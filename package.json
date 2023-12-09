@@ -19,7 +19,8 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "prerelease",
-    "@oruga-ui/oruga-next": "^0.5.3",
+    "@oruga-ui/oruga-next": "0.8.0",
+    "@oruga-ui/theme-oruga": "^0.2.0",
     "@vue/cli-plugin-typescript": "^4.5.15",
     "axios": "^1.6.2",
     "core-js": "^3.34.0",
@@ -74,6 +75,7 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
+      "no-unused-vars": "off",
       "vue/multi-word-component-names": "off"
     }
   },

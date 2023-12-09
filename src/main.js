@@ -38,8 +38,9 @@ useOruga(vueApp)
 
 //
 // global components
-import Dropdown from './components/dropdown/Dropdown'
-vueApp.component('Dropdown', Dropdown)
+// import Dropdown from './components/dropdown/Dropdown'
+import { ODropdown } from '@oruga-ui/oruga-next'
+vueApp.component('Dropdown', ODropdown)
 
 //
 // markdown

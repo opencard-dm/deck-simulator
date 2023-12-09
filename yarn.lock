@@ -2518,12 +2518,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oruga-ui/oruga-next@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "@oruga-ui/oruga-next@npm:0.5.3"
+"@oruga-ui/oruga-next@npm:0.8.0":
+  version: 0.8.0
+  resolution: "@oruga-ui/oruga-next@npm:0.8.0"
   peerDependencies:
     vue: ^3.0.0
-  checksum: c9a0926dfc9a3de3d6a21a1385764f3e666b1c7502f0ffb046e2141a6f509e03b5c5fb667e3449c5714002f89da71a600b5adb57bf66078a7c87508f16aedeb1
+  checksum: dc42ccc5534a91de32ffc84c2c636308c2df7902984cac9cab34c4358199d7247f8c2e9949e8f2b2602bceb4e01dae443fd8bcc0d57a06f3de71eabd847393c8
+  languageName: node
+  linkType: hard
+
+"@oruga-ui/theme-oruga@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@oruga-ui/theme-oruga@npm:0.2.0"
+  checksum: f3a1176d9e6b7109e82a6252c9fd35973e211b391a94169efe262789ac22a29a4d906f4dbf837e238f0d2135e42d74259707d96125013f6d54ef0a29d34d4686
   languageName: node
   linkType: hard
 
@@ -6703,7 +6710,8 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": ^5.15.4
     "@fortawesome/free-solid-svg-icons": ^5.15.4
     "@fortawesome/vue-fontawesome": prerelease
-    "@oruga-ui/oruga-next": ^0.5.3
+    "@oruga-ui/oruga-next": 0.8.0
+    "@oruga-ui/theme-oruga": ^0.2.0
     "@types/jest": ^27.4.0
     "@vue/cli-plugin-babel": ^5.0.8
     "@vue/cli-plugin-eslint": ^5.0.8

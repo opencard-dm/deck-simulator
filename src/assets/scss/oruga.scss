@@ -34,8 +34,7 @@ $colors: (
     "grey-dark" : ($grey-dark, $white),
 ) !default;
 
-@import '../../../node_modules/@oruga-ui/oruga-next/src/scss/oruga-full.scss';
-
+@import '../../../node_modules/@oruga-ui/theme-oruga/dist/scss/oruga-full';
 .o-drop__item--active {
     color: #222;
     background-color: transparent;

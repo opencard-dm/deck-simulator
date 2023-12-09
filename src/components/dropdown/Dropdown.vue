@@ -72,7 +72,7 @@ export default defineComponent({
     trapFocus,
   },
   configField: "dropdown",
-  mixins: [BaseComponentMixin, MatchMediaMixin],
+  mixins: [BaseComponentMixin],
   provide() {
     return {
       $dropdown: this,
