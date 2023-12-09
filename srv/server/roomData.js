@@ -1,14 +1,23 @@
 import { createClient } from 'redis'
+import fs from 'fs'
 
 export class RoomData {
-  /** 'memory'|'redis' */
-  static driver = 'redis'
-  static roomData = {}
-  /** @type {[string]: NodeJS.Timeout[]} */
-  static timeOuts = {}
+  /** 'file'|'redis' */
+  static driver = 'file'
   static redisClient = null
 
   static init() {
+    if (this.driver === 'file') {
+      fs.readdir('cache/rooms', (err, files) => {
+        if (files.length > 100) {
+          fs.rmdirSync('cache/rooms')
+          fs.mkdirSync('cache/rooms', { recursive: true });
+        }
+      })
+      if (!fs.existsSync('cache/rooms')){
+        fs.mkdirSync('cache/rooms', { recursive: true });
+      }
+    }
     if (this.driver === 'redis') {
       this.redisClient = createClient({
         url: process.env.REDIS_URL || 'redis://@localhost:6379',
@@ -25,10 +34,15 @@ export class RoomData {
   static async getRoomCache(roomId) {
     const key = `json:room:${roomId}`
     const defalut = { a: null, b: null }
+    if (this.driver === 'file') {
+      if (fs.existsSync(`cache/rooms/${roomId}`)) {
+        return JSON.parse(fs.readFileSync(`cache/rooms/${roomId}`))
+      }
+      return defalut
+    }
     if (this.driver === 'redis') {
       try {
-        const room = JSON.parse(await this.redisClient.get(key))
-        return room
+        return JSON.parse(await this.redisClient.get(key))
       } catch (err) {
         if (!this.redisClient.isOpen) {
           this.redisClient.connect().catch((err) => {console.log(err)})
@@ -36,11 +50,6 @@ export class RoomData {
         console.log(err)
         return defalut
       }
-    } else {
-      if (key in this.roomData) {
-        return this.roomData[key]
-      }
-      return defalut
     }
   }
 
@@ -48,6 +57,12 @@ export class RoomData {
     const key = `json:room:${roomId}`
     let room = this.getRoomCache(roomId)
     room[roomData.name] = roomData
+    if (this.driver === 'file') {
+      try {
+        fs.writeFileSync(`cache/rooms/${roomId}`, JSON.stringify(room))
+      } catch (error) {
+      }
+    }
     if (this.driver === 'redis') {
       this.redisClient.multi()
         .set(key, JSON.stringify(room))
@@ -59,17 +74,6 @@ export class RoomData {
             this.redisClient.connect().catch((err) => {console.log(err)})
           }
         })
-    } else {
-      this.roomData[key] = room
-      if (key in this.timeOuts) {
-        try {
-          this.timeOuts[key].forEach(t => clearTimeout(t))
-        } catch (error) {}
-      }
-      this.timeOuts[key] = [setTimeout(() => {
-        delete this.roomData[key]
-        delete this.timeOuts[key]
-      }, 60 * 60 * 1000)];
     }
   }
 }
