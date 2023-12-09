@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { setRoomCache } from './redisClient.js'
+import { RoomData } from './roomData.js'
 
 export function attachSocketIo(appServer) {
   const socketIoConfig = process.env.CLIENT_ORIGIN ?
@@ -27,7 +27,7 @@ export function attachSocketIo(appServer) {
     socket.on('cards-moved', async (data) => {
       // 送信者を除いく部屋のユーザーに送信。
       socket.to('room' + data.roomId).emit('cards-moved', data)
-      setRoomCache(data.roomId, data)
+      RoomData.setRoomCache(data.roomId, data)
     })
     socket.on("disconnect", () => {
       console.log('ソケットの接続が切断されました。')

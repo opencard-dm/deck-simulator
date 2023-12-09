@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { deckList } from '../../src/helpers/data.js'
 import sampleDeckList from '../../src/helpers/data-sample.js'
 import { useConfig } from '../../src/plugins/useConfig.js'
-import { getRoomCache } from './redisClient.js'
+import { RoomData } from './roomData.js'
 
 const router = Router()
 
@@ -10,7 +10,7 @@ router.get('/api/rooms/:roomId', async function (req, res) {
   if (!req.params.roomId) {
     return res.json({})
   }
-  const room = (await getRoomCache(req.params.roomId)) || {}
+  const room = (await RoomData.getRoomCache(req.params.roomId)) || {}
   res.json(room)
 })
 
