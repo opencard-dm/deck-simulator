@@ -16,7 +16,7 @@ it('can fetch user', (done) => {
     .expect(200, done)
 })
 
-const serverApp = require('@/server/index.js')
+const serverApp = require('srv/server/index.js')
 const myApp = serverApp.app
 it('can use esmodule', (done) => {
   request(myApp)

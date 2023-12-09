@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import deckList from '../helpers/data.js'
-import sampleDeckList from '../helpers/data-sample.js'
-import { useConfig } from '../plugins/useConfig.js'
+import { deckList } from '../../src/helpers/data.js'
+import sampleDeckList from '../../src/helpers/data-sample.js'
+import { useConfig } from '../../src/plugins/useConfig.js'
 import { getRoomCache } from './redisClient.js'
 
 const router = Router()
@@ -17,7 +17,7 @@ router.get('/api/rooms/:roomId', async function (req, res) {
 import axios from 'axios'
 router.get('/api/decks', async function (req, res) {
   // サンプルモードの場合は、サンプルのデッキのみを返す。
-  if (useConfig().SAMPLE_MODE) {
+  if (true) {
     return res.json(sampleDeckList)
   }
   let response
@@ -34,7 +34,7 @@ router.get('/api/decks', async function (req, res) {
 // https://elements.heroku.com/buildpacks/playwright-community/heroku-playwright-buildpack
 // 特定のブラウザのみに対応するplaywrightを使用。
 import { chromium } from 'playwright-chromium'
-import { Deck } from '../helpers/Deck.js'
+import { Deck } from '../../src/helpers/Deck.js'
 
 router.get('/api/cards', async (req, res) => {
   const apiRes = await axios.get(`https://d23r8jlqp3e2gc.cloudfront.net/api/v1/dm/cards?main-card-ids=${req.query.cardIds}`)
@@ -103,4 +103,6 @@ router.get('/api/scrape', async (req, res) => {
   res.json(deck)
 })
 
-export default router
+export {
+  router as apiRouter,
+}

@@ -1,6 +1,6 @@
-import { server } from './server/app.js'
-import { client as redisClient } from './server/redisClient.js';
-import './server/socket-io.js'
+import { server } from '../srv/server/app.js'
+import { client as redisClient } from '../srv/server/redisClient.js';
+import '../srv/server/socket-io.js'
 
 const port = process.env.PORT || 8080;
 server.listen(port, async () => {
