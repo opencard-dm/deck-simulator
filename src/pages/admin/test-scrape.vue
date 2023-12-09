@@ -2,7 +2,7 @@
   <div class="markdownWrapper">
     <div style="display: flex;" v-for="deck in decks" :key="deck.url">
       <div style="width: 20%;">{{ deck.label }}</div>
-      <o-button class="" @click="scrape(deck.url)">スクレイピング</o-button>
+      <o-button class="" @click="scrape(deck.url)" :loading="scraping">スクレイピング</o-button>
       <!-- <iframe :src="deck.url"></iframe> -->
     </div>
     <button></button>
@@ -23,7 +23,7 @@ export default {
         },
         {
           label: '超次元8 サンプル1',
-          url: 'https://deck-maker.com/dm/decks/new/?copiedfrom=a55ad809-837c-4b85-901d-d8f39cd45cf1'
+          url: 'https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=a55ad809-837c-4b85-901d-d8f39cd45cf1'
         },
         {
           label: '超次元1+GR サンプル1',
@@ -51,8 +51,7 @@ export default {
         })
         .catch((err) => {
           this.scraping = false;
-          this.errors.scrapeUrl = "デッキデータの取得に失敗しました";
-          console.log(err);
+          console.error("デッキデータの取得に失敗しました", err);
         });
     },
   },

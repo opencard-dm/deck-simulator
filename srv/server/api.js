@@ -32,10 +32,8 @@ router.get('/api/decks', async function (req, res) {
   }
 })
 
-// https://elements.heroku.com/buildpacks/playwright-community/heroku-playwright-buildpack
-// 特定のブラウザのみに対応するplaywrightを使用。
-import { chromium } from 'playwright-chromium'
 import { Deck } from '../../src/helpers/Deck.js'
+import { getPage } from './helpers.js'
 
 router.get('/api/cards', async (req, res) => {
   const apiRes = await axios.get(`https://d23r8jlqp3e2gc.cloudfront.net/api/v1/dm/cards?main-card-ids=${req.query.cardIds}`)
@@ -50,15 +48,16 @@ router.get('/api/cards', async (req, res) => {
 })
 
 router.get('/api/scrape', async (req, res) => {
-  const browser = await chromium.launch();
-
-  const page = await browser.newPage();
+  const page = await getPage();
   const pageRes = await page.goto(req.query.url);
   //
   if (![200].includes(pageRes.status())) {
     // throw new Error('invalid_url');
     return res.sendStatus(404);
   }
+  await page.waitForFunction(() => {
+    return typeof getCategoryId !== 'undefined'
+  })
   const deckData = await page.evaluate(async () => {
     // カテゴリーIDを取得
     const categoryId = getCategoryId(`dm`)
@@ -104,7 +103,7 @@ router.get('/api/scrape', async (req, res) => {
       mainCardId: c.main_card_id,
     }
   }))
-  await browser.close();
+  page.context().close()
   // レスポンス
   res.json(deck)
 })
