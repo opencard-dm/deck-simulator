@@ -7,8 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "express": "vue-cli-service express:watch",
-    "express:run": "vue-cli-service express:run",
-    "start": "node src/server.js",
+    "start": "vue-cli-service express:run",
     "test": "jest"
   },
   "dependencies": {
