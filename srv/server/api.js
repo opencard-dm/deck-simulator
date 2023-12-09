@@ -16,20 +16,8 @@ router.get('/api/rooms/:roomId', async function (req, res) {
 
 import axios from 'axios'
 router.get('/api/decks', async function (req, res) {
-  // サンプルモードの場合は、サンプルのデッキのみを返す。
-  if (true) {
-    return res.json(deckList)
-    // return res.json(sampleDeckList)
-  }
-  let response
-  try {
-    response = await axios.get(process.env.DECK_URL)
-    res.json([...deckList, ...response.data])
-  } catch (error) {
-    // ex: Request failed with status code 404
-    console.log(error.message)
-    res.json(deckList)
-  }
+  return res.json(deckList)
+  // return res.json(sampleDeckList)
 })
 
 import { Deck } from '../../src/helpers/Deck.js'
