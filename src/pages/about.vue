@@ -3,17 +3,17 @@
     <div style="margin-bottom: 20px">
       <router-link to="/">戻る</router-link>
     </div>
-    <Markdown class="markdown-body" :source="markdown"></Markdown>
+    <MarkdownIt class="markdown-body" :source="about"></MarkdownIt>
   </div>
 </template>
 
 <script>
-import markdown from "raw-loader!../assets/markdown/about.md";
+import about from "raw-loader!../assets/markdown/about.md";
 
 export default {
   data() {
     return {
-      markdown: markdown,
+      about,
     };
   },
   created() {

@@ -1,7 +1,7 @@
-import Markdown from 'vue3-markdown-it'
+import MarkdownIt from 'vue3-markdown-it'
 
 export default {
   install: (app) => {
-    app.component('Markdown', Markdown)
+    app.component('MarkdownIt', MarkdownIt)
   }
 }
