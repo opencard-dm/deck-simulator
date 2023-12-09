@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  app:
+    image: saiki987/tcg-simulator:1.1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    command: bash -c ". ~/.nvm/nvm.sh && yarn start"
+    # environment:
+    #  - "PORT=3000"

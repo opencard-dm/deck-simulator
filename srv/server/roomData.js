@@ -9,7 +9,7 @@ export class RoomData {
   static init() {
     if (this.driver === 'file') {
       fs.readdir('cache/rooms', (err, files) => {
-        if (files.length > 100) {
+        if (!err && files && files.length > 100) {
           fs.rmdirSync('cache/rooms')
           fs.mkdirSync('cache/rooms', { recursive: true });
         }
@@ -60,8 +60,7 @@ export class RoomData {
     if (this.driver === 'file') {
       try {
         fs.writeFileSync(`cache/rooms/${roomId}`, JSON.stringify(room))
-      } catch (error) {
-      }
+      } catch (error) {}
     }
     if (this.driver === 'redis') {
       this.redisClient.multi()
