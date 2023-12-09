@@ -16,7 +16,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/vue-fontawesome": "prerelease",
+    "@fortawesome/vue-fontawesome": "latest-3",
     "@oruga-ui/oruga-next": "0.8.0",
     "@oruga-ui/theme-oruga": "^0.2.0",
     "axios": "0.21.1",

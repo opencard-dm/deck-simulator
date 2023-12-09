@@ -39,7 +39,7 @@ export class Deck {
         mainCards.push({
           ...c,
           imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-          backImageUrl: c.backImageUrl || `${imageHost}/card-back.jpg`,
+          backImageUrl: c.backImageUrl || '/images/card-back.jpg',
           mainCardId: c.mainCardId,
         });
       }
@@ -59,7 +59,7 @@ export class Deck {
           chojigenCards.push({
             ...c,
             imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-            backImageUrl: c.backImageUrl || `${imageHost}/card-back.jpg`,
+            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
             mainCardId: c.mainCardId,
           });
         }

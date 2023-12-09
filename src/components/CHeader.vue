@@ -33,9 +33,10 @@
             label="コピーしました"
             position="top"
             variant="info"
+            :triggers="['click']"
+            :closeable="false"
             :active="copyLinkTooltip"
-            :always="true"
-            ><o-icon class="sidebar_copyLinkIcon" pack="fas" icon="copy" @click="copyInviteLink"></o-icon
+          ><o-icon class="sidebar_copyLinkIcon" pack="fas" icon="copy" @click="copyInviteLink"></o-icon
           ></o-tooltip>
         </div>
         <div style="font-size: 12px">{{ inviteLink }}</div>

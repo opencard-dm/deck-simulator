@@ -73,7 +73,8 @@
             variant="info"
             size="small"
             :active="copyLinkTooltip"
-            :always="true"
+            :triggers="['click']"
+            :closeable="false"
           >
             <o-button variant="info" size="small" @click="copyInviteLink"
               >招待リンクをコピーする</o-button

@@ -13,9 +13,7 @@ export function useOruga(vueApp) {
     .use(Field)
     .use(Tooltip)
     .use(Notification)
-  // https://github.com/oruga-ui/oruga/issues/99#issuecomment-794784783
-  // How to set icon pack for Individual components (tree shaking) ?
-  vueApp.use(ConfigProgrammatic, {
+  ConfigProgrammatic.setOptions({
     iconComponent: 'vue-fontawesome',
     iconPack: 'fas',
   })
