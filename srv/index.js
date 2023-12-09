@@ -6,6 +6,7 @@ import { attachSocketIo } from './server/socket-io.js'
 
 /**
  * @param 
+ * @link /node_modules/vue-cli-plugin-express/src/server.js
  */
 export default (
   /** @type {import('express').Express} */ app, 

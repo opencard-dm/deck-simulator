@@ -1,8 +1,7 @@
 FROM playwright/chrome:playwright-1.40.1
-CMD ["yarn", "start"]
 USER root
 ENV HOME /root
-EXPOSE 3000
+EXPOSE 8080
 SHELL ["/bin/bash", "-c"]
 
 WORKDIR /root
@@ -11,16 +10,15 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
 RUN . $HOME/.nvm/nvm.sh && nvm install 18.16.0 \
     && npm install -g yarn
 
-# COPY ./.yarn/plugins /app/.yarn/plugins
-# COPY ./.yarn/releases /app/.yarn/releases
-# COPY ./dist /app/dist
-# COPY ./srv /app/srv
-# COPY ./.yarnrc.yml /app/
-# COPY ./package.json /app/
-# COPY ./yarn.lock /app/
-COPY . /app
 WORKDIR /app
+COPY ./.yarn /app/.yarn
+COPY ./.yarnrc.yml /app/
+COPY ./package.json /app/
+COPY ./yarn.lock /app/
 RUN . $HOME/.nvm/nvm.sh \
     && yarn install && yarn cache clean
+COPY . /app
+
 ENV SHELL /bin/bash
 ENTRYPOINT []
+CMD bash -c ". ~/.nvm/nvm.sh && yarn start --port ${PORT}"

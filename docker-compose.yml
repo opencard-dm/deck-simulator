@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    command: bash -c ". ~/.nvm/nvm.sh && yarn start"
-    # environment:
-    #  - "PORT=3000"
+      - "${PORT}:${PORT}"
+    # command: bash -c ". ~/.nvm/nvm.sh && yarn start --port ${PORT}"
+    environment:
+     - "PORT=${PORT}"
