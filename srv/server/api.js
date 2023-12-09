@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import deckList from '../helpers/data.js'
-import sampleDeckList from '../helpers/data-sample.js'
-import { useConfig } from '../plugins/useConfig.js'
-import { getRoomCache } from './redisClient.js'
+import { deckList } from '../../src/helpers/data.js'
+import sampleDeckList from '../../src/helpers/data-sample.js'
+import { useConfig } from '../../src/plugins/useConfig.js'
+import { RoomData } from './roomData.js'
 
 const router = Router()
 
@@ -10,31 +10,18 @@ router.get('/api/rooms/:roomId', async function (req, res) {
   if (!req.params.roomId) {
     return res.json({})
   }
-  const room = (await getRoomCache(req.params.roomId)) || {}
+  const room = (await RoomData.getRoomCache(req.params.roomId)) || {}
   res.json(room)
 })
 
 import axios from 'axios'
 router.get('/api/decks', async function (req, res) {
-  // サンプルモードの場合は、サンプルのデッキのみを返す。
-  if (useConfig().SAMPLE_MODE) {
-    return res.json(sampleDeckList)
-  }
-  let response
-  try {
-    response = await axios.get(process.env.DECK_URL)
-    res.json([...deckList, ...response.data])
-  } catch (error) {
-    // ex: Request failed with status code 404
-    console.log(error.message)
-    res.json(deckList)
-  }
+  return res.json(deckList)
+  // return res.json(sampleDeckList)
 })
 
-// https://elements.heroku.com/buildpacks/playwright-community/heroku-playwright-buildpack
-// 特定のブラウザのみに対応するplaywrightを使用。
-import { chromium } from 'playwright-chromium'
-import { Deck } from '../helpers/Deck.js'
+import { Deck } from '../../src/helpers/Deck.js'
+import { getPage } from './helpers.js'
 
 router.get('/api/cards', async (req, res) => {
   const apiRes = await axios.get(`https://d23r8jlqp3e2gc.cloudfront.net/api/v1/dm/cards?main-card-ids=${req.query.cardIds}`)
@@ -49,15 +36,16 @@ router.get('/api/cards', async (req, res) => {
 })
 
 router.get('/api/scrape', async (req, res) => {
-  const browser = await chromium.launch();
-
-  const page = await browser.newPage();
+  const page = await getPage();
   const pageRes = await page.goto(req.query.url);
   //
   if (![200].includes(pageRes.status())) {
     // throw new Error('invalid_url');
     return res.sendStatus(404);
   }
+  await page.waitForFunction(() => {
+    return typeof getCategoryId !== 'undefined'
+  })
   const deckData = await page.evaluate(async () => {
     // カテゴリーIDを取得
     const categoryId = getCategoryId(`dm`)
@@ -85,7 +73,6 @@ router.get('/api/scrape', async (req, res) => {
     name: deckData.name,
     dmDeckId: deckData.dm_deck_id,
   }
-  deck.chojigenCards = deckData.hyper_spatial_cards
   deck.cards = Deck.groupByCardId(deckData.main_cards.map((c) => {
     return {
       imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
@@ -98,9 +85,17 @@ router.get('/api/scrape', async (req, res) => {
       mainCardId: c.main_card_id,
     }
   }))
-  await browser.close();
+  deck.grCards = Deck.groupByCardId(deckData.gr_cards.map((c) => {
+    return {
+      imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
+      mainCardId: c.main_card_id,
+    }
+  }))
+  page.context().close()
   // レスポンス
   res.json(deck)
 })
 
-export default router
+export {
+  router as apiRouter,
+}

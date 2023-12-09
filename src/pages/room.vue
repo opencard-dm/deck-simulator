@@ -1,15 +1,15 @@
 <template>
-  <Room
+  <DuelRoom
     :upper-player="upperPlayer"
     :lower-player="lowerPlayer"
-  ></Room>
+  ></DuelRoom>
 </template>
 
 <script>
-import Room from '../components/Room.vue';
+import DuelRoom from '../components/DuelRoom.vue';
 
 export default {
-  components: { Room },
+  components: { DuelRoom },
   beforeRouteLeave (to, from, next) {
     this.$socket.emit('leave-room', this.roomId)
     console.log("room" + this.roomId + "から退室しました")

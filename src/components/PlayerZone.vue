@@ -180,7 +180,7 @@ $card-width: 50px;
     width: 60px;
     height: cardHeight(50px);
 
-    background-image: url("../assets/images/bochi.jpg");
+    background-color: purple;
     background-size: cover;
     cursor: pointer;
     img {

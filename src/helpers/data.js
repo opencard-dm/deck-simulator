@@ -1,4 +1,4 @@
-export default [{
+export const deckList = [{
   name: '【サンプルデッキ】4cドラグナー【2022/01・アドバンス】',
   dmDeckId: '628db1ff-aa5a-43d1-b932-832d76e80aa3',
   chojigenCards: [
