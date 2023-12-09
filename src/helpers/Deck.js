@@ -61,6 +61,19 @@ export class Deck {
             imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
             backImageUrl: c.backImageUrl || '/images/card-back.jpg',
             mainCardId: c.mainCardId,
+            isChojigen: true,
+          });
+        }
+      });
+      (deck.grCards || []).forEach(c => {
+        const times = c.time || 1
+        for (let i = 0; i < times; i++) {
+          chojigenCards.push({
+            ...c,
+            imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
+            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+            mainCardId: c.mainCardId,
+            isGr: true,
           });
         }
       })
@@ -69,7 +82,6 @@ export class Deck {
         return {
           ...c,
           id: count++,
-          isChojigen: true,
         }
       })
       deck.hasChojigen = true
@@ -90,6 +102,10 @@ export class Deck {
     deck.chojigenCards.forEach((c) => {
       if (Object.prototype.hasOwnProperty.call(cardMap, c.mainCardId)) {
         c.text = c.text || cardMap[c.mainCardId].card_text;
+        if (cardMap[c.mainCardId].image_paths 
+          && cardMap[c.mainCardId].image_paths.length >= 2) {
+          c.backImageUrl = `https://storage.googleapis.com/ka-nabell-card-images/img/card/${cardMap[c.mainCardId].image_paths[1]}`
+        }
       }
     });
     console.log("card data", cardMap);

@@ -18,7 +18,8 @@ import axios from 'axios'
 router.get('/api/decks', async function (req, res) {
   // サンプルモードの場合は、サンプルのデッキのみを返す。
   if (true) {
-    return res.json(sampleDeckList)
+    return res.json(deckList)
+    // return res.json(sampleDeckList)
   }
   let response
   try {
@@ -85,7 +86,6 @@ router.get('/api/scrape', async (req, res) => {
     name: deckData.name,
     dmDeckId: deckData.dm_deck_id,
   }
-  deck.chojigenCards = deckData.hyper_spatial_cards
   deck.cards = Deck.groupByCardId(deckData.main_cards.map((c) => {
     return {
       imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
@@ -93,6 +93,12 @@ router.get('/api/scrape', async (req, res) => {
     }
   }))
   deck.chojigenCards = Deck.groupByCardId(deckData.hyper_spatial_cards.map((c) => {
+    return {
+      imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
+      mainCardId: c.main_card_id,
+    }
+  }))
+  deck.grCards = Deck.groupByCardId(deckData.gr_cards.map((c) => {
     return {
       imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
       mainCardId: c.main_card_id,
