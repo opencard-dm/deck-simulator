@@ -52,7 +52,6 @@
           例:
           https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=xxxx
         </p>
-        <p>※フォーマットがオリジナルのデッキのみ取得可能です</p>
       </div>
     </div>
 
