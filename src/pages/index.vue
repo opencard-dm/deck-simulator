@@ -58,9 +58,9 @@
         </tr>
       </table>
       <div class="index_links">
-        <p v-if="decks.length > 0">
+        <!-- <p v-if="decks.length > 0">
           <router-link to="/builder">自分のデッキを編集</router-link>
-        </p>
+        </p> -->
         <p>
           <o-tooltip
             label="はじめにお読みください"

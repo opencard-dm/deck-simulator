@@ -9,7 +9,7 @@ import adminTestFirebase from '../pages/admin/test-firebase.vue'
 const routes = [
   { path: '', name: 'index', component: index },
   { path: '/room', name: 'room', component: room },
-  { path: '/builder', name: 'builder', component: builder },
+  // { path: '/builder', name: 'builder', component: builder },
   { path: '/about', name: 'about', component: about },
 ]
 if (process.env.NODE_ENV === 'development') {
