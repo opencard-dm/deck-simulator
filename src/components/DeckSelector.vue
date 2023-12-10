@@ -264,6 +264,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0px 20px;
   > * {
     display: block;
   }
@@ -275,6 +276,7 @@ export default {
 #waiting-player {
   text-align: center;
   line-height: 30px;
+  padding-bottom: 20px;
 }
 .deckForm_example {
   width: 100%;

@@ -473,9 +473,12 @@ $card-width: 120px;
       background-color: black;
     }
   }
-  &_top_1 {
+  .workSpace_top_1 {
     display: flex;
     align-items: center;
+    > * + * {
+      margin-left: 8px;
+    }
   }
   &_cardList {
     margin-top: 10px;
