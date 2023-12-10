@@ -17,6 +17,7 @@ export const useConfig = () => {
     // WebSocketのホストとapiのホストは同一の設計にしている。
     API_HOST: process.env.VUE_APP_WS_HOST || '',
     ENABLE_REDIS: parseBool(process.env.ENABLE_REDIS) || false,
+    REDIS_URL: process.env.REDIS_URL || 'redis://@localhost:6379',
   }
 }
 export default {

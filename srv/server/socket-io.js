@@ -17,7 +17,9 @@ export async function attachSocketIo(appServer) {
   io.attach(appServer)
   if (useConfig().ENABLE_REDIS) {
     // https://socket.io/docs/v4/redis-adapter/
-    const pubClient = createClient({ url: "redis://localhost:6379" });
+    const pubClient = createClient({
+      url: process.env.REDIS_URL,
+    });
     const subClient = pubClient.duplicate();
     Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
       io.adapter(createAdapter(pubClient, subClient));
