@@ -108,7 +108,6 @@ export class Deck {
         }
       }
     });
-    console.log("card data", cardMap);
     return deck
   }
 

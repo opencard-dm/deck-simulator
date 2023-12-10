@@ -71,7 +71,6 @@ DeckRecipeInfo.prototype.updateDeckDetail = async function() {
       const deckObjResult = await this.getGachiMatomeBaseRef()
           .doc(this.deckId)
           .set(deck_obj)
-      console.log(deckObjResult)
     }
     // 登録デッキの場合
     const deck_type_name = await this.getDeckTypeName(deck_card[`${categoryName}_deck_type_id`])
@@ -118,8 +117,6 @@ DeckRecipeInfo.prototype.updateDeckDetail = async function() {
       zeron: deck_card.hasOwnProperty('zeron') ? deck_card.zeron : false,
     }
     this.deckCardData = Object.assign({}, deck_card, deck_card_add)
-    console.log(`public deck info.`, this.publicDeckData)
-    console.log(`deck card info.`, this.deckCardData)
     // カード枚数の更新
     // this.updateCardCount(this.deckCardData)
     // デッキ内のカード情報の更新
@@ -134,7 +131,6 @@ DeckRecipeInfo.prototype.updateDeckDetail = async function() {
 // {{{ DeckRecipeInfo.prototype.hideDeckTab = function(deckCardData, publicDeckData) {
 DeckRecipeInfo.prototype.hideDeckTab = function(deckCardData, publicDeckData) {
   const categoryName = 'dm' // yg, dm, ygrd
-  console.log(`categoryName: ${this.categoryId},${categoryName}`)
   if (categoryName === 'yg') {
     if (deckCardData.extra) {
       $(`#pills-extra-tab-${this.deckId}, #pills-extradeck-${this.deckId}`).removeClass(`d-none`)
@@ -286,7 +282,6 @@ DeckRecipeInfo.prototype.loadComplete = async function(embedFlag) {
     if (cardKey) {
       $(`#card-name-overlay-${cardKey}-${this.deckId}`).removeClass(`d-none`)
     }
-    console.log(`card-key=` + cardKey)
   })
   const host = DECKMAKER_ENV.deckmaker_host
   // コピーボタンのイベントを設定する
