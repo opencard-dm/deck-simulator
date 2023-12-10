@@ -36,11 +36,13 @@ export default {
     scrape(url) {
       if (!url || this.scraping) return;
       this.scraping = true;
-      const apiUrl = `${this.useConfig().API_HOST}/api/scrape?url=${encodeURI(
-        url.trim()
-      )}`;
+      const apiUrl = `${this.useConfig().API_HOST}/api/scrape`;
       axios
-        .get(apiUrl)
+        .get(apiUrl, {
+          params: {
+            deckId: url.split('tcgrevo_deck_maker_deck_id=')[1],
+          }
+        })
         .then((res) => {
           console.log("fetched deck", res);
           // this.$store.commit("decks/setData", [
