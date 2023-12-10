@@ -17,8 +17,9 @@ COPY ./package.json /app/
 COPY ./yarn.lock /app/
 RUN . $HOME/.nvm/nvm.sh \
     && yarn install && yarn cache clean
-COPY . /app
 
 ENV SHELL /bin/bash
 ENTRYPOINT []
 CMD bash -c ". ~/.nvm/nvm.sh && yarn start --port ${PORT}"
+
+COPY . /app
