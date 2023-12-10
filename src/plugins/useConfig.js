@@ -16,6 +16,7 @@ export const useConfig = () => {
     WS_ENABLED: parseBool(process.env.VUE_APP_WS_ENABLED || true),
     // WebSocketのホストとapiのホストは同一の設計にしている。
     API_HOST: process.env.VUE_APP_WS_HOST || '',
+    ENABLE_REDIS: parseBool(process.env.ENABLE_REDIS) || false,
   }
 }
 export default {

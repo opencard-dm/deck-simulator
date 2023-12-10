@@ -1,7 +1,10 @@
 import { Server } from 'socket.io';
+import { createAdapter } from "@socket.io/redis-adapter";
 import { RoomData } from './roomData.js'
+import { createClient } from "redis";
+import { useConfig } from '../../src/plugins/useConfig'
 
-export function attachSocketIo(appServer) {
+export async function attachSocketIo(appServer) {
   const socketIoConfig = process.env.CLIENT_ORIGIN ?
     {
       // https://socket.io/docs/v4/handling-cors/
@@ -12,8 +15,14 @@ export function attachSocketIo(appServer) {
     } : {}
   const io = new Server(socketIoConfig)
   io.attach(appServer)
-  // require('socket.io')(server, socketIoConfig);
-  
+  if (useConfig().ENABLE_REDIS) {
+    // https://socket.io/docs/v4/redis-adapter/
+    const pubClient = createClient({ url: "redis://localhost:6379" });
+    const subClient = pubClient.duplicate();
+    Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+      io.adapter(createAdapter(pubClient, subClient));
+    });
+  }
   io.on('connection', function (socket) {
     socket.on('room', (roomId) => {
       socket.join('room' + roomId);
