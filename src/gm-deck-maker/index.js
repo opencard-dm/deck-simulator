@@ -3,6 +3,7 @@ import firebase from "firebase/app";
 import { DeckRecipeInfo } from "./DeckRecipeInfo.js";
 
 export async function getDeckData(deckId) {
+  // https://stackoverflow.com/questions/37482366/is-it-safe-to-expose-firebase-apikey-to-the-public
   const firebaseConfig = {
     apiKey: "AIzaSyCKhH2S_r29U5olfQC6AsXaaHNhqmJMR40",
     authDomain: "prod-deckmaker-8345f.firebaseapp.com",
