@@ -7510,7 +7510,6 @@ __metadata:
     jest: ^29.7.0
     jest-serializer-vue: ^3.1.0
     jest-transform-stub: ^2.0.0
-    playwright-chromium: ^1.40.1
     raw-loader: ^4.0.2
     redis: 4.0.3
     sass: ^1.69.5
@@ -12871,26 +12870,6 @@ fsevents@^1.2.7:
   dependencies:
     find-up: ^5.0.0
   checksum: b167bb8dac7bbf22b1d5e30ec223e6b064b84b63010c9d49384619a36734caf95ed23ad23d4f9bd975e8e8082b60a83395f43a89bb192df53a7c25a38ecb57d9
-  languageName: node
-  linkType: hard
-
-"playwright-chromium@npm:^1.40.1":
-  version: 1.40.1
-  resolution: "playwright-chromium@npm:1.40.1"
-  dependencies:
-    playwright-core: 1.40.1
-  bin:
-    playwright: cli.js
-  checksum: 110119261d543dae06f3a9c3c8d21ab357ba904661fb30ea440ccb5c2c0d5847e7c6aa0dc52fc1710dfaabf90c9b0e67fd39331f9f94d91cd42e57ec1d873908
-  languageName: node
-  linkType: hard
-
-"playwright-core@npm:1.40.1":
-  version: 1.40.1
-  resolution: "playwright-core@npm:1.40.1"
-  bin:
-    playwright-core: cli.js
-  checksum: 84d92fb9b86e3c225b16b6886bf858eb5059b4e60fa1205ff23336e56a06dcb2eac62650992dede72f406c8e70a7b6a5303e511f9b4bc0b85022ede356a01ee0
   languageName: node
   linkType: hard
 
