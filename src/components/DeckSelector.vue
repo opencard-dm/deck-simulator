@@ -1,7 +1,7 @@
 <template>
   <o-modal
     :active="active"
-    :canCancel="canCansel"
+    :cancelable="canCansel"
     @close="onClose"
     :width="600"
   >
@@ -91,6 +91,7 @@ import axios from "axios";
 
 export default {
   props: ["isReady", "player", "partnerIsReady", "active"],
+  emits: ['move-cards', 'selected', 'update:active'],
   data() {
     return {
       deckId: 0,
@@ -276,7 +277,7 @@ export default {
 #waiting-player {
   text-align: center;
   line-height: 30px;
-  padding-bottom: 20px;
+  padding: 20px;
 }
 .deckForm_example {
   width: 100%;
