@@ -4,6 +4,7 @@ import room from '../pages/room.vue'
 import builder from '../pages/builder.vue'
 import about from '../pages/about.vue'
 import adminTestScrapte from '../pages/admin/test-scrape.vue'
+import adminTestFirebase from '../pages/admin/test-firebase.vue'
 
 const routes = [
   { path: '', name: 'index', component: index },
@@ -12,7 +13,8 @@ const routes = [
   { path: '/about', name: 'about', component: about },
 ]
 if (process.env.NODE_ENV === 'development') {
-  routes.push({ path: '/admin/test-scrape', name: 'about', component: adminTestScrapte })
+  routes.push({ path: '/admin/test-scrape', component: adminTestScrapte })
+  routes.push({ path: '/admin/test-firebase', component: adminTestFirebase })
 }
 
 const router = createRouter({

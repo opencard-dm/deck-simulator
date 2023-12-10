@@ -333,6 +333,7 @@ export default {
       this.moveCards(from, to, [card], player, prepend);
     },
     moveCards: function (from, to, selectedCards, player, prepend = false) {
+      if (!selectedCards || selectedCards.length === 0) return;
       // 先頭のカードがグループに属していた場合、そのグループから抜ける。
       const card = selectedCards[0];
       if (card.groupId) {
