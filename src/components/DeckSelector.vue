@@ -216,11 +216,14 @@ export default {
     scrape() {
       if (!this.scrapeUrl || this.scraping || this.errors.scrapeUrl) return;
       this.scraping = true;
-      const url = `${this.useConfig().API_HOST}/api/scrape?url=${encodeURI(
-        this.scrapeUrl.trim()
-      )}`;
+      const deckId = this.scrapeUrl.split('tcgrevo_deck_maker_deck_id=')[1]
+      const url = `${this.useConfig().API_HOST}/api/scrape`;
       axios
-        .get(url)
+        .get(url, {
+          params: {
+            deckId,
+          }
+        })
         .then((res) => {
           console.log("fetched deck", res);
           this.$store.commit("decks/setData", [
@@ -229,6 +232,7 @@ export default {
           ]);
           this.scrapeUrl = "";
           this.scraping = false;
+          this.selectDeck()
         })
         .catch((err) => {
           // this.scrapeUrl = "";
