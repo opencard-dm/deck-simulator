@@ -4,6 +4,7 @@ const { initializeApp, cert } = require('firebase-admin/lib/app')
 // use version 11.3.0 
 // https://github.com/firebase/firebase-admin-node/issues/2276
 const { getFirestore } = require('firebase-admin/lib/firestore')
+const { Timestamp } = require('firebase-admin/lib/firestore')
 
 let env = 'dev'
 if (fs.existsSync('.credentails.json')) {
@@ -21,4 +22,5 @@ if (fs.existsSync('.credentails.json')) {
 export class FireStore {
   static db = getFirestore()
   static env = env
+  static Timestamp = Timestamp
 }

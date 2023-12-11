@@ -8,7 +8,6 @@
 
 <script>
 import DuelRoom from '../components/DuelRoom.vue';
-import { io } from 'socket.io-client'
 import { SocketUtil } from '../helpers/socket'
 
 export default {

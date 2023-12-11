@@ -46,14 +46,7 @@
         <tr>
           <td>部屋x</td>
           <td colspan="2">
-            <router-link
-              :to="{
-                path: '/room',
-                query: { roomId: randomRoomId(), player: 'a' },
-              }"
-            >
-              <o-button variant="info" size="small">部屋を作る</o-button>
-            </router-link>
+            <o-button variant="info" size="small" @click="createRoom()">部屋を作る</o-button>
           </td>
         </tr>
       </table>
@@ -79,6 +72,7 @@
 
 <script>
 import { makeRandomString } from "@/helpers/makeRandomString";
+import axios from 'axios';
 
 export default {
   data() {
@@ -98,6 +92,29 @@ export default {
     randomRoomId() {
       return makeRandomString(4) + "-" + makeRandomString(3);
     },
+    getCloudRunCookie() {
+      const cookie = document.cookie;
+      let target = ''
+      if (cookie) {
+        cookie.split(';').forEach(seg => {
+          const trimed = seg.trim()
+          if (trimed.startsWith('GAESA=')) {
+            target = trimed
+          }
+        })
+      }
+      return target
+    },
+    async createRoom() {
+      const roomId = this.randomRoomId()
+      await axios.put(`/api/rooms/${roomId}`, {
+        cookie: this.getCloudRunCookie()
+      })
+      this.$router.push({
+        path: 'room',
+        query: { roomId, player: 'a' },
+      })
+    }
   },
 };
 </script>
