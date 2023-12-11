@@ -1,5 +1,6 @@
 <template>
   <DuelRoom
+    v-if="!loading"
     :upper-player="upperPlayer"
     :lower-player="lowerPlayer"
     :room="room"
@@ -19,6 +20,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       room: {},
       upperPlayer: this.$route.query.player === "a" ? "b" : "a",
       lowerPlayer: this.$route.query.player,
@@ -41,6 +43,7 @@ export default {
     SocketUtil.connect()
     SocketUtil.socket.emit("room", this.roomId);
     console.log("room" + this.roomId + "に入室しました")
+    this.loading = false;
   },
 }
 </script>

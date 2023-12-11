@@ -5,7 +5,7 @@ export class SocketUtil {
   /** @type {import('socket.io-client').Socket} */
   static socket = null
   static connect() {
-    this.socket = io('', {
+    this.socket = io({
       transports: [ "websocket", "polling" ],
       withCredentials: true,
     })
