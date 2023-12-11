@@ -30,7 +30,7 @@ router.put('/api/rooms/:roomId', async function (req, res) {
   const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
   await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).set({
     cookie: req.body.cookie || '',
-    ttl: FireStore.Timestamp.fromMillis(Date.now() + (1 * 60 * 60)),
+    ttl: FireStore.Timestamp.fromMillis(Date.now() + (1 * 60 * 60 * 1000)),
   })
   res.json({})
 })
