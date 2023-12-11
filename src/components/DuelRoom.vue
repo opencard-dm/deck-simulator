@@ -431,6 +431,9 @@ export default {
         `${this.useConfig().API_HOST}/api/rooms/${this.roomId}`
       );
       const room = await res.json();
+      if (room.cookie) {
+        document.cookie = room.cookie
+      }
       if (room.a) {
         this.players.a = room.a;
       }

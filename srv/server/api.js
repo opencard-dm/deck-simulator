@@ -2,14 +2,22 @@ import { Router } from 'express'
 import { deckList } from '../../src/helpers/data.js'
 import sampleDeckList from '../../src/helpers/data-sample.js'
 import { RoomData } from './roomData.js'
+import { FireStore } from './firestore.js'
+import { Deck } from '../../src/helpers/Deck.js'
+import { getDeckData } from '../../src/gm-deck-maker'
 
 const router = Router()
 
 router.get('/api/rooms/:roomId', async function (req, res) {
-  if (!req.params.roomId) {
+  const roomId = req.params.roomId
+  if (!roomId) {
     return res.json({})
   }
-  const room = (await RoomData.getRoomCache(req.params.roomId)) || {}
+  const room = (await RoomData.getRoomCache(roomId)) || {}
+  const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
+  if (roomDoc.exists) {
+    room.cookie = roomDoc.get('cookie')
+  }
   res.json(room)
 })
 
@@ -18,9 +26,6 @@ router.get('/api/decks', async function (req, res) {
   return res.json(deckList)
   // return res.json(sampleDeckList)
 })
-
-import { Deck } from '../../src/helpers/Deck.js'
-import { getDeckData } from '../../src/gm-deck-maker'
 
 router.get('/api/cards', async (req, res) => {
   const apiRes = await axios.get(`https://d23r8jlqp3e2gc.cloudfront.net/api/v1/dm/cards?main-card-ids=${req.query.cardIds}`)
