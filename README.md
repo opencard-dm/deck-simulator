@@ -1,5 +1,7 @@
 # tcg-simulator
 
+![Docker Pulls](https://img.shields.io/docker/pulls/saiki987/tcg-simulator)
+
 ## 環境構築
 ### 必要な環境
 - nodejs 18.x
