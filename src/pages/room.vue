@@ -1,9 +1,9 @@
 <template>
   <DuelRoom
-    v-if="!loading"
     :upper-player="upperPlayer"
     :lower-player="lowerPlayer"
     :room="room"
+    :loading="loading"
   ></DuelRoom>
 </template>
 
@@ -33,7 +33,7 @@ export default {
     }
   },
   async created() {
-    const room = await axios.get(`/api/rooms/${this.roomId}`)
+    const { data: room } = await axios.get(`/api/rooms/${this.roomId}`)
     if (room.cookie) {
       document.cookie = room.cookie
     }

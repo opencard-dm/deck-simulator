@@ -227,7 +227,7 @@ function initialData({ roomId }) {
 
 export default {
   name: "c-app",
-  props: ["upperPlayer", "lowerPlayer", "room"],
+  props: ["upperPlayer", "lowerPlayer", "room", "loading"],
   components: {
     WorkSpace,
     ImageViewer,
@@ -246,6 +246,13 @@ export default {
       roomId: this.$route.query.roomId,
     });
     return data;
+  },
+  watch: {
+    loading: function (newVal, oldVal) {
+      if (newVal === false) {
+        this.setRoomState()
+      }
+    }
   },
   computed: {
     roomId() {
