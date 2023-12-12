@@ -1,9 +1,11 @@
 # tcg-simulator
 
 ## 環境構築
-### 必要なツール
+### 必要な環境
 - nodejs 18.x
 - yarn
+- firestore
+- docker
 
 ### サーバーを立てるまでの手順
 1. `git clone git@github.com:qingshui-hui/tcg-simulator.git`
