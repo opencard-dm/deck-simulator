@@ -2,21 +2,27 @@
   <DuelRoom
     :upper-player="upperPlayer"
     :lower-player="lowerPlayer"
+    :room="room"
+    :loading="loading"
   ></DuelRoom>
 </template>
 
 <script>
+import axios from 'axios';
 import DuelRoom from '../components/DuelRoom.vue';
+import { SocketUtil } from '../helpers/socket'
 
 export default {
   components: { DuelRoom },
   beforeRouteLeave (to, from, next) {
-    this.$socket.emit('leave-room', this.roomId)
+    SocketUtil.socket.emit('leave-room', this.roomId)
     console.log("room" + this.roomId + "から退室しました")
     next()
   },
   data() {
     return {
+      loading: true,
+      room: {},
       upperPlayer: this.$route.query.player === "a" ? "b" : "a",
       lowerPlayer: this.$route.query.player,
     };
@@ -26,12 +32,16 @@ export default {
       return this.$route.query.roomId
     }
   },
-  created() {
-    if (this.$socket) {
-      // room{Id}チャンネルに接続
-      this.$socket.emit("room", this.roomId);
-      console.log("room" + this.roomId + "に入室しました")
+  async created() {
+    const { data: room } = await axios.get(`/api/rooms/${this.roomId}`)
+    if (room.cookie) {
+      document.cookie = room.cookie
     }
+    this.room = room;
+    SocketUtil.connect()
+    SocketUtil.socket.emit("room", this.roomId);
+    console.log("room" + this.roomId + "に入室しました")
+    this.loading = false;
   },
 }
 </script>

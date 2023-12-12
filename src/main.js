@@ -20,11 +20,6 @@ import useConfig from './plugins/useConfig'
 vueApp.use(useConfig)
 
 //
-// socket io
-import socket from './plugins/socket'
-vueApp.use(socket)
-
-//
 // axios
 import axios from 'axios'
 if (process.env.VUE_APP_WS_HOST) {

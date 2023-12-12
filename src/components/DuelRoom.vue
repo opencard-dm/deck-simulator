@@ -11,6 +11,7 @@
         ></WorkSpace>
 
         <DeckSelector
+          v-if="!loading"
           v-model:active="deckSelectorActive"
           :player="lowerPlayer"
           :isReady="players[lowerPlayer].isReady"
@@ -179,6 +180,7 @@ import ShieldZone from "./ShieldZone.vue";
 import CHeader from "./CHeader.vue";
 import DeckZone from "./DeckZone.vue";
 import ChojigenZone from "./ChojigenZone.vue";
+import { SocketUtil } from '../helpers/socket';
 
 function initialData({ roomId }) {
   return {
@@ -226,7 +228,7 @@ function initialData({ roomId }) {
 
 export default {
   name: "c-app",
-  props: ["upperPlayer", "lowerPlayer"],
+  props: ["upperPlayer", "lowerPlayer", "room", "loading"],
   components: {
     WorkSpace,
     ImageViewer,
@@ -245,6 +247,13 @@ export default {
       roomId: this.$route.query.roomId,
     });
     return data;
+  },
+  watch: {
+    loading: function (newVal, oldVal) {
+      if (newVal === false) {
+        this.setRoomState()
+      }
+    }
   },
   computed: {
     roomId() {
@@ -291,7 +300,7 @@ export default {
       }
       // 状態の変更を送信する
       if (!this.useConfig().WS_ENABLED) return;
-      this.$socket.emit("cards-moved", this.players[player]);
+      SocketUtil.socket.emit("cards-moved", this.players[player]);
     },
     // groupNameはbattleCardGroupsかshieldCardGroups
     ungroupCard({ groupName, card, player, zone }) {
@@ -398,13 +407,13 @@ export default {
       }
       if (!this.useConfig().WS_ENABLED) return;
       this.players[player].isReady = true;
-      this.$socket.emit("cards-moved", this.players[player]);
+      SocketUtil.socket.emit("cards-moved", this.players[player]);
     },
     emitRoomState() {
-      if (this.$socket) {
+      if (SocketUtil.socket) {
         // 今のところバトルゾーンとマナゾーンのタップ状態を送信するために使用。
-        this.$socket.emit("cards-moved", this.players[this.lowerPlayer]);
-        // this.$socket.emit("cards-moved", this.players[this.upperPlayer])
+        SocketUtil.socket.emit("cards-moved", this.players[this.lowerPlayer]);
+        // SocketUtil.socket.emit("cards-moved", this.players[this.upperPlayer])
       }
     },
     shuffleCards(from, cards, player) {
@@ -426,16 +435,12 @@ export default {
     setMessage() {
       //
     },
-    async getRoomState() {
-      const res = await fetch(
-        `${this.useConfig().API_HOST}/api/rooms/${this.roomId}`
-      );
-      const room = await res.json();
-      if (room.a) {
-        this.players.a = room.a;
+    setRoomState() {
+      if (this.room.a) {
+        this.players.a = this.room.a;
       }
-      if (room.b) {
-        this.players.b = room.b;
+      if (this.room.b) {
+        this.players.b = this.room.b;
       }
       // 片方がデッキ未選択であれば、モーダルを表示する。
       if (!this.players.a.isReady || !this.players.b.isReady) {
@@ -452,21 +457,20 @@ export default {
       });
       this.deckSelectorActive = true;
       // 状態の変更を送信する
-      if (!this.$socket) return;
-      this.$socket.emit("cards-moved", this.players.a);
-      this.$socket.emit("cards-moved", this.players.b);
+      if (!SocketUtil.socket) return;
+      SocketUtil.socket.emit("cards-moved", this.players.a);
+      SocketUtil.socket.emit("cards-moved", this.players.b);
     },
   },
   async mounted() {
-    // サーバーからデータを取得する。
-    await this.getRoomState();
-    if (this.$socket) {
+    this.setRoomState();
+    if (SocketUtil.socket) {
       //
       // イベントをリッスン
-      this.$socket.on("cards-moved", (playerData) => {
+      SocketUtil.socket.on("cards-moved", (playerData) => {
         this.players[playerData.name] = playerData;
       });
-      this.$socket.on(
+      SocketUtil.socket.on(
         "set-message",
         function (data) {
           // this.message[data.player] = data.message;

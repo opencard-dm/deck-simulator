@@ -4,15 +4,7 @@ import { DeckRecipeInfo } from "./DeckRecipeInfo.js";
 
 export async function getDeckData(deckId) {
   // https://stackoverflow.com/questions/37482366/is-it-safe-to-expose-firebase-apikey-to-the-public
-  const firebaseConfig = {
-    apiKey: "AIzaSyCKhH2S_r29U5olfQC6AsXaaHNhqmJMR40",
-    authDomain: "prod-deckmaker-8345f.firebaseapp.com",
-    databaseURL: "https://prod-deckmaker-8345f.firebaseio.com",
-    projectId: "prod-deckmaker-8345f",
-    storageBucket: "prod-deckmaker-8345f.appspot.com",
-    messagingSenderId: "326486201589",
-    appId: "1:326486201589:web:c72eb695996dea77",
-  };
+  const firebaseConfig = JSON.parse(Buffer.from(process.env.DM_KEY, 'base64'));
   const defalutCardUrl =
     "https://storage.googleapis.com/ka-nabell-card-images/img/s/card/card100244663_1.jpg";
   // 2: 'dm'

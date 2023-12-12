@@ -15,7 +15,11 @@ export const useConfig = () => {
     IMAGE_HOST: process.env.VUE_APP_IMAGE_HOST || 'http://localhost:3000',
     WS_ENABLED: parseBool(process.env.VUE_APP_WS_ENABLED || true),
     // WebSocketのホストとapiのホストは同一の設計にしている。
-    API_HOST: process.env.VUE_APP_WS_HOST || '',
+    API_HOST: '',
+    VUE_APP_API_HOST: process.env.NODE_ENV === 'development' ?
+      `http://localhost:${process.env.VUE_APP_PORT}` : '',
+    ENABLE_REDIS: parseBool(process.env.ENABLE_REDIS) || false,
+    REDIS_URL: process.env.REDIS_URL || 'redis://@localhost:6379',
   }
 }
 export default {

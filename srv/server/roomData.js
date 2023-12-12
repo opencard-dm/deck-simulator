@@ -1,5 +1,6 @@
 import { createClient } from 'redis'
 import fs from 'fs'
+import { useConfig } from '../../src/plugins/useConfig'
 
 export class RoomData {
   /** 'file'|'redis' */
@@ -7,6 +8,9 @@ export class RoomData {
   static redisClient = null
 
   static init() {
+    if (useConfig().ENABLE_REDIS) {
+      this.driver = 'redis';
+    }
     if (this.driver === 'file') {
       fs.readdir('cache/rooms', (err, files) => {
         if (!err && files && files.length > 100) {
@@ -20,7 +24,7 @@ export class RoomData {
     }
     if (this.driver === 'redis') {
       this.redisClient = createClient({
-        url: process.env.REDIS_URL || 'redis://@localhost:6379',
+        url: process.env.REDIS_URL
       })
       this.redisClient.on('error', (err) => {
         console.log('Redis Client Error', err)
@@ -60,7 +64,9 @@ export class RoomData {
     if (this.driver === 'file') {
       try {
         fs.writeFileSync(`cache/rooms/${roomId}`, JSON.stringify(room))
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     }
     if (this.driver === 'redis') {
       this.redisClient.multi()

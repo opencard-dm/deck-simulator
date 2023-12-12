@@ -1,6 +1,6 @@
 {
   "name": "duelma-3",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -11,6 +11,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@socket.io/admin-ui": "^0.5.1",
+    "@socket.io/redis-adapter": "^8.2.1",
     "@vue/cli": "^5.0.8",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",
@@ -21,8 +23,8 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "firebase": "7.24.0",
+    "firebase-admin": "11.3.0",
     "github-markdown-css": "^5.4.0",
-    "playwright-chromium": "^1.40.1",
     "redis": "4.0.3",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
@@ -59,19 +61,6 @@
     "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0"
   },
-  "vue": {
-    "pages": {
-      "index": {
-        "entry": "src/main.js"
-      }
-    },
-    "pluginOptions": {
-      "express": {
-        "shouldServeApp": true,
-        "serverDir": "./srv"
-      }
-    }
-  },
   "eslintConfig": {
     "root": true,
     "env": {
@@ -95,7 +84,7 @@
     "not dead"
   ],
   "engines": {
-    "node": "16.x",
+    "node": "18.x",
     "yarn": "3.x"
   },
   "packageManager": "yarn@3.1.1"

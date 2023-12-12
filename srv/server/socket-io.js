@@ -1,19 +1,61 @@
 import { Server } from 'socket.io';
+import { createAdapter } from "@socket.io/redis-adapter";
 import { RoomData } from './roomData.js'
+import { createClient } from "redis";
+import { useConfig } from '../../src/plugins/useConfig'
+const { instrument } = require("@socket.io/admin-ui");
 
-export function attachSocketIo(appServer) {
-  const socketIoConfig = process.env.CLIENT_ORIGIN ?
-    {
+export async function attachSocketIo(appServer) {
+  /** @type {import('socket.io').ServerOptions} */
+  const socketIoConfig = {
       // https://socket.io/docs/v4/handling-cors/
-      cors: {
-        origin: process.env.CLIENT_ORIGIN || 'http://localhost:8080',
-        methods: ["GET", "POST"],
-      }
-    } : {}
+    cors: {
+      origin: [
+        'http://localhost:8081',
+        `http://localhost:${process.env.PORT}`,
+        'https://admin.socket.io',
+      ],
+      credentials: true,
+      methods: ["GET", "POST"],
+    }
+  }
   const io = new Server(socketIoConfig)
   io.attach(appServer)
-  // require('socket.io')(server, socketIoConfig);
-  
+  if (useConfig().ENABLE_REDIS) {
+    // https://socket.io/docs/v4/redis-adapter/
+    const pubClient = createClient({
+      url: process.env.REDIS_URL,
+    });
+    const subClient = pubClient.duplicate();
+    Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+      io.adapter(createAdapter(pubClient, subClient));
+    });
+  }
+  if (process.env.NODE_ENV === 'development') {
+    console.debug('enable Socket.IO Admin UI')
+    instrument(io, {
+      namespaceName: '/',
+      auth: process.env.SOCKET_ADMIN_PASSWORD ? {
+        type: "basic",
+        username: "admin",
+        password: require("bcryptjs").hashSync(process.env.SOCKET_ADMIN_PASSWORD, 10)
+      } : false,
+    });
+  } else {
+    if (process.env.SOCKET_ADMIN_PASSWORD) {
+      instrument(io, {
+        namespaceName: '/',
+        auth: {
+          type: "basic",
+          username: "admin",
+          password: require("bcryptjs").hashSync(process.env.SOCKET_ADMIN_PASSWORD, 10)
+        },
+        serverId: `${require("os").hostname()}#${process.pid}`
+      });
+    } else {
+      console.error('set SOCKET_ADMIN_PASSWORD')
+    }
+  }
   io.on('connection', function (socket) {
     socket.on('room', (roomId) => {
       socket.join('room' + roomId);

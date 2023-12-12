@@ -153,17 +153,18 @@ $card-width: 50px;
     width: 50px;
   }
   .shieldButton {
-    align-self: center;
-    background-color: blue;
-    color: white;
-    border-radius: 50%;
-    width: 70px;
-    height: 50px;
-    text-align: center;
     cursor: pointer;
+    background-color: blue;
+    border-radius: 50%;
+    height: 50px;
+    width: 70px;
+    color: beige;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     &_text {
-      padding-top: 10px;
-      margin: 0px 0 5px;
       font-size: 10px;
       &__single {
         line-height: 50px;

@@ -1,7 +1,7 @@
 <template>
   <o-modal
     :active="active"
-    :canCancel="canCansel"
+    :cancelable="canCansel"
     @close="onClose"
     :width="600"
   >
@@ -91,6 +91,7 @@ import axios from "axios";
 
 export default {
   props: ["isReady", "player", "partnerIsReady", "active"],
+  emits: ['move-cards', 'selected', 'update:active'],
   data() {
     return {
       deckId: 0,
@@ -149,11 +150,8 @@ export default {
       this.deckId = this.$route.query.deckId;
       this.selectDeck();
     }
-    // GC Storageからデータを取得する。
-    // httpsとhttpの場合でcorsの挙動に差があり、httpの方を利用した。
-    const deckUrl = `${this.useConfig().API_HOST}/api/decks`;
     axios
-      .get(deckUrl)
+      .get('/api/decks')
       .then((res) => {
         this.deckList = [...this.deckList, ...res.data];
       })
@@ -264,6 +262,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0px 20px;
   > * {
     display: block;
   }
@@ -275,6 +274,7 @@ export default {
 #waiting-player {
   text-align: center;
   line-height: 30px;
+  padding: 20px;
 }
 .deckForm_example {
   width: 100%;

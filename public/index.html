@@ -4,8 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="icon" href="<%= BASE_URL %>favicon.svg">
+    <title>DECK SIMULATOR</title>
+    <% if (process.env.NODE_ENV === 'production') { %>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4673429620302587"
+    crossorigin="anonymous"></script>
+    <% } %>
   </head>
   <body>
     <noscript>

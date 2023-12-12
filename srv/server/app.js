@@ -13,10 +13,10 @@ function createApp(app) {
   // app.use(express.static(filepath))
   
   // cors
-  if (process.env.CLIENT_ORIGIN) {
-    // 全てのクロスオリジンリクエストを許可する。
-    app.use(cors())
-  }
+  // if (process.env.CLIENT_ORIGIN) {
+  //   // 全てのクロスオリジンリクエストを許可する。
+  //   app.use(cors())
+  // }
   
   // app.get('/', function (req, res) {
   //   res.sendFile(filepath + '/index.html');

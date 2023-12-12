@@ -31,3 +31,4 @@ pnpm-debug.log*
 .pnp.*
 
 /cache
+/.credentails.json

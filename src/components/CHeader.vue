@@ -45,12 +45,12 @@
   </div>
   <!-- サイドバーのために使用する仮のモーダル -->
   <o-modal
-    class="sidebarModal"
+    rootClass="sidebarModal"
     v-model:active="sidebarOpen"
     contentClass="sidebarModal__content"
   >
   </o-modal>
-  <o-modal v-model:active="resetGameModal" class="resetGameModal">
+  <o-modal v-model:active="resetGameModal" rootClass="resetGameModal">
     <o-button variant="grey-dark" @click="resetGame()"
       >ゲームをリセットする</o-button
     >
