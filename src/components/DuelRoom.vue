@@ -11,7 +11,7 @@
         ></WorkSpace>
 
         <DeckSelector
-          v-if="!loading"
+          v-if="!loading && !single"
           v-model:active="deckSelectorActive"
           :player="lowerPlayer"
           :isReady="players[lowerPlayer].isReady"
@@ -21,71 +21,73 @@
         ></DeckSelector>
 
         <div id="js_gameBoard">
-          <TefudaZone
-            :side="'upper'"
-            :player="upperPlayer"
-            :tefudaCards="players[upperPlayer]['cards']['tefudaCards']"
-            v-on:move-cards="moveCards"
-          ></TefudaZone>
-          <ManaZone
-            :side="'upper'"
-            :player="upperPlayer"
-            :manaCards="players[upperPlayer]['cards']['manaCards']"
-            v-on:move-cards="moveCards"
-          ></ManaZone>
-          <PlayerZone
-            :side="'upper'"
-            :player="upperPlayer"
-            :bochiCards="players[upperPlayer]['cards']['bochiCards']"
-            :yamafudaCards="players[upperPlayer]['cards']['yamafudaCards']"
-            :shieldCards="players[upperPlayer]['cards']['shieldCards']"
-            :shieldCardGroups="
-              players[upperPlayer]['cards']['shieldCardGroups']
-            "
-            v-on:move-cards="moveCards"
-          >
-            <template #shield-zone>
-              <ShieldZone
-                side="upper"
-                :player="upperPlayer"
-                :shieldCards="players[upperPlayer]['cards']['shieldCards']"
-                :shieldCardGroups="
-                  players[upperPlayer]['cards']['shieldCardGroups']
-                "
-                v-on:move-cards="moveCards"
-                @group-card="groupCard"
-              ></ShieldZone>
-            </template>
-            <template #deck-zone>
-              <DeckZone
-                side="upper"
-                :player="upperPlayer"
-                :yamafudaCards="players[upperPlayer]['cards']['yamafudaCards']"
-                v-on:move-cards="moveCards"
-                @group-card="groupCard"
-              ></DeckZone>
-            </template>
-            <template #chojigenZone>
-              <ChojigenZone
-                side="upper"
-                :player="upperPlayer"
-                :chojigenCards="players[upperPlayer]['cards']['chojigenCards']"
-                :hasChojigen="players[upperPlayer].hasChojigen"
-                @move-cards="moveCards"
-              ></ChojigenZone>
-            </template>
-          </PlayerZone>
-          <BattleZone
-            :side="'upper'"
-            :player="upperPlayer"
-            :battleCards="players[upperPlayer]['cards']['battleCards']"
-            :battleCardGroups="
-              players[upperPlayer]['cards']['battleCardGroups']
-            "
-            v-on:move-cards="moveCards"
-            @group-card="groupCard"
-            @emit-room-state="emitRoomState"
-          ></BattleZone>
+          <template v-if="!single">
+            <TefudaZone
+              :side="'upper'"
+              :player="upperPlayer"
+              :tefudaCards="players[upperPlayer]['cards']['tefudaCards']"
+              v-on:move-cards="moveCards"
+            ></TefudaZone>
+            <ManaZone
+              :side="'upper'"
+              :player="upperPlayer"
+              :manaCards="players[upperPlayer]['cards']['manaCards']"
+              v-on:move-cards="moveCards"
+            ></ManaZone>
+            <PlayerZone
+              :side="'upper'"
+              :player="upperPlayer"
+              :bochiCards="players[upperPlayer]['cards']['bochiCards']"
+              :yamafudaCards="players[upperPlayer]['cards']['yamafudaCards']"
+              :shieldCards="players[upperPlayer]['cards']['shieldCards']"
+              :shieldCardGroups="
+                players[upperPlayer]['cards']['shieldCardGroups']
+              "
+              v-on:move-cards="moveCards"
+            >
+              <template #shield-zone>
+                <ShieldZone
+                  side="upper"
+                  :player="upperPlayer"
+                  :shieldCards="players[upperPlayer]['cards']['shieldCards']"
+                  :shieldCardGroups="
+                    players[upperPlayer]['cards']['shieldCardGroups']
+                  "
+                  v-on:move-cards="moveCards"
+                  @group-card="groupCard"
+                ></ShieldZone>
+              </template>
+              <template #deck-zone>
+                <DeckZone
+                  side="upper"
+                  :player="upperPlayer"
+                  :yamafudaCards="players[upperPlayer]['cards']['yamafudaCards']"
+                  v-on:move-cards="moveCards"
+                  @group-card="groupCard"
+                ></DeckZone>
+              </template>
+              <template #chojigenZone>
+                <ChojigenZone
+                  side="upper"
+                  :player="upperPlayer"
+                  :chojigenCards="players[upperPlayer]['cards']['chojigenCards']"
+                  :hasChojigen="players[upperPlayer].hasChojigen"
+                  @move-cards="moveCards"
+                ></ChojigenZone>
+              </template>
+            </PlayerZone>
+            <BattleZone
+              :side="'upper'"
+              :player="upperPlayer"
+              :battleCards="players[upperPlayer]['cards']['battleCards']"
+              :battleCardGroups="
+                players[upperPlayer]['cards']['battleCardGroups']
+              "
+              v-on:move-cards="moveCards"
+              @group-card="groupCard"
+              @emit-room-state="emitRoomState"
+            ></BattleZone>
+          </template>
 
           <!-- <MessageBox :upper-player="upperPlayer"
             :lower-player="lowerPlayer"
@@ -228,7 +230,7 @@ function initialData({ roomId }) {
 
 export default {
   name: "c-app",
-  props: ["upperPlayer", "lowerPlayer", "room", "loading"],
+  props: ["upperPlayer", "lowerPlayer", "room", "loading", "deck", "single"],
   components: {
     WorkSpace,
     ImageViewer,
@@ -299,7 +301,7 @@ export default {
         );
       }
       // 状態の変更を送信する
-      if (!this.useConfig().WS_ENABLED) return;
+      if (!SocketUtil.socket) return;
       SocketUtil.socket.emit("cards-moved", this.players[player]);
     },
     // groupNameはbattleCardGroupsかshieldCardGroups
@@ -405,7 +407,7 @@ export default {
           );
         }, 300);
       }
-      if (!this.useConfig().WS_ENABLED) return;
+      if (!SocketUtil.socket) return;
       this.players[player].isReady = true;
       SocketUtil.socket.emit("cards-moved", this.players[player]);
     },
@@ -436,6 +438,28 @@ export default {
       //
     },
     setRoomState() {
+      if (this.single) {
+        const shieldCards = this.deck.cards.slice(0, 5);
+        shieldCards.forEach((c) => {
+          c.faceDown = true;
+        });
+        this.players.a.cards.shieldCards = shieldCards
+        this.players.a.cards.tefudaCards = this.deck.cards.slice(5, 10)
+        // 40枚の制限をしない
+        const yamafudaCards = this.deck.cards.slice(10);
+        yamafudaCards.forEach((c) => {
+          c.faceDown = true;
+        });
+        this.players.a.cards.yamafudaCards = yamafudaCards
+        this.players.a.cards.chojigenCards = this.deck.chojigenCards || []
+        this.players.a.hasChojigen = this.deck.hasChojigen
+        this.onDeckSelected({ 
+          deck: this.deck, 
+          player: 'a' 
+        })
+        this.deckSelectorActive = false;
+        return
+      }
       if (this.room.a) {
         this.players.a = this.room.a;
       }
