@@ -6,7 +6,7 @@ const { initializeApp, cert } = require('firebase-admin/lib/app')
 const { getFirestore } = require('firebase-admin/lib/firestore')
 const { Timestamp } = require('firebase-admin/lib/firestore')
 
-let env = 'dev'
+const env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev'
 if (fs.existsSync('.credentails.json')) {
   const serviceAccount = JSON.parse(fs.readFileSync('.credentails.json', {
     encoding: 'utf8'
@@ -16,7 +16,6 @@ if (fs.existsSync('.credentails.json')) {
   });
 } else {
   initializeApp();
-  env = 'prod'
 }
 
 export class FireStore {
