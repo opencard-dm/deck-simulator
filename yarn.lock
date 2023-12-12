@@ -3595,6 +3595,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@socket.io/admin-ui@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@socket.io/admin-ui@npm:0.5.1"
+  dependencies:
+    "@types/bcryptjs": ^2.4.2
+    bcryptjs: ^2.4.3
+    debug: ~4.3.1
+  peerDependencies:
+    socket.io: ">=3.1.0"
+  checksum: 5d3c95db7f9aed1e7a37914e19017d4b5f71459bbe788a2f1cefbd5c039a7910c818cf5346b6366aff99f9c60c17b9cc71385ddd3c17147d08ba6353efad070c
+  languageName: node
+  linkType: hard
+
 "@socket.io/component-emitter@npm:~3.1.0":
   version: 3.1.0
   resolution: "@socket.io/component-emitter@npm:3.1.0"
@@ -3704,6 +3717,13 @@ __metadata:
   dependencies:
     "@babel/types": ^7.3.0
   checksum: a797ea09c72307569e3ee08aa3900ca744ce3091114084f2dc59b67a45ee7d01df7865252790dbfa787a7915ce892cdc820c9b920f3683292765fc656b08dc63
+  languageName: node
+  linkType: hard
+
+"@types/bcryptjs@npm:^2.4.2":
+  version: 2.4.6
+  resolution: "@types/bcryptjs@npm:2.4.6"
+  checksum: 25ae1fd1e8a9bd688e22a8de905581d6d7bf26e823b797f895d2c488100b1f15d3c12a7d1a94f553087b010d316bf3978106df860e8e58fd13f52b4c708df5fd
   languageName: node
   linkType: hard
 
@@ -5875,6 +5895,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bcryptjs@npm:^2.4.3":
+  version: 2.4.3
+  resolution: "bcryptjs@npm:2.4.3"
+  checksum: 0e80ed852a41f5dfb1853f53ee14a7390b0ef263ce05dba6e2ef3cd919dfad025a7c21ebcfe5bc7fa04b100990edf90c7a877ff7fe623d3e479753253131b629
+  languageName: node
+  linkType: hard
+
 "big.js@npm:^5.2.2":
   version: 5.2.2
   resolution: "big.js@npm:5.2.2"
@@ -7791,6 +7818,7 @@ __metadata:
     "@fortawesome/vue-fontawesome": latest-3
     "@oruga-ui/oruga-next": 0.8.0
     "@oruga-ui/theme-oruga": ^0.2.0
+    "@socket.io/admin-ui": ^0.5.1
     "@socket.io/redis-adapter": ^8.2.1
     "@types/jest": ^27.4.0
     "@vue/cli": ^5.0.8

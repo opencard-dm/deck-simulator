@@ -11,6 +11,7 @@
         ></WorkSpace>
 
         <DeckSelector
+          v-if="!loading"
           v-model:active="deckSelectorActive"
           :player="lowerPlayer"
           :isReady="players[lowerPlayer].isReady"
