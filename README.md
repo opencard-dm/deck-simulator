@@ -1,6 +1,6 @@
 # tcg-simulator
 
-![Docker Pulls](https://img.shields.io/docker/pulls/saiki987/tcg-simulator)
+Docker Images: https://hub.docker.com/repository/docker/saiki987/tcg-simulator/
 
 ## 環境構築
 ### 必要な環境
