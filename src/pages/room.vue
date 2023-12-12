@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import DuelRoom from '../components/DuelRoom.vue';
 import { SocketUtil } from '../helpers/socket'
 
@@ -32,10 +33,7 @@ export default {
     }
   },
   async created() {
-    const res = await fetch(
-      `${this.useConfig().API_HOST}/api/rooms/${this.roomId}`
-    );
-    const room = await res.json();
+    const room = await axios.get(`/api/rooms/${this.roomId}`)
     if (room.cookie) {
       document.cookie = room.cookie
     }

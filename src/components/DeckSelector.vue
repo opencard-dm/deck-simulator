@@ -150,11 +150,8 @@ export default {
       this.deckId = this.$route.query.deckId;
       this.selectDeck();
     }
-    // GC Storageからデータを取得する。
-    // httpsとhttpの場合でcorsの挙動に差があり、httpの方を利用した。
-    const deckUrl = `${this.useConfig().API_HOST}/api/decks`;
     axios
-      .get(deckUrl)
+      .get('/api/decks')
       .then((res) => {
         this.deckList = [...this.deckList, ...res.data];
       })
