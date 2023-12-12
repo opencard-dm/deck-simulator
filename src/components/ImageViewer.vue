@@ -3,7 +3,7 @@
     <div
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
-      :style="[display.left ? { left: '5px' } : { right: '5px' }]"
+      :style="[display.left ? { left: '5px' } : { left: '820px' }]"
     >
       <div
         v-if="cardIsVisible"
@@ -158,14 +158,13 @@ export default {
   &.blur {
     opacity: 0.6;
   }
-  &_image {
-    margin-left: auto;
+  .imageDisplay_image {
     width: 100%;
     img {
       width: 100%;
     }
   }
-  &_cardText {
+  .imageDisplay_cardText {
     border-radius: 8px;
     background-color: #fff;
     padding: 8px;
