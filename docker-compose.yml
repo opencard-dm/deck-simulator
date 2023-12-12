@@ -8,6 +8,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${PORT}:${PORT}"
-    # command: bash -c ". ~/.nvm/nvm.sh && yarn start --port ${PORT}"
+    # command: yarn start --port ${PORT}
     environment:
      - "PORT=${PORT}"
