@@ -31,31 +31,6 @@ export async function attachSocketIo(appServer) {
       io.adapter(createAdapter(pubClient, subClient));
     });
   }
-  if (process.env.NODE_ENV === 'development') {
-    console.debug('enable Socket.IO Admin UI')
-    instrument(io, {
-      namespaceName: '/',
-      auth: process.env.SOCKET_ADMIN_PASSWORD ? {
-        type: "basic",
-        username: "admin",
-        password: require("bcryptjs").hashSync(process.env.SOCKET_ADMIN_PASSWORD, 10)
-      } : false,
-    });
-  } else {
-    if (process.env.SOCKET_ADMIN_PASSWORD) {
-      instrument(io, {
-        namespaceName: '/',
-        auth: {
-          type: "basic",
-          username: "admin",
-          password: require("bcryptjs").hashSync(process.env.SOCKET_ADMIN_PASSWORD, 10)
-        },
-        serverId: `${require("os").hostname()}#${process.pid}`
-      });
-    } else {
-      console.error('set SOCKET_ADMIN_PASSWORD')
-    }
-  }
   io.on('connection', function (socket) {
     socket.on('room', (roomId) => {
       socket.join('room' + roomId);
