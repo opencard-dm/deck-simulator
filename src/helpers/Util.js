@@ -1,4 +1,11 @@
 
+export function isPc() {
+  return window.innerWidth >= 800
+}
+export function isPhone() {
+  return window.innerWidth < 800
+}
+
 export class Util {
 
   static arrayRemoveCards(array, cards) {
