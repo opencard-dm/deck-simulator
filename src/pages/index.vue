@@ -1,6 +1,11 @@
 <template>
   <div class="content_wrapper">
     <div id="app" style="padding: 20px; background-color: white">
+      <div style="text-align: end;">
+        <RouterLink class="topLink" to="/battle">
+          対戦ツールはこちら(試作品)
+        </RouterLink>
+      </div>
       <div>
         このサイトではDECK MAKERで作成したデッキを動かすことができます。
       </div>
@@ -173,6 +178,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.topLink {
+  color: #0969da;
+  font-size: 14px;
+}
 .send {
   margin-left: 10px;
 }
