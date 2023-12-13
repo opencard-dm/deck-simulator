@@ -58,6 +58,28 @@
         </div>
       </div>
 
+      <div
+        v-if="side === 'lower'"
+        class="card_wrapper"
+      >
+        <div
+          class="card"
+          style="opacity: 0.2;cursor: pointer;"
+        >
+          <div>
+            <img src="/images/card-back.jpg" @click="drawOne()" />
+          </div>
+        </div>
+        <div class="card_bottomButton" style="top: 50%;">
+          <o-button
+            variant="grey-dark"
+            style="opacity: 0.6;"
+            size="small"
+            >ドロー</o-button
+          >
+        </div>
+      </div>
+
       <div v-if="side == 'lower'" class="tefudaZoneButton_wrapper">
         <o-icon
           v-if="!selectMode"
@@ -95,6 +117,7 @@ import mixin from "@/helpers/mixin.js";
 export default {
   props: ["player", "tefudaCards", "side"],
   mixins: [mixin.zone],
+  emits: ['drawOne'],
   data() {
     return {
       zone: "tefudaCards",
@@ -119,6 +142,9 @@ export default {
         zone: this.zone,
       });
     },
+    drawOne() {
+      this.$emit('drawOne');
+    }
   },
 };
 </script>

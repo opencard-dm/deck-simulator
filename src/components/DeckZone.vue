@@ -1,5 +1,5 @@
 <template>
-  <Dropdown
+  <ODropdown
     class="deckZone_wrapper"
     :triggers="dropdownTriggers"
     position="top-left"
@@ -67,7 +67,7 @@
         >ドロー</o-dropdown-item
       >
     </template>
-  </Dropdown>
+  </ODropdown>
 </template>
 
 <script>
@@ -125,6 +125,9 @@ export default {
         player: this.player,
       });
     },
+    drawOne() {
+      this.moveCard(this.zone, 'tefudaCards', this.yamafudaCards[0])
+    }
   },
 };
 </script>

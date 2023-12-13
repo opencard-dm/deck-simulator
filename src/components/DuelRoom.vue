@@ -134,6 +134,7 @@
             <template #deck-zone>
               <DeckZone
                 side="lower"
+                ref="lowerDeckZone"
                 :player="lowerPlayer"
                 :yamafudaCards="players[lowerPlayer]['cards']['yamafudaCards']"
                 v-on:move-cards="moveCards"
@@ -161,6 +162,7 @@
             :player="lowerPlayer"
             :tefudaCards="players[lowerPlayer]['cards']['tefudaCards']"
             v-on:move-cards="moveCards"
+            @drawOne="$refs.lowerDeckZone.drawOne()"
           ></tefuda-zone>
         </div>
       </ImageViewer>
