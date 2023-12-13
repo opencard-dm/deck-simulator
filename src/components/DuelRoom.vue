@@ -474,6 +474,20 @@ export default {
       } else {
         this.deckSelectorActive = false;
       }
+      if (SocketUtil.socket) {
+        //
+        // イベントをリッスン
+        SocketUtil.socket.on("cards-moved", (playerData) => {
+          this.players[playerData.name] = playerData;
+        });
+        SocketUtil.socket.on(
+          "set-message",
+          function (data) {
+            // this.message[data.player] = data.message;
+            this.expireMessage(data.message, data.player);
+          }.bind(this)
+        );
+      }
     },
     resetGame() {
       this.players = initialData({ roomId: this.roomId }).players;
@@ -489,21 +503,6 @@ export default {
     },
   },
   async mounted() {
-    this.setRoomState();
-    if (SocketUtil.socket) {
-      //
-      // イベントをリッスン
-      SocketUtil.socket.on("cards-moved", (playerData) => {
-        this.players[playerData.name] = playerData;
-      });
-      SocketUtil.socket.on(
-        "set-message",
-        function (data) {
-          // this.message[data.player] = data.message;
-          this.expireMessage(data.message, data.player);
-        }.bind(this)
-      );
-    }
     // デバッグのために公開
     window.$room = this;
   },
