@@ -4,8 +4,8 @@
       class="c-header__bars"
       pack="fas"
       icon="bars"
-      size="medium"
-      style="color: white; margin-left: 30px"
+      size="small"
+      style="color: white; margin-left: 20px; font-size: 18px;"
       @click.stop="sidebarOpen = !sidebarOpen"
     ></o-icon>
   </div>
@@ -104,7 +104,10 @@ export default {
 
 <style lang="scss" scoped>
 .c-header {
-  height: 60px;
+  height: 40px;
+  @media screen and (max-device-width: 800px) {
+    height: 30px;
+  }
   background-color: #005c98;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -115,7 +118,7 @@ export default {
     top: 0;
     z-index: 11;
   }
-  &__bars {
+  .c-header__bars {
     cursor: pointer;
   }
 }
@@ -135,7 +138,10 @@ export default {
   &.sidebar--open {
     transform: translateX(0%);
   }
-  top: 60px;
+  top: 40px;
+  @media screen and (max-device-width: 800px) {
+    height: 30px;
+  }
   left: 0;
   bottom: 0;
   padding-top: 20px;

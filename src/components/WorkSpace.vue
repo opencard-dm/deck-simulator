@@ -82,7 +82,9 @@
                         :src="card.backImageUrl"
                         v-if="card.faceDown === true && !card.showInWorkSpace"
                       />
-                      <img :src="card.imageUrl" v-else />
+                      <CardPopup v-else :url="card.imageUrl">
+                        <img :src="card.imageUrl" />
+                      </CardPopup>
                     </div>
                   </div>
                 </MarkTool>
@@ -217,6 +219,10 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import CardPopup from './elements/CardPopup'
+</script>
 
 <script>
 import mixin from "../helpers/mixin.js";

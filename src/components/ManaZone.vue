@@ -187,11 +187,14 @@ $card-margin: -35px;
   img {
     width: $card-width;
   }
-  &_cont {
+  .manaZone_cont {
     width: 390px;
     height: cardHeight($card-width);
     position: relative;
     display: flex;
+    @media screen and (max-device-width: 800px) {
+        display: none;
+    }
     &.upper {
       transform: rotate(180deg);
       margin-left: 10px;

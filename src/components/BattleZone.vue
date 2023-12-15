@@ -64,7 +64,9 @@
               :width="cardWidth"
               draggable="false"
             />
-            <img v-else :src="card.imageUrl" draggable="false" :width="cardWidth" />
+            <CardPopup v-else :url="card.imageUrl">
+              <img :src="card.imageUrl" draggable="false" :width="cardWidth" />
+            </CardPopup>
           </div>
         </MarkTool>
         <div v-if="cardIsSelected(card)" class="card_bottomButton">
@@ -138,6 +140,7 @@
 
 <script setup>
 import { isPhone } from "@/helpers/Util"
+import CardPopup from './elements/CardPopup'
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650

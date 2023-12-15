@@ -20,13 +20,9 @@
           </div>
           <div v-else @click.stop="clickCard(card)">
             <img v-if="card.faceDown" :src="card.backImageUrl" />
-            <OnLongPress v-else 
-              @trigger="$store.commit('setDisplayImageUrl', card.imageUrl)"
-              @contextmenu.prevent
-              :prevent="true"
-            >
+            <CardPopup v-else :url="card.imageUrl">
               <img :src="card.imageUrl" />
-            </OnLongPress>
+            </CardPopup>
           </div>
         </div>
         <div
@@ -117,13 +113,15 @@
   </div>
 </template>
 
+<script setup>
+import CardPopup from './elements/CardPopup'
+</script>
+
 <script>
 import mixin from "@/helpers/mixin.js";
-import { OnLongPress } from '@vueuse/components'
 
 export default {
   props: ["player", "tefudaCards", "side"],
-  components: {OnLongPress},
   mixins: [mixin.zone],
   emits: ['drawOne'],
   data() {
