@@ -1,6 +1,5 @@
 <template>
   <DuelRoom
-    v-if="!loading"
     :upper-player="'b'"
     :lower-player="'a'"
     :room="room"
