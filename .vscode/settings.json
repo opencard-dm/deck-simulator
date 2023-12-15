@@ -1,0 +1,7 @@
+{
+    "search.exclude": {
+        "yarn.lock": true,
+        "**/bower_components": true,
+        "**/*.code-search": true
+    }
+}
