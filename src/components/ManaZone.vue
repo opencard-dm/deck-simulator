@@ -1,21 +1,21 @@
 <template>
   <div class="manaZone_wrapper">
     <div class="manaZone" :class="side">
-      <div class="manaButton" @click.stop="clickManaButton">
+      <RoundButton :style="{color: 'beige', background: 'green'}" @click.stop="clickManaButton">
         <template v-if="hasSelectedCard()">
           <template v-if="selectMode.zone !== 'manaCards'">
-            <p class="fs-12">チャージ</p>
+            <p :style="{fontSize: '12px'}">チャージ</p>
           </template>
           <template v-else-if="selectMode.card.tapped">
-            <p class="fs-10">全て</p>
-            <p class="fs-12">アンタップ</p>
+            <p :style="{fontSize: '10px'}">全て</p>
+            <p :style="{fontSize: '12px'}">アンタップ</p>
           </template>
         </template>
         <template v-else>
-          <p class="fs-10">マナ</p>
+          <p :style="{fontSize: '10px'}">マナ</p>
           <p>{{ countNormal }}/{{ manaCards.length }}</p>
         </template>
-      </div>
+      </RoundButton>
       <div class="manaZone_cont" :class="side">
         <div class="manaZone_cardList manaZone_cardList__tapped">
           <div
@@ -76,10 +76,12 @@
 
 <script>
 import mixin from "@/helpers/mixin.js";
+import RoundButton from './elements/RoundButton'
 
 export default {
   props: ["player", "manaCards", "side"],
   mixins: [mixin.zone],
+  components: {RoundButton},
   data() {
     return {
       zone: "manaCards",
@@ -151,6 +153,9 @@ $card-margin: -35px;
 .manaZone {
   display: flex;
   margin-left: 20px;
+  @media screen and (max-device-width: 800px) {
+    margin-left: 5px;
+  }
   align-items: center;
   &.upper {
     padding-top: 20px;
@@ -212,26 +217,6 @@ $card-margin: -35px;
     > * {
       margin-left: calc($card-margin);
     }
-  }
-}
-
-.manaButton {
-  cursor: pointer;
-  background-color: green;
-  border-radius: 50%;
-  height: 50px;
-  width: 70px;
-  color: beige;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .fs-10 {
-    font-size: 10px;
-  }
-  .fs-12 {
-    font-size: 12px;
   }
 }
 </style>

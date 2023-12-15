@@ -2,17 +2,17 @@
   <div class="player-zone-wrapper">
     <div class="player-zone" :class="side">
       <div class="player-counter" :class="side">
-        <div class="shieldButton" @click.stop="clickShieldButton">
-          <div v-if="hasSelectedCard()" class="shieldButton_text__single">
+        <RoundButton :style="{background: 'blue', color: 'beige'}" @click.stop="clickShieldButton">
+          <div v-if="hasSelectedCard()" :style="{fontSize: '10px'}">
             シールドへ
           </div>
           <template v-else>
-            <div class="shieldButton_text">シールド</div>
-            <div class="shieldButton_count">
+            <div :style="{fontSize: '10px'}">シールド</div>
+            <div :style="{fontSize: '16px'}">
               {{ countableShieldCards.length }}
             </div>
           </template>
-        </div>
+        </RoundButton>
       </div>
       <div class="shield-wrapper" :class="side">
         <!-- シールドゾーン -->
@@ -43,10 +43,12 @@
 
 <script>
 import mixin from "@/helpers/mixin.js";
+import RoundButton from './elements/RoundButton'
 
 export default {
   props: ["player", "bochiCards", "shieldCards", "shieldCardGroups", "side"],
   mixins: [mixin.zone],
+  components: {RoundButton},
   computed: {
     countableShieldCards() {
       // グループ化されているカードは一つとカウントする。
@@ -109,6 +111,9 @@ $card-width: 50px;
       align-self: center;
     }
     margin-left: 20px;
+    @media screen and (max-device-width: 800px) {
+      margin-left: 5px;
+    }
     &.upper {
       margin-top: 20px;
     }
@@ -151,28 +156,6 @@ $card-width: 50px;
   }
   .player-zone img {
     width: 50px;
-  }
-  .shieldButton {
-    cursor: pointer;
-    background-color: blue;
-    border-radius: 50%;
-    height: 50px;
-    width: 70px;
-    color: beige;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    &_text {
-      font-size: 10px;
-      &__single {
-        line-height: 50px;
-        font-size: 12px;
-      }
-    }
-    &_count {
-    }
   }
 
   .player-zone .bochi {

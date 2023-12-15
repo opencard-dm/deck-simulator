@@ -21,6 +21,9 @@ body {
 }
 .main {
   margin-left: 10px;
+  @media screen and (max-device-width: 800px) {
+      margin-left: 0px;
+  }
 }
 
 #canvas {
@@ -30,7 +33,7 @@ body {
   background-color: rgb(241, 241, 241);
   position: relative;
   @media screen and (max-device-width: 800px) {
-    margin-left: 0;
+    width: 100%;
   }
 }
 .rotate {

@@ -31,6 +31,7 @@
       :class="{
         [side]: true,
       }"
+      :style="{minHeight: cardHeight}"
     >
       <!-- keyをindexにしていると、カード移動後MarkerToolが同じindexの別のカードに移ってしまう。 -->
       <div
@@ -60,9 +61,10 @@
             <img
               v-if="card.faceDown === true"
               :src="card.backImageUrl"
+              :width="cardWidth"
               draggable="false"
             />
-            <img v-else :src="card.imageUrl" draggable="false" />
+            <img v-else :src="card.imageUrl" draggable="false" :width="cardWidth" />
           </div>
         </MarkTool>
         <div v-if="cardIsSelected(card)" class="card_bottomButton">
@@ -133,6 +135,13 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { isPhone } from "@/helpers/Util"
+
+const cardWidth = isPhone() ? 80 : 100
+const cardHeight = cardWidth * 908 / 650
+</script>
 
 <script>
 import mixin from "@/helpers/mixin.js";
@@ -205,9 +214,6 @@ export default {
 $card-width: 100px;
 .battle-zone-wrapper {
   display: flex;
-  img {
-    width: $card-width;
-  }
   .battleZoneButton {
     // align-self: flex-end;
     cursor: pointer;
@@ -216,6 +222,9 @@ $card-width: 100px;
       margin-right: 10px;
       width: 70px;
       height: 50px;
+      @media screen and (max-device-width: 800px) {
+        margin-left: 5px;
+      }
       &.upper {
         align-self: flex-start;
         margin-top: 20px;
@@ -235,7 +244,6 @@ $card-width: 100px;
     flex-wrap: wrap;
     min-height: cardHeight($card-width);
     // overflow-x: scroll;
-    // height: cardHeight($card-width);
     max-width: 700px; // 800 - margin-left
     > * {
       flex-shrink: 0;
@@ -252,7 +260,6 @@ $card-width: 100px;
           // あとはtranslateXでy座標を調整する。
           transform: rotate(90deg) translateX(-100%);
           transform-origin: left bottom;
-          width: cardHeight($card-width);
         }
       }
     }
@@ -263,7 +270,6 @@ $card-width: 100px;
       .card.tapped {
         transform: rotate(-90deg) translateX(100%);
         transform-origin: right bottom;
-        width: cardHeight($card-width);
       }
     }
   }
