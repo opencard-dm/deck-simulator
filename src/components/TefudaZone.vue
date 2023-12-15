@@ -20,7 +20,13 @@
           </div>
           <div v-else @click.stop="clickCard(card)">
             <img v-if="card.faceDown" :src="card.backImageUrl" />
-            <img v-else :src="card.imageUrl" />
+            <OnLongPress v-else 
+              @trigger="$store.commit('setDisplayImageUrl', card.imageUrl)"
+              @contextmenu.prevent
+              :prevent="true"
+            >
+              <img :src="card.imageUrl" />
+            </OnLongPress>
           </div>
         </div>
         <div
@@ -113,9 +119,11 @@
 
 <script>
 import mixin from "@/helpers/mixin.js";
+import { OnLongPress } from '@vueuse/components'
 
 export default {
   props: ["player", "tefudaCards", "side"],
+  components: {OnLongPress},
   mixins: [mixin.zone],
   emits: ['drawOne'],
   data() {
@@ -181,6 +189,9 @@ $card-width: 70px;
   &.lower {
     margin-top: 20px;
     margin-left: 100px;
+    @media screen and (max-device-width: 800px) {
+      margin-left: 10px;
+    }
     .tefuda-zone {
       display: flex;
       flex-wrap: wrap;

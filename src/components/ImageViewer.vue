@@ -1,5 +1,7 @@
 <template>
-  <div id="canvas" @mousemove="traceMouseMove">
+  <div id="canvas"
+    v-if="isMounted"
+    v-on="!isPhone() ? {mousemove: traceMouseMove} : {}">
     <div
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
@@ -22,6 +24,9 @@
       >
         {{ cardText }}
       </div>
+    </div>
+    <div v-if="imageUrl" class="phoneImageDisplay">
+      <img :src="imageUrl" @click="$store.commit('setDisplayImageUrl', '')">
     </div>
     <!-- slot -->
     <slot></slot>
@@ -57,6 +62,15 @@
   </div>
 </template>
 
+<script setup>
+import { isPhone } from '@/helpers/Util';
+import { onMounted, ref } from 'vue';
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
+</script>
+
 <script>
 import { mapMutations, mapState } from "vuex/dist/vuex.cjs";
 
@@ -79,6 +93,9 @@ export default {
   },
   computed: {
     ...mapState(["hoveredCard"]),
+    imageUrl() {
+      return this.$store.state.displayImageUrl
+    },
     cardIsVisible() {
       if (this.hoveredCard) {
         if (!this.hoveredCard.faceDown || this.hoveredCard.showInWorkSpace) {
@@ -171,6 +188,17 @@ export default {
     font-size: 12px;
     white-space: pre-line;
     width: 360px;
+  }
+}
+.phoneImageDisplay {
+  position: fixed;
+  top: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 100;
+  img {
+    width: 90vw;
   }
 }
 </style>
