@@ -72,7 +72,10 @@
                   :color="card.markColor"
                   @change="setMarkColor(card, $event)"
                 >
-                  <div class="card with-info" :class="{ tapped: card.tapped }">
+                  <div class="card with-info" 
+                    :class="{ tapped: card.tapped }"
+                    :style="{ width: `${card.tapped ? cardHeight : cardWidth}px` }"
+                  >
                     <span class="card-id card-info" v-if="card.groupId">{{
                       card.groupId
                     }}</span>
@@ -80,10 +83,11 @@
                       <!-- ワークスペース内だけでみられる状態がある -->
                       <img
                         :src="card.backImageUrl"
+                        :width="cardWidth"
                         v-if="card.faceDown === true && !card.showInWorkSpace"
                       />
                       <CardPopup v-else :url="card.imageUrl">
-                        <img :src="card.imageUrl" />
+                        <img :src="card.imageUrl" :width="cardWidth" />
                       </CardPopup>
                     </div>
                   </div>
@@ -146,12 +150,14 @@
                 <o-button
                   v-if="card.faceDown && !card.showInWorkSpace && isOwner"
                   @click.stop="card.showInWorkSpace = true"
+                  :size="isPhone() ? 'small' : ''"
                   >見る</o-button
                 >
                 <!-- 見られる状態になったカードを場に出すボタン -->
                 <o-button
                   v-if="card.showInWorkSpace"
                   @click.stop="moveCard(card, 'battleCards')"
+                  :size="isPhone() ? 'small' : ''"
                   >出す</o-button
                 >
               </template>
@@ -159,9 +165,11 @@
               <!-- ショートカット -->
               <template v-else-if="['tefudaCards'].includes(workSpace.zone)">
                 <o-button @click.stop="moveCard(card, 'battleCards')"
+                  :size="isPhone() ? 'small' : ''"
                   >出す</o-button
                 >
                 <o-button @click.stop="moveCard(card, 'manaCards')"
+                  :size="isPhone() ? 'small' : ''"
                   >マナ</o-button
                 >
               </template>
@@ -169,6 +177,7 @@
                 v-else-if="
                   ['battleCards', 'bochiCards'].includes(workSpace.zone)
                 "
+                :size="isPhone() ? 'small' : ''"
                 @click.stop="moveCard(card, 'tefudaCards')"
                 >手札へ</o-button
               >
@@ -177,22 +186,27 @@
                 <o-button
                   v-if="card.faceDown && !card.showInWorkSpace"
                   @click.stop="card.showInWorkSpace = true"
+                  :size="isPhone() ? 'small' : ''"
                   >見る</o-button
                 >
                 <template v-else>
                   <o-button @click.stop="moveCard(card, 'battleCards')"
+                    :size="isPhone() ? 'small' : ''"
                     >出す</o-button
                   >
                   <o-button @click.stop="moveCard(card, 'tefudaCards')"
+                    :size="isPhone() ? 'small' : ''"
                     >手札</o-button
                   >
                 </template>
               </template>
               <template v-else-if="['manaCards'].includes(workSpace.zone)">
                 <o-button v-if="!card.tapped" @click.stop="card.tapped = true"
+                  :size="isPhone() ? 'small' : ''"
                   >タップ</o-button
                 >
                 <o-button v-else @click.stop="card.tapped = false"
+                  :size="isPhone() ? 'small' : ''"
                   >アンタップ</o-button
                 >
               </template>
@@ -222,11 +236,15 @@
 
 <script setup>
 import CardPopup from './elements/CardPopup'
+const cardWidth = isPhone() ? 70 : 120
+const cardHeight = cardWidth * 908 / 650
+
 </script>
 
 <script>
 import mixin from "../helpers/mixin.js";
 import { MarkTool } from "./index.js";
+import { isPhone } from '@/helpers/Util';
 
 export default {
   components: { MarkTool },
@@ -393,16 +411,11 @@ export default {
 @function cardHeight($value) {
   @return calc($value * 908 / 650);
 }
-$card-width: 120px;
 .gridCardList {
   // スクロールをしないUIに変更
   display: flex;
   flex-wrap: wrap;
   max-width: 700px; // 800 - margin-left
-  @media screen and (max-device-width: 700px) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
   > * {
     // flex-shrink: 0;
     margin: 0 10px 10px 0;
@@ -413,7 +426,6 @@ $card-width: 120px;
       // あとはtranslateXでy座標を調整する。
       transform: rotate(-90deg) translateX(100%);
       transform-origin: right bottom;
-      width: cardHeight($card-width);
       // .o-drop__menu {
       //   z-index: 2;
       //   transform: rotate(90deg) translateY(100%) translateX(-175%);
@@ -431,8 +443,9 @@ $card-width: 120px;
   background-color: #fff;
   padding: 10px;
   border-radius: 10px;
-  @media screen and (max-device-width: 700px) {
-    margin: 0;
+  @media screen and (max-device-width: 800px) {
+    width: 96%;
+    margin: 0 2%;
   }
   &__minimum {
     .workSpace_inner {
@@ -448,9 +461,10 @@ $card-width: 120px;
     // height: 60vh;
     max-height: 60vh;
     overflow-y: auto;
-    @media screen and (max-device-width: 700px) {
+    @media screen and (max-device-width: 800px) {
       margin: 0;
-      max-width: 100vw;
+      max-width: 100%;
+      max-height: 80vh;
       overflow-x: scroll;
     }
   }
@@ -491,13 +505,10 @@ $card-width: 120px;
   }
   .card {
     position: relative;
-    img {
-      width: $card-width;
-    }
-    &_bottomButton {
-      display: flex;
-      justify-content: center;
-    }
+  }
+  .card_bottomButton {
+    display: flex;
+    justify-content: center;
   }
   .card-info {
     background-color: black;
