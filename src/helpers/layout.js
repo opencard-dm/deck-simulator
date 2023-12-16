@@ -10,7 +10,7 @@ export class Layout {
 
   static playerZoneHeight(cardWidth) {
     if (isPhone()) {
-      const height = screen.height - this.headerHeight() - this.tefudaHeight(cardWidth)
+      const height = window.innerHeight - this.headerHeight() - this.tefudaHeight(cardWidth)
       return height
     }
     return false
