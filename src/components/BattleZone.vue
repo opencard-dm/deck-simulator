@@ -130,6 +130,10 @@
         class="card_wrapper card-placeholder-wrapper"
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
       >
+        <div
+          class="card in-battle card-placeholder"
+        >
+        </div>
         <o-button
           v-if="hasSelectedCard()"
           class="battleZoneButton"
@@ -139,11 +143,6 @@
         >
           出す
         </o-button>
-        <div
-          v-else
-          class="card in-battle card-placeholder"
-        >
-        </div>
       </div>
     </div>
   </div>
@@ -336,12 +335,14 @@ $card-width: 100px;
     }
   }
   .card-placeholder {
+    position: absolute;
     width: 100%;
     height: 100%;
     background: radial-gradient(lightyellow, rgb(241, 241, 241));
     border-radius: 10px;
   }
   .card-placeholder-wrapper {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;

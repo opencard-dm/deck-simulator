@@ -93,7 +93,7 @@ export default {
     // エディタの幅
     min-width: 100px;
   }
-  &_editIcon {
+  .markTool_editIcon {
     background-color: #fff;
     padding: 4px;
     border-radius: 50%;
@@ -102,7 +102,7 @@ export default {
     top: -5px;
     right: 0px;
   }
-  &_mark {
+  .markTool_mark {
     position: absolute;
     // top: 2px;
     // right: 2px;
@@ -110,13 +110,15 @@ export default {
     height: 15px;
     border-radius: 50%;
   }
-  &_colorPicker {
+  .markTool_colorPicker {
     background-color: #fff;
     border-radius: 5px;
     position: absolute;
     top: -5px;
     right: 0px;
     padding: 10px;
+    // カードのボタンよりも上にくるようにする
+    z-index: 1;
 
     display: grid;
     grid-template-columns: repeat(3, 20px);

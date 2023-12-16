@@ -25,7 +25,7 @@
         {{ cardText }}
       </div>
     </div>
-    <div v-if="imageUrl" class="phoneImageDisplay">
+    <div v-if="imageUrl" class="phoneImageDisplay" @contextmenu.prevent>
       <img :src="imageUrl" @click="$store.commit('setDisplayImageUrl', '')">
     </div>
     <!-- slot -->
