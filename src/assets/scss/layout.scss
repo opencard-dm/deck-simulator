@@ -34,7 +34,9 @@ body {
   position: relative;
   @media screen and (max-device-width: 800px) {
     width: 100%;
+    padding-top: 0px;
     min-height: 100vh;
+    overflow: hidden; // これがないと右側に余白ができた
   }
 }
 .rotate {

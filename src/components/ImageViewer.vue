@@ -31,7 +31,7 @@
     <!-- slot -->
     <slot></slot>
   </div>
-  <div class="tool-footer">
+  <div class="tool-footer" v-if="!isPhone()">
     <div>
       <label>
         <!-- v-modelだと値の更新が行われなかった。 -->

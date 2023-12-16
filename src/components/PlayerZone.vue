@@ -137,6 +137,7 @@ $card-width: 50px;
     margin-left: 20px;
     @media screen and (max-device-width: 800px) {
       margin-left: 5px;
+      width: 100%;
     }
     &.upper {
       margin-top: 20px;
@@ -150,6 +151,10 @@ $card-width: 50px;
     display: flex;
     align-items: center;
     width: 430px;
+    @media screen and (max-device-width: 800px) {
+      // シールドボタン50px マージン15px
+      width: calc(100% - 75px);
+    }
     &.upper {
       flex-direction: row-reverse;
       .bochi {
