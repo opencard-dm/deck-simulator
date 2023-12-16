@@ -40,6 +40,7 @@
         :key="card.id"
         @mouseenter="setHoveredCard(card)"
         @mouseleave="setHoveredCard(null)"
+        :style="{height: cardHeight}"
       >
         <MarkTool
           :reverse="side === 'upper'"
@@ -219,6 +220,12 @@ $card-width: 100px;
   display: flex;
   .battleZoneButton {
     // align-self: flex-end;
+    &.o-btn {
+      @media screen and (max-device-width: 800px) {
+        width: 45px;
+        font-size: 12px;
+      }
+    }
     cursor: pointer;
     &_wrapper {
       margin-left: 20px;
@@ -227,6 +234,7 @@ $card-width: 100px;
       height: 50px;
       @media screen and (max-device-width: 800px) {
         margin-left: 5px;
+        width: 50px;
       }
       &.upper {
         align-self: flex-start;
@@ -248,6 +256,9 @@ $card-width: 100px;
     min-height: cardHeight($card-width);
     // overflow-x: scroll;
     max-width: 700px; // 800 - margin-left
+    @media screen and (max-device-width: 800px) {
+      margin-left: 20px;
+    }
     > * {
       flex-shrink: 0;
       margin: 0 10px 10px 0;

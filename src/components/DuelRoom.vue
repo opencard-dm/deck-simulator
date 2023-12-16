@@ -144,6 +144,7 @@
             <template #chojigenZone>
               <ChojigenZone
                 side="lower"
+                v-if="players[lowerPlayer]['cards']['chojigenCards'].length > 0"
                 :player="lowerPlayer"
                 :chojigenCards="players[lowerPlayer]['cards']['chojigenCards']"
                 :hasChojigen="players[lowerPlayer].hasChojigen"
