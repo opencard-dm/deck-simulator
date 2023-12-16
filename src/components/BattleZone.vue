@@ -1,17 +1,7 @@
 <template>
   <div class="battle-zone-wrapper">
     <div class="battleZoneButton_wrapper" :class="side">
-      <o-button
-        v-if="hasSelectedCard()"
-        class="battleZoneButton"
-        variant="danger"
-        rounded
-        @click.stop="moveSelectedCard('battleCards', true)"
-      >
-        出す
-      </o-button>
       <o-icon
-        v-else
         class="openZoneButton battleZoneButton"
         pack="fas"
         size="large"
@@ -40,7 +30,7 @@
         :key="card.id"
         @mouseenter="setHoveredCard(card)"
         @mouseleave="setHoveredCard(null)"
-        :style="{height: cardHeight}"
+        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
       >
         <MarkTool
           :reverse="side === 'upper'"
@@ -135,6 +125,26 @@
           </template>
         </div>
       </div>
+      
+      <div
+        class="card_wrapper card-placeholder-wrapper"
+        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
+      >
+        <o-button
+          v-if="hasSelectedCard()"
+          class="battleZoneButton"
+          variant="danger"
+          rounded
+          @click.stop="moveSelectedCard('battleCards', false)"
+        >
+          出す
+        </o-button>
+        <div
+          v-else
+          class="card in-battle card-placeholder"
+        >
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -218,33 +228,33 @@ export default {
 $card-width: 100px;
 .battle-zone-wrapper {
   display: flex;
+  .battleZoneButton_wrapper {
+    margin-left: 20px;
+    margin-right: 10px;
+    width: 70px;
+    height: 50px;
+    @media screen and (max-device-width: 800px) {
+      margin-left: 5px;
+      width: 50px;
+    }
+    &.upper {
+      align-self: flex-start;
+      margin-top: 20px;
+    }
+    &.lower {
+      align-self: flex-end;
+      margin-bottom: 20px;
+    }
+  }
   .battleZoneButton {
     // align-self: flex-end;
     &.o-btn {
       @media screen and (max-device-width: 800px) {
-        width: 45px;
-        font-size: 12px;
+        // width: 45px;
+        // font-size: 12px;
       }
     }
     cursor: pointer;
-    &_wrapper {
-      margin-left: 20px;
-      margin-right: 10px;
-      width: 70px;
-      height: 50px;
-      @media screen and (max-device-width: 800px) {
-        margin-left: 5px;
-        width: 50px;
-      }
-      &.upper {
-        align-self: flex-start;
-        margin-top: 20px;
-      }
-      &.lower {
-        align-self: flex-end;
-        margin-bottom: 20px;
-      }
-    }
     &.openZoneButton {
       transform: rotate(45deg);
     }
@@ -252,7 +262,7 @@ $card-width: 100px;
   .battle-zone {
     // スクロールをしないUIに変更
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap-reverse; // 上に行を追加していく
     min-height: cardHeight($card-width);
     // overflow-x: scroll;
     max-width: 700px; // 800 - margin-left
@@ -309,21 +319,32 @@ $card-width: 100px;
         border-radius: 5px;
       }
     }
-    &_wrapper {
-      position: relative;
+  }
+  .card_wrapper {
+    position: relative;
+  }
+  .card_bottomButton {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    > * + * {
+      margin-top: 10px;
     }
-    &_bottomButton {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%) translateY(-100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      > * + * {
-        margin-top: 10px;
-      }
-    }
+  }
+  .card-placeholder {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(lightyellow, rgb(241, 241, 241));
+    border-radius: 10px;
+  }
+  .card-placeholder-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
