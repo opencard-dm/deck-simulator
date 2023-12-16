@@ -1,5 +1,5 @@
 <template>
-  <div class="tefuda-zone-wrapper" :class="side">
+  <div class="tefuda-zone-wrapper" :class="side" :style="{height: tefudaHeight}">
     <div class="tefuda-zone" :class="side">
       <div
         class="card_wrapper"
@@ -109,8 +109,11 @@
 <script setup>
 import CardPopup from './elements/CardPopup'
 import { isPhone } from '@/helpers/Util'
+import { Layout } from '@/helpers/layout'
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650
+const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
+  `${Layout.tefudaHeight(cardWidth)}px` : false
 </script>
 
 <script>
@@ -173,7 +176,6 @@ $card-width: 70px;
     position: fixed;
     bottom: 0px;
     width: 100%;
-    height: calc($card-width * 2 + 40px);
     overflow-y: scroll;
   }
   .openZoneButton {

@@ -1,6 +1,6 @@
 <template>
-  <div id="app" style="background-color: lightgray">
-    <CHeader @reset-game="resetGame"></CHeader>
+  <div id="app" style="background-color: lightgray" v-if="isMounted">
+    <CHeader @reset-game="resetGame" :single="single"></CHeader>
     <div class="app-wrapper main">
       <ImageViewer>
         <WorkSpace
@@ -20,7 +20,10 @@
           @selected="onDeckSelected"
         ></DeckSelector>
 
-        <div id="js_gameBoard" class="gameBoard" :style="{opacity: $store.state.workSpace.active ? 0.3 : 1}">
+        <div id="js_gameBoard" class="gameBoard" :style="{
+          opacity: $store.state.workSpace.active ? 0.3 : 1,
+          height: playerZoneHeight,
+        }">
           <template v-if="!single">
             <TefudaZone
               :side="'upper'"
@@ -170,6 +173,18 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { Layout } from '@/helpers/layout'
+import { isPhone } from '@/helpers/Util'
+import { onMounted, ref } from 'vue';
+
+const playerZoneHeight = isPhone() ? `${Layout.playerZoneHeight(70)}px` : false
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
+</script>
 
 <script>
 import { Deck } from "@/helpers/Deck";

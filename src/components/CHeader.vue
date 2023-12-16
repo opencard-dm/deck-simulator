@@ -1,61 +1,79 @@
 <template>
-  <div class="c-header">
-    <o-icon
-      class="c-header__bars"
-      pack="fas"
-      icon="bars"
-      size="small"
-      style="color: white; margin-left: 20px; font-size: 18px;"
-      @click.stop="sidebarOpen = !sidebarOpen"
-    ></o-icon>
-  </div>
-  <div
-    class="sidebar"
-    :class="{
-      'sidebar--open': sidebarOpen,
-    }"
-  >
-    <nav class="nav-links">
-      <div class="nav-item">
-        <router-link to="/">退出する</router-link>
-      </div>
-    </nav>
-    <nav class="nav-links">
-      <div class="nav-item">
-        <a @click="openResetGameModal()">ゲームをリセットする</a>
-      </div>
-    </nav>
-    <nav class="nav-links">
-      <div class="nav-item">
-        <div>
-          招待リンク
-          <o-tooltip
-            label="コピーしました"
-            position="top"
-            variant="info"
-            :triggers="['click']"
-            :closeable="false"
-            :active="copyLinkTooltip"
-          ><o-icon class="sidebar_copyLinkIcon" pack="fas" icon="copy" @click="copyInviteLink"></o-icon
-          ></o-tooltip>
-        </div>
-        <div style="font-size: 12px">{{ inviteLink }}</div>
-      </div>
-    </nav>
-  </div>
-  <!-- サイドバーのために使用する仮のモーダル -->
-  <o-modal
-    rootClass="sidebarModal"
-    v-model:active="sidebarOpen"
-    contentClass="sidebarModal__content"
-  >
-  </o-modal>
-  <o-modal v-model:active="resetGameModal" rootClass="resetGameModal">
-    <o-button variant="grey-dark" @click="resetGame()"
-      >ゲームをリセットする</o-button
+  <div v-if="isMounted">
+    <div class="c-header" :style="{height: headerHeight}">
+      <o-icon
+        class="c-header__bars"
+        pack="fas"
+        icon="bars"
+        size="small"
+        style="color: white; margin-left: 20px; font-size: 18px;"
+        @click.stop="sidebarOpen = !sidebarOpen"
+      ></o-icon>
+    </div>
+    <div
+      class="sidebar"
+      :class="{
+        'sidebar--open': sidebarOpen,
+      }"
     >
-  </o-modal>
+      <nav class="nav-links">
+        <div class="nav-item">
+          <router-link to="/">退出する</router-link>
+        </div>
+      </nav>
+      <nav class="nav-links" v-if="!single">
+        <div class="nav-item">
+          <a @click="openResetGameModal()">ゲームをリセットする</a>
+        </div>
+      </nav>
+      <nav class="nav-links" v-if="!single">
+        <div class="nav-item">
+          <div>
+            招待リンク
+            <o-tooltip
+              label="コピーしました"
+              position="top"
+              variant="info"
+              :triggers="['click']"
+              :closeable="false"
+              :active="copyLinkTooltip"
+            ><o-icon class="sidebar_copyLinkIcon" pack="fas" icon="copy" @click="copyInviteLink"></o-icon
+            ></o-tooltip>
+          </div>
+          <div style="font-size: 12px">{{ inviteLink }}</div>
+        </div>
+      </nav>
+    </div>
+    <!-- サイドバーのために使用する仮のモーダル -->
+    <o-modal
+      rootClass="sidebarModal"
+      v-model:active="sidebarOpen"
+      contentClass="sidebarModal__content"
+    >
+    </o-modal>
+    <o-modal v-model:active="resetGameModal" rootClass="resetGameModal">
+      <o-button variant="grey-dark" @click="resetGame()"
+        >ゲームをリセットする</o-button
+      >
+    </o-modal>
+  </div>
 </template>
+
+<script setup>
+import { Layout } from '@/helpers/layout'
+import { onMounted, ref } from 'vue';
+
+defineProps({
+  single: Boolean,
+})
+
+const headerHeight = `${Layout.headerHeight()}px`
+
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
+</script>
 
 <script>
 export default {
@@ -104,10 +122,6 @@ export default {
 
 <style lang="scss" scoped>
 .c-header {
-  height: 40px;
-  @media screen and (max-device-width: 800px) {
-    height: 30px;
-  }
   background-color: #005c98;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -138,10 +152,7 @@ export default {
   &.sidebar--open {
     transform: translateX(0%);
   }
-  top: 40px;
-  @media screen and (max-device-width: 800px) {
-    top: 30px;
-  }
+  top: 10px;
   left: 0;
   bottom: 0;
   padding-top: 20px;
