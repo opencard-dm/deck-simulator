@@ -3,7 +3,7 @@
     <div class="tefuda-zone" :class="side">
       <div
         class="card_wrapper"
-        :style="{height: `${cardHeight}px`}"
+        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         v-for="(card, index) in tefudaCards"
         :key="index"
         @mouseenter="setHoveredCard(card)"
@@ -17,12 +17,20 @@
         >
           <!-- 対戦相手の手札は常に裏向き -->
           <div v-if="side === 'upper'">
-            <img :src="card.backImageUrl" @click.stop="clickCard(card)" />
+            <img 
+              :src="card.backImageUrl" 
+              @click.stop="clickCard(card)"
+              :style="{width: `${cardWidth}px`}"
+            />
           </div>
           <div v-else @click.stop="clickCard(card)">
-            <img v-if="card.faceDown" :src="card.backImageUrl" />
+            <img 
+              v-if="card.faceDown" 
+              :src="card.backImageUrl"
+              :style="{width: `${cardWidth}px`}"
+            />
             <CardPopup v-else :url="card.imageUrl">
-              <img :src="card.imageUrl" />
+              <img :src="card.imageUrl" :style="{width: `${cardWidth}px`}" />
             </CardPopup>
           </div>
         </div>
@@ -50,6 +58,7 @@
             >重ねる</o-button
           >
           <o-button
+            v-if="!isPhone()"
             variant="grey-dark"
             size="small"
             @click.stop="
@@ -68,7 +77,7 @@
           @click="clickPlaceholderCard()" 
         >
           <div style="opacity: 0.2;">
-            <img src="/images/card-back.jpg" />
+            <img src="/images/card-back.jpg" :width="cardWidth" />
           </div>
           <div
             class="card_bottomButton" 
@@ -163,6 +172,7 @@ $card-width: 70px;
   @media screen and (max-device-width: 800px) {
     position: fixed;
     bottom: 0px;
+    width: 100%;
     height: calc($card-width * 2 + 40px);
     overflow-y: scroll;
   }
@@ -202,9 +212,6 @@ $card-width: 70px;
       }
     }
   }
-  img {
-    width: $card-width;
-  }
   .tefuda-zone {
     height: 100%;
     display: flex;
@@ -218,6 +225,9 @@ $card-width: 70px;
     .card {
       position: relative;
       margin-right: 5px;
+      img {
+        box-sizing: border-box;
+      }
       &.is-selected {
         img {
           border: 3px solid #b60000;
@@ -228,7 +238,7 @@ $card-width: 70px;
         position: absolute;
         left: 0;
         bottom: 0;
-        width: $card-width;
+        width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;

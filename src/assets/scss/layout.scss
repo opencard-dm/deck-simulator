@@ -34,10 +34,22 @@ body {
   position: relative;
   @media screen and (max-device-width: 800px) {
     width: 100%;
+    min-height: unset;
     overflow: hidden; // これがないと右側に余白ができた
   }
   .gameBoard {
     min-height: 100vh;
+    @media screen and (max-device-width: 800px) {
+      min-height: unset;
+      height: calc(100vh - 30px - 230px);
+      overflow-y: scroll;
+      width: 100%;
+      padding-bottom: 40px;
+      // https://stackoverflow.com/a/16671476
+      padding-right: 17px; /* Increase/decrease this value for cross-browser compatibility */
+      box-sizing: content-box; /* So the width will be 100% + 17px */
+      // overflow-x: hidden;
+    }
   }
 }
 .rotate {

@@ -299,6 +299,9 @@ $card-width: 100px;
   .card {
     position: relative;
     display: flex;
+    img {
+      box-sizing: border-box;
+    }
     &.is-group img {
       border: lightgray 1px solid;
       border-top-width: 0;
