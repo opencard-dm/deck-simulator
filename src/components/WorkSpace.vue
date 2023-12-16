@@ -297,12 +297,8 @@ export default {
     // ワークスペースが開いている間は背景を薄くする。
     // ホバーで画像拡大はできるようにする。
     workSpace(newVal, oldVal) {
-      // 開いたとき
-      if (newVal.active) {
-        document.querySelector("#js_gameBoard").style.opacity = 0.8;
+      if (!newVal.active) {
         // 閉じたとき
-      } else {
-        document.querySelector("#js_gameBoard").style.opacity = 1;
         oldVal.cards.forEach((c) => {
           c.showInWorkSpace = false;
         });

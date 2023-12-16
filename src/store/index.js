@@ -71,6 +71,9 @@ const store = createStore({
       // セレクトモード変化時には選択中のカードを消す。
       state.selectedCard = null
       state.selectMode = data
+      if (data === null) {
+        state.displayImageUrl = ''
+      }
     },
     setSelectedCard(state, card) {
       state.selectedCard = card

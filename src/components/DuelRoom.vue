@@ -20,7 +20,7 @@
           @selected="onDeckSelected"
         ></DeckSelector>
 
-        <div id="js_gameBoard" class="gameBoard">
+        <div id="js_gameBoard" class="gameBoard" :style="{opacity: $store.state.workSpace.active ? 0.3 : 1}">
           <template v-if="!single">
             <TefudaZone
               :side="'upper'"
@@ -348,6 +348,9 @@ export default {
     },
     moveCards: function (from, to, selectedCards, player, prepend = false) {
       if (!selectedCards || selectedCards.length === 0) return;
+      if (this.$store.state.displayImageUrl) {
+        this.$store.commit('setDisplayImageUrl', '')
+      }
       // 先頭のカードがグループに属していた場合、そのグループから抜ける。
       const card = selectedCards[0];
       if (card.groupId) {
