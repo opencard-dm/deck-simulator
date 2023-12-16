@@ -140,7 +140,7 @@ export default {
   }
   top: 40px;
   @media screen and (max-device-width: 800px) {
-    height: 30px;
+    top: 30px;
   }
   left: 0;
   bottom: 0;
