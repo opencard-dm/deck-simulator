@@ -61,7 +61,7 @@
       </div>
 
       <div
-        v-if="side === 'lower'"
+        v-if="side === 'lower' && !selectMode"
         class="card_wrapper"
       >
         <div
@@ -82,25 +82,8 @@
         </div>
       </div>
 
-      <div v-if="side == 'lower'" class="tefudaZoneButton_wrapper">
-        <o-icon
-          v-if="!selectMode"
-          class="openZoneButton"
-          :class="side"
-          pack="fas"
-          size="large"
-          icon="arrow-circle-up"
-          variant="info"
-          @click.stop="
-            openWorkSpace({
-              zone,
-              cards,
-              player,
-            })
-          "
-        ></o-icon>
+      <div v-if="side == 'lower' && selectMode && selectMode.zone !== zone" class="tefudaZoneButton_wrapper">
         <o-button
-          v-else
           class="tefudaZoneButton"
           variant="info"
           rounded
