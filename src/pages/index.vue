@@ -2,9 +2,9 @@
   <div class="content_wrapper">
     <div id="app" style="padding: 20px; background-color: white">
       <div style="text-align: end;">
-        <RouterLink class="topLink" to="/battle">
+        <!-- <RouterLink class="topLink" to="/battle">
           対戦ツールはこちら(試作品)
-        </RouterLink>
+        </RouterLink> -->
       </div>
       <div>
         このサイトではDECK MAKERで作成したデッキを動かすことができます。
