@@ -36,6 +36,9 @@ body {
     width: 100%;
     overflow: hidden; // これがないと右側に余白ができた
   }
+  .gameBoard {
+    min-height: 100vh;
+  }
 }
 .rotate {
   transform: rotate(-90deg);

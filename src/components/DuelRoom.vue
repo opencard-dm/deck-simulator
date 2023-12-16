@@ -20,7 +20,7 @@
           @selected="onDeckSelected"
         ></DeckSelector>
 
-        <div id="js_gameBoard">
+        <div id="js_gameBoard" class="gameBoard">
           <template v-if="!single">
             <TefudaZone
               :side="'upper'"
