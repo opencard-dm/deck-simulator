@@ -28,14 +28,12 @@ body {
 
 #canvas {
   width: 800px;
-  padding: 20px 0px;
+  min-height: 100vh;
   // height: 600px;
   background-color: rgb(241, 241, 241);
   position: relative;
   @media screen and (max-device-width: 800px) {
     width: 100%;
-    padding-top: 0px;
-    min-height: 100vh;
     overflow: hidden; // これがないと右側に余白ができた
   }
 }

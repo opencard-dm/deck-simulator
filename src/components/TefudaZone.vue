@@ -60,11 +60,8 @@
         </div>
       </div>
 
-      <div
-        v-if="side === 'lower' && !selectMode"
-        class="card_wrapper"
-      >
-        <div
+      <div v-if="side === 'lower'" class="card_wrapper">
+        <div v-show="!selectMode"
           class="card"
           style="opacity: 0.2;cursor: pointer;"
         >
@@ -72,7 +69,10 @@
             <img src="/images/card-back.jpg" @click="drawOne()" />
           </div>
         </div>
-        <div class="card_bottomButton" style="top: 50%;">
+        <div v-show="!selectMode"
+          class="card_bottomButton" 
+          style="top: 50%;"
+        >
           <o-button
             variant="grey-dark"
             style="opacity: 0.6;"
@@ -80,17 +80,17 @@
             >ドロー</o-button
           >
         </div>
-      </div>
-
-      <div v-if="side == 'lower' && selectMode && selectMode.zone !== zone" class="tefudaZoneButton_wrapper">
-        <o-button
-          class="tefudaZoneButton"
-          variant="info"
-          rounded
-          @click.stop="moveSelectedCard(zone, true)"
-        >
-          手札へ
-        </o-button>
+        <div v-show="selectMode" class="tefudaZoneButton_wrapper">
+          <o-button
+            :style="{opacity: selectMode && selectMode.zone === zone ? 0 : 1}"
+            class="tefudaZoneButton"
+            variant="info"
+            rounded
+            @click.stop="moveSelectedCard(zone, true)"
+          >
+            手札へ
+          </o-button>
+        </div>
       </div>
     </div>
   </div>
