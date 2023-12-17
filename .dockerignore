@@ -1,6 +1,5 @@
-.yarn/cache
 cache
-node_modules
+**/node_modules
 Dockerfile
 docker-compose.yml
 .env

@@ -1,61 +1,88 @@
 <template>
-  <div class="c-header">
-    <o-icon
-      class="c-header__bars"
-      pack="fas"
-      icon="bars"
-      size="medium"
-      style="color: white; margin-left: 30px"
-      @click.stop="sidebarOpen = !sidebarOpen"
-    ></o-icon>
-  </div>
-  <div
-    class="sidebar"
-    :class="{
-      'sidebar--open': sidebarOpen,
-    }"
-  >
-    <nav class="nav-links">
-      <div class="nav-item">
-        <router-link to="/">退出する</router-link>
-      </div>
-    </nav>
-    <nav class="nav-links">
-      <div class="nav-item">
-        <a @click="openResetGameModal()">ゲームをリセットする</a>
-      </div>
-    </nav>
-    <nav class="nav-links">
-      <div class="nav-item">
-        <div>
-          招待リンク
-          <o-tooltip
-            label="コピーしました"
-            position="top"
-            variant="info"
-            :triggers="['click']"
-            :closeable="false"
-            :active="copyLinkTooltip"
-          ><o-icon class="sidebar_copyLinkIcon" pack="fas" icon="copy" @click="copyInviteLink"></o-icon
-          ></o-tooltip>
-        </div>
-        <div style="font-size: 12px">{{ inviteLink }}</div>
-      </div>
-    </nav>
-  </div>
-  <!-- サイドバーのために使用する仮のモーダル -->
-  <o-modal
-    rootClass="sidebarModal"
-    v-model:active="sidebarOpen"
-    contentClass="sidebarModal__content"
-  >
-  </o-modal>
-  <o-modal v-model:active="resetGameModal" rootClass="resetGameModal">
-    <o-button variant="grey-dark" @click="resetGame()"
-      >ゲームをリセットする</o-button
+  <div v-if="isMounted">
+    <div class="c-header" :style="{height: headerHeight}">
+      <o-icon
+        class="c-header__bars"
+        pack="fas"
+        icon="bars"
+        size="small"
+        style="color: white; margin-left: 20px; font-size: 24px;"
+        @click.stop="sidebarOpen = !sidebarOpen"
+      ></o-icon>
+    </div>
+    <div
+      class="sidebar"
+      :class="{
+        'sidebar--open': sidebarOpen,
+      }"
     >
-  </o-modal>
+      <nav class="nav-links">
+        <div class="nav-item">
+          <router-link to="/">{{single ? 'トップページへ' : '退出する' }}</router-link>
+        </div>
+      </nav>
+      <div style="margin-top: 30px; padding: 0px 20px;">
+        <div>操作方法</div>
+        <div>・カードを{{isPhone() ? 'タップ' : 'クリック'}}で選択</div>
+        <div v-if="isPhone()">・カード画像を長押しで拡大</div>
+        <div>・「マナ」や「シールド」ボタンを{{isPhone() ? 'タップ' : 'クリック'}}でポップアップを開く</div>
+        <div>・山札を長押しで山札ポップアップを開く</div>
+        <div>・「重ねる」ボタンは進化やギャラクシールドに使用する</div>
+      </div>
+      <nav class="nav-links" v-if="!single">
+        <div class="nav-item">
+          <a @click="openResetGameModal()">ゲームをリセットする</a>
+        </div>
+      </nav>
+      <nav class="nav-links" v-if="!single">
+        <div class="nav-item">
+          <div>
+            招待リンク
+            <o-tooltip
+              label="コピーしました"
+              position="top"
+              variant="info"
+              :triggers="['click']"
+              :closeable="false"
+              :active="copyLinkTooltip"
+            ><o-icon class="sidebar_copyLinkIcon" pack="fas" icon="copy" @click="copyInviteLink"></o-icon
+            ></o-tooltip>
+          </div>
+          <div style="font-size: 12px">{{ inviteLink }}</div>
+        </div>
+      </nav>
+    </div>
+    <!-- サイドバーのために使用する仮のモーダル -->
+    <o-modal
+      rootClass="sidebarModal"
+      v-model:active="sidebarOpen"
+      contentClass="sidebarModal__content"
+    >
+    </o-modal>
+    <o-modal v-model:active="resetGameModal" rootClass="resetGameModal">
+      <o-button variant="grey-dark" @click="resetGame()"
+        >ゲームをリセットする</o-button
+      >
+    </o-modal>
+  </div>
 </template>
+
+<script setup>
+import { Layout } from '@/helpers/layout'
+import { onMounted, ref } from 'vue';
+import { isPhone } from '@/helpers/Util';
+
+defineProps({
+  single: Boolean,
+})
+
+const headerHeight = `${Layout.headerHeight()}px`
+
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
+</script>
 
 <script>
 export default {
@@ -104,7 +131,6 @@ export default {
 
 <style lang="scss" scoped>
 .c-header {
-  height: 60px;
   background-color: #005c98;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -115,7 +141,7 @@ export default {
     top: 0;
     z-index: 11;
   }
-  &__bars {
+  .c-header__bars {
     cursor: pointer;
   }
 }
@@ -135,7 +161,7 @@ export default {
   &.sidebar--open {
     transform: translateX(0%);
   }
-  top: 60px;
+  top: 10px;
   left: 0;
   bottom: 0;
   padding-top: 20px;

@@ -46,6 +46,7 @@ const store = createStore({
   },
   state() {
     return {
+      displayImageUrl: '',
       selectMode: false, // カードを重ねるときに使用。
       selectedCard: null, // セレクトモードではないが、カードを選択するとき使用する。
       hoveredCard: null,
@@ -63,10 +64,16 @@ const store = createStore({
     }
   },
   mutations: {
+    setDisplayImageUrl(state, url) {
+      state.displayImageUrl = url
+    },
     setSelectMode(state, data) {
       // セレクトモード変化時には選択中のカードを消す。
       state.selectedCard = null
       state.selectMode = data
+      if (data === null) {
+        state.displayImageUrl = ''
+      }
     },
     setSelectedCard(state, card) {
       state.selectedCard = card

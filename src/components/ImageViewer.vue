@@ -1,9 +1,11 @@
 <template>
-  <div id="canvas" @mousemove="traceMouseMove">
+  <div id="canvas"
+    v-if="isMounted"
+    v-on="!isPhone() ? {mousemove: traceMouseMove} : {}">
     <div
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
-      :style="[display.left ? { left: '5px' } : { right: '5px' }]"
+      :style="[display.left ? { left: '5px' } : { left: '820px' }]"
     >
       <div
         v-if="cardIsVisible"
@@ -23,10 +25,13 @@
         {{ cardText }}
       </div>
     </div>
+    <div v-if="imageUrl" class="phoneImageDisplay" @contextmenu.prevent>
+      <img :src="imageUrl" @click="$store.commit('setDisplayImageUrl', '')">
+    </div>
     <!-- slot -->
     <slot></slot>
   </div>
-  <div class="tool-footer">
+  <div class="tool-footer" v-if="!isPhone()">
     <div>
       <label>
         <!-- v-modelだと値の更新が行われなかった。 -->
@@ -57,6 +62,15 @@
   </div>
 </template>
 
+<script setup>
+import { isPhone } from '@/helpers/Util';
+import { onMounted, ref } from 'vue';
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
+</script>
+
 <script>
 import { mapMutations, mapState } from "vuex/dist/vuex.cjs";
 
@@ -79,6 +93,9 @@ export default {
   },
   computed: {
     ...mapState(["hoveredCard"]),
+    imageUrl() {
+      return this.$store.state.displayImageUrl
+    },
     cardIsVisible() {
       if (this.hoveredCard) {
         if (!this.hoveredCard.faceDown || this.hoveredCard.showInWorkSpace) {
@@ -158,20 +175,30 @@ export default {
   &.blur {
     opacity: 0.6;
   }
-  &_image {
-    margin-left: auto;
+  .imageDisplay_image {
     width: 100%;
     img {
       width: 100%;
     }
   }
-  &_cardText {
+  .imageDisplay_cardText {
     border-radius: 8px;
     background-color: #fff;
     padding: 8px;
     font-size: 12px;
     white-space: pre-line;
     width: 360px;
+  }
+}
+.phoneImageDisplay {
+  position: fixed;
+  top: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 100;
+  img {
+    width: 90vw;
   }
 }
 </style>

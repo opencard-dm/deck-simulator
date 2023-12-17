@@ -1,0 +1,11 @@
+{
+	"sm": {
+		"prefix": "sm",
+		"body": [
+			"@media screen and (max-device-width: 800px) {",
+			"    $1",
+			"}"
+		],
+		"description": "media query for small devise"
+	}
+}

@@ -21,16 +21,36 @@ body {
 }
 .main {
   margin-left: 10px;
+  @media screen and (max-device-width: 800px) {
+      margin-left: 0px;
+  }
 }
 
 #canvas {
   width: 800px;
-  padding: 20px 0px;
+  min-height: 100vh;
   // height: 600px;
   background-color: rgb(241, 241, 241);
   position: relative;
   @media screen and (max-device-width: 800px) {
-    margin-left: 0;
+    width: 100%;
+    min-height: unset;
+    overflow: hidden; // これがないと右側に余白ができた
+  }
+  .gameBoard {
+    min-height: 100vh;
+    @media screen and (max-device-width: 800px) {
+      min-height: unset;
+      overflow-y: scroll;
+      width: 100%;
+      // https://stackoverflow.com/a/16671476
+      padding-right: 17px; /* Increase/decrease this value for cross-browser compatibility */
+      box-sizing: content-box; /* So the width will be 100% + 17px */
+      // overflow-x: hidden;
+      & > .manaZone_wrapper {
+        padding-bottom: 40px;
+      }
+    }
   }
 }
 .rotate {

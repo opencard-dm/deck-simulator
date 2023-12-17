@@ -2,17 +2,17 @@
   <div class="player-zone-wrapper">
     <div class="player-zone" :class="side">
       <div class="player-counter" :class="side">
-        <div class="shieldButton" @click.stop="clickShieldButton">
-          <div v-if="hasSelectedCard()" class="shieldButton_text__single">
+        <RoundButton :style="{background: 'blue', color: 'beige'}" @click.stop="clickShieldButton">
+          <div v-if="hasSelectedCard()" :style="{fontSize: '10px'}">
             シールドへ
           </div>
           <template v-else>
-            <div class="shieldButton_text">シールド</div>
-            <div class="shieldButton_count">
+            <div :style="{fontSize: '10px'}">シールド</div>
+            <div :style="{fontSize: '16px'}">
               {{ countableShieldCards.length }}
             </div>
           </template>
-        </div>
+        </RoundButton>
       </div>
       <div class="shield-wrapper" :class="side">
         <!-- シールドゾーン -->
@@ -20,33 +20,59 @@
         <!-- デッキゾーン -->
         <slot name="deck-zone"></slot>
         <!-- 墓地 -->
-        <div class="bochi" @click.stop="clickBochi">
-          <div
-            v-if="selectMode && selectMode.player === player"
-            class="bochi_text"
-          >
-            墓地へ
+        <template v-if="!isPhone()">
+          <div class="bochi" @click.stop="clickBochi">
+            <div
+              v-if="selectMode && selectMode.player === player"
+              class="bochi_text"
+            >
+              墓地へ
+            </div>
+            <img
+              v-else-if="lastCard(bochiCards)"
+              :src="lastCard(bochiCards).imageUrl"
+              @mouseenter="setHoveredCard(lastCard(bochiCards))"
+              @mouseleave="setHoveredCard(null)"
+            />
           </div>
-          <img
-            v-else-if="lastCard(bochiCards)"
-            :src="lastCard(bochiCards).imageUrl"
-            @mouseenter="setHoveredCard(lastCard(bochiCards))"
-            @mouseleave="setHoveredCard(null)"
-          />
-        </div>
-        <!-- 超次元ゾーン -->
-        <slot name="chojigenZone"></slot>
+          <!-- 超次元ゾーン -->
+          <slot name="chojigenZone"></slot>
+        </template>
       </div>
+    </div>
+    <div v-if="isPhone()" class="player-zone-under">
+      <div class="bochi" @click.stop="clickBochi">
+        <div
+          v-if="selectMode && selectMode.player === player"
+          class="bochi_text"
+        >
+          墓地へ
+        </div>
+        <img
+          v-else-if="lastCard(bochiCards)"
+          :src="lastCard(bochiCards).imageUrl"
+          @mouseenter="setHoveredCard(lastCard(bochiCards))"
+          @mouseleave="setHoveredCard(null)"
+        />
+      </div>
+      <!-- 超次元ゾーン -->
+      <slot name="chojigenZone"></slot>
     </div>
   </div>
 </template>
 
+<script setup>
+import { isPhone } from "@/helpers/Util";
+</script>
+
 <script>
 import mixin from "@/helpers/mixin.js";
+import RoundButton from './elements/RoundButton'
 
 export default {
   props: ["player", "bochiCards", "shieldCards", "shieldCardGroups", "side"],
   mixins: [mixin.zone],
+  components: {RoundButton},
   computed: {
     countableShieldCards() {
       // グループ化されているカードは一つとカウントする。
@@ -109,6 +135,10 @@ $card-width: 50px;
       align-self: center;
     }
     margin-left: 20px;
+    @media screen and (max-device-width: 800px) {
+      margin-left: 5px;
+      width: 100%;
+    }
     &.upper {
       margin-top: 20px;
     }
@@ -121,6 +151,10 @@ $card-width: 50px;
     display: flex;
     align-items: center;
     width: 430px;
+    @media screen and (max-device-width: 800px) {
+      // シールドボタン50px マージン15px
+      width: calc(100% - 75px);
+    }
     &.upper {
       flex-direction: row-reverse;
       .bochi {
@@ -136,55 +170,46 @@ $card-width: 50px;
         margin-left: 5px;
       }
     }
-    .bochi {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: lightgray;
-      &_text {
-        text-align: center;
-      }
-    }
     > * {
       align-self: center;
     }
   }
-  .player-zone img {
+  img {
     width: 50px;
   }
-  .shieldButton {
-    cursor: pointer;
-    background-color: blue;
-    border-radius: 50%;
-    height: 50px;
-    width: 70px;
-    color: beige;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    &_text {
-      font-size: 10px;
-      &__single {
-        line-height: 50px;
-        font-size: 12px;
-      }
-    }
-    &_count {
-    }
-  }
-
-  .player-zone .bochi {
+  .bochi {
     position: relative;
     text-align: center;
     width: 60px;
     height: cardHeight(50px);
-
     background-color: purple;
     background-size: cover;
     cursor: pointer;
-    img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: lightgray;
+    .bochi_text {
+      text-align: center;
+    }
+    @media screen and (max-device-width: 800px) {
+        width: 50px;
+        img {
+          border-top: 1px solid purple;
+          border-bottom: 1px solid purple;
+          border-left: 2px solid purple;
+          border-right: 2px solid purple;
+        }
+    }
+  }
+  @media screen and (max-device-width: 800px) {
+    .player-zone-under {
+      width: fit-content;
+      float: right;
+      // margin-left: auto;
+      margin-top: 10px;
+      margin-right: 10px;
+      display: flex;
     }
   }
 }

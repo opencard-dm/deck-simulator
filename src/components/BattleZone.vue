@@ -1,20 +1,10 @@
 <template>
   <div class="battle-zone-wrapper">
     <div class="battleZoneButton_wrapper" :class="side">
-      <o-button
-        v-if="hasSelectedCard()"
-        class="battleZoneButton"
-        variant="danger"
-        rounded
-        @click.stop="moveSelectedCard('battleCards', true)"
-      >
-        出す
-      </o-button>
       <o-icon
-        v-else
         class="openZoneButton battleZoneButton"
         pack="fas"
-        size="large"
+        size="medium"
         icon="arrow-circle-up"
         variant="primary"
         @click.stop="
@@ -31,6 +21,7 @@
       :class="{
         [side]: true,
       }"
+      :style="{minHeight: cardHeight}"
     >
       <!-- keyをindexにしていると、カード移動後MarkerToolが同じindexの別のカードに移ってしまう。 -->
       <div
@@ -39,6 +30,7 @@
         :key="card.id"
         @mouseenter="setHoveredCard(card)"
         @mouseleave="setHoveredCard(null)"
+        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
       >
         <MarkTool
           :reverse="side === 'upper'"
@@ -60,9 +52,12 @@
             <img
               v-if="card.faceDown === true"
               :src="card.backImageUrl"
+              :width="cardWidth"
               draggable="false"
             />
-            <img v-else :src="card.imageUrl" draggable="false" />
+            <CardPopup v-else :url="card.imageUrl">
+              <img :src="card.imageUrl" draggable="false" :width="cardWidth" />
+            </CardPopup>
           </div>
         </MarkTool>
         <div v-if="cardIsSelected(card)" class="card_bottomButton">
@@ -113,6 +108,7 @@
           <o-button
             v-if="card.faceDown && !card.isChojigen"
             variant="grey-dark"
+            :size="isPhone() ? 'small' : ''"
             @click.stop="setCardState(card, { faceDown: !card.faceDown })"
             >裏返す</o-button
           >
@@ -121,18 +117,47 @@
             <o-button
               v-if="card.tapped"
               variant="grey-dark"
+            :size="isPhone() ? 'small' : ''"
               @click.stop="toggleTap(card)"
               >アンタップ</o-button
             >
-            <o-button v-else variant="grey-dark" @click.stop="toggleTap(card)"
-              >タップ</o-button
-            >
+            <o-button v-else variant="grey-dark"
+              :size="isPhone() ? 'small' : ''"
+              @click.stop="toggleTap(card)"
+            >タップ</o-button>
           </template>
         </div>
+      </div>
+      
+      <div
+        class="card_wrapper card-placeholder-wrapper"
+        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
+      >
+        <div
+          class="card in-battle card-placeholder"
+        >
+        </div>
+        <o-button
+          v-if="hasSelectedCard()"
+          class="battleZoneButton"
+          variant="danger"
+          rounded
+          @click.stop="moveSelectedCard('battleCards', false)"
+        >
+          出す
+        </o-button>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import { isPhone } from "@/helpers/Util"
+import CardPopup from './elements/CardPopup'
+
+const cardWidth = isPhone() ? 80 : 100
+const cardHeight = cardWidth * 908 / 650
+</script>
 
 <script>
 import mixin from "@/helpers/mixin.js";
@@ -205,26 +230,33 @@ export default {
 $card-width: 100px;
 .battle-zone-wrapper {
   display: flex;
-  img {
-    width: $card-width;
+  .battleZoneButton_wrapper {
+    margin-left: 20px;
+    margin-right: 10px;
+    width: 70px;
+    height: 50px;
+    @media screen and (max-device-width: 800px) {
+      margin-left: 5px;
+      width: 50px;
+    }
+    &.upper {
+      align-self: flex-start;
+      margin-top: 20px;
+    }
+    &.lower {
+      align-self: flex-end;
+      margin-bottom: 20px;
+    }
   }
   .battleZoneButton {
     // align-self: flex-end;
-    cursor: pointer;
-    &_wrapper {
-      margin-left: 20px;
-      margin-right: 10px;
-      width: 70px;
-      height: 50px;
-      &.upper {
-        align-self: flex-start;
-        margin-top: 20px;
-      }
-      &.lower {
-        align-self: flex-end;
-        margin-bottom: 20px;
+    &.o-btn {
+      @media screen and (max-device-width: 800px) {
+        // width: 45px;
+        // font-size: 12px;
       }
     }
+    cursor: pointer;
     &.openZoneButton {
       transform: rotate(45deg);
     }
@@ -232,11 +264,13 @@ $card-width: 100px;
   .battle-zone {
     // スクロールをしないUIに変更
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap-reverse; // 上に行を追加していく
     min-height: cardHeight($card-width);
     // overflow-x: scroll;
-    // height: cardHeight($card-width);
     max-width: 700px; // 800 - margin-left
+    @media screen and (max-device-width: 800px) {
+      margin-left: 20px;
+    }
     > * {
       flex-shrink: 0;
       margin: 0 10px 10px 0;
@@ -252,7 +286,6 @@ $card-width: 100px;
           // あとはtranslateXでy座標を調整する。
           transform: rotate(90deg) translateX(-100%);
           transform-origin: left bottom;
-          width: cardHeight($card-width);
         }
       }
     }
@@ -263,13 +296,15 @@ $card-width: 100px;
       .card.tapped {
         transform: rotate(-90deg) translateX(100%);
         transform-origin: right bottom;
-        width: cardHeight($card-width);
       }
     }
   }
   .card {
     position: relative;
     display: flex;
+    img {
+      box-sizing: border-box;
+    }
     &.is-group img {
       border: lightgray 1px solid;
       border-top-width: 0;
@@ -289,21 +324,34 @@ $card-width: 100px;
         border-radius: 5px;
       }
     }
-    &_wrapper {
-      position: relative;
+  }
+  .card_wrapper {
+    position: relative;
+  }
+  .card_bottomButton {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    > * + * {
+      margin-top: 10px;
     }
-    &_bottomButton {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%) translateY(-100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      > * + * {
-        margin-top: 10px;
-      }
-    }
+  }
+  .card-placeholder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(lightyellow, rgb(241, 241, 241));
+    border-radius: 10px;
+  }
+  .card-placeholder-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>

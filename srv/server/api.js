@@ -70,13 +70,13 @@ router.get('/api/scrape', async (req, res) => {
       mainCardId: c.main_card_id,
     }
   }))
-  deck.chojigenCards = Deck.groupByCardId(deckData.hyper_spatial_cards.map((c) => {
+  deck.chojigenCards = Deck.groupByCardId((deckData.hyper_spatial_cards || []).map((c) => {
     return {
       imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
       mainCardId: c.main_card_id,
     }
   }))
-  deck.grCards = Deck.groupByCardId(deckData.gr_cards.map((c) => {
+  deck.grCards = Deck.groupByCardId((deckData.gr_cards || []).map((c) => {
     return {
       imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
       mainCardId: c.main_card_id,

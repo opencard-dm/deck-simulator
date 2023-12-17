@@ -1,8 +1,18 @@
 import firebase from "firebase/app";
 // import firebase from 'firebase/app';
 import { DeckRecipeInfo } from "./DeckRecipeInfo.js";
+import { deckList } from '../../src/helpers/data.js'
 
 export async function getDeckData(deckId) {
+  // 開発環境では通信の節約
+  if (process.env.NODE_ENV === 'development') {
+    for (const deck of deckList) {
+      if (deck.deck_id === deckId) {
+        console.log('deck is found in local')
+        return deck
+      }
+    }
+  }
   // https://stackoverflow.com/questions/37482366/is-it-safe-to-expose-firebase-apikey-to-the-public
   const firebaseConfig = JSON.parse(Buffer.from(process.env.DM_KEY, 'base64'));
   const defalutCardUrl =

@@ -1,15 +1,6 @@
 <template>
   <div>
     <router-view />
-    <o-notification
-      v-if="deviseWidth < 900"
-      class="alertBottom"
-      closable
-      variant="warning"
-      aria-close-label="Close notification"
-    >
-      このサイトはPC(スクリーンの幅が900px以上)向けです。
-    </o-notification>
   </div>
 </template>
 

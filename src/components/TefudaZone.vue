@@ -1,8 +1,9 @@
 <template>
-  <div class="tefuda-zone-wrapper" :class="side">
+  <div class="tefuda-zone-wrapper" :class="side" :style="{height: tefudaHeight}">
     <div class="tefuda-zone" :class="side">
       <div
         class="card_wrapper"
+        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         v-for="(card, index) in tefudaCards"
         :key="index"
         @mouseenter="setHoveredCard(card)"
@@ -16,11 +17,21 @@
         >
           <!-- 対戦相手の手札は常に裏向き -->
           <div v-if="side === 'upper'">
-            <img :src="card.backImageUrl" @click.stop="clickCard(card)" />
+            <img 
+              :src="card.backImageUrl" 
+              @click.stop="clickCard(card)"
+              :style="{width: `${cardWidth}px`}"
+            />
           </div>
           <div v-else @click.stop="clickCard(card)">
-            <img v-if="card.faceDown" :src="card.backImageUrl" />
-            <img v-else :src="card.imageUrl" />
+            <img 
+              v-if="card.faceDown" 
+              :src="card.backImageUrl"
+              :style="{width: `${cardWidth}px`}"
+            />
+            <CardPopup v-else :url="card.imageUrl">
+              <img :src="card.imageUrl" :style="{width: `${cardWidth}px`}" />
+            </CardPopup>
           </div>
         </div>
         <div
@@ -47,6 +58,7 @@
             >重ねる</o-button
           >
           <o-button
+            v-if="!isPhone()"
             variant="grey-dark"
             size="small"
             @click.stop="
@@ -58,36 +70,51 @@
         </div>
       </div>
 
-      <div v-if="side == 'lower'" class="tefudaZoneButton_wrapper">
-        <o-icon
-          v-if="!selectMode"
-          class="openZoneButton"
-          :class="side"
-          pack="fas"
-          size="large"
-          icon="arrow-circle-up"
-          variant="info"
-          @click.stop="
-            openWorkSpace({
-              zone,
-              cards,
-              player,
-            })
-          "
-        ></o-icon>
-        <o-button
-          v-else
-          class="tefudaZoneButton"
-          variant="info"
-          rounded
-          @click.stop="moveSelectedCard(zone, true)"
+      <div v-if="side === 'lower'" class="card_wrapper card-placeholder-wrapper" :style="{height: `${cardHeight}px`}">
+        <div
+          class="card"
+          style="cursor: pointer;"
+          @click="clickPlaceholderCard()" 
         >
-          手札へ
-        </o-button>
+          <div style="opacity: 0.2;">
+            <img src="/images/card-back.jpg" :width="cardWidth" />
+          </div>
+          <div
+            class="card_bottomButton" 
+            style="top: 50%; transform: translateY(-50%);"
+          >
+            <o-button
+              v-if="selectMode && selectMode.zone !== zone"
+              class="tefudaZoneButton"
+              :size="isPhone() ? 'small' : ''"
+              variant="info"
+              rounded
+            >
+              手札へ
+            </o-button>
+            <o-button
+              v-else
+              variant="grey-dark"
+              size="small"
+              :disabled="true"
+              >ドロー</o-button
+            >
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import CardPopup from './elements/CardPopup'
+import { isPhone } from '@/helpers/Util'
+import { Layout } from '@/helpers/layout'
+const cardWidth = 70
+const cardHeight = cardWidth * 908 / 650
+const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
+  `${Layout.tefudaHeight(cardWidth)}px` : false
+</script>
 
 <script>
 import mixin from "@/helpers/mixin.js";
@@ -95,6 +122,7 @@ import mixin from "@/helpers/mixin.js";
 export default {
   props: ["player", "tefudaCards", "side"],
   mixins: [mixin.zone],
+  emits: ['drawOne'],
   data() {
     return {
       zone: "tefudaCards",
@@ -107,10 +135,17 @@ export default {
   },
   methods: {
     clickCard(card) {
+      if (this.workSpace.active) {
+        this.closeWorkSpace()
+      }
       // すでに選択済みのカードであれば、選択解除
       if (this.selectMode && this.selectMode.card.id === card.id) {
         this.setSelectMode(null);
         return;
+      }
+      // カードのプレビューが開いていた場合、表示するカードを切り替える
+      if (!card.faceDown && this.$store.state.displayImageUrl) {
+        this.$store.commit('setDisplayImageUrl', card.imageUrl)
       }
       // 選択する
       this.setSelectMode({
@@ -118,6 +153,13 @@ export default {
         card,
         zone: this.zone,
       });
+    },
+    clickPlaceholderCard() {
+      if (this.selectMode && this.selectMode.zone !== this.zone) {
+        this.moveSelectedCard(this.zone, false)
+      } else {
+        this.$emit('drawOne');
+      }
     },
   },
 };
@@ -130,6 +172,12 @@ export default {
 $card-width: 70px;
 
 .tefuda-zone-wrapper {
+  @media screen and (max-device-width: 800px) {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    overflow-y: scroll;
+  }
   .openZoneButton {
     transform: rotate(45deg);
     margin-left: 10px;
@@ -140,7 +188,6 @@ $card-width: 70px;
     &_wrapper {
       display: flex;
       align-items: center;
-      height: cardHeight($card-width);
     }
   }
   &.upper {
@@ -155,6 +202,9 @@ $card-width: 70px;
   &.lower {
     margin-top: 20px;
     margin-left: 100px;
+    @media screen and (max-device-width: 800px) {
+      margin-left: 10px;
+    }
     .tefuda-zone {
       display: flex;
       flex-wrap: wrap;
@@ -163,9 +213,6 @@ $card-width: 70px;
         margin-top: 5px;
       }
     }
-  }
-  img {
-    width: $card-width;
   }
   .tefuda-zone {
     height: 100%;
@@ -180,6 +227,9 @@ $card-width: 70px;
     .card {
       position: relative;
       margin-right: 5px;
+      img {
+        box-sizing: border-box;
+      }
       &.is-selected {
         img {
           border: 3px solid #b60000;
@@ -190,7 +240,7 @@ $card-width: 70px;
         position: absolute;
         left: 0;
         bottom: 0;
-        width: $card-width;
+        width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -203,6 +253,10 @@ $card-width: 70px;
         }
       }
     }
+  }
+  .card-placeholder-wrapper {
+    display: flex;
+    align-items: center;
   }
 }
 // layout
