@@ -4,7 +4,7 @@
       <o-icon
         class="openZoneButton battleZoneButton"
         pack="fas"
-        size="large"
+        size="medium"
         icon="arrow-circle-up"
         variant="primary"
         @click.stop="
