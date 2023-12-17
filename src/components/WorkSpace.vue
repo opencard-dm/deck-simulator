@@ -126,7 +126,7 @@
                 <span
                   v-if="isOwner"
                   class="drop-item-2"
-                  @click.stop="openCard(card)"
+                  @click="openCard(card)"
                   >裏返す</span
                 >
               </o-dropdown-item>
