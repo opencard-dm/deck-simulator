@@ -59,12 +59,9 @@
             variant="grey-dark"
             size="small"
             class="deck_buttons_top"
-            @click.stop="() => {
-              setCardState(this.yamafudaCards[0], {
-                faceDown: !this.yamafudaCards[0].faceDown
-              })
-            }"
-            >裏返す</o-button
+            @click.stop="setCardState(yamafudaCards[0], {
+              faceDown: !yamafudaCards[0].faceDown
+            })">裏返す</o-button
           >
           <o-button
             v-else
@@ -218,10 +215,12 @@ $card-width: 50px;
     justify-content: space-between;
     align-items: center;
     .deck_buttons_top {
-      transform: translateY(-100%);
+      position: absolute;
+      bottom: 100%;
     }
     .deck_buttons_buttom {
-      transform: translateY(50%);
+      position: absolute;
+      bottom: 0;
     }
   }
 }
