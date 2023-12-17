@@ -422,6 +422,10 @@ export default {
           );
         }, 300);
       }
+      if (this.single) {
+        sessionStorage.setItem('room', JSON.stringify(this.players))
+        return
+      }
       if (!SocketUtil.socket) return;
       this.players[player].isReady = true;
       SocketUtil.socket.emit("cards-moved", this.players[player]);
@@ -454,6 +458,11 @@ export default {
     },
     setRoomState() {
       if (this.single) {
+        const sessionRoom = sessionStorage.getItem('room')
+        if (sessionRoom) {
+          this.players = JSON.parse(sessionRoom)
+          return
+        }
         const shieldCards = this.deck.cards.slice(0, 5);
         shieldCards.forEach((c) => {
           c.faceDown = true;

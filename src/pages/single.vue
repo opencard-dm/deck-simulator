@@ -17,6 +17,10 @@ import { Deck } from "@/helpers/Deck";
 
 export default {
   components: { DuelRoom },
+  beforeRouteLeave() {
+    sessionStorage.removeItem('room')
+    console.debug('deleted session storage cache')
+  },
   data() {
     return {
       loading: true,
