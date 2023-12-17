@@ -385,12 +385,6 @@ export default {
           card.faceDown = false;
         });
       }
-      // 山札から、場に出る時には表向きにする。
-      if (from === "yamafudaCards" && to === "battleCards") {
-        selectedCards.forEach((card) => {
-          card.faceDown = false;
-        });
-      }
       // 山札へ行くときは裏向きにする。
       if (["yamafudaCards"].includes(to) && to !== from) {
         selectedCards.forEach((card) => {

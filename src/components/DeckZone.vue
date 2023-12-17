@@ -1,36 +1,67 @@
 <template>
-  <ODropdown
+  <div
     class="deckZone_wrapper"
-    :triggers="dropdownTriggers"
     position="top-left"
   >
-    <template v-slot:trigger>
+    <div>
       <div class="deck_zone" :class="side">
         <div
           class="deck_card"
           v-for="i in deckViews"
           :key="i"
-          :style="{ top: `${(i - 1) * -2}px`, left: `${(i - 1) * -2}px` }"
+          :style="{ 
+            top: `${(i - 1) * -2}px`,
+            left: `${(i - 1) * -2}px` 
+          }"
         ></div>
         <div
           class="deck_topImg"
           v-if="yamafudaCards.length > 0"
           :class="[{ is_selected: cardIsSelected(yamafudaCards[0]) }]"
-          alt
           :style="{
             top: `${deckViews.length * -2}px`,
             left: `${deckViews.length * -2}px`,
+            cursor: 'pointer',
           }"
+          @click.stop="setSelectMode({
+            zone: 'yamafudaCards',
+            card: yamafudaCards[0],
+            player,
+            selectingTarget: true,
+          })"
         >
           <img
             v-if="yamafudaCards[0].faceDown"
             :src="yamafudaCards[0].backImageUrl"
             alt=""
           />
-          <img v-else :src="yamafudaCards[0].imageUrl" alt="" />
+          <CardPopup v-else :url="yamafudaCards[0].imageUrl">
+            <img :src="yamafudaCards[0].imageUrl" alt="" />
+          </CardPopup>
         </div>
-        <div v-if="hasSelectedCard()" class="deck_buttons">
+        <div v-if="hasSelectedCard()" class="deck_buttons"
+          :style="{
+            top: `${deckViews.length * -2}px`,
+            left: `${deckViews.length * -2}px`,
+            cursor: 'pointer',
+            width: cardWidth
+          }"
+          @contextmenu.prevent
+        >
           <o-button
+            v-if="selectMode.zone === zone"
+            variant="grey-dark"
+            size="small"
+            class="deck_buttons_top"
+            @click.stop="() => {
+              setCardState(this.yamafudaCards[0], {
+                faceDown: !this.yamafudaCards[0].faceDown
+              })
+            }"
+            >裏返す</o-button
+          >
+          <o-button
+            v-else
             variant="grey-dark"
             size="small"
             @click.stop="moveSelectedCard(zone, true)"
@@ -38,43 +69,43 @@
           >
           <o-button
             variant="grey-dark"
+            class="deck_buttons_buttom"
             size="small"
             @click.stop="moveSelectedCard(zone, false)"
             >下へ</o-button
           >
         </div>
       </div>
-    </template>
-    <template v-if="yamafudaCards.length > 0">
-      <o-dropdown-item aria-role="listitem" @click="openDeck"
-        >山札を確認</o-dropdown-item
-      >
-      <o-dropdown-item
-        aria-role="listitem"
-        @click="
-          setSelectMode({
-            zone: 'yamafudaCards',
-            card: yamafudaCards[0],
-            player,
-            selectingTarget: true,
-          })
-        "
-        >山札の上から一枚目を</o-dropdown-item
-      >
-      <o-dropdown-item
-        aria-role="listitem"
-        @click="moveCard('yamafudaCards', 'tefudaCards', yamafudaCards[0])"
-        >ドロー</o-dropdown-item
-      >
-    </template>
-  </ODropdown>
+    </div>
+  </div>
 </template>
+
+<script setup>
+import CardPopup from './elements/CardPopup'
+
+const props = defineProps({
+  yamafudaCards: Array,
+  player: String,
+  side: String,
+})
+const cardWidthNum = 50
+const cardWidth = `${cardWidthNum}px`
+const cardHeight = `${cardWidthNum * 908 / 650}px`
+
+const emit = defineEmits(['move-cards'])
+const drawOne = () => {
+  emit('move-cards', 'yamafudaCards', 'tefudaCards', [props.yamafudaCards[0]], props.player)
+}
+defineExpose({
+  drawOne
+})
+</script>
 
 <script>
 import mixin from "@/helpers/mixin.js";
+import { defineExpose } from 'vue';
 
 export default {
-  props: ["player", "yamafudaCards", "side"],
   mixins: [mixin.zone],
   data() {
     return {
@@ -125,9 +156,6 @@ export default {
         player: this.player,
       });
     },
-    drawOne() {
-      this.moveCard(this.zone, 'tefudaCards', this.yamafudaCards[0])
-    }
   },
 };
 </script>
@@ -176,12 +204,17 @@ $card-width: 50px;
     border-radius: 2px;
   }
   .deck_buttons {
+    position: relative;
     display: flex;
     height: 100%;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    > * + * {
-      margin-top: 8px;
+    .deck_buttons_top {
+      transform: translateY(-100%);
+    }
+    .deck_buttons_buttom {
+      transform: translateY(50%);
     }
   }
 }
