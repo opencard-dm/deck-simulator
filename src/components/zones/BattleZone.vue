@@ -343,7 +343,7 @@ $card-width: 100px;
     position: absolute;
     width: 100%;
     height: 100%;
-    background: radial-gradient(lightyellow, rgb(241, 241, 241));
+    background: radial-gradient(rgb(254, 218, 151), rgb(241, 241, 241));
     border-radius: 10px;
   }
   .card-placeholder-wrapper {
