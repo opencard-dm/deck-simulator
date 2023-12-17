@@ -30,11 +30,17 @@
             selectingTarget: true,
           })"
         >
-          <img
+          <OnLongPress
             v-if="yamafudaCards[0].faceDown"
-            :src="yamafudaCards[0].backImageUrl"
-            alt=""
-          />
+            @trigger="openDeck()"
+            @contextmenu.prevent
+            :prevent="true"
+          >
+            <img
+              :src="yamafudaCards[0].backImageUrl"
+              alt=""
+            />
+          </OnLongPress>
           <CardPopup v-else :url="yamafudaCards[0].imageUrl">
             <img :src="yamafudaCards[0].imageUrl" alt="" />
           </CardPopup>
@@ -82,6 +88,7 @@
 
 <script setup>
 import CardPopup from './elements/CardPopup'
+import { OnLongPress } from '@vueuse/components'
 
 const props = defineProps({
   yamafudaCards: Array,

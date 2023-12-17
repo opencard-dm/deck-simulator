@@ -21,11 +21,12 @@
           <router-link to="/">{{single ? 'トップページへ' : '退出する' }}</router-link>
         </div>
       </nav>
-      <div v-if="single && isPhone()" style="margin-top: 30px; padding: 0px 20px;">
+      <div style="margin-top: 30px; padding: 0px 20px;">
         <div>操作方法</div>
-        <div>・カードをタップで選択</div>
-        <div>・カード画像をプッシュで拡大</div>
-        <div>・「マナ」や「シールド」ボタンをタップでポップアップを開く</div>
+        <div>・カードを{{isPhone() ? 'タップ' : 'クリック'}}で選択</div>
+        <div v-if="isPhone()">・カード画像を長押しで拡大</div>
+        <div>・「マナ」や「シールド」ボタンを{{isPhone() ? 'タップ' : 'クリック'}}でポップアップを開く</div>
+        <div>・山札を長押しで山札ポップアップを開く</div>
         <div>・「重ねる」ボタンは進化やギャラクシールドに使用する</div>
       </div>
       <nav class="nav-links" v-if="!single">
