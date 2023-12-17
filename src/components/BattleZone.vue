@@ -108,6 +108,7 @@
           <o-button
             v-if="card.faceDown && !card.isChojigen"
             variant="grey-dark"
+            :size="isPhone() ? 'small' : ''"
             @click.stop="setCardState(card, { faceDown: !card.faceDown })"
             >裏返す</o-button
           >
@@ -116,12 +117,14 @@
             <o-button
               v-if="card.tapped"
               variant="grey-dark"
+            :size="isPhone() ? 'small' : ''"
               @click.stop="toggleTap(card)"
               >アンタップ</o-button
             >
-            <o-button v-else variant="grey-dark" @click.stop="toggleTap(card)"
-              >タップ</o-button
-            >
+            <o-button v-else variant="grey-dark"
+              :size="isPhone() ? 'small' : ''"
+              @click.stop="toggleTap(card)"
+            >タップ</o-button>
           </template>
         </div>
       </div>

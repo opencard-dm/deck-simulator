@@ -6,7 +6,7 @@
         pack="fas"
         icon="bars"
         size="small"
-        style="color: white; margin-left: 20px; font-size: 18px;"
+        style="color: white; margin-left: 20px; font-size: 24px;"
         @click.stop="sidebarOpen = !sidebarOpen"
       ></o-icon>
     </div>
@@ -18,9 +18,16 @@
     >
       <nav class="nav-links">
         <div class="nav-item">
-          <router-link to="/">退出する</router-link>
+          <router-link to="/">{{single ? 'トップページへ' : '退出する' }}</router-link>
         </div>
       </nav>
+      <div v-if="single && isPhone()" style="margin-top: 30px; padding: 0px 20px;">
+        <div>操作方法</div>
+        <div>・カードをタップで選択</div>
+        <div>・カード画像をプッシュで拡大</div>
+        <div>・「マナ」や「シールド」ボタンをタップでポップアップを開く</div>
+        <div>・「重ねる」ボタンは進化やギャラクシールドに使用する</div>
+      </div>
       <nav class="nav-links" v-if="!single">
         <div class="nav-item">
           <a @click="openResetGameModal()">ゲームをリセットする</a>
@@ -62,6 +69,7 @@
 <script setup>
 import { Layout } from '@/helpers/layout'
 import { onMounted, ref } from 'vue';
+import { isPhone } from '@/helpers/Util';
 
 defineProps({
   single: Boolean,

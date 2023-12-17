@@ -3,7 +3,7 @@ import { isPhone } from "./Util";
 export class Layout {
   static headerHeight() {
     if (isPhone()) {
-      return 30
+      return 40
     }
     return 40
   }
