@@ -52,8 +52,8 @@
 
 <script>
 // Dropdownを使うと、スクロールゾーンの中にメニューが表示されて何も見えない問題があった。
-import mixin from "../helpers/mixin";
-import MarkTool from "./mark-tool/MarkTool.vue";
+import mixin from "@/helpers/mixin";
+import MarkTool from "../mark-tool/MarkTool.vue";
 
 export default {
   components: { MarkTool },

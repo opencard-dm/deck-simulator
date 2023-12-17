@@ -107,7 +107,7 @@
 </template>
 
 <script setup>
-import CardPopup from './elements/CardPopup'
+import CardPopup from '../elements/CardPopup'
 import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
 const cardWidth = 70

@@ -153,7 +153,8 @@
 
 <script setup>
 import { isPhone } from "@/helpers/Util"
-import CardPopup from './elements/CardPopup'
+import CardPopup from '../elements/CardPopup'
+import MarkTool from "../mark-tool/MarkTool";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650
@@ -161,11 +162,9 @@ const cardHeight = cardWidth * 908 / 650
 
 <script>
 import mixin from "@/helpers/mixin.js";
-import { MarkTool } from ".";
 
 export default {
   props: ["player", "battleCards", "battleCardGroups", "side"],
-  components: { MarkTool },
   mixins: [mixin.zone],
   computed: {
     battleZoneCards() {

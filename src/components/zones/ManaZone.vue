@@ -76,7 +76,7 @@
 
 <script>
 import mixin from "@/helpers/mixin.js";
-import RoundButton from './elements/RoundButton'
+import RoundButton from '../elements/RoundButton'
 
 export default {
   props: ["player", "manaCards", "side"],

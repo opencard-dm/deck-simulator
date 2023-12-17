@@ -61,13 +61,13 @@
 </template>
 
 <script setup>
-import TefudaZone from './TefudaZone.vue';
-import ManaZone from './ManaZone.vue';
-import PlayerZone from './PlayerZone.vue';
-import BattleZone from './BattleZone.vue';
-import ShieldZone from './ShieldZone.vue';
-import DeckZone from './DeckZone.vue';
-import ChojigenZone from './ChojigenZone.vue';
+import TefudaZone from './zones/TefudaZone.vue';
+import ManaZone from './zones/ManaZone.vue';
+import PlayerZone from './zones/PlayerZone.vue';
+import BattleZone from './zones/BattleZone.vue';
+import ShieldZone from './zones/ShieldZone.vue';
+import DeckZone from './zones/DeckZone.vue';
+import ChojigenZone from './zones/ChojigenZone.vue';
 
 const props = defineProps({
   player: String,
