@@ -1,22 +1,23 @@
 <template>
-  <DuelRoom
+  <SingleRoom
     :upper-player="'b'"
     :lower-player="'a'"
     :room="room"
     :loading="loading"
     :deck="deck"
     :single="true"
-  ></DuelRoom>
+  ></SingleRoom>
 </template>
+
+<script setup>
+import SingleRoom from "@/components/SingleRoom.vue";
+</script>
 
 <script>
 import axios from "axios";
-import DuelRoom from "../components/DuelRoom.vue";
 import { SocketUtil } from "../helpers/socket";
 import { Deck } from "@/helpers/Deck";
-
 export default {
-  components: { DuelRoom },
   beforeRouteLeave() {
     sessionStorage.removeItem('room')
     console.debug('deleted session storage cache')

@@ -10,6 +10,7 @@ export function useRoomSetup(props) {
   const store = useStore();
   const roomId = route.query.roomId
   const players = reactive(initialData({ roomId }).players);
+  const deckSelectorActive = ref(true);
 
   function moveCards(from, to, selectedCards, player, prepend = false) {
     if (!selectedCards || selectedCards.length === 0) return;
@@ -83,6 +84,7 @@ export function useRoomSetup(props) {
 
   function scrollZone(targetSelector, direction) {
     const target = document.querySelector(targetSelector);
+    if (!target) return
     target.scrollTo({
       behavior: 'smooth',
       [direction]: target.scrollWidth,
@@ -98,38 +100,38 @@ export function useRoomSetup(props) {
         players.b = parsed.b;
         return;
       }
-      const shieldCards = this.deck.cards.slice(0, 5);
+      const shieldCards = props.deck.cards.slice(0, 5);
       shieldCards.forEach((c) => {
         c.faceDown = true;
       });
       players.a.cards.shieldCards = shieldCards;
-      players.a.cards.tefudaCards = this.deck.cards.slice(5, 10);
+      players.a.cards.tefudaCards = props.deck.cards.slice(5, 10);
       // 40枚の制限をしない
-      const yamafudaCards = this.deck.cards.slice(10);
+      const yamafudaCards = props.deck.cards.slice(10);
       yamafudaCards.forEach((c) => {
         c.faceDown = true;
       });
       players.a.cards.yamafudaCards = yamafudaCards;
-      players.a.cards.chojigenCards = this.deck.chojigenCards || [];
-      players.a.hasChojigen = this.deck.hasChojigen;
-      this.onDeckSelected({
-        deck: this.deck,
+      players.a.cards.chojigenCards = props.deck.chojigenCards || [];
+      players.a.hasChojigen = props.deck.hasChojigen;
+      onDeckSelected({
+        deck: props.deck,
         player: 'a',
       });
-      this.deckSelectorActive = false;
+      deckSelectorActive.value = false;
       return;
     }
-    if (this.room.a) {
-      players.a = this.room.a;
+    if (props.room.a) {
+      players.a = props.room.a;
     }
-    if (this.room.b) {
-      players.b = this.room.b;
+    if (props.room.b) {
+      players.b = props.room.b;
     }
     // 片方がデッキ未選択であれば、モーダルを表示する。
     if (!players.a.isReady || !players.b.isReady) {
-      this.deckSelectorActive = true;
+      deckSelectorActive.value = true;
     } else {
-      this.deckSelectorActive = false;
+      deckSelectorActive.value = false;
     }
     if (SocketUtil.socket) {
       //
@@ -137,14 +139,18 @@ export function useRoomSetup(props) {
       SocketUtil.socket.on('cards-moved', (playerData) => {
         players[playerData.name] = playerData;
       });
-      SocketUtil.socket.on(
-        'set-message',
-        function (data) {
-          // this.message[data.player] = data.message;
-          this.expireMessage(data.message, data.player);
-        }.bind(this)
-      );
+      // SocketUtil.socket.on(
+      //   'set-message',
+      //   function (data) {
+      //     // this.message[data.player] = data.message;
+      //     this.expireMessage(data.message, data.player);
+      //   }.bind(this)
+      // );
     }
+  }
+  function onDeckSelected({ deck, player }) {
+    players[player].isReady = true;
+    players[player].hasChojigen = !!deck.hasChojigen;
   }
 
   function groupCard({ from, to, fromCard, toCard, player }) {
