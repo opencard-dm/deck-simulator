@@ -14,7 +14,7 @@ export default (
   app.use(express.json())
   app.use(function(req, res, next) {
     if (req.hostname !== 'deck-simulator.com') {
-      res.setHeader('X-Robots-Tag', 'noindex')
+      // res.setHeader('X-Robots-Tag', 'noindex')
       res.setHeader('Link', '<https://deck-simulator.com>; rel="canonical"')
     }
     next();
