@@ -13,7 +13,7 @@
         </option>
       </select>
       <o-button
-        @click.stop="selectDeck"
+        @click.stop="onClickSelectButton"
         variant="info"
         :style="{ marginTop: '20px' }"
         >選択</o-button
@@ -90,7 +90,7 @@ import { Deck } from "@/helpers/Deck";
 import axios from "axios";
 
 export default {
-  props: ["isReady", "player", "partnerIsReady", "active"],
+  props: ["isReady", "player", "partnerIsReady", "active", "cancelable"],
   emits: ['move-cards', 'selected', 'update:active'],
   data() {
     return {
@@ -122,6 +122,7 @@ export default {
   },
   computed: {
     canCansel() {
+      if (this.cancelable) return true
       return this.isReady;
     },
     tabUrl() {
@@ -145,11 +146,6 @@ export default {
     },
   },
   mounted() {
-    // クエリストリングにdeckIdが存在したときのショートカット。
-    if (this.$route.query.deckId) {
-      this.deckId = this.$route.query.deckId;
-      this.selectDeck();
-    }
     axios
       .get('/api/decks')
       .then((res) => {
@@ -160,9 +156,14 @@ export default {
       });
   },
   methods: {
-    async selectDeck() {
+    onClickSelectButton() {
+      this.errors.scrapeUrl = ''
+      this.scrapeUrl = this.allDecks[this.deckId].url
+      this.scrape()
+    },
+    async setupDeck(deckData) {
       const deck = await Deck.prepareDeckForGame(
-        this.allDecks[this.deckId],
+        deckData,
         this.player === "a"
       );
       console.log("selected deck", deck);
@@ -224,13 +225,13 @@ export default {
         })
         .then((res) => {
           console.log("fetched deck", res);
-          this.$store.commit("decks/setData", [
-            res.data,
-            ...this.$store.state.decks.data,
-          ]);
+          // this.$store.commit("decks/setData", [
+          //   res.data,
+          //   ...this.$store.state.decks.data,
+          // ]);
           this.scrapeUrl = "";
           this.scraping = false;
-          this.selectDeck()
+          this.setupDeck(res.data)
         })
         .catch((err) => {
           // this.scrapeUrl = "";

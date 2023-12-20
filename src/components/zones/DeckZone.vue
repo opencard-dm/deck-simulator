@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import CardPopup from './elements/CardPopup'
+import CardPopup from '../elements/CardPopup'
 import { OnLongPress } from '@vueuse/components'
 
 const props = defineProps({

@@ -3,5 +3,6 @@
         "yarn.lock": true,
         "**/bower_components": true,
         "**/*.code-search": true
-    }
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
 }

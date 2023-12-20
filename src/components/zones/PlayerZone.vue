@@ -67,7 +67,7 @@ import { isPhone } from "@/helpers/Util";
 
 <script>
 import mixin from "@/helpers/mixin.js";
-import RoundButton from './elements/RoundButton'
+import RoundButton from '../elements/RoundButton'
 
 export default {
   props: ["player", "bochiCards", "shieldCards", "shieldCardGroups", "side"],
