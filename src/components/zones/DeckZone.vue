@@ -106,7 +106,7 @@ defineExpose({
 </script>
 
 <script>
-import mixin from "@/helpers/mixin.js";
+import mixin from "@/helpers/mixin";
 import { defineExpose } from 'vue';
 
 export default {

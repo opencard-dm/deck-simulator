@@ -48,18 +48,18 @@
       <OField
         class="deckForm_searchField"
         style="margin-top: 10px; max"
-        :variant="deckUrlError ? 'danger' : ''"
-        :message="scraping ? 'デッキ取得中です' : deckUrlError"
+        :variant="DeckForm.deckUrlError.value ? 'danger' : ''"
+        :message="DeckForm.scraping.value ? 'デッキ取得中です' : DeckForm.deckUrlError.value"
       >
         <OInput
-          v-model="deckUrl"
+          v-model="DeckForm.deckUrl.value"
           placeholder="デッキメーカーのURLを貼り付ける"
           type="text"
           icon="search"
           :expanded="true"
-          :disabled="scraping"
-          @keypress.prevent="onKeyPress"
-          @input="onDeckUrlChange"
+          :disabled="DeckForm.scraping.value"
+          @keypress.prevent="DeckForm.onKeyPress()"
+          @input="DeckForm.onDeckUrlChange()"
         >
         </OInput>
       </OField>
@@ -81,100 +81,100 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { makeRandomString } from "@/helpers/makeRandomString";
 import axios from "axios";
-import { OField, OInput } from "@oruga-ui/oruga-next";
 
-export default {
-  data() {
-    return {
-      deckUrl: "",
-      deckUrlError: "",
-      scraping: false,
-      defaultDecks: [
-        {
-          name: "赤単我我我ブランド【2021/12・オリジナル】",
-          id: "a4c9f4ea-0c42-4c7b-987b-a589f549f1d8",
-        },
-        {
-          name: "4cガイアッシュ覇道【2021/12・オリジナル】",
-          id: "da3e7dfb-948e-47d8-8924-d277368ca399",
-        },
-        {
-          name: "デアリガズ墓地ソース【2021/12・オリジナル】",
-          id: "a7aa7e2f-f2af-4271-b5d1-08ddaee92362",
-        },
-      ],
-      rooms: [{ id: "1" }, { id: "2" }, { id: "3" }],
-    };
-  },
-  computed: {
-    decks() {
-      return this.$store.state.decks.data;
-    },
-    readAbout() {
-      return this.$store.state.setting.readAbout;
-    },
-  },
-  methods: {
-    onKeyPress() {
-      this.deckUrlError = "ペーストのみ可能です";
-    },
-    onDeckUrlChange() {
-      const newVal = this.deckUrl
-      if (!newVal) {
-        this.deckUrlError = "";
-        return;
-      }
-      if (
-        !newVal.match(/^https:\/\/gachi-matome.com\/deckrecipe-detail-dm/) ||
-        !newVal.includes("tcgrevo_deck_maker_deck_id=")
-      ) {
-        this.deckUrlError = "不適切なURLです";
-        return;
-      } else {
-        if (this.scraping || this.deckUrlError) return;
-        const deckId = newVal.split("tcgrevo_deck_maker_deck_id=")[1];
-        this.scraping = true
-        setTimeout(() => {
-          this.$router.push({
-            path: "/single",
-            query: { deck_id: deckId },
-          });
-        }, 500)
-      }
-      this.deckUrlError = "";
-    },
-    randomRoomId() {
-      return makeRandomString(4) + "-" + makeRandomString(3);
-    },
-    getCloudRunCookie() {
-      const cookie = document.cookie;
-      let target = "";
-      if (cookie) {
-        cookie.split(";").forEach((seg) => {
-          const trimed = seg.trim();
-          if (trimed.startsWith("GAESA=")) {
-            target = trimed;
-          }
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter()
+
+function useDeckForm() {
+  const deckUrl = ref('')
+  const deckUrlError = ref('')
+  const scraping = ref(false)
+  function onKeyPress() {
+    deckUrlError.value = "ペーストのみ可能です";
+  }
+  function onDeckUrlChange() {
+    const newVal = deckUrl.value
+    if (!newVal) {
+      deckUrlError.value = "";
+      return;
+    }
+    if (
+      !newVal.match(/^https:\/\/gachi-matome.com\/deckrecipe-detail-dm/) ||
+      !newVal.includes("tcgrevo_deck_maker_deck_id=")
+    ) {
+      deckUrlError.value = "不適切なURLです";
+      return;
+    } else {
+      if (scraping.value || deckUrlError.value) return;
+      const deckId = newVal.split("tcgrevo_deck_maker_deck_id=")[1];
+      scraping.value = true
+      setTimeout(() => {
+        router.push({
+          path: "/single",
+          query: { deck_id: deckId },
         });
-      }
-      return target;
-    },
-    async createRoom() {
-      const roomId = this.randomRoomId();
-      await axios.put(`/api/rooms/${roomId}`, {
-        cookie: this.getCloudRunCookie(),
-      });
-      this.$router.push({
-        path: "room",
-        query: { roomId, player: "a" },
-      });
-    },
+      }, 500)
+    }
+    deckUrlError.value = "";
+  }
+  return {
+    deckUrl,
+    deckUrlError,
+    scraping,
+    onKeyPress,
+    onDeckUrlChange,
+  }
+}
+
+const DeckForm = useDeckForm()
+
+const defaultDecks = [
+  {
+    name: "赤単我我我ブランド【2021/12・オリジナル】",
+    id: "a4c9f4ea-0c42-4c7b-987b-a589f549f1d8",
   },
-  components: { OField, OInput },
-};
+  {
+    name: "4cガイアッシュ覇道【2021/12・オリジナル】",
+    id: "da3e7dfb-948e-47d8-8924-d277368ca399",
+  },
+  {
+    name: "デアリガズ墓地ソース【2021/12・オリジナル】",
+    id: "a7aa7e2f-f2af-4271-b5d1-08ddaee92362",
+  },
+]
+
+
+function randomRoomId() {
+  return makeRandomString(4) + "-" + makeRandomString(3);
+}
+function getCloudRunCookie() {
+  const cookie = document.cookie;
+  let target = "";
+  if (cookie) {
+    cookie.split(";").forEach((seg) => {
+      const trimed = seg.trim();
+      if (trimed.startsWith("GAESA=")) {
+        target = trimed;
+      }
+    });
+  }
+  return target;
+}
+async function createRoom() {
+  const router = useRouter()
+  const roomId = randomRoomId();
+  await axios.put(`/api/rooms/${roomId}`, {
+    cookie: getCloudRunCookie(),
+  });
+  router.push({
+    path: "room",
+    query: { roomId, player: "a" },
+  });
+}
 </script>
 
 <style lang="scss" scoped>

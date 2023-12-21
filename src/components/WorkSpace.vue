@@ -242,8 +242,8 @@ const cardHeight = cardWidth * 908 / 650
 </script>
 
 <script>
-import mixin from "../helpers/mixin.js";
-import { MarkTool } from "./index.js";
+import mixin from "../helpers/mixin";
+import { MarkTool } from "./index";
 import { isPhone } from '@/helpers/Util';
 
 export default {

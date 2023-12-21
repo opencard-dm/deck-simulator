@@ -3,7 +3,7 @@ import { deckList } from '../../src/helpers/data.js'
 import sampleDeckList from '../../src/helpers/data-sample.js'
 import { RoomData } from './roomData.js'
 import { FireStore } from './firestore.js'
-import { Deck } from '../../src/helpers/Deck.js'
+import { Deck } from '../../src/helpers/Deck'
 import { getDeckData } from '../gm-deck-maker/index.js'
 import axios from 'axios'
 

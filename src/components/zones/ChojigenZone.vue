@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import mixin from "@/helpers/mixin.js";
+import mixin from "@/helpers/mixin";
 
 export default {
   props: ["player", "chojigenCards", "side", "hasChojigen"],

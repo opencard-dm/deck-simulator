@@ -161,7 +161,7 @@ const cardHeight = cardWidth * 908 / 650
 </script>
 
 <script>
-import mixin from "@/helpers/mixin.js";
+import mixin from "@/helpers/mixin";
 
 export default {
   props: ["player", "battleCards", "battleCardGroups", "side"],

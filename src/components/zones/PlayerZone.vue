@@ -66,7 +66,7 @@ import { isPhone } from "@/helpers/Util";
 </script>
 
 <script>
-import mixin from "@/helpers/mixin.js";
+import mixin from "@/helpers/mixin";
 import RoundButton from '../elements/RoundButton.vue'
 
 export default {

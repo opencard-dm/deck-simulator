@@ -67,7 +67,7 @@
   </div>
 </template>
 <script>
-import { Deck } from "../../helpers/Deck.js";
+import { Deck } from "../../helpers/Deck";
 import DeckHeader from "./DeckHeader.vue";
 import CardList from "./CardList.vue";
 

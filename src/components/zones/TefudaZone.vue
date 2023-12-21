@@ -117,7 +117,7 @@ const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
 </script>
 
 <script>
-import mixin from "@/helpers/mixin.js";
+import mixin from "@/helpers/mixin";
 
 export default {
   props: ["player", "tefudaCards", "side"],
