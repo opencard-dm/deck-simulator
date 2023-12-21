@@ -4,7 +4,7 @@ import sampleDeckList from '../../src/helpers/data-sample.js'
 import { RoomData } from './roomData.js'
 import { FireStore } from './firestore.js'
 import { Deck } from '../../src/helpers/Deck.js'
-import { getDeckData } from '../../src/gm-deck-maker/index.js'
+import { getDeckData } from '../gm-deck-maker/index.js'
 import axios from 'axios'
 
 const router = Router()
