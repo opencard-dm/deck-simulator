@@ -8,6 +8,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["vite/client"],
     "esModuleInterop": true,
     "diagnostics": false,
     "outDir": "./dist"
