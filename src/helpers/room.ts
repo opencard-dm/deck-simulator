@@ -4,66 +4,24 @@ import { useStore } from 'vuex';
 import { Util } from '@/helpers/Util';
 import { SocketUtil } from '../helpers/socket';
 import { useRoute } from 'vue-router';
+import { CardActions } from './CardActions';
+import { player, zone, cardState } from '@/entities';
 
 export function useRoomSetup(props) {
   const route = useRoute();
   const store = useStore();
-  const roomId = route.query.roomId
-  const players = reactive(initialData({ roomId }).players);
+  const roomId = route.query.roomId as string
+  const players = reactive(initialData(roomId).players);
   const deckSelectorActive = ref(true);
 
-  function moveCards(from, to, selectedCards, player, prepend = false) {
+  const cardActions = new CardActions(players)
+
+  function moveCards(from: zone, to: zone, selectedCards: any[], player: player, prepend = false) {
     if (!selectedCards || selectedCards.length === 0) return;
     if (store.state.displayImageUrl) {
       store.commit('setDisplayImageUrl', '');
     }
-    // 先頭のカードがグループに属していた場合、そのグループから抜ける。
-    const card = selectedCards[0];
-    if (card.groupId) {
-      ungroupCard({
-        zone: from,
-        groupName: card.group,
-        card,
-        player,
-      });
-    }
-    // 手札、マナ、墓地へ行く場合は表向きにする。
-    if (
-      ['tefudaCards', 'manaCards', 'bochiCards'].includes(to) &&
-      to !== from
-    ) {
-      selectedCards.forEach((card) => {
-        card.faceDown = false;
-      });
-    }
-    // 山札へ行くときは裏向きにする。
-    if (['yamafudaCards'].includes(to) && to !== from) {
-      selectedCards.forEach((card) => {
-        card.faceDown = true;
-      });
-    }
-    // 違うゾーンへ移動するときはタップとマークを解除する。
-    if (to !== from) {
-      selectedCards.forEach((card) => {
-        card.markColor = '';
-        card.tapped = false;
-      });
-    }
-    players[player]['cards'][from] = Util.arrayRemoveCards(
-      players[player]['cards'][from],
-      selectedCards
-    );
-    if (prepend) {
-      players[player]['cards'][to] = Util.arrayPrependCards(
-        players[player]['cards'][to],
-        selectedCards
-      );
-    } else {
-      players[player]['cards'][to] = Util.arrayAppendCards(
-        players[player]['cards'][to],
-        selectedCards
-      );
-    }
+    cardActions.moveCards(from, to, selectedCards, player, prepend)
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {
       setTimeout(() => {
@@ -153,88 +111,31 @@ export function useRoomSetup(props) {
     players[player].hasChojigen = !!deck.hasChojigen;
   }
 
-  function groupCard({ from, to, fromCard, toCard, player }) {
-    // 情報をカードに追加
-    // card.groupはできれば使いたくない。moveCards内でのみ使用。
-    fromCard.group = to;
-    toCard.group = to;
-    if (toCard.groupId) {
-      // ターゲットのカードが既にグループ化されていた場合、
-      // 既存のグループに追加する。
-      const group = players[player]['cards'][to].find(
-        (g) => g.id === toCard.groupId
-      );
-      group.cardIds.unshift(fromCard.id);
-      fromCard.groupId = toCard.groupId;
-    } else {
-      // 新しくグループを作成する。
-      // TODO: 被らない文字列にする。
-      const groupId = `${toCard.id}-${fromCard.id}`;
-      players[player]['cards'][to].push({
-        id: groupId,
-        cardIds: [fromCard.id, toCard.id],
-      });
-      fromCard.groupId = groupId;
-      toCard.groupId = groupId;
-    }
-    // 並べ替え
-    if (['battleCardGroups', 'shieldCardGroups'].includes(to)) {
-      // fromCardをtoCardの前に移す。
-      Util.arrayInsertBefore(players[player]['cards'][from], toCard, fromCard);
-    }
+  function groupCard({ from, to, fromCard, toCard, player }: {
+    from: zone,
+    to: zone,
+    fromCard: any,
+    toCard: any,
+    player: player,
+  }) {
+    cardActions.groupCard({ from, to, fromCard, toCard, player })
     // 状態の変更を送信する
     if (!SocketUtil.socket) return;
     SocketUtil.socket.emit('cards-moved', players[player]);
   }
-  // groupNameはbattleCardGroupsかshieldCardGroups
-  function ungroupCard({ groupName, card, player, zone }) {
-    // シールドのグループの場合はカードの行き先がわからず、注意が必要。
-    const groupIndex = players[player]['cards'][groupName].findIndex(
-      (g) => g.id === card.groupId
-    );
-    const group = players[player]['cards'][groupName].find(
-      (g) => g.id === card.groupId
-    );
-    players[player]['cards'][groupName][groupIndex].cardIds.splice(
-      group.cardIds.findIndex((id) => id === card.id),
-      1
-    );
-    // カードが一枚だけのグループは消す。
-    if (group.cardIds.length === 1) {
-      const lastCardIndex = players[player]['cards'][zone].findIndex(
-        (c) => c.id === group.cardIds[0]
-      );
-      if (lastCardIndex) {
-        const lastCard = players[player]['cards'][zone][lastCardIndex];
-        ungroupCard({
-          groupName,
-          card: lastCard,
-          player,
-          zone,
-        });
-      }
-    }
-    // cardIdsが0になったグループは自動で消す。
-    if (group.cardIds.length === 0) {
-      players[player]['cards'][groupName].splice(groupIndex, 1);
-    }
-    card.groupId = null;
-    card.group = null;
+
+  function changeCardsState({ from, cards, player, cardState }: {
+    from: zone,
+    cards: any[],
+    player: player,
+    cardState: cardState,
+  }) {
+    cardActions.changeCardsState({ from, cards, player, cardState })
   }
-  function changeCardsState(from, cards, player, cardState) {
-    const cardIds = cards.map((c) => c.id);
-    players[player]["cards"][from].forEach((c) => {
-      if (!cardIds.includes(c.id)) return;
-      Object.keys(cardState).forEach((key) => {
-        if (["tapped", "faceDown", "markColor"].includes(key)) {
-          c[key] = cardState[key];
-        }
-      });
-    });
-  }
+
   function resetGame() {
-    players.a = initialData({ roomId }).players.a;
-    players.b = initialData({ roomId }).players.b;
+    players.a = initialData(roomId).players.a;
+    players.b = initialData(roomId).players.b;
     window.scrollTo({
       top: 0,
       // behavior: "smooth",
@@ -247,7 +148,6 @@ export function useRoomSetup(props) {
   return {
     moveCards,
     groupCard,
-    ungroupCard,
     setRoomState,
     changeCardsState,
     props,
@@ -256,7 +156,7 @@ export function useRoomSetup(props) {
   }
 }
 
-function initialData({ roomId }) {
+function initialData(roomId: string) {
   return {
     players: {
       a: {
