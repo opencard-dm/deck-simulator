@@ -1,19 +1,32 @@
 <template>
   <SingleRoom
+    ref="roomComponent"
     :upper-player="'b'"
     :lower-player="'a'"
     :room="room"
     :loading="loading"
     :deck="deck"
     :single="true"
+    :gameLogger="gameLogger"
   ></SingleRoom>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useHistory } from '@/helpers/room';
+
 import SingleRoom from "@/components/SingleRoom.vue";
+const roomComponent = ref<InstanceType<typeof SingleRoom> | null>(null);
+const { gameLogger } = useHistory()
+
+onMounted(() => {
+  if (roomComponent !== null) {
+    gameLogger.setRoom(roomComponent.value as InstanceType<typeof SingleRoom>)
+  }
+})
 </script>
 
-<script>
+<script lang="ts">
 import axios from "axios";
 import { SocketUtil } from "../helpers/socket";
 import { Deck } from "@/helpers/Deck";

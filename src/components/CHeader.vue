@@ -9,6 +9,28 @@
         style="color: white; margin-left: 20px; font-size: 24px;"
         @click.stop="sidebarOpen = !sidebarOpen"
       ></o-icon>
+      <o-icon
+        pack="fas"
+        icon="undo"
+        size="small"
+        style="margin-left: 40px; font-size: 24px;"
+        :style="{
+          color: gameLogger.historyIndex === -1 ? 'gray' : '#ddd'
+        }"
+        title="Ctrl + Z"
+        @click.stop="gameLogger.undo()"
+      ></o-icon>
+      <o-icon
+        pack="fas"
+        icon="redo"
+        size="small"
+        style="color: #ddd; margin-left: 20px; font-size: 24px;"
+        :style="{
+          color: gameLogger.canredo() ? '#ddd' : 'gray'
+        }"
+        title="Ctrl + Y"
+        @click.stop="gameLogger.redo()"
+      ></o-icon>
     </div>
     <div
       class="sidebar"
@@ -67,14 +89,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Layout } from '@/helpers/layout'
 import { onMounted, ref } from 'vue';
 import { isPhone } from '@/helpers/Util';
+import { GameLogger } from '@/helpers/GameLogger';
 
-defineProps({
-  single: Boolean,
-})
+const props = defineProps<{
+  single: boolean,
+  gameLogger: GameLogger,
+}>()
+
+const emit = defineEmits([
+  'reset-game',
+])
 
 const headerHeight = `${Layout.headerHeight()}px`
 
@@ -84,9 +112,8 @@ onMounted(() => {
 });
 </script>
 
-<script>
+<script lang="ts">
 export default {
-  emits: ['reset-game'],
   data() {
     return {
       sidebarOpen: false,

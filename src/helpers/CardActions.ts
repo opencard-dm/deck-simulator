@@ -5,7 +5,7 @@ import { Card, CardGroup } from "@/entities/Card";
 export interface moveCardsParams {
   from: zone
   to: zone
-  selectedCards: Card[]
+  cards: Card[]
   player: player
   prepend: boolean
 }
@@ -34,10 +34,10 @@ export class CardActions {
     public players: any
   ) {}
 
-  moveCards({ from, to, selectedCards, player, prepend }: moveCardsParams) {
-    if (!selectedCards || selectedCards.length === 0) return;
+  moveCards({ from, to, cards, player, prepend }: moveCardsParams) {
+    if (!cards || cards.length === 0) return;
     // 先頭のカードがグループに属していた場合、そのグループから抜ける。
-    const card = selectedCards[0];
+    const card = cards[0];
     if (card.groupId && card.group) {
       this.ungroupCard({
         zone: from,
@@ -51,36 +51,36 @@ export class CardActions {
       ['tefudaCards', 'manaCards', 'bochiCards'].includes(to) &&
       to !== from
     ) {
-      selectedCards.forEach((card) => {
+      cards.forEach((card) => {
         card.faceDown = false;
       });
     }
     // 山札へ行くときは裏向きにする。
     if (['yamafudaCards'].includes(to) && to !== from) {
-      selectedCards.forEach((card) => {
+      cards.forEach((card) => {
         card.faceDown = true;
       });
     }
     // 違うゾーンへ移動するときはタップとマークを解除する。
     if (to !== from) {
-      selectedCards.forEach((card) => {
+      cards.forEach((card) => {
         card.markColor = '';
         card.tapped = false;
       });
     }
     this.players[player]['cards'][from] = Util.arrayRemoveCards(
       this.players[player]['cards'][from],
-      selectedCards
+      cards
     );
     if (prepend) {
       this.players[player]['cards'][to] = Util.arrayPrependCards(
         this.players[player]['cards'][to],
-        selectedCards
+        cards
       );
     } else {
       this.players[player]['cards'][to] = Util.arrayAppendCards(
         this.players[player]['cards'][to],
-        selectedCards
+        cards
       );
     }
   }

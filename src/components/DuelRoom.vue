@@ -94,11 +94,12 @@ const props = defineProps({
   single: Boolean,
 });
 
-const { moveCards, groupCard, setRoomState, players } = useRoomSetup(props);
+const { moveCards, groupCard, setRoomState, players, changeCardsState } = useRoomSetup(props);
 
 defineExpose({
   moveCards,
   groupCard,
+  changeCardsState,
 })
 
 watch(

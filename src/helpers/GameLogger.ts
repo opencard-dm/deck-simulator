@@ -1,73 +1,147 @@
 import { Socket } from "socket.io-client"
 import { SocketUtil } from "./socket"
 import SingleRoom from "@/components/SingleRoom.vue"
+import { player } from "@/entities"
+import { changeCardsStateParams, groupCardParams, moveCardsParams } from "./CardActions"
+import { reactive } from 'vue'
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
 
-  histories = []
+  public histories: history[] = []
+  public historyIndex: number = -1
   // vue component
+  private who: player = 'a'
+  private room: InstanceType<typeof SingleRoom> | null = null
 
-  constructor(
-    private room: InstanceType<typeof SingleRoom>
-  ) {}
-
-  moveCards(who, {from, to, cards, player, prepend}) {
-    
-  }
-
-  groupCard(who, {from, to, fromCard, toCard, player}) {
-
-  }
-  
-  changeCardsState(who, {from, cards, player, cardState}) {
-
-  }
-
-  /**
-   * @param {Socket} socket 
-   */
-  emitChange(socket) {
-    socket.emit(('pop-history', this.players[this.lowerPlayer]))
-  }
-
-  appendHistory(who, method, args, message='') {
-    const history = {
-      canundo: true,
-      who,
-      method,
-      args,
-      message,
-    }
-    this.histories.push(history) 
-    if (SocketUtil.socket) {
-      SocketUtil.socket.emit(('append-history', history))
+  static useGameLogger() {
+    // https://zenn.dev/tanukikyo/articles/40603fbdc88c05#%E3%80%87-object-%C3%97-reactive
+    const gameLogger = reactive(new GameLogger()) as GameLogger
+    return {
+      gameLogger
     }
   }
 
-  receiveHistory(history) {
-    if (history.method === this.moveCards.name) {
-      /**
-       * @see useRoomSetup
-       */
-      // this.room.
-    }
+  moveCards(args: moveCardsParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as moveCardsParams
+    this.appendHistory(this.moveCards.name, argsCopy)
+  }
+
+  groupCard(args: groupCardParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
+    this.appendHistory(this.groupCard.name, argsCopy)
+  }
+
+  changeCardsState(args: changeCardsStateParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as changeCardsStateParams
+    this.appendHistory(this.changeCardsState.name, argsCopy)
+  }
+
+  setHistories(histories: history[]) {
+    this.histories = histories
+    this.historyIndex = histories.length - 1
+  }
+
+  setRoom(room: InstanceType<typeof SingleRoom>) {
+    this.room = room
+    this.who = room.$props.lowerPlayer
+  }
+
+  undo() {
+    if (this.historyIndex === -1) return
+    const history = this.histories[this.historyIndex]
+    this.historyIndex -= 1
     switch (history.method) {
       case this.moveCards.name:
-        const { from, to, cards, player, prepend } = history.args
-        this.room.moveCards(from, to, cards, player, prepend)
+        const { from, to, cards, player, prepend } = history.args as moveCardsParams
+        this.room?.moveCards(to, from, cards, player, prepend)
         break;
       case this.groupCard.name:
-        const { from, to, fromCard, toCard, player } = history.args
-        this.room.groupCard(from, to, fromCard, toCard, player)
+        this.room?.groupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        const { from, cards, player, cardState } = history.args
-        this.room.changeCardsState(from, cards, player, cardState)
+        this.room?.changeCardsState(history.args as changeCardsStateParams)
         break
       default:
         break;
     }
-    this.room[history.method]()
+    if (SocketUtil.socket) {
+      SocketUtil.socket.emit('pop-history', history)
+    }
   }
+
+  canredo() {
+    return this.histories.length - 1 !== this.historyIndex
+  }
+
+  redo() {
+    console.log('redo')
+    console.log(this.histories)
+    console.log(this.historyIndex)
+    if (!this.canredo()) return
+    this.historyIndex += 1
+    const history = this.histories[this.historyIndex]
+    switch (history.method) {
+      case this.moveCards.name:
+        const { from, to, cards, player, prepend } = history.args as moveCardsParams
+        this.room?.moveCards(from, to, cards, player, prepend)
+        break;
+      case this.groupCard.name:
+        this.room?.groupCard(history.args as groupCardParams)
+        break
+      case this.changeCardsState.name:
+        this.room?.changeCardsState(history.args as changeCardsStateParams)
+        break
+      default:
+        break;
+    }
+  }
+
+  appendHistory(method: string, args: methodParams, message='') {
+    const history: history = {
+      canundo: true,
+      who: this.who,
+      method,
+      args,
+      message,
+    }
+    // 履歴を切り捨てる
+    if (this.historyIndex < this.histories.length - 1) {
+      console.debug(`${this.histories.length - this.historyIndex - 1}件の履歴を削除しました`)
+      this.histories = this.histories.slice(0, this.historyIndex + 1)
+    }
+    this.histories.push(history)
+    this.historyIndex = this.histories.length - 1
+    if (SocketUtil.socket) {
+      SocketUtil.socket.emit('append-history', history)
+    }
+  }
+
+  receiveHistory(history: history) {
+    this.histories.push(history)
+    switch (history.method) {
+      case this.moveCards.name:
+        const { from, to, cards, player, prepend } = history.args as moveCardsParams
+        this.room?.moveCards(from, to, cards, player, prepend)
+        break;
+      case this.groupCard.name:
+        this.room?.groupCard(history.args as groupCardParams)
+        break
+      case this.changeCardsState.name:
+        this.room?.changeCardsState(history.args as changeCardsStateParams)
+        break
+      default:
+        break;
+    }
+  }
+}
+
+type methodParams = moveCardsParams | changeCardsStateParams | groupCardParams
+
+interface history {
+  canundo: true
+  who: player
+  method: string
+  args: methodParams
+  message: string
 }

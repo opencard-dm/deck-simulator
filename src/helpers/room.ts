@@ -1,12 +1,27 @@
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 
-import { Util } from '@/helpers/Util';
 import { SocketUtil } from '../helpers/socket';
 import { useRoute } from 'vue-router';
 import { CardActions, changeCardsStateParams, groupCardParams } from './CardActions';
-import { player, zone, cardState } from '@/entities';
+import { player, zone } from '@/entities';
 import { Card } from '@/entities/Card';
+import { GameLogger } from './GameLogger';
+
+export function useHistory() {
+  const { gameLogger } = GameLogger.useGameLogger()
+
+  function undo() {
+  }
+
+  function redo() {
+  }
+  return {
+    gameLogger,
+    undo,
+    redo,
+  }
+}
 
 export function useRoomSetup(props: any) {
   const route = useRoute();
@@ -14,15 +29,16 @@ export function useRoomSetup(props: any) {
   const roomId = route.query.roomId as string
   const players = reactive(initialData(roomId).players);
   const deckSelectorActive = ref(true);
+  const gameLogger: GameLogger = props.gameLogger
 
   const cardActions = new CardActions(players)
 
-  function moveCards(from: zone, to: zone, selectedCards: any[], player: player, prepend = false) {
-    if (!selectedCards || selectedCards.length === 0) return;
+  function onMoveCards(from: zone, to: zone, cards: any[], player: player, prepend = false) {
+    if (!cards || cards.length === 0) return;
     if (store.state.displayImageUrl) {
       store.commit('setDisplayImageUrl', '');
     }
-    cardActions.moveCards({ from, to, selectedCards, player, prepend })
+    moveCards(from, to, cards, player, prepend)
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {
       setTimeout(() => {
@@ -32,13 +48,24 @@ export function useRoomSetup(props: any) {
         );
       }, 300);
     }
+    gameLogger.appendHistory(
+      cardActions.moveCards.name,
+      { from, to, cards: cards, player, prepend }
+    )
     if (props.single) {
-      sessionStorage.setItem('room', JSON.stringify(players));
+      sessionStorage.setItem('room', JSON.stringify({
+        players,
+        histories: gameLogger.histories,
+      }));
       return;
     }
     if (!SocketUtil.socket) return;
     players[player].isReady = true;
     SocketUtil.socket.emit('cards-moved', players[player]);
+  }
+
+  function moveCards(from: zone, to: zone, cards: any[], player: player, prepend = false) {
+    cardActions.moveCards({ from, to, cards: cards, player, prepend })
   }
 
   function scrollZone(targetSelector: string, direction: string) {
@@ -55,8 +82,9 @@ export function useRoomSetup(props: any) {
       const sessionRoom = sessionStorage.getItem('room');
       if (sessionRoom) {
         const parsed = JSON.parse(sessionRoom);
-        players.a = parsed.a;
-        players.b = parsed.b;
+        players.a = parsed.players.a;
+        players.b = parsed.players.b;
+        gameLogger.setHistories(parsed.histories)
         return;
       }
       const shieldCards = props.deck.cards.slice(0, 5);
@@ -139,6 +167,7 @@ export function useRoomSetup(props: any) {
     SocketUtil.socket.emit("cards-moved", players.b);
   }
   return {
+    onMoveCards,
     moveCards,
     groupCard,
     setRoomState,
@@ -146,6 +175,7 @@ export function useRoomSetup(props: any) {
     props,
     resetGame,
     players,
+    gameLogger,
   }
 }
 
