@@ -11,6 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@babel/core": "^7.23.6",
     "@socket.io/admin-ui": "^0.5.1",
     "@socket.io/redis-adapter": "^8.2.1",
     "@vueuse/components": "^10.7.0",
@@ -22,12 +23,14 @@
     "firebase": "7.24.0",
     "firebase-admin": "11.3.0",
     "github-markdown-css": "^5.4.0",
+    "happy-dom": "^12.10.3",
     "redis": "4.0.3",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "ts-node": "^10.9.2",
     "vite-express": "^0.12.0",
-    "vite-raw-plugin": "^1.0.2"
+    "vite-raw-plugin": "^1.0.2",
+    "vite-tsconfig-paths": "^4.2.2"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",
@@ -37,8 +40,9 @@
     "@fortawesome/vue-fontawesome": "latest-3",
     "@oruga-ui/oruga-next": "0.8.0",
     "@oruga-ui/theme-oruga": "^0.2.0",
+    "@types/babel__core": "^7",
     "@vitejs/plugin-vue": "^4.5.2",
-    "@vue/test-utils": "next",
+    "@vue/test-utils": "^2.4.3",
     "eslint": "^8.55.0",
     "eslint-plugin-vue": "^9.19.2",
     "sass": "^1.69.5",
@@ -46,6 +50,7 @@
     "supertest": "^6.3.3",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
+    "vitest": "^1.1.0",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "vue-tsc": "^1.8.25",
