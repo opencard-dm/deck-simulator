@@ -96,6 +96,11 @@ const props = defineProps({
 
 const { moveCards, groupCard, setRoomState, players } = useRoomSetup(props);
 
+defineExpose({
+  moveCards,
+  groupCard,
+})
+
 watch(
   () => props.loading,
   (newVal) => {

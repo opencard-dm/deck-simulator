@@ -221,6 +221,17 @@ export function useRoomSetup(props) {
     card.groupId = null;
     card.group = null;
   }
+  function changeCardsState(from, cards, player, cardState) {
+    const cardIds = cards.map((c) => c.id);
+    players[player]["cards"][from].forEach((c) => {
+      if (!cardIds.includes(c.id)) return;
+      Object.keys(cardState).forEach((key) => {
+        if (["tapped", "faceDown", "markColor"].includes(key)) {
+          c[key] = cardState[key];
+        }
+      });
+    });
+  }
   function resetGame() {
     players.a = initialData({ roomId }).players.a;
     players.b = initialData({ roomId }).players.b;
@@ -238,6 +249,7 @@ export function useRoomSetup(props) {
     groupCard,
     ungroupCard,
     setRoomState,
+    changeCardsState,
     props,
     resetGame,
     players,

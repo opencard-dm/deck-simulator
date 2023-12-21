@@ -92,7 +92,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Layout } from '@/helpers/layout';
 import { isPhone } from '@/helpers/Util';
 import { onMounted, ref, watch } from 'vue';
@@ -135,6 +135,11 @@ const props = defineProps({
 });
 
 const { moveCards, groupCard, setRoomState, players } = useRoomSetup(props);
+
+defineExpose({
+  moveCards,
+  groupCard,
+})
 
 watch(
   () => props.loading,

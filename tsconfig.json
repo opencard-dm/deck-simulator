@@ -14,7 +14,8 @@
     "types": ["vite/client"],
     "esModuleInterop": true,
     "diagnostics": false,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "isolatedModules": true
   },
   "exclude": [
     "node_modules",
