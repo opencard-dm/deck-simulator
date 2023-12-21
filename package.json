@@ -13,11 +13,6 @@
   "dependencies": {
     "@socket.io/admin-ui": "^0.5.1",
     "@socket.io/redis-adapter": "^8.2.1",
-    "@vue/cli": "^5.0.8",
-    "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-plugin-eslint": "^5.0.8",
-    "@vue/cli-service": "^5.0.8",
-    "@vue/cli-shared-utils": "^5.0.8",
     "@vueuse/components": "^10.7.0",
     "axios": "0.21.1",
     "core-js": "^3.34.0",
@@ -31,8 +26,7 @@
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "vite-express": "^0.12.0",
-    "vite-raw-plugin": "^1.0.2",
-    "vue-cli-plugin-express": "~1.0.2"
+    "vite-raw-plugin": "^1.0.2"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",
