@@ -7,8 +7,8 @@
     "dev": "ts-node -T srv/index.js",
     "build": "vite build",
     "lint": "vite lint",
-    "start": "NODE_ENV=production ts-node srv/index.js",
-    "test": "jest"
+    "start": "NODE_ENV=production ts-node -T srv/index.js",
+    "test": "vitest"
   },
   "dependencies": {
     "@babel/core": "^7.23.6",

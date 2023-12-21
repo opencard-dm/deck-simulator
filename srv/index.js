@@ -40,3 +40,7 @@ function prepareApp(app, http) {
   //   client.emit("message", "Welcome");
   // });
 }
+
+export {
+  app
+}
