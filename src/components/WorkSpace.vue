@@ -235,7 +235,7 @@
 </template>
 
 <script setup>
-import CardPopup from './elements/CardPopup'
+import CardPopup from './elements/CardPopup.vue'
 const cardWidth = isPhone() ? 70 : 120
 const cardHeight = cardWidth * 908 / 650
 

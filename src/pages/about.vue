@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import about from "raw-loader!../assets/markdown/about.md";
+import about from "../assets/markdown/about.md";
 
 export default {
   data() {

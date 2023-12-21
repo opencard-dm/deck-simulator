@@ -31,7 +31,7 @@
               @click.stop="clickCard(card)"
             >
               <img v-if="!card.faceDown" :src="card.imageUrl" />
-              <img v-else src="card.backImageUrl" />
+              <img v-else :src="card.backImageUrl" />
             </div>
             <div v-if="cardIsSelected(card)" class="card_bottomButton">
               <o-button
@@ -76,7 +76,7 @@
 
 <script>
 import mixin from "@/helpers/mixin.js";
-import RoundButton from '../elements/RoundButton'
+import RoundButton from '../elements/RoundButton.vue'
 
 export default {
   props: ["player", "manaCards", "side"],

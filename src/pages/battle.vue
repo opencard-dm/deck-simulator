@@ -29,7 +29,7 @@
 <script>
 import { makeRandomString } from "@/helpers/makeRandomString";
 import axios from "axios";
-import battlemd from "raw-loader!../assets/markdown/battle.md";
+import battlemd from "../assets/markdown/battle.md";
 
 export default {
   data() {

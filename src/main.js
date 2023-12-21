@@ -22,8 +22,8 @@ vueApp.use(useConfig)
 //
 // axios
 import axios from 'axios'
-if (process.env.VUE_APP_WS_HOST) {
-  axios.defaults.baseURL = process.env.VUE_APP_WS_HOST
+if (import.meta.env.VUE_APP_WS_HOST) {
+  axios.defaults.baseURL = import.meta.env.VUE_APP_WS_HOST
 }
 
 //

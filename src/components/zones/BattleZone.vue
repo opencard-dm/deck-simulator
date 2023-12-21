@@ -153,8 +153,8 @@
 
 <script setup>
 import { isPhone } from "@/helpers/Util"
-import CardPopup from '../elements/CardPopup'
-import MarkTool from "../mark-tool/MarkTool";
+import CardPopup from '../elements/CardPopup.vue'
+import MarkTool from "../mark-tool/MarkTool.vue";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650

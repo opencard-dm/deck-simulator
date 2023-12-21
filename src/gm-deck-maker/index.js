@@ -5,7 +5,7 @@ import { deckList } from '../../src/helpers/data.js'
 
 export async function getDeckData(deckId) {
   // 開発環境では通信の節約
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.NODE_ENV === 'development') {
     for (const deck of deckList) {
       if (deck.deck_id === deckId) {
         console.log('deck is found in local')
@@ -14,7 +14,7 @@ export async function getDeckData(deckId) {
     }
   }
   // https://stackoverflow.com/questions/37482366/is-it-safe-to-expose-firebase-apikey-to-the-public
-  const firebaseConfig = JSON.parse(Buffer.from(process.env.DM_KEY, 'base64'));
+  const firebaseConfig = JSON.parse(Buffer.from(import.meta.env.DM_KEY, 'base64'));
   const defalutCardUrl =
     "https://storage.googleapis.com/ka-nabell-card-images/img/s/card/card100244663_1.jpg";
   // 2: 'dm'

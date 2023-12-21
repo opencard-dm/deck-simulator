@@ -16,7 +16,7 @@ const routes = [
   { path: '/about', name: 'about', component: about },
   { path: '/battle', component: battle },
 ]
-if (process.env.NODE_ENV === 'development') {
+if (import.meta.env.NODE_ENV === 'development') {
   routes.push({ path: '/admin/test-scrape', component: adminTestScrapte })
   routes.push({ path: '/admin/test-firebase', component: adminTestFirebase })
 }
