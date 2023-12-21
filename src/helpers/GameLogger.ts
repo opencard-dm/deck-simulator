@@ -75,9 +75,6 @@ export class GameLogger {
   }
 
   redo() {
-    console.log('redo')
-    console.log(this.histories)
-    console.log(this.historyIndex)
     if (!this.canredo()) return
     this.historyIndex += 1
     const history = this.histories[this.historyIndex]
