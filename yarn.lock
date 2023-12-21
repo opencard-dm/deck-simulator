@@ -7212,6 +7212,7 @@ __metadata:
     babel-plugin-transform-import-meta: "npm:^2.2.1"
     core-js: "npm:^3.34.0"
     cors: "npm:^2.8.5"
+    dotenv: "npm:^16.3.1"
     eslint: "npm:^8.55.0"
     eslint-plugin-vue: "npm:^9.19.2"
     express: "npm:^4.18.2"
@@ -7629,6 +7630,13 @@ __metadata:
   version: 10.0.0
   resolution: "dotenv@npm:10.0.0"
   checksum: 55f701ae213e3afe3f4232fae5edfb6e0c49f061a363ff9f1c5a0c2bf3fb990a6e49aeada11b2a116efb5fdc3bc3f1ef55ab330be43033410b267f7c0809a9dc
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.3.1":
+  version: 16.3.1
+  resolution: "dotenv@npm:16.3.1"
+  checksum: dbb778237ef8750e9e3cd1473d3c8eaa9cc3600e33a75c0e36415d0fa0848197f56c3800f77924c70e7828f0b03896818cd52f785b07b9ad4d88dba73fbba83f
   languageName: node
   linkType: hard
 

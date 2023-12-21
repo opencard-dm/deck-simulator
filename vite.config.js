@@ -4,18 +4,15 @@ import path from 'path'
 import markdownRawPlugin from 'vite-raw-plugin'
 
 export default {
-  plugins: [
-    vue(),
-    markdownRawPlugin({
-        fileRegex: /\.md$/
-    })
-],
-  server: {
-    port: 8080,
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src')
-    },
-  }
+    plugins: [
+        vue(),
+        markdownRawPlugin({
+            fileRegex: /\.md$/
+        })
+    ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src')
+        },
+    }
 }

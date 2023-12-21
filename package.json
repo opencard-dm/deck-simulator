@@ -4,11 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "serve": "vite",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "express": "vue-cli-service express:watch",
-    "start": "vue-cli-service express:run",
+    "serve": "node srv/index.js",
+    "build": "vite build",
+    "lint": "vite lint",
+    "start": "NODE_ENV=production node srv/index.js",
     "test": "jest"
   },
   "dependencies": {
@@ -23,6 +22,7 @@
     "axios": "0.21.1",
     "core-js": "^3.34.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "firebase": "7.24.0",
     "firebase-admin": "11.3.0",
