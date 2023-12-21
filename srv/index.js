@@ -5,11 +5,13 @@ import { createApp } from './server/app.js';
 import { RoomData } from './server/roomData.js';
 import { attachSocketIo } from './server/socket-io.js';
 import ViteExpress from "vite-express";
+import ip from 'ip'
 
 const app = express()
-const server = app.listen(process.env.PORT, "0.0.0.0", () =>
-  console.log(`Server is listening on http://localhost:${process.env.PORT}`)
-);
+const server = app.listen(process.env.PORT, "0.0.0.0", () => {
+  console.log(`http://localhost:${process.env.PORT}`)
+  console.log(`http://${ip.address()}:${process.env.PORT}`)
+});
 
 prepareApp(app, server)
 ViteExpress.bind(app, server)
