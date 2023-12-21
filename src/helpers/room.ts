@@ -4,10 +4,11 @@ import { useStore } from 'vuex';
 import { Util } from '@/helpers/Util';
 import { SocketUtil } from '../helpers/socket';
 import { useRoute } from 'vue-router';
-import { CardActions } from './CardActions';
+import { CardActions, changeCardsStateParams, groupCardParams } from './CardActions';
 import { player, zone, cardState } from '@/entities';
+import { Card } from '@/entities/Card';
 
-export function useRoomSetup(props) {
+export function useRoomSetup(props: any) {
   const route = useRoute();
   const store = useStore();
   const roomId = route.query.roomId as string
@@ -21,7 +22,7 @@ export function useRoomSetup(props) {
     if (store.state.displayImageUrl) {
       store.commit('setDisplayImageUrl', '');
     }
-    cardActions.moveCards(from, to, selectedCards, player, prepend)
+    cardActions.moveCards({ from, to, selectedCards, player, prepend })
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {
       setTimeout(() => {
@@ -40,7 +41,7 @@ export function useRoomSetup(props) {
     SocketUtil.socket.emit('cards-moved', players[player]);
   }
 
-  function scrollZone(targetSelector, direction) {
+  function scrollZone(targetSelector: string, direction: string) {
     const target = document.querySelector(targetSelector);
     if (!target) return
     target.scrollTo({
@@ -59,14 +60,14 @@ export function useRoomSetup(props) {
         return;
       }
       const shieldCards = props.deck.cards.slice(0, 5);
-      shieldCards.forEach((c) => {
+      shieldCards.forEach((c: Card) => {
         c.faceDown = true;
       });
       players.a.cards.shieldCards = shieldCards;
       players.a.cards.tefudaCards = props.deck.cards.slice(5, 10);
       // 40枚の制限をしない
       const yamafudaCards = props.deck.cards.slice(10);
-      yamafudaCards.forEach((c) => {
+      yamafudaCards.forEach((c: Card) => {
         c.faceDown = true;
       });
       players.a.cards.yamafudaCards = yamafudaCards;
@@ -106,30 +107,22 @@ export function useRoomSetup(props) {
       // );
     }
   }
-  function onDeckSelected({ deck, player }) {
+  function onDeckSelected({ deck, player }: {
+    deck: any,
+    player: player
+  }) {
     players[player].isReady = true;
     players[player].hasChojigen = !!deck.hasChojigen;
   }
 
-  function groupCard({ from, to, fromCard, toCard, player }: {
-    from: zone,
-    to: zone,
-    fromCard: any,
-    toCard: any,
-    player: player,
-  }) {
+  function groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
     cardActions.groupCard({ from, to, fromCard, toCard, player })
     // 状態の変更を送信する
     if (!SocketUtil.socket) return;
     SocketUtil.socket.emit('cards-moved', players[player]);
   }
 
-  function changeCardsState({ from, cards, player, cardState }: {
-    from: zone,
-    cards: any[],
-    player: player,
-    cardState: cardState,
-  }) {
+  function changeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
     cardActions.changeCardsState({ from, cards, player, cardState })
   }
 
