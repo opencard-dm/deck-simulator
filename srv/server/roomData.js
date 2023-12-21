@@ -1,6 +1,6 @@
 import { createClient } from 'redis'
 import fs from 'fs'
-import { useConfig } from '../../src/plugins/useConfig'
+import { useConfig } from '../../src/plugins/useConfig.js'
 
 export class RoomData {
   /** 'file'|'redis' */

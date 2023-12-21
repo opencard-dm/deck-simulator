@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+import firebase from "firebase/app/dist/index.cjs.js";
 // import firebase from 'firebase/app';
 import { DeckRecipeInfo } from "./DeckRecipeInfo.js";
 import { deckList } from '../../src/helpers/data.js'
