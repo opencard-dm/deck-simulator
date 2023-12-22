@@ -30,7 +30,7 @@
             </div>
             <img
               v-else-if="lastCard(bochiCards)"
-              :src="lastCard(bochiCards).imageUrl"
+              :src="lastCard(bochiCards)?.imageUrl"
               @mouseenter="setHoveredCard(lastCard(bochiCards))"
               @mouseleave="setHoveredCard(null)"
             />
@@ -50,7 +50,7 @@
         </div>
         <img
           v-else-if="lastCard(bochiCards)"
-          :src="lastCard(bochiCards).imageUrl"
+          :src="lastCard(bochiCards)?.imageUrl"
           @mouseenter="setHoveredCard(lastCard(bochiCards))"
           @mouseleave="setHoveredCard(null)"
         />
@@ -61,61 +61,83 @@
   </div>
 </template>
 
-<script setup>
-import { isPhone } from "@/helpers/Util";
+<script setup lang="ts">
+import { isPhone } from "@/helpers/Util"
+import { computed } from 'vue'
+import type { player, side } from "@/entities";
+import RoundButton from '../elements/RoundButton.vue'
+import { Card, CardGroup } from "@/entities/Card";
+import { useZone, zoneEmit } from "@/helpers/zone";
+
+const props = defineProps<{
+  player: player
+  bochiCards: Card[]
+  shieldCardGroups: CardGroup[]
+  shieldCards: Card[]
+  side: side
+}>()
+
+const emit = defineEmits<zoneEmit>()
+
+const {
+  openWorkSpace,
+  setHoveredCard,
+  cardIsSelected,
+  setMarkColor,
+  selectTargetMode,
+  selectMode,
+  setCardState,
+  toggleTap,
+  setSelectMode,
+  hasSelectedCard,
+  moveSelectedCard,
+} = useZone(props, emit)
+
+const countableShieldCards = computed(() => {
+  // グループ化されているカードは一つとカウントする。
+  const firstCardIds = props.shieldCardGroups.map((g) => g.cardIds[0]);
+  return props.shieldCards.filter((c) => {
+    return !c.groupId || firstCardIds.includes(c.id);
+  });
+})
+
+function lastCard(cards: Card[]) {
+  const length = cards.length;
+  if (length && 0 < length) {
+    return cards[length - 1];
+  }
+  return null;
+}
+function clickBochi() {
+  if (!selectMode) {
+    openWorkSpace({
+      zone: "bochiCards",
+      cards: props.bochiCards,
+      player: props.player,
+    });
+    return;
+  }
+  moveSelectedCard("bochiCards");
+}
+function clickShieldButton() {
+  if (hasSelectedCard() && selectMode.value) {
+    selectMode.value.card.faceDown = true;
+    moveSelectedCard("shieldCards");
+    return;
+  }
+  openWorkSpace({
+    zone: "shieldCards",
+    cards: props.shieldCards,
+    player: props.player,
+  });
+}
 </script>
 
-<script>
-import mixin from "@/helpers/mixin";
-import RoundButton from '../elements/RoundButton.vue'
-
+<script lang="ts">
 export default {
-  props: ["player", "bochiCards", "shieldCards", "shieldCardGroups", "side"],
-  mixins: [mixin.zone],
-  components: {RoundButton},
   computed: {
-    countableShieldCards() {
-      // グループ化されているカードは一つとカウントする。
-      const firstCardIds = this.shieldCardGroups.map((g) => g.cardIds[0]);
-      return this.shieldCards.filter((c) => {
-        return !c.groupId || firstCardIds.includes(c.id);
-      });
-    },
-    dropdownTriggers() {
-      return this.$store.state.settings.dropdownTriggers;
-    },
   },
   methods: {
-    lastCard: function (cards) {
-      const length = cards.length;
-      if (length && 0 < length) {
-        return cards[length - 1];
-      }
-      return null;
-    },
-    clickBochi() {
-      if (!this.selectMode) {
-        this.openWorkSpace({
-          zone: "bochiCards",
-          cards: this.bochiCards,
-          player: this.player,
-        });
-        return;
-      }
-      this.moveSelectedCard("bochiCards");
-    },
-    clickShieldButton() {
-      if (this.hasSelectedCard()) {
-        this.selectMode.card.faceDown = true;
-        this.moveSelectedCard("shieldCards");
-        return;
-      }
-      this.openWorkSpace({
-        zone: "shieldCards",
-        cards: this.shieldCards,
-        player: this.player,
-      });
-    },
   },
 };
 </script>

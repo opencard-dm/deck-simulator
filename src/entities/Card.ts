@@ -7,6 +7,7 @@ export interface Card {
     markColor: string
     group: zoneGroup | null
     groupId: string | null
+    shieldId: string
     imageUrl: string
     backImageUrl: string
     isChojigen: boolean

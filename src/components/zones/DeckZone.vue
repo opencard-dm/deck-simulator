@@ -55,7 +55,7 @@
           @contextmenu.prevent
         >
           <o-button
-            v-if="selectMode.zone === zone"
+            v-if="selectMode?.zone === zone"
             variant="grey-dark"
             size="small"
             class="deck_buttons_top"
@@ -83,85 +83,79 @@
   </div>
 </template>
 
-<script setup>
-import CardPopup from '../elements/CardPopup.vue'
+<script setup lang="ts">
 import { OnLongPress } from '@vueuse/components'
+import CardPopup from '../elements/CardPopup.vue'
+import { computed } from 'vue'
+import { Card } from "@/entities/Card";
+import { useZone, zoneEmit } from "@/helpers/zone";
+import { defineExpose } from 'vue';
+import type { player, side, zone } from "@/entities";
 
-const props = defineProps({
-  yamafudaCards: Array,
-  player: String,
-  side: String,
-})
 const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`
-const cardHeight = `${cardWidthNum * 908 / 650}px`
 
-const emit = defineEmits(['move-cards'])
+const zone = 'yamafudaCards'
+const props = defineProps<{
+  player: player
+  yamafudaCards: Card[]
+  side: side
+}>()
+
+const emit = defineEmits<zoneEmit>()
+
+const {
+  openWorkSpace,
+  cardIsSelected,
+  selectMode,
+  setCardState,
+  setSelectMode,
+  hasSelectedCard,
+  moveSelectedCard,
+} = useZone(props, emit)
+
 const drawOne = () => {
   emit('move-cards', 'yamafudaCards', 'tefudaCards', [props.yamafudaCards[0]], props.player)
 }
 defineExpose({
   drawOne
 })
-</script>
 
-<script>
-import mixin from "@/helpers/mixin";
-import { defineExpose } from 'vue';
-
-export default {
-  mixins: [mixin.zone],
-  data() {
-    return {
-      zone: "yamafudaCards",
-    };
-  },
-  computed: {
-    dropdownTriggers() {
-      if (window.innerWidth >= 800 && !this.hasSelectedCard()) {
-        return ['click', 'hover']
-      }
-      return ['click']
-    },
-    deckViews() {
-      // 1~nまでの数字を順に要素とする配列を返す。
-      // デッキの下に重なっているカード要素の数を
-      // deckViewsLengthとする。
-      const l = this.yamafudaCards.length;
-      let deckViewsLength = 0;
-      if (l >= 20) {
-        deckViewsLength = 4;
-      } else if (l >= 15) {
-        deckViewsLength = 3;
-      } else if (l >= 2) {
-        deckViewsLength = 2;
-        // } else if (l >= 2) {
-        //   deckViewsLength = 1
-        // deckViewが一枚だけだと見た目が良くなかったため飛ばして0にする。
-      } else {
-        deckViewsLength = 0;
-      }
-      const deckViews = [];
-      for (let i = 0; i < deckViewsLength; i++) {
-        deckViews.push(i + 1);
-      }
-      return deckViews;
-    },
-  },
-  methods: {
-    // デッキを開くときはデフォルトで全て裏にする。
-    openDeck() {
-      this.yamafudaCards.forEach((c) => {
-        c.faceDown = true;
-      });
-      this.openWorkSpace({
-        zone: "yamafudaCards",
-        cards: this.yamafudaCards,
-        player: this.player,
-      });
-    },
-  },
-};
+const deckViews = computed(() => {
+  // 1~nまでの数字を順に要素とする配列を返す。
+  // デッキの下に重なっているカード要素の数を
+  // deckViewsLengthとする。
+  const l = props.yamafudaCards.length;
+  let deckViewsLength = 0;
+  if (l >= 20) {
+    deckViewsLength = 4;
+  } else if (l >= 15) {
+    deckViewsLength = 3;
+  } else if (l >= 2) {
+    deckViewsLength = 2;
+    // } else if (l >= 2) {
+    //   deckViewsLength = 1
+    // deckViewが一枚だけだと見た目が良くなかったため飛ばして0にする。
+  } else {
+    deckViewsLength = 0;
+  }
+  const deckViews = [];
+  for (let i = 0; i < deckViewsLength; i++) {
+    deckViews.push(i + 1);
+  }
+  return deckViews;
+})
+function openDeck() {
+  // デッキを開くときはデフォルトで全て裏にする。
+  props.yamafudaCards.forEach((c) => {
+    c.faceDown = true;
+  });
+  openWorkSpace({
+    zone: "yamafudaCards",
+    cards: props.yamafudaCards,
+    player: props.player,
+  });
+}
 </script>
 
 <style lang="scss">

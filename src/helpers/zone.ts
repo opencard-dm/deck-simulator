@@ -11,7 +11,7 @@ export interface zoneProps {
 }
 
 export type zoneEmit = {
-    'move-cards': []
+    'move-cards': [from: zone, to: zone, cards: Card[], player: player, prepend?: boolean]
     'change-cards-state': []
     'group-card': [{from: zone, to: zoneGroup, fromCard: Card, toCard: Card, player: player}]
     'shuffle-cards': [from: zone, cards: Card[], player: player]

@@ -6,6 +6,7 @@ export type zone = 'tefudaCards'
   | 'chojigenCards'
   | 'yamafudaCards'
   | 'manaCards'
+  | 'bochiCards'
 
 export type zoneGroup = 'shieldCardGroups' | 'battleCardGroups'
 

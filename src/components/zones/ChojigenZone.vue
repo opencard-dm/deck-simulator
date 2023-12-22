@@ -14,29 +14,35 @@
   </div>
 </template>
 
-<script>
-import mixin from "@/helpers/mixin";
+<script setup lang="ts">
 
-export default {
-  props: ["player", "chojigenCards", "side", "hasChojigen"],
-  mixins: [mixin.zone],
-  data() {
-    return {};
-  },
-  methods: {
-    clickChojigenZone() {
-      if (!this.selectMode) {
-        this.openWorkSpace({
-          zone: "chojigenCards",
-          cards: this.chojigenCards,
-          player: this.player,
-        });
-        return;
-      }
-      this.moveSelectedCard("chojigenCards");
-    },
-  },
-};
+import type { player, side, zone } from "@/entities";
+import { Card } from "@/entities/Card";
+import { zoneEmit, useZone } from "@/helpers/zone";
+
+const props = defineProps<{
+  player: player
+  chojigenCards: Card[]
+  side: side
+  hasChojigen: boolean
+}>()
+const emit = defineEmits<zoneEmit>()
+const {
+  openWorkSpace,
+  selectMode,
+  moveSelectedCard,
+} = useZone(props, emit)
+function clickChojigenZone() {
+  if (!selectMode.value) {
+    openWorkSpace({
+      zone: "chojigenCards",
+      cards: props.chojigenCards,
+      player: props.player,
+    });
+    return;
+  }
+  moveSelectedCard("chojigenCards");
+}
 </script>
 
 <style lang="scss" scoped>
