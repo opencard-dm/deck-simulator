@@ -22,6 +22,14 @@ export class GameLogger {
     }
   }
 
+  get currentHistory() {
+    return this.histories[this.historyIndex]
+  }
+
+  get nextHistory() {
+    return this.histories[this.historyIndex + 1]
+  }
+
   moveCards(args: moveCardsParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as moveCardsParams
     this.appendHistory(this.moveCards.name, argsCopy)
@@ -47,8 +55,12 @@ export class GameLogger {
     this.who = room.$props.lowerPlayer
   }
 
+  canundo() {
+    return this.historyIndex !== -1
+  }
+
   undo() {
-    if (this.historyIndex === -1) return
+    if (!this.canundo()) return
     const history = this.histories[this.historyIndex]
     this.historyIndex -= 1
     switch (history.method) {
@@ -98,6 +110,7 @@ export class GameLogger {
     const history: history = {
       canundo: true,
       who: this.who,
+      player: args.player,
       method,
       args,
       message,
@@ -138,6 +151,7 @@ type methodParams = moveCardsParams | changeCardsStateParams | groupCardParams
 interface history {
   canundo: true
   who: player
+  player: player
   method: string
   args: methodParams
   message: string

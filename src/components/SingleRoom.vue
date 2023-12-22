@@ -2,6 +2,8 @@
   <div id="app" style="background-color: lightgray" v-if="isMounted">
     <CHeader :single="single"
       :gameLogger="gameLogger"
+      :currentPlayer="currentPlayer"
+      @switch-tab="switchTab()"
     ></CHeader>
 
     <div
@@ -113,15 +115,29 @@ import { GameLogger } from '@/helpers/GameLogger';
 
 const store = useStore()
 
+const props = defineProps<{
+  upperPlayer: player,
+  lowerPlayer: player,
+  room: Object,
+  loading: boolean,
+  deck: Object,
+  single: boolean,
+  gameLogger: GameLogger,
+}>()
+
 const tabId = ref(1);
+const currentPlayer = ref(props.lowerPlayer)
+
 function switchTab() {
   if (tabId.value === 1) {
     if (!players.b.isReady) {
       deckSelectorActive.value = true;
     }
     tabId.value = 2;
+    currentPlayer.value = props.upperPlayer
   } else {
     tabId.value = 1;
+    currentPlayer.value = props.lowerPlayer
   }
 }
 
@@ -132,16 +148,6 @@ const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
 });
-
-const props = defineProps<{
-  upperPlayer: player,
-  lowerPlayer: player,
-  room: Object,
-  loading: boolean,
-  deck: Object,
-  single: boolean,
-  gameLogger: GameLogger,
-}>()
 
 const { moveCards, onMoveCards, groupCard, setRoomState, players, changeCardsState } = useRoomSetup(props);
 

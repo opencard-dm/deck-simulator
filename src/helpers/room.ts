@@ -10,16 +10,8 @@ import { GameLogger } from './GameLogger';
 
 export function useHistory() {
   const { gameLogger } = GameLogger.useGameLogger()
-
-  function undo() {
-  }
-
-  function redo() {
-  }
   return {
     gameLogger,
-    undo,
-    redo,
   }
 }
 
