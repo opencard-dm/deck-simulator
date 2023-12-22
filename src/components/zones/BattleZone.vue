@@ -158,7 +158,7 @@ import MarkTool from "../mark-tool/MarkTool.vue";
 import { computed } from 'vue'
 import type { player, side, zone } from "@/entities";
 import { Card, CardGroup } from "@/entities/Card";
-import { useZone, zoneEmit } from "@/helpers/zone";
+import { useZone, zoneEmit } from "./zone";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650

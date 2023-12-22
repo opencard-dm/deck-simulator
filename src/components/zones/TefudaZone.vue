@@ -112,7 +112,7 @@ import { Card } from '@/entities/Card';
 import CardPopup from '../elements/CardPopup.vue'
 import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
-import { useZone, zoneEmit } from '@/helpers/zone';
+import { useZone, zoneEmit } from './zone';
 import { useStore } from 'vuex';
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650

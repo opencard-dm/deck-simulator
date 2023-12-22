@@ -67,7 +67,7 @@ import { computed } from 'vue'
 import type { player, side } from "@/entities";
 import RoundButton from '../elements/RoundButton.vue'
 import { Card, CardGroup } from "@/entities/Card";
-import { useZone, zoneEmit } from "@/helpers/zone";
+import { useZone, zoneEmit } from "./zone";
 
 const props = defineProps<{
   player: player

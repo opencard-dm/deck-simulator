@@ -88,7 +88,7 @@ import { OnLongPress } from '@vueuse/components'
 import CardPopup from '../elements/CardPopup.vue'
 import { computed } from 'vue'
 import { Card } from "@/entities/Card";
-import { useZone, zoneEmit } from "@/helpers/zone";
+import { useZone, zoneEmit } from "./zone";
 import { defineExpose } from 'vue';
 import type { player, side, zone } from "@/entities";
 

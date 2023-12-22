@@ -18,7 +18,7 @@
 
 import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
-import { zoneEmit, useZone } from "@/helpers/zone";
+import { zoneEmit, useZone } from "./zone";
 
 const props = defineProps<{
   player: player

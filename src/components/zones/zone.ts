@@ -2,7 +2,6 @@ import { useStore } from "vuex";
 import { store as Store } from '@/store/index'
 import { cardState, player, zone, zoneGroup } from "@/entities";
 import { Card } from "@/entities/Card";
-import { mutations } from "@/store/mutations";
 import { computed } from "vue";
 
 export interface zoneProps {
