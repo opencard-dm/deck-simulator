@@ -7,8 +7,13 @@ export interface Card {
     markColor: string
     group: zoneGroup | null
     groupId: string | null
+    imageUrl: string
+    backImageUrl: string
+    isChojigen: boolean
 }
 
 export interface CardGroup {
     id: string
+    cardIds: number[]
+    cards: Card[]
 }

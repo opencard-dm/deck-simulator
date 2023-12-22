@@ -47,7 +47,7 @@
               'is-selected': cardIsSelected(card),
             }"
             :draggable="!card.groupId"
-            @click.stop="clickCard($event, card)"
+            @click.stop="clickCard(card)"
           >
             <img
               v-if="card.faceDown === true"
@@ -78,10 +78,10 @@
           >
           <template v-else>
             <o-button
-              v-if="selectTargetMode() && selectMode.card.id === card.id"
+              v-if="selectTargetMode() && selectMode?.card.id === card.id"
               variant="grey-dark"
               size="small"
-              @click.stop="clickCard($event, card)"
+              @click.stop="clickCard(card)"
               >キャンセル</o-button
             >
             <template v-else>
@@ -151,74 +151,87 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { isPhone } from "@/helpers/Util"
 import CardPopup from '../elements/CardPopup.vue'
 import MarkTool from "../mark-tool/MarkTool.vue";
+import { computed } from 'vue'
+import type { player, side, zone } from "@/entities";
+import { Card, CardGroup } from "@/entities/Card";
+import { useZone, zoneEmit } from "@/helpers/zone";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650
-</script>
 
-<script>
-import mixin from "@/helpers/mixin";
+const props = defineProps<{
+  player: player
+  battleCards: Card[]
+  battleCardGroups: CardGroup[]
+  side: side
+}>()
+const emit = defineEmits<zoneEmit>()
 
-export default {
-  props: ["player", "battleCards", "battleCardGroups", "side"],
-  mixins: [mixin.zone],
-  computed: {
-    battleZoneCards() {
-      // 表示するカードのIDのリスト
-      const firstCardIds = this.battleCardGroups.map((g) => g.cardIds[0]);
-      const visibleCards = this.battleCards.filter((c) => {
-        return !c.groupId || firstCardIds.includes(c.id);
+const {
+  openWorkSpace,
+  setHoveredCard,
+  cardIsSelected,
+  setMarkColor,
+  selectTargetMode,
+  selectMode,
+  setCardState,
+  toggleTap,
+  setSelectMode,
+  hasSelectedCard,
+  moveSelectedCard,
+} = useZone(props, emit)
+
+const battleZoneCards = computed(() => {
+  // 表示するカードのIDのリスト
+  const firstCardIds = props.battleCardGroups.map((g: CardGroup) => g.cardIds[0]);
+  const visibleCards = props.battleCards.filter((c: Card) => {
+    return !c.groupId || firstCardIds.includes(c.id);
+  });
+  return visibleCards;
+})
+
+function group(card: Card) {
+  const group = {
+    ...props.battleCardGroups.find((g) => g.id === card.groupId),
+  };
+  group.cards = props.battleCards.filter((c) => c.groupId === group.id);
+  return group;
+}
+function clickCard(card: Card) {
+  if (cardIsSelected(card)) {
+    // 選択中のカードと同じカードがクリックされた場合、
+    // セレクトモードを終了。
+    setSelectMode(null);
+    return;
+  }
+  if (!selectTargetMode()) {
+    setSelectMode({
+      card,
+      zone: "battleCards",
+      player: props.player,
+    });
+    return;
+  } else {
+    // カードを重ねる。
+    // moveSelectedCardでselectModeがnullになるので、情報を残しておく。
+    if (selectMode.value) {
+      const fromCard = selectMode.value?.card;
+      moveSelectedCard("battleCards");
+      emit("group-card", {
+        from: "battleCards",
+        to: "battleCardGroups",
+        fromCard: fromCard,
+        toCard: card,
+        player: props.player,
       });
-      return visibleCards;
-    },
-  },
-  methods: {
-    // リレーション
-    group(card) {
-      if (!card.groupId) {
-        return null;
-      }
-      const group = {
-        ...this.battleCardGroups.find((g) => g.id === card.groupId),
-      };
-      group.cards = this.battleCards.filter((c) => c.groupId === group.id);
-      return group;
-    },
-    clickCard(event, card) {
-      if (this.cardIsSelected(card)) {
-        // 選択中のカードと同じカードがクリックされた場合、
-        // セレクトモードを終了。
-        this.setSelectMode(null);
-        return;
-      }
-      if (!this.selectTargetMode()) {
-        this.setSelectMode({
-          card,
-          zone: "battleCards",
-          player: this.player,
-        });
-        return;
-      } else {
-        // カードを重ねる。
-        // moveSelectedCardでselectModeがnullになるので、情報を残しておく。
-        const fromCard = this.selectMode.card;
-        this.moveSelectedCard("battleCards");
-        this.$emit("group-card", {
-          from: "battleCards",
-          to: "battleCardGroups",
-          fromCard: fromCard,
-          toCard: card,
-          player: this.player,
-        });
-        return;
-      }
-    },
-  },
-};
+      return;
+    }
+  }
+}
 </script>
 
 <style lang="scss">
