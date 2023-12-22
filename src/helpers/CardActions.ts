@@ -89,13 +89,13 @@ export class CardActions {
     const cardIds = cards.map((c) => c.id);
     this.players[player]["cards"][from].forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
-      if ('tapped' in cardState) {
+      if (cardState.tapped !== undefined) {
         c.tapped = cardState.tapped
       }
-      if ('faceDown' in cardState) {
+      if (cardState.faceDown !== undefined) {
         c.faceDown = cardState.faceDown
       }
-      if ('markColor' in cardState) {
+      if (cardState.markColor !== undefined) {
         c.markColor = cardState.markColor
       }
     });

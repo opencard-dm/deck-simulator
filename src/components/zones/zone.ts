@@ -3,6 +3,7 @@ import { store as Store } from '@/store/index'
 import { cardState, player, zone, zoneGroup } from "@/entities";
 import { Card } from "@/entities/Card";
 import { computed } from "vue";
+import { changeCardsStateParams } from "@/helpers/CardActions";
 
 export interface zoneProps {
     player: player,
@@ -11,13 +12,13 @@ export interface zoneProps {
 
 export type zoneEmit = {
     'move-cards': [from: zone, to: zone, cards: Card[], player: player, prepend?: boolean]
-    'change-cards-state': []
-    'group-card': [{from: zone, to: zoneGroup, fromCard: Card, toCard: Card, player: player}]
+    'change-cards-state': [param: changeCardsStateParams]
+    'group-card': [param: {from: zone, to: zoneGroup, fromCard: Card, toCard: Card, player: player}]
     'shuffle-cards': [from: zone, cards: Card[], player: player]
-    'emit-room-state': []
+    'emit-room-state': [player: player]
 }
 
-export function useZone(props: zoneProps, emit: any) {
+export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zoneEmit>>) {
     const store = useStore()
     const workSpace = computed<typeof Store.state.workSpace>(() => store.state.workSpace)
     const selectMode = computed<typeof Store.state.selectMode>(() => store.state.selectMode)
@@ -46,10 +47,17 @@ export function useZone(props: zoneProps, emit: any) {
         // マナゾーンの場合タップ後に位置が変わるため、配列にプッシュして移動先の最後に表示されるようにする。
         emit('move-cards', 'manaCards', 'manaCards', [card], selectMode.value.player, false);
       }
-      card.tapped = !card.tapped;
+      if (selectMode.value) {
+        emit('change-cards-state', {
+          from: selectMode.value.zone,
+          cards: [card],
+          player: props.player,
+          cardState: {
+            tapped: !card.tapped
+          }
+        })
+      }
       setSelectMode(null);
-      // 状態を送信
-      emitState();
     }
     function setCardState(card: Card, cardState: cardState) {
       Object.keys(cardState).forEach((key) => {

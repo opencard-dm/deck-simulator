@@ -7,6 +7,7 @@
     @move-cards="moveCards"
     @group-card="groupCard"
     @emit-room-state="emitRoomState"
+    @change-cards-state="changeCardsState"
   ></BattleZone>
 
   <player-zone
@@ -60,11 +61,11 @@
     :player="player"
     :tefudaCards="cards.tefudaCards"
     @move-cards="moveCards"
-    @drawOne="$refs.lowerDeckZone.drawOne()"
+    @drawOne="lowerDeckZone?.drawOne()"
   ></tefuda-zone>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import TefudaZone from './zones/TefudaZone.vue';
 import ManaZone from './zones/ManaZone.vue';
 import PlayerZone from './zones/PlayerZone.vue';
@@ -72,36 +73,47 @@ import BattleZone from './zones/BattleZone.vue';
 import ShieldZone from './zones/ShieldZone.vue';
 import DeckZone from './zones/DeckZone.vue';
 import ChojigenZone from './zones/ChojigenZone.vue';
+import { zoneEmit } from './zones/zone';
+import type { player } from '@/entities';
+import { Card, CardGroup } from '@/entities/Card';
+import { ref } from 'vue';
 
-const props = defineProps({
-  player: String,
+const lowerDeckZone = ref<InstanceType<typeof DeckZone> | null>(null)
+const props = defineProps<{
+  player: player,
   cards: {
-    manaCards: Array,
-    battleCards: Array,
-    bochiCards: Array,
-    shieldCards: Array,
-    tefudaCards: Array,
-    yamafudaCards: Array,
-    chojigenCards: Array,
+    manaCards: Card[],
+    battleCards: Card[],
+    bochiCards: Card[],
+    shieldCards: Card[],
+    tefudaCards: Card[],
+    yamafudaCards: Card[],
+    chojigenCards: Card[],
     // cardGroups
-    battleCardGroups: Array,
-    shieldCardGroups: Array,
+    battleCardGroups: CardGroup[],
+    shieldCardGroups: CardGroup[],
   },
-  name: String,
-  roomId: String,
-  isReady: Boolean,
-  hasChojigen: Boolean,
-});
+  name: string,
+  roomId: string,
+  isReady: boolean,
+  hasChojigen: boolean,
+}>();
 
 const side = 'lower';
 
-const emit = defineEmits(['move-cards', 'group-card', 'emit-room-state']);
+const emit = defineEmits<zoneEmit>();
 
-function moveCards(from, to, cards, player, prepend) {
-  emit('move-cards', ...arguments);
+function moveCards(...args: any[]) {
+  // @ts-ignore
+  emit('move-cards', ...args);
 }
-function groupCard(from, to, fromCard, toCard, player) {
-  emit('group-card', ...arguments);
+function groupCard(...args: any[]) {
+  // @ts-ignore
+  emit('group-card', ...args);
+}
+function changeCardsState(...args: any[]) {
+  // @ts-ignore
+  emit('change-cards-state', ...args);
 }
 function emitRoomState() {
   emit('emit-room-state', props.player);

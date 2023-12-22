@@ -18,7 +18,7 @@ export function useHistory() {
 export function useRoomSetup(props: any) {
   const route = useRoute();
   const store = useStore();
-  const roomId = route.query.roomId as string
+  const roomId = route.query.roomId as string || 'single'
   const players = reactive(initialData(roomId).players);
   const deckSelectorActive = ref(true);
   const gameLogger: GameLogger = props.gameLogger
@@ -54,6 +54,22 @@ export function useRoomSetup(props: any) {
     if (!SocketUtil.socket) return;
     players[player].isReady = true;
     SocketUtil.socket.emit('cards-moved', players[player]);
+  }
+
+  function onChangeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
+    if (!cards || cards.length === 0) return;
+    cardActions.changeCardsState({ from, cards, player, cardState })
+    gameLogger.appendHistory(
+      cardActions.moveCards.name,
+      { from, cards, player, cardState }
+    )
+    if (props.single) {
+      sessionStorage.setItem('room', JSON.stringify({
+        players,
+        histories: gameLogger.histories,
+      }));
+      return;
+    }
   }
 
   function moveCards(from: zone, to: zone, cards: any[], player: player, prepend = false) {
@@ -164,6 +180,7 @@ export function useRoomSetup(props: any) {
     groupCard,
     setRoomState,
     changeCardsState,
+    onChangeCardsState,
     props,
     resetGame,
     players,

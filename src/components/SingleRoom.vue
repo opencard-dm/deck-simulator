@@ -43,6 +43,7 @@
             @move-cards="onMoveCards"
             @group-card="groupCard"
             @emit-room-state="emitRoomState"
+            @change-cards-state="onChangeCardsState"
           ></PlayerLower>
         </div>
       </ImageViewer>
@@ -89,6 +90,7 @@
             @move-cards="onMoveCards"
             @group-card="groupCard"
             @emit-room-state="emitRoomState"
+            @change-cards-state="onChangeCardsState"
           ></PlayerLower>
         </div>
       </ImageViewer>
@@ -120,7 +122,7 @@ const props = defineProps<{
   lowerPlayer: player,
   room: Object,
   loading: boolean,
-  deck: Object,
+  deck: Object | null,
   single: boolean,
   gameLogger: GameLogger,
 }>()
@@ -149,7 +151,7 @@ onMounted(() => {
   isMounted.value = true;
 });
 
-const { moveCards, onMoveCards, groupCard, setRoomState, players, changeCardsState } = useRoomSetup(props);
+const { moveCards, onMoveCards, groupCard, setRoomState, players, changeCardsState, onChangeCardsState } = useRoomSetup(props);
 
 defineExpose({
   moveCards,
