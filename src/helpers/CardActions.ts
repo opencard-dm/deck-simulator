@@ -147,6 +147,21 @@ export class CardActions {
     }
   }
 
+  undoGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
+    let card
+    this.players[player]["cards"][from].forEach((c: Card) => {
+      card = c
+      if (c.id === fromCard.id) {
+        c.faceDown = fromCard.faceDown
+        c.tapped = fromCard.tapped
+        c.markColor = fromCard.markColor
+        c.group = fromCard.group
+        c.groupId = fromCard.groupId
+      }
+    })
+    this.ungroupCard({ groupName: to, card: card as Card, player, zone: from })
+  }
+
   // groupNameはbattleCardGroupsかshieldCardGroups
   ungroupCard({ groupName, card, player, zone }: {
     groupName: zoneGroup,

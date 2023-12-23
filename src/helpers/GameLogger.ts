@@ -69,7 +69,7 @@ export class GameLogger {
         this.room?.moveCards(to, from, cards, player, prepend)
         break;
       case this.groupCard.name:
-        this.room?.groupCard(history.args as groupCardParams)
+        this.room?.cardActions.undoGroupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
         this.room?.cardActions.undoCardsState(history.args as changeCardsStateParams)
