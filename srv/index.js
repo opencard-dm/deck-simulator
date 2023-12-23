@@ -14,7 +14,9 @@ const server = app.listen(process.env.PORT, "0.0.0.0", () => {
 });
 
 prepareApp(app, server)
-ViteExpress.bind(app, server)
+if (process.env.NODE_ENV === 'development') {
+  ViteExpress.bind(app, server)
+}
 /**
  * @param {import('express').Express} app 
  * @param {import('http').Server} http 
