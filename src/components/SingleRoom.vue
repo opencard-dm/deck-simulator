@@ -62,6 +62,7 @@
           :isReady="players[upperPlayer].isReady"
           :partnerIsReady="true"
           :cancelable="true"
+          :cardActions="cardActions"
           @moveCards="onMoveCards"
           @selected="onDeckSelected"
         ></DeckSelector>

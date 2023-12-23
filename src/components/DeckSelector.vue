@@ -33,6 +33,7 @@
             size="small"
             :expanded="true"
             :disabled="scraping"
+            @input="validateUrl()"
             @keypress.prevent="onKeyPress"
             @icon-click="scrape"
           >
@@ -85,176 +86,180 @@
   </o-modal>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { player } from "@/entities";
+import type { Deck as DeckType } from "@/entities/Deck";
+import { CardActions } from "@/helpers/CardActions";
 import { Deck } from "@/helpers/Deck";
 import axios from "axios";
+import { computed, onMounted, reactive, ref } from "vue";
+import { useRoute } from "vue-router";
+import { useStore } from "vuex";
 
-export default {
-  props: ["isReady", "player", "partnerIsReady", "active", "cancelable"],
-  emits: ['move-cards', 'selected', 'update:active'],
-  data() {
-    return {
-      deckId: 0,
-      deckList: [],
-      scrapeUrl: "",
-      scraping: false,
-      errors: {
-        scrapeUrl: "",
-      },
-      copyLinkTooltip: false,
-    };
-  },
-  watch: {
-    /**
-     * @param {String} newVal
-     */
-    scrapeUrl(newVal) {
-      if (newVal) {
-        if (newVal.match(/^https:\/\/gachi-matome.com\/deckrecipe-detail-dm/)) {
-          this.scrape();
-        } else {
-          this.errors.scrapeUrl = "不適切なURLです";
-          return;
-        }
-      }
-      this.errors.scrapeUrl = "";
-    },
-  },
-  computed: {
-    canCansel() {
-      if (this.cancelable) return true
-      return this.isReady;
-    },
-    tabUrl() {
-      // 相手プレイヤーのルームのURL
-      const roomId = this.$route.query.roomId;
-      const player = this.$route.query.player;
-      return encodeURI(
-        `/room?roomId=${roomId}&player=${player == "a" ? "b" : "a"}`
-      );
-    },
-    allDecks() {
-      return [...this.$store.state.decks.data, ...this.deckList];
-    },
-    inviteLink() {
-      return (
-        window.location.origin +
-        "/room?roomId=" +
-        encodeURI(this.$route.query.roomId) +
-        "&player=b"
-      );
-    },
-  },
-  mounted() {
-    axios
+const route = useRoute()
+const store = useStore()
+const props = defineProps<{
+  player: player
+  isReady: boolean
+  partnerIsReady: boolean
+  active: boolean
+  cancelable: boolean
+  cardActions: CardActions
+}>()
+const emit = defineEmits(['move-cards', 'selected', 'update:active'])
+
+// data
+const deckId = ref(0)
+const deckList = reactive([])
+const scrapeUrl = ref("")
+const scraping = ref(false)
+const errors = reactive({
+  scrapeUrl: "",
+})
+const copyLinkTooltip = ref(false)
+
+function validateUrl() {
+  if (scrapeUrl) {
+    if (scrapeUrl.value.match(/^https:\/\/gachi-matome.com\/deckrecipe-detail-dm/)) {
+      scrape();
+    } else {
+      errors.scrapeUrl = "不適切なURLです";
+      return;
+    }
+  }
+  errors.scrapeUrl = "";
+}
+// computed
+const canCansel = computed(() => {
+  if (props.cancelable) return true
+  return props.isReady;
+})
+const tabUrl = computed(() => {
+  // 相手プレイヤーのルームのURL
+  const roomId = route.query.roomId as string;
+  const player = route.query.player as string;
+  return encodeURI(
+    `/room?roomId=${roomId}&player=${player == "a" ? "b" : "a"}`
+  );
+})
+const allDecks = computed(() => {
+  return [...store.state.decks.data, ...deckList];
+})
+const inviteLink = computed(() => {
+  return (
+    window.location.origin +
+    "/room?roomId=" +
+    encodeURI(route.query.roomId as string) +
+    "&player=b"
+  );
+})
+onMounted(() => {
+  axios
       .get('/api/decks')
       .then((res) => {
-        this.deckList = [...this.deckList, ...res.data];
+        deckList.push(...res.data as never[]);
       })
       .catch((err) => {
         console.log(err);
       });
-  },
-  methods: {
-    onClickSelectButton() {
-      this.errors.scrapeUrl = ''
-      this.scrapeUrl = this.allDecks[this.deckId].url
-      this.scrape()
-    },
-    async setupDeck(deckData) {
-      const deck = await Deck.prepareDeckForGame(
-        deckData,
-        this.player === "a"
-      );
-      console.log("selected deck", deck);
-      // fromのカードは存在しなくても良いため、仮にyamafudaCardsにしている。
-      const shieldCards = deck.cards.slice(0, 5);
-      shieldCards.forEach((c) => {
-        c.faceDown = true;
-      });
-      this.$emit(
-        "move-cards",
-        "yamafudaCards",
-        "shieldCards",
-        shieldCards,
-        this.player
-      );
-      this.$emit(
-        "move-cards",
-        "yamafudaCards",
-        "tefudaCards",
-        deck.cards.slice(5, 10),
-        this.player
-      );
-      const yamafudaCards = deck.cards.slice(10, 40);
-      yamafudaCards.forEach((c) => {
-        c.faceDown = true;
-      });
-      this.$emit(
-        "move-cards",
-        "yamafudaCards",
-        "yamafudaCards",
-        yamafudaCards,
-        this.player
-      );
-      this.$emit(
-        "move-cards",
-        "yamafudaCards",
-        "chojigenCards",
-        deck.chojigenCards,
-        this.player
-      );
-      this.$emit("selected", {
-        deck,
-        player: this.player,
-      });
-      if (this.partnerIsReady) {
-        this.$emit("update:active", false);
+})
+
+function onClickSelectButton() {
+  errors.scrapeUrl = ''
+  scrapeUrl.value = allDecks.value[deckId.value].url
+  scrape()
+}
+async function setupDeck(deckData: DeckType) {
+  const deck: DeckType = await Deck.prepareDeckForGame(
+    deckData,
+    props.player === "a"
+  );
+  console.log("selected deck", deck);
+  // fromのカードは存在しなくても良いため、仮にyamafudaCardsにしている。
+  const shieldCards = deck.cards.slice(0, 5);
+  shieldCards.forEach((c) => {
+    c.faceDown = true;
+  });
+  props.cardActions.moveCards({
+    from: 'yamafudaCards',
+    to: 'shieldCards',
+    cards: shieldCards,
+    player: props.player,
+    prepend: false,
+  })
+  props.cardActions.moveCards({
+    from: 'yamafudaCards',
+    to: 'tefudaCards',
+    cards: deck.cards.slice(5, 10),
+    player: props.player,
+    prepend: false,
+  })
+  const yamafudaCards = deck.cards.slice(10, 40);
+  yamafudaCards.forEach((c) => {
+    c.faceDown = true;
+  });
+  props.cardActions.moveCards({
+    from: 'yamafudaCards',
+    to: 'yamafudaCards',
+    cards: yamafudaCards,
+    player: props.player,
+    prepend: false,
+  })
+  props.cardActions.moveCards({
+    from: 'yamafudaCards',
+    to: 'chojigenCards',
+    cards: deck.chojigenCards,
+    player: props.player,
+    prepend: false,
+  })
+  emit("selected", {
+    deck,
+    player: props.player,
+  });
+  if (props.partnerIsReady) {
+    emit("update:active", false);
+  }
+}
+function scrape() {
+  if (!scrapeUrl.value || scraping.value || errors.scrapeUrl) return;
+  scraping.value = true;
+  const deckId = scrapeUrl.value.split('tcgrevo_deck_maker_deck_id=')[1]
+  axios
+    .get('/api/scrape', {
+      params: {
+        deckId,
       }
-    },
-    scrape() {
-      if (!this.scrapeUrl || this.scraping || this.errors.scrapeUrl) return;
-      this.scraping = true;
-      const deckId = this.scrapeUrl.split('tcgrevo_deck_maker_deck_id=')[1]
-      const url = `${this.useConfig().API_HOST}/api/scrape`;
-      axios
-        .get(url, {
-          params: {
-            deckId,
-          }
-        })
-        .then((res) => {
-          console.log("fetched deck", res);
-          // this.$store.commit("decks/setData", [
-          //   res.data,
-          //   ...this.$store.state.decks.data,
-          // ]);
-          this.scrapeUrl = "";
-          this.scraping = false;
-          this.setupDeck(res.data)
-        })
-        .catch((err) => {
-          // this.scrapeUrl = "";
-          this.scraping = false;
-          this.errors.scrapeUrl = "デッキデータの取得に失敗しました";
-          console.log(err);
-        });
-    },
-    onKeyPress() {
-      this.errors.scrapeUrl = "ペーストのみ可能です";
-    },
-    onClose() {
-      this.$emit("update:active", false);
-    },
-    copyInviteLink() {
-      navigator.clipboard.writeText(this.inviteLink);
-      this.copyLinkTooltip = true;
-      window.setTimeout(() => {
-        this.copyLinkTooltip = false;
-      }, 1000);
-    },
-  },
-};
+    })
+    .then((res) => {
+      console.log("fetched deck", res);
+      // this.$store.commit("decks/setData", [
+      //   res.data,
+      //   ...this.$store.state.decks.data,
+      // ]);
+      scrapeUrl.value = "";
+      scraping.value = false;
+      setupDeck(res.data)
+    })
+    .catch((err) => {
+      // this.scrapeUrl = "";
+      scraping.value = false;
+      errors.scrapeUrl = "デッキデータの取得に失敗しました";
+      console.log(err);
+    });
+}
+function onKeyPress() {
+  errors.scrapeUrl = "ペーストのみ可能です";
+}
+function onClose() {
+  emit("update:active", false);
+}
+function copyInviteLink() {
+  navigator.clipboard.writeText(inviteLink.value);
+  copyLinkTooltip.value = true;
+  window.setTimeout(() => {
+    copyLinkTooltip.value = false;
+  }, 1000);
+}
 </script>
 
 <style lang="scss">
