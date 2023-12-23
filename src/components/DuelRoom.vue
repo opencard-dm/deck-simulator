@@ -29,7 +29,8 @@
           }"
         >
           <template v-if="!single && !isPhone()">
-            <PlayerUpper
+            <PlayerLower
+              :side="'upper'"
               :player="upperPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"
@@ -39,7 +40,7 @@
               @move-cards="moveCards"
               @group-card="groupCard"
               @emit-room-state="emitRoomState"
-            ></PlayerUpper>
+            ></PlayerLower>
           </template>
 
           <!-- <MessageBox :upper-player="upperPlayer"
@@ -49,6 +50,7 @@
           <!-- center -->
           <!-- <MessageButtons :player="lowerPlayer"></MessageButtons> -->
           <PlayerLower
+            :side="'lower'"
             :player="lowerPlayer"
             :cards="players[lowerPlayer].cards"
             :name="players[lowerPlayer].name"
@@ -65,7 +67,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Layout } from '@/helpers/layout';
 import { isPhone } from '@/helpers/Util';
 import { onMounted, ref, watch } from 'vue';
@@ -74,7 +76,6 @@ import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
 import DeckSelector from './DeckSelector.vue';
 import PlayerLower from './PlayerLower.vue';
-import PlayerUpper from './PlayerUpper.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';

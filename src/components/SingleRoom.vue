@@ -34,6 +34,7 @@
           }"
         >
           <PlayerLower
+            :side="'lower'"
             :player="lowerPlayer"
             :cards="players[lowerPlayer].cards"
             :name="players[lowerPlayer].name"
@@ -81,6 +82,7 @@
           }"
         >
           <PlayerLower
+            :side="'lower'"
             :player="upperPlayer"
             :cards="players[upperPlayer].cards"
             :name="players[upperPlayer].name"
