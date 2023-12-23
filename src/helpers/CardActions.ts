@@ -174,7 +174,7 @@ export class CardActions {
       cards.map(c => c.id === toCard.id ? c.groupId = toCard.groupId : null)
     }
     if (from !== to) {
-      this.moveCards({ from: to, to: from, cards: [fromCard], player, prepend: false })
+      this.undoMoveCards({ from, to, cards: [fromCard], player })
     } else {
       // TODO: 順番をもとに戻す
     }
