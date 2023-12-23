@@ -101,6 +101,21 @@ export class CardActions {
     });
   }
 
+  undoCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
+    const cardIds = cards.map((c) => c.id);
+    this.players[player]["cards"][from].forEach((c: Card) => {
+      if (!cardIds.includes(c.id)) return;
+      for (const card of cards) {
+        if (card.id === c.id) {
+          c.tapped = card.tapped
+          c.faceDown = card.faceDown
+          c.markColor = card.markColor
+          break
+        }
+      }
+    });
+  }
+
   groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
     // 情報をカードに追加
     // card.groupはできれば使いたくない。moveCards内でのみ使用。

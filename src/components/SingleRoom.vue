@@ -151,12 +151,22 @@ onMounted(() => {
   isMounted.value = true;
 });
 
-const { moveCards, onMoveCards, groupCard, setRoomState, players, changeCardsState, onChangeCardsState } = useRoomSetup(props);
+const {
+  moveCards,
+  onMoveCards,
+  groupCard,
+  setRoomState,
+  players,
+  changeCardsState,
+  onChangeCardsState,
+  cardActions
+} = useRoomSetup(props);
 
 defineExpose({
   moveCards,
   groupCard,
   changeCardsState,
+  cardActions,
 })
 
 watch(

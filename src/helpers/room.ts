@@ -30,6 +30,7 @@ export function useRoomSetup(props: any) {
     if (store.state.displayImageUrl) {
       store.commit('setDisplayImageUrl', '');
     }
+    gameLogger.moveCards({ from, to, cards: cards, player, prepend })
     moveCards(from, to, cards, player, prepend)
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {
@@ -40,10 +41,6 @@ export function useRoomSetup(props: any) {
         );
       }, 300);
     }
-    gameLogger.appendHistory(
-      cardActions.moveCards.name,
-      { from, to, cards: cards, player, prepend }
-    )
     if (props.single) {
       sessionStorage.setItem('room', JSON.stringify({
         players,
@@ -58,11 +55,9 @@ export function useRoomSetup(props: any) {
 
   function onChangeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
     if (!cards || cards.length === 0) return;
+    // 実際に変更を加える前に状態を保存する
+    gameLogger.changeCardsState({ from, cards, player, cardState })
     cardActions.changeCardsState({ from, cards, player, cardState })
-    gameLogger.appendHistory(
-      cardActions.moveCards.name,
-      { from, cards, player, cardState }
-    )
     if (props.single) {
       sessionStorage.setItem('room', JSON.stringify({
         players,
@@ -175,6 +170,7 @@ export function useRoomSetup(props: any) {
     SocketUtil.socket.emit("cards-moved", players.b);
   }
   return {
+    cardActions,
     onMoveCards,
     moveCards,
     groupCard,
