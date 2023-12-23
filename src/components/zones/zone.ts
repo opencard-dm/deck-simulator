@@ -1,13 +1,15 @@
 import { useStore } from "vuex";
 import { store as Store } from '@/store/index'
 import { cardState, player, zone, zoneGroup } from "@/entities";
-import { Card } from "@/entities/Card";
+import { Card, CardGroup } from "@/entities/Card";
 import { computed } from "vue";
 import { changeCardsStateParams } from "@/helpers/CardActions";
 
 export interface zoneProps {
-    player: player,
-    zone?: zone,
+    player: player
+    cards: Card[]
+    cardGroups?: CardGroup[]
+    zone?: zone
 }
 
 export type zoneEmit = {
@@ -43,10 +45,10 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
       emit('move-cards', from, to, [card], props.player, prepend);
     }
     function toggleTap(card: Card) {
-      if (selectMode.value?.zone === 'manaCards') {
-        // マナゾーンの場合タップ後に位置が変わるため、配列にプッシュして移動先の最後に表示されるようにする。
-        emit('move-cards', 'manaCards', 'manaCards', [card], selectMode.value.player, false);
-      }
+      // if (selectMode.value?.zone === 'manaCards') {
+      //   // マナゾーンの場合タップ後に位置が変わるため、配列にプッシュして移動先の最後に表示されるようにする。
+      //   emit('move-cards', 'manaCards', 'manaCards', [card], selectMode.value.player, false);
+      // }
       if (selectMode.value) {
         emit('change-cards-state', {
           from: selectMode.value.zone,
@@ -60,18 +62,25 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
       setSelectMode(null);
     }
     function setCardState(card: Card, cardState: cardState) {
-      Object.keys(cardState).forEach((key) => {
-        if (key === 'tapped' || key === 'faceDown') {
-            card[key] = cardState[key] as any
-        }
+      console.assert(props.zone, 'props.zone is required')
+      emit('change-cards-state', {
+        from: props.zone as zone,
+        cards: [card],
+        player: props.player,
+        cardState: cardState,
       })
-      // 状態を送信
-      emitState();
     }
     function setMarkColor(card: Card, color: string) {
-      setSelectMode(null);
-      card.markColor = color;
-      emitState();
+      setSelectMode(null)
+      console.assert(props.zone, 'props.zone is required')
+      emit('change-cards-state', {
+        from: props.zone as zone,
+        cards: [card],
+        player: props.player,
+        cardState: {
+          markColor: color
+        },
+      })
     }
     function hasSelectedCard() {
       // セレクトモードと本人であることを確認

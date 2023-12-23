@@ -2,13 +2,13 @@
   <TefudaZone
     :side="side"
     :player="player"
-    :tefudaCards="cards.tefudaCards"
+    :cards="cards.tefudaCards"
     @move-cards="moveCards"
   ></TefudaZone>
   <ManaZone
     :side="side"
     :player="player"
-    :manaCards="cards.manaCards"
+    :cards="cards.manaCards"
     @move-cards="moveCards"
   ></ManaZone>
   <PlayerZone
@@ -24,8 +24,8 @@
       <ShieldZone
         :side="side"
         :player="player"
-        :shieldCards="cards.shieldCards"
-        :shieldCardGroups="cards.shieldCardGroups"
+        :cards="cards.shieldCards"
+        :cardGroups="cards.shieldCardGroups"
         @move-cards="moveCards"
         @group-card="groupCard"
       ></ShieldZone>
@@ -34,7 +34,7 @@
       <DeckZone
         :side="side"
         :player="player"
-        :yamafudaCards="cards.yamafudaCards"
+        :cards="cards.yamafudaCards"
         @move-cards="moveCards"
         @group-card="groupCard"
       ></DeckZone>
@@ -43,7 +43,7 @@
       <ChojigenZone
         :side="side"
         :player="player"
-        :chojigenCards="cards.chojigenCards"
+        :cards="cards.chojigenCards"
         :hasChojigen="hasChojigen"
         @move-cards="moveCards"
       ></ChojigenZone>
@@ -52,8 +52,8 @@
   <BattleZone
     :side="side"
     :player="player"
-    :battleCards="cards.battleCards"
-    :battleCardGroups="cards.battleCardGroups"
+    :cards="cards.battleCards"
+    :cardGroups="cards.battleCardGroups"
     @move-cards="moveCards"
     @group-card="groupCard"
     @emit-room-state="emitRoomState"

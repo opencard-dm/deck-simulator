@@ -2,8 +2,8 @@
   <BattleZone
     :side="side"
     :player="player"
-    :battleCards="cards.battleCards"
-    :battleCardGroups="cards.battleCardGroups"
+    :cards="cards.battleCards"
+    :cardGroups="cards.battleCardGroups"
     @move-cards="moveCards"
     @group-card="groupCard"
     @emit-room-state="emitRoomState"
@@ -18,15 +18,17 @@
     :shieldCards="cards.shieldCards"
     :shieldCardGroups="cards.shieldCardGroups"
     @move-cards="moveCards"
+    @change-cards-state="changeCardsState"
   >
     <template #shield-zone>
       <ShieldZone
         :side="side"
         :player="player"
-        :shieldCards="cards.shieldCards"
-        :shieldCardGroups="cards.shieldCardGroups"
+        :cards="cards.shieldCards"
+        :cardGroups="cards.shieldCardGroups"
         @move-cards="moveCards"
         @group-card="groupCard"
+        @change-cards-state="changeCardsState"
       ></ShieldZone>
     </template>
     <template #deck-zone>
@@ -34,9 +36,10 @@
         :side="side"
         ref="lowerDeckZone"
         :player="player"
-        :yamafudaCards="cards.yamafudaCards"
+        :cards="cards.yamafudaCards"
         @move-cards="moveCards"
         @group-card="groupCard"
+        @change-cards-state="changeCardsState"
       ></DeckZone>
     </template>
     <template #chojigenZone>
@@ -44,7 +47,7 @@
         :side="side"
         v-if="cards.chojigenCards.length > 0"
         :player="player"
-        :chojigenCards="cards.chojigenCards"
+        :cards="cards.chojigenCards"
         :hasChojigen="hasChojigen"
         @move-cards="moveCards"
       ></ChojigenZone>
@@ -53,13 +56,14 @@
   <mana-zone
     :side="side"
     :player="player"
-    :manaCards="cards.manaCards"
+    :cards="cards.manaCards"
     @move-cards="moveCards"
+    @change-cards-state="changeCardsState"
   ></mana-zone>
   <tefuda-zone
     :side="side"
     :player="player"
-    :tefudaCards="cards.tefudaCards"
+    :cards="cards.tefudaCards"
     @move-cards="moveCards"
     @drawOne="lowerDeckZone?.drawOne()"
   ></tefuda-zone>

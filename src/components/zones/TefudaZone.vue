@@ -4,7 +4,7 @@
       <div
         class="card_wrapper"
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
-        v-for="(card, index) in tefudaCards"
+        v-for="(card, index) in cards"
         :key="index"
         @mouseenter="setHoveredCard(card)"
         @mouseleave="setHoveredCard(null)"
@@ -122,7 +122,7 @@ const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
 const store = useStore()
 const props = defineProps<{
   player: player
-  tefudaCards: Card[]
+  cards: Card[]
   side: side
 }>()
 const zone = 'tefudaCards'

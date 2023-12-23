@@ -3,7 +3,7 @@
     <div class="manaZone" :class="side">
       <RoundButton :style="{color: 'beige', background: 'green'}" @click.stop="clickManaButton">
         <template v-if="hasSelectedCard()">
-          <template v-if="selectMode?.zone !== 'manaCards'">
+          <template v-if="selectMode?.zone !== zone">
             <p :style="{fontSize: '12px'}">チャージ</p>
           </template>
           <template v-else-if="selectMode.card.tapped">
@@ -13,7 +13,7 @@
         </template>
         <template v-else>
           <p :style="{fontSize: '10px'}">マナ</p>
-          <p>{{ countNormal }}/{{ manaCards.length }}</p>
+          <p>{{ countNormal }}/{{ cards.length }}</p>
         </template>
       </RoundButton>
       <div class="manaZone_cont" :class="side">
@@ -81,22 +81,21 @@ import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 
-const zone = 'manaCards'
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   player: player
-  manaCards: Card[]
+  cards: Card[]
   side: side
-}>()
+  zone?: zone
+}>(), {
+  zone: 'manaCards',
+})
 const emit = defineEmits<zoneEmit>()
 
 const {
   openWorkSpace,
   setHoveredCard,
   cardIsSelected,
-  setMarkColor,
-  selectTargetMode,
   selectMode,
-  setCardState,
   toggleTap,
   setSelectMode,
   hasSelectedCard,
@@ -105,12 +104,12 @@ const {
 } = useZone(props, emit)
 
 const normalCards = computed(() => {
-  return props.manaCards.filter((card) => {
+  return props.cards.filter((card) => {
     return card.tapped !== true;
   });
 })
 const tappedCards = computed(() => {
-  return props.manaCards.filter((card) => {
+  return props.cards.filter((card) => {
     return card.tapped === true;
   });
 })
@@ -119,12 +118,12 @@ const countNormal = computed(() => {
 })
 function clickManaButton() {
   if (hasSelectedCard()) {
-    if (selectMode.value?.zone !== "manaCards") {
-      moveSelectedCard(zone);
+    if (selectMode.value?.zone !== props.zone) {
+      moveSelectedCard(props.zone);
       return;
     }
     if (selectMode.value.card.tapped) {
-      props.manaCards.forEach((c) => {
+      props.cards.forEach((c) => {
         c.tapped = false;
       });
       setSelectMode(null);
@@ -133,8 +132,8 @@ function clickManaButton() {
     }
   }
   openWorkSpace({
-    zone: "manaCards",
-    cards: props.manaCards,
+    zone: props.zone,
+    cards: props.cards,
     player: props.player,
   });
 }
@@ -148,7 +147,7 @@ function clickCard(card: Card) {
   }
   setSelectMode({
     card,
-    zone: "manaCards",
+    zone: props.zone,
     player: props.player,
   });
   return;

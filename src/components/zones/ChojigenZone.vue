@@ -20,12 +20,15 @@ import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { zoneEmit, useZone } from "./zone";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   player: player
-  chojigenCards: Card[]
+  cards: Card[]
   side: side
   hasChojigen: boolean
-}>()
+  zone?: zone
+}>(), {
+  zone: 'chojigenCards',
+})
 const emit = defineEmits<zoneEmit>()
 const {
   openWorkSpace,
@@ -35,13 +38,13 @@ const {
 function clickChojigenZone() {
   if (!selectMode.value) {
     openWorkSpace({
-      zone: "chojigenCards",
-      cards: props.chojigenCards,
+      zone: props.zone,
+      cards: props.cards,
       player: props.player,
     });
     return;
   }
-  moveSelectedCard("chojigenCards");
+  moveSelectedCard(props.zone);
 }
 </script>
 

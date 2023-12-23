@@ -36,7 +36,7 @@
             size="small"
             @click.stop="
               openWorkSpace({
-                zone: 'shieldCards',
+                zone: zone,
                 cards: card.groupId ? group(card).cards : [card],
                 player: player,
                 single: true,
@@ -53,24 +53,27 @@
 <script setup lang="ts">
 import MarkTool from "../mark-tool/MarkTool.vue";
 import { computed } from 'vue'
-import type { player, side, } from "@/entities";
+import type { player, side, zone, zoneGroup } from "@/entities";
 import { Card, CardGroup } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   player: player
-  shieldCards: Card[]
-  shieldCardGroups: CardGroup[]
+  cards: Card[]
+  cardGroups: CardGroup[]
   side: side
-}>()
+  zone?: zone
+  groupZone?: zoneGroup
+}>(), {
+  zone: 'shieldCards',
+  groupZone: 'shieldCardGroups',
+})
 const emit = defineEmits<zoneEmit>()
-const zone = 'shieldCards'
-const groupZone = 'shieldCardGroups'
 
 const countableShieldCards = computed(() => {
   // グループ化されているカードは一つとカウントする。
-  const firstCardIds = props.shieldCardGroups.map((g) => g.cardIds[0]);
-  return props.shieldCards.filter((c: Card) => {
+  const firstCardIds = props.cardGroups.map((g) => g.cardIds[0]);
+  return props.cards.filter((c: Card) => {
     return !c.groupId || firstCardIds.includes(c.id);
   });
 })
@@ -87,9 +90,9 @@ const {
 
 function group(card: Card): CardGroup {
   const group = {
-    ...props.shieldCardGroups.find((g: CardGroup) => g.id === card.groupId),
+    ...props.cardGroups.find((g: CardGroup) => g.id === card.groupId),
   };
-  group.cards = props.shieldCards.filter((c: Card) => c.groupId === group.id);
+  group.cards = props.cards.filter((c: Card) => c.groupId === group.id);
   return group as CardGroup;
 }
 
@@ -105,10 +108,10 @@ function clickShield(card: Card) {
       // カードを重ねる。
       // moveSelectedCardでselectModeがnullになるので、情報を残しておく。
       const fromCard = selectMode.value.card;
-      moveSelectedCard(zone);
+      moveSelectedCard(props.zone);
       emit("group-card", {
-        from: zone,
-        to: groupZone,
+        from: props.zone,
+        to: props.groupZone,
         fromCard: fromCard,
         toCard: card,
         player: props.player,
@@ -118,7 +121,7 @@ function clickShield(card: Card) {
   }
   setSelectMode({
     card,
-    zone: "shieldCards",
+    zone: props.zone,
     player: props.player,
   });
 }

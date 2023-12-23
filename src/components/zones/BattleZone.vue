@@ -9,8 +9,8 @@
         variant="primary"
         @click.stop="
           openWorkSpace({
-            zone: 'battleCards',
-            cards: battleCards,
+            zone: zone,
+            cards: cards,
             player: player,
           })
         "
@@ -68,7 +68,7 @@
             size="small"
             @click.stop="
               openWorkSpace({
-                zone: 'battleCards',
+                zone: zone,
                 cards: card.groupId ? group(card).cards : [card],
                 player: player,
                 single: true,
@@ -142,7 +142,7 @@
           class="battleZoneButton"
           variant="danger"
           rounded
-          @click.stop="moveSelectedCard('battleCards', false)"
+          @click.stop="moveSelectedCard(zone, false)"
         >
           出す
         </o-button>
@@ -156,19 +156,25 @@ import { isPhone } from "@/helpers/Util"
 import CardPopup from '../elements/CardPopup.vue'
 import MarkTool from "../mark-tool/MarkTool.vue";
 import { computed } from 'vue'
-import type { player, side, zone } from "@/entities";
+import type { player, side, zone, zoneGroup } from "@/entities";
 import { Card, CardGroup } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   player: player
-  battleCards: Card[]
-  battleCardGroups: CardGroup[]
+  cards: Card[]
+  cardGroups: CardGroup[]
   side: side
-}>()
+  zone?: zone
+  groupZone?: zoneGroup
+}>(), {
+  zone: 'battleCards',
+  groupZone: 'battleCardGroups',
+})
+
 const emit = defineEmits<zoneEmit>()
 
 const {
@@ -187,8 +193,8 @@ const {
 
 const battleZoneCards = computed(() => {
   // 表示するカードのIDのリスト
-  const firstCardIds = props.battleCardGroups.map((g: CardGroup) => g.cardIds[0]);
-  const visibleCards = props.battleCards.filter((c: Card) => {
+  const firstCardIds = props.cardGroups.map((g: CardGroup) => g.cardIds[0]);
+  const visibleCards = props.cards.filter((c: Card) => {
     return !c.groupId || firstCardIds.includes(c.id);
   });
   return visibleCards;
@@ -196,9 +202,9 @@ const battleZoneCards = computed(() => {
 
 function group(card: Card) {
   const group = {
-    ...props.battleCardGroups.find((g) => g.id === card.groupId),
+    ...props.cardGroups.find((g) => g.id === card.groupId),
   };
-  group.cards = props.battleCards.filter((c) => c.groupId === group.id);
+  group.cards = props.cards.filter((c) => c.groupId === group.id);
   return group;
 }
 function clickCard(card: Card) {
@@ -211,7 +217,7 @@ function clickCard(card: Card) {
   if (!selectTargetMode()) {
     setSelectMode({
       card,
-      zone: "battleCards",
+      zone: props.zone,
       player: props.player,
     });
     return;
@@ -220,10 +226,10 @@ function clickCard(card: Card) {
     // moveSelectedCardでselectModeがnullになるので、情報を残しておく。
     if (selectMode.value) {
       const fromCard = selectMode.value?.card;
-      moveSelectedCard("battleCards");
+      moveSelectedCard(props.zone);
       emit("group-card", {
-        from: "battleCards",
-        to: "battleCardGroups",
+        from: props.zone,
+        to: props.groupZone,
         fromCard: fromCard,
         toCard: card,
         player: props.player,

@@ -82,13 +82,7 @@ const emit = defineEmits<zoneEmit>()
 const {
   openWorkSpace,
   setHoveredCard,
-  cardIsSelected,
-  setMarkColor,
-  selectTargetMode,
   selectMode,
-  setCardState,
-  toggleTap,
-  setSelectMode,
   hasSelectedCard,
   moveSelectedCard,
 } = useZone(props, emit)

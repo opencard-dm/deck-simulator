@@ -16,33 +16,33 @@
         ></div>
         <div
           class="deck_topImg"
-          v-if="yamafudaCards.length > 0"
-          :class="[{ is_selected: cardIsSelected(yamafudaCards[0]) }]"
+          v-if="cards.length > 0"
+          :class="[{ is_selected: cardIsSelected(cards[0]) }]"
           :style="{
             top: `${deckViews.length * -2}px`,
             left: `${deckViews.length * -2}px`,
             cursor: 'pointer',
           }"
           @click.stop="setSelectMode({
-            zone: 'yamafudaCards',
-            card: yamafudaCards[0],
+            zone: zone,
+            card: cards[0],
             player,
             selectingTarget: true,
           })"
         >
           <OnLongPress
-            v-if="yamafudaCards[0].faceDown"
+            v-if="cards[0].faceDown"
             @trigger="openDeck()"
             @contextmenu.prevent
             :prevent="true"
           >
             <img
-              :src="yamafudaCards[0].backImageUrl"
+              :src="cards[0].backImageUrl"
               alt=""
             />
           </OnLongPress>
-          <CardPopup v-else :url="yamafudaCards[0].imageUrl">
-            <img :src="yamafudaCards[0].imageUrl" alt="" />
+          <CardPopup v-else :url="cards[0].imageUrl">
+            <img :src="cards[0].imageUrl" alt="" />
           </CardPopup>
         </div>
         <div v-if="hasSelectedCard()" class="deck_buttons"
@@ -59,8 +59,8 @@
             variant="grey-dark"
             size="small"
             class="deck_buttons_top"
-            @click.stop="setCardState(yamafudaCards[0], {
-              faceDown: !yamafudaCards[0].faceDown
+            @click.stop="setCardState(cards[0], {
+              faceDown: !cards[0].faceDown
             })">裏返す</o-button
           >
           <o-button
@@ -95,12 +95,14 @@ import type { player, side, zone } from "@/entities";
 const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`
 
-const zone = 'yamafudaCards'
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   player: player
-  yamafudaCards: Card[]
+  cards: Card[]
   side: side
-}>()
+  zone?: zone
+}>(), {
+  zone: 'yamafudaCards',
+})
 
 const emit = defineEmits<zoneEmit>()
 
@@ -115,7 +117,7 @@ const {
 } = useZone(props, emit)
 
 const drawOne = () => {
-  emit('move-cards', 'yamafudaCards', 'tefudaCards', [props.yamafudaCards[0]], props.player)
+  emit('move-cards', props.zone, 'tefudaCards', [props.cards[0]], props.player)
 }
 defineExpose({
   drawOne
@@ -125,7 +127,7 @@ const deckViews = computed(() => {
   // 1~nまでの数字を順に要素とする配列を返す。
   // デッキの下に重なっているカード要素の数を
   // deckViewsLengthとする。
-  const l = props.yamafudaCards.length;
+  const l = props.cards.length;
   let deckViewsLength = 0;
   if (l >= 20) {
     deckViewsLength = 4;
@@ -147,12 +149,12 @@ const deckViews = computed(() => {
 })
 function openDeck() {
   // デッキを開くときはデフォルトで全て裏にする。
-  props.yamafudaCards.forEach((c) => {
+  props.cards.forEach((c) => {
     c.faceDown = true;
   });
   openWorkSpace({
-    zone: "yamafudaCards",
-    cards: props.yamafudaCards,
+    zone: props.zone,
+    cards: props.cards,
     player: props.player,
   });
 }
