@@ -26,7 +26,7 @@
       <!-- keyをindexにしていると、カード移動後MarkerToolが同じindexの別のカードに移ってしまう。 -->
       <div
         class="card_wrapper"
-        v-for="card in battleZoneCards"
+        v-for="card in visibleCards"
         :key="card.id"
         @mouseenter="setHoveredCard(card)"
         @mouseleave="setHoveredCard(null)"
@@ -69,7 +69,7 @@
             @click.stop="
               openWorkSpace({
                 zone: zone,
-                cards: card.groupId ? group(card).cards : [card],
+                cards: card.groupId ? getGroup(card)?.cards : [card],
                 player: player,
                 single: true,
               })
@@ -155,10 +155,10 @@
 import { isPhone } from "@/helpers/Util"
 import CardPopup from '../elements/CardPopup.vue'
 import MarkTool from "../mark-tool/MarkTool.vue";
-import { computed } from 'vue'
 import type { player, side, zone, zoneGroup } from "@/entities";
-import { Card, CardGroup } from "@/entities/Card";
+import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
+import { useCardGroups } from "./cardGroups";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650
@@ -166,7 +166,6 @@ const cardHeight = cardWidth * 908 / 650
 const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
-  cardGroups: CardGroup[]
   side: side
   zone?: zone
   groupZone?: zoneGroup
@@ -191,22 +190,11 @@ const {
   moveSelectedCard,
 } = useZone(props, emit)
 
-const battleZoneCards = computed(() => {
-  // 表示するカードのIDのリスト
-  const firstCardIds = props.cardGroups.map((g: CardGroup) => g.cardIds[0]);
-  const visibleCards = props.cards.filter((c: Card) => {
-    return !c.groupId || firstCardIds.includes(c.id);
-  });
-  return visibleCards;
-})
+const {
+  visibleCards,
+  getGroup,
+} = useCardGroups(props)
 
-function group(card: Card) {
-  const group = {
-    ...props.cardGroups.find((g) => g.id === card.groupId),
-  };
-  group.cards = props.cards.filter((c) => c.groupId === group.id);
-  return group;
-}
 function clickCard(card: Card) {
   if (cardIsSelected(card)) {
     // 選択中のカードと同じカードがクリックされた場合、

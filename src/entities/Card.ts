@@ -15,6 +15,5 @@ export interface Card {
 
 export interface CardGroup {
     id: string
-    cardIds: number[]
     cards: Card[]
 }

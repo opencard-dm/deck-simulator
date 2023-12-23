@@ -38,7 +38,7 @@ export class CardActions {
     if (!cards || cards.length === 0) return;
     // 先頭のカードがグループに属していた場合、そのグループから抜ける。
     const card = cards[0];
-    if (card.groupId && card.group) {
+    if (card.groupId) {
       this.ungroupCard({
         zone: from,
         groupName: card.group,
@@ -117,34 +117,16 @@ export class CardActions {
   }
 
   groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
-    // 情報をカードに追加
-    // card.groupはできれば使いたくない。moveCards内でのみ使用。
-    fromCard.group = to;
-    toCard.group = to;
     if (toCard.groupId) {
-      // ターゲットのカードが既にグループ化されていた場合、
-      // 既存のグループに追加する。
-      const group = this.players[player]['cards'][to].find(
-        (g: CardGroup) => g.id === toCard.groupId
-      );
-      group.cardIds.unshift(fromCard.id);
-      fromCard.groupId = toCard.groupId;
+      fromCard.groupId = toCard.groupId
     } else {
-      // 新しくグループを作成する。
-      // TODO: 被らない文字列にする。
       const groupId = `${toCard.id}-${fromCard.id}`;
-      this.players[player]['cards'][to].push({
-        id: groupId,
-        cardIds: [fromCard.id, toCard.id],
-      });
-      fromCard.groupId = groupId;
-      toCard.groupId = groupId;
+      console.debug(`created group '${groupId}'`)
+      fromCard.groupId = groupId
+      toCard.groupId = groupId
     }
-    // 並べ替え
-    if (['battleCardGroups', 'shieldCardGroups'].includes(to)) {
-      // fromCardをtoCardの前に移す。
-      Util.arrayInsertBefore(this.players[player]['cards'][from], toCard, fromCard);
-    }
+    // fromCardをtoCardの前に移す。
+    Util.arrayInsertBefore(this.players[player]['cards'][from], toCard, fromCard);
   }
 
   undoGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {

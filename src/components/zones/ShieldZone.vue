@@ -1,7 +1,7 @@
 <template>
   <div class="shield-zone" :class="side">
     <div
-      v-for="(card, index) in countableShieldCards"
+      v-for="(card, index) in visibleCards"
       :key="index"
       class="shield"
       :class="{
@@ -24,10 +24,10 @@
           <img v-if="!card.faceDown" :src="card.imageUrl" />
           <img v-else :src="card.backImageUrl" />
           <div
-            v-if="card.groupId && group(card).cardIds.length > 1"
+            v-if="card.groupId"
             class="shield-num"
           >
-            {{ group(card).cardIds.length }}
+            {{ getGroup(card)?.cards.length }}
           </div>
         </div>
         <div v-if="cardIsSelected(card)" class="card_buttons">
@@ -37,7 +37,7 @@
             @click.stop="
               openWorkSpace({
                 zone: zone,
-                cards: card.groupId ? group(card).cards : [card],
+                cards: card.groupId ? getGroup(card)?.cards : [card],
                 player: player,
                 single: true,
               })
@@ -52,15 +52,14 @@
 
 <script setup lang="ts">
 import MarkTool from "../mark-tool/MarkTool.vue";
-import { computed } from 'vue'
 import type { player, side, zone, zoneGroup } from "@/entities";
-import { Card, CardGroup } from "@/entities/Card";
+import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
+import { useCardGroups } from "./cardGroups";
 
 const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
-  cardGroups: CardGroup[]
   side: side
   zone?: zone
   groupZone?: zoneGroup
@@ -70,13 +69,6 @@ const props = withDefaults(defineProps<{
 })
 const emit = defineEmits<zoneEmit>()
 
-const countableShieldCards = computed(() => {
-  // グループ化されているカードは一つとカウントする。
-  const firstCardIds = props.cardGroups.map((g) => g.cardIds[0]);
-  return props.cards.filter((c: Card) => {
-    return !c.groupId || firstCardIds.includes(c.id);
-  });
-})
 const {
   openWorkSpace,
   setHoveredCard,
@@ -88,13 +80,10 @@ const {
   moveSelectedCard,
 } = useZone(props, emit)
 
-function group(card: Card): CardGroup {
-  const group = {
-    ...props.cardGroups.find((g: CardGroup) => g.id === card.groupId),
-  };
-  group.cards = props.cards.filter((c: Card) => c.groupId === group.id);
-  return group as CardGroup;
-}
+const {
+  visibleCards,
+  getGroup,
+} = useCardGroups(props)
 
 function clickShield(card: Card) {
   if (cardIsSelected(card)) {

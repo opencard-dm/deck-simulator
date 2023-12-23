@@ -6,22 +6,21 @@
     <template v-else>
       <div :style="{fontSize: '10px'}">シールド</div>
       <div :style="{fontSize: '16px'}">
-        {{ countableShieldCards.length }}
+        {{ visibleCards.length }}
       </div>
     </template>
   </RoundButton>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { player, side, zone, zoneGroup } from "@/entities";
 import RoundButton from '../elements/RoundButton.vue'
-import { Card, CardGroup } from "@/entities/Card";
+import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
+import { useCardGroups } from './cardGroups';
 
 const props = withDefaults(defineProps<{
   player: player
-  cardGroups: CardGroup[]
   cards: Card[]
   side: side
   zone?: zone
@@ -40,13 +39,9 @@ const {
   moveSelectedCard,
 } = useZone(props, emit)
 
-const countableShieldCards = computed(() => {
-  // グループ化されているカードは一つとカウントする。
-  const firstCardIds = props.cardGroups.map((g) => g.cardIds[0]);
-  return props.cards.filter((c) => {
-    return !c.groupId || firstCardIds.includes(c.id);
-  });
-})
+const {
+  visibleCards,
+} = useCardGroups(props)
 
 function clickShieldButton() {
   if (hasSelectedCard() && selectMode.value) {

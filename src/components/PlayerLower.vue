@@ -4,7 +4,6 @@
       :side="side"
       :player="player"
       :cards="cards.battleCards"
-      :cardGroups="cards.battleCardGroups"
       @move-cards="moveCards"
       @group-card="groupCard"
       @emit-room-state="emitRoomState"
@@ -35,7 +34,6 @@
         :side="side"
         :player="player"
         :cards="cards.shieldCards"
-        :cardGroups="cards.shieldCardGroups"
         @move-cards="moveCards"
       ></ShieldButton>
     </template>
@@ -44,7 +42,6 @@
         :side="side"
         :player="player"
         :cards="cards.shieldCards"
-        :cardGroups="cards.shieldCardGroups"
         @move-cards="moveCards"
         @group-card="groupCard"
         @change-cards-state="changeCardsState"
@@ -101,7 +98,6 @@
       :side="side"
       :player="player"
       :cards="cards.battleCards"
-      :cardGroups="cards.battleCardGroups"
       @move-cards="moveCards"
       @group-card="groupCard"
       @emit-room-state="emitRoomState"
