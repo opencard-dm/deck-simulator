@@ -116,7 +116,7 @@ import ChojigenZone from './zones/ChojigenZone.vue';
 import BochiZone from './zones/BochiZone.vue';
 import { zoneEmit } from './zones/zone';
 import type { player, side } from '@/entities';
-import { Card, CardGroup } from '@/entities/Card';
+import { Card } from '@/entities/Card';
 import { ref } from 'vue';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
@@ -131,9 +131,6 @@ const props = defineProps<{
     tefudaCards: Card[],
     yamafudaCards: Card[],
     chojigenCards: Card[],
-    // cardGroups
-    battleCardGroups: CardGroup[],
-    shieldCardGroups: CardGroup[],
   },
   name: string,
   roomId: string,

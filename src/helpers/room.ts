@@ -218,9 +218,6 @@ function initialData(roomId: string) {
           tefudaCards: [] as Card[],
           yamafudaCards: [] as Card[],
           chojigenCards: [] as Card[],
-          // cardGroups
-          battleCardGroups: [] as Card[],
-          shieldCardGroups: [] as Card[],
         },
         name: 'a',
         roomId: roomId,
@@ -236,9 +233,6 @@ function initialData(roomId: string) {
           tefudaCards: [] as Card[],
           yamafudaCards: [] as Card[],
           chojigenCards: [] as Card[],
-          // cardGroups
-          battleCardGroups: [] as Card[],
-          shieldCardGroups: [] as Card[],
         },
         name: 'b',
         roomId: roomId,

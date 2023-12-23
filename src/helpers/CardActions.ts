@@ -180,7 +180,6 @@ export class CardActions {
     }
   }
 
-  // groupNameはbattleCardGroupsかshieldCardGroups
   ungroupCard({ card, player, zone }: {
     card: Card,
     player: player,

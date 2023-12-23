@@ -1,14 +1,13 @@
 import { useStore } from "vuex";
 import { store as Store } from '@/store/index'
 import { cardState, groupableZone, player, zone } from "@/entities";
-import { Card, CardGroup } from "@/entities/Card";
+import { Card } from "@/entities/Card";
 import { computed } from "vue";
 import { changeCardsStateParams } from "@/helpers/CardActions";
 
 export interface zoneProps {
     player: player
     cards: Card[]
-    cardGroups?: CardGroup[]
     zone?: zone
 }
 

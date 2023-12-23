@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import type { player, side, zone, zoneGroup } from "@/entities";
+import type { player, side, zone } from "@/entities";
 import RoundButton from '../elements/RoundButton.vue'
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
@@ -24,10 +24,8 @@ const props = withDefaults(defineProps<{
   cards: Card[]
   side: side
   zone?: zone
-  zoneGroup?: zoneGroup
 }>(), {
   zone: 'shieldCards',
-  zoneGroup: 'shieldCardGroups',
 })
 
 const emit = defineEmits<zoneEmit>()

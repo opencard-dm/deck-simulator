@@ -1,4 +1,3 @@
-import { zoneGroup } from "."
 
 export interface Card {
     id: number
@@ -7,7 +6,6 @@ export interface Card {
     tapped: boolean
     faceDown: boolean
     markColor: string
-    group: zoneGroup | null
     groupId: string | null
     shieldId: string
     imageUrl: string

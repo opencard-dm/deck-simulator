@@ -170,7 +170,6 @@ const props = withDefaults(defineProps<{
   zone?: groupableZone
 }>(), {
   zone: 'battleCards',
-  groupZone: 'battleCardGroups',
 })
 
 const emit = defineEmits<zoneEmit>()
