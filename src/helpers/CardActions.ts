@@ -1,20 +1,21 @@
-import { zone, player, zoneGroup, cardState, groupableZone } from "@/entities";
+import { zone, player, cardState, groupableZone } from "@/entities";
 import { Util } from "./Util";
-import { Card, CardGroup } from "@/entities/Card";
+import { Card } from "@/entities/Card";
 
 export interface moveCardsParams {
   from: zone
   to: zone
   cards: Card[]
   player: player
-  prepend: boolean
+  prepend?: boolean
+  index?: number
 }
 
 export interface changeCardsStateParams {
   from: zone,
   cards: Card[],
   player: player,
-  cardState: cardState,
+  cardState?: cardState,
 }
 
 export interface groupCardParams {
@@ -34,14 +35,13 @@ export class CardActions {
     public players: any
   ) {}
 
-  moveCards({ from, to, cards, player, prepend }: moveCardsParams) {
+  moveCards({ from, to, cards, player, prepend, index }: moveCardsParams) {
     if (!cards || cards.length === 0) return;
     // 先頭のカードがグループに属していた場合、そのグループから抜ける。
     const card = cards[0];
     if (card.groupId) {
       this.ungroupCard({
         zone: from,
-        groupName: card.group,
         card,
         player,
       });
@@ -72,6 +72,14 @@ export class CardActions {
       this.players[player]['cards'][from],
       cards
     );
+    if (index !== undefined && cards.length === 1) {
+      if (index === 0) {
+        this.players[player]['cards'][to].unshift(card)
+      } else {
+        this.players[player]['cards'][to].splice(index, 0, card)
+      }
+      return
+    }
     if (prepend) {
       this.players[player]['cards'][to] = Util.arrayPrependCards(
         this.players[player]['cards'][to],
@@ -84,24 +92,35 @@ export class CardActions {
       );
     }
   }
+  
+  undoMoveCards({ from, to, cards, player }: moveCardsParams) {
+    const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
+    if (cards.length === 1) {
+      console.log({ from, cardsCopy, player })
+      this.moveCards({ from: to, to: from, cards, player, index: cards[0].index })
+    } else {
+      this.moveCards({ from: to, to: from, cards, player, prepend: false })
+    }
+    this.undoCardsState({ from, cards: cardsCopy, player })
+  }
 
   changeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
     const cardIds = cards.map((c) => c.id);
     this.players[player]["cards"][from].forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
-      if (cardState.tapped !== undefined) {
+      if (cardState?.tapped !== undefined) {
         c.tapped = cardState.tapped
       }
-      if (cardState.faceDown !== undefined) {
+      if (cardState?.faceDown !== undefined) {
         c.faceDown = cardState.faceDown
       }
-      if (cardState.markColor !== undefined) {
+      if (cardState?.markColor !== undefined) {
         c.markColor = cardState.markColor
       }
     });
   }
 
-  undoCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
+  undoCardsState({ from, cards, player }: changeCardsStateParams) {
     const cardIds = cards.map((c) => c.id);
     this.players[player]["cards"][from].forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
@@ -120,13 +139,18 @@ export class CardActions {
     if (from !== to) {
       this.moveCards({ from, to, cards: [fromCard], player, prepend: false })
     }
-    if (toCard.groupId) {
-      fromCard.groupId = toCard.groupId
+    // NOTE: redoのときはポインタが外れているため対象のカードをIDで探す
+    const toCards: Card[] = this.players[player]["cards"][to]
+    const toCardRef = toCards.find(c => c.id === toCard.id) as Card
+    const fromCards: Card[] = this.players[player]["cards"][to]
+    const fromCardRef = fromCards.find(c => c.id === fromCard.id) as Card
+    if (toCardRef.groupId) {
+      fromCardRef.groupId = toCardRef.groupId
     } else {
       const groupId = `${toCard.id}-${fromCard.id}`;
       console.debug(`created group '${groupId}'`)
-      fromCard.groupId = groupId
-      toCard.groupId = groupId
+      fromCardRef.groupId = groupId
+      toCardRef.groupId = groupId
     }
     // fromCardをtoCardの前に移す。
     Util.arrayInsertBefore(this.players[player]['cards'][to], toCard, fromCard);
@@ -143,7 +167,6 @@ export class CardActions {
       if (c.id === fromCard.id) {
         c.groupId = fromCard.groupId
       }
-      // this.ungroupCard({ groupName: to, card: c, player, zone: from })
     })
     // fromCardを見つけてもとの位置に戻す
     // カードが一枚だけのグループは消す。

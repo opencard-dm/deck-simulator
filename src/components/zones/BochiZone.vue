@@ -47,7 +47,6 @@ function lastCard() {
 }
 function clickBochi() {
   if (!selectMode.value) {
-    console.log('clicked')
     openWorkSpace({
       zone: props.zone,
       cards: props.cards,

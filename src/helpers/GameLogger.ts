@@ -65,8 +65,7 @@ export class GameLogger {
     this.historyIndex -= 1
     switch (history.method) {
       case this.moveCards.name:
-        const { from, to, cards, player, prepend } = history.args as moveCardsParams
-        this.room?.cardActions.moveCards({ from: to, to: from, cards, player, prepend })
+        this.room?.cardActions.undoMoveCards(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
         this.room?.cardActions.undoGroupCard(history.args as groupCardParams)

@@ -2,6 +2,8 @@ import { zoneGroup } from "."
 
 export interface Card {
     id: number
+    /** location in zone */
+    index?: number
     tapped: boolean
     faceDown: boolean
     markColor: string

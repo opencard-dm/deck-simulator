@@ -32,11 +32,15 @@ function useRoomListners({
   const route = useRoute();
   const store = useStore();
   
-  function onMoveCards(from: zone, to: zone, cards: any[], player: player, prepend = false) {
+  function onMoveCards(from: zone, to: zone, cards: Card[], player: player, prepend = false) {
     if (!cards || cards.length === 0) return;
     if (store.state.displayImageUrl) {
       store.commit('setDisplayImageUrl', '');
     }
+    // カードにインデックスを付与する
+    players[player].cards[from].forEach((card, index) => {
+      card.index = index
+    })
     gameLogger.moveCards({ from, to, cards: cards, player, prepend })
     cardActions.moveCards({ from, to, cards: cards, player, prepend })
     // 少し待てば、レンダリングが完了しているため、うまくいった。
@@ -207,16 +211,16 @@ function initialData(roomId: string) {
     players: {
       a: {
         cards: {
-          manaCards: [],
-          battleCards: [],
-          bochiCards: [],
-          shieldCards: [],
-          tefudaCards: [],
-          yamafudaCards: [],
-          chojigenCards: [],
+          manaCards: [] as Card[],
+          battleCards: [] as Card[],
+          bochiCards: [] as Card[],
+          shieldCards: [] as Card[],
+          tefudaCards: [] as Card[],
+          yamafudaCards: [] as Card[],
+          chojigenCards: [] as Card[],
           // cardGroups
-          battleCardGroups: [],
-          shieldCardGroups: [],
+          battleCardGroups: [] as Card[],
+          shieldCardGroups: [] as Card[],
         },
         name: 'a',
         roomId: roomId,
@@ -225,16 +229,16 @@ function initialData(roomId: string) {
       },
       b: {
         cards: {
-          manaCards: [],
-          battleCards: [],
-          bochiCards: [],
-          shieldCards: [],
-          tefudaCards: [],
-          yamafudaCards: [],
-          chojigenCards: [],
+          manaCards: [] as Card[],
+          battleCards: [] as Card[],
+          bochiCards: [] as Card[],
+          shieldCards: [] as Card[],
+          tefudaCards: [] as Card[],
+          yamafudaCards: [] as Card[],
+          chojigenCards: [] as Card[],
           // cardGroups
-          battleCardGroups: [],
-          shieldCardGroups: [],
+          battleCardGroups: [] as Card[],
+          shieldCardGroups: [] as Card[],
         },
         name: 'b',
         roomId: roomId,
