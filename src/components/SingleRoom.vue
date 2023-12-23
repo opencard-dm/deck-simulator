@@ -42,7 +42,7 @@
             :isReady="players[lowerPlayer].isReady"
             :hasChojigen="players[lowerPlayer].hasChojigen"
             @move-cards="onMoveCards"
-            @group-card="groupCard"
+            @group-card="onGroupCard"
             @emit-room-state="emitRoomState"
             @change-cards-state="onChangeCardsState"
           ></PlayerLower>
@@ -91,7 +91,7 @@
             :isReady="players[upperPlayer].isReady"
             :hasChojigen="players[upperPlayer].hasChojigen"
             @move-cards="onMoveCards"
-            @group-card="groupCard"
+            @group-card="onGroupCard"
             @emit-room-state="emitRoomState"
             @change-cards-state="onChangeCardsState"
           ></PlayerLower>
@@ -155,20 +155,15 @@ onMounted(() => {
 });
 
 const {
-  moveCards,
   onMoveCards,
-  groupCard,
+  onGroupCard,
+  onChangeCardsState,
   setRoomState,
   players,
-  changeCardsState,
-  onChangeCardsState,
   cardActions
 } = useRoomSetup(props);
 
 defineExpose({
-  moveCards,
-  groupCard,
-  changeCardsState,
   cardActions,
 })
 

@@ -1,6 +1,6 @@
 import { useStore } from "vuex";
 import { store as Store } from '@/store/index'
-import { cardState, player, zone, zoneGroup } from "@/entities";
+import { cardState, groupableZone, player, zone } from "@/entities";
 import { Card, CardGroup } from "@/entities/Card";
 import { computed } from "vue";
 import { changeCardsStateParams } from "@/helpers/CardActions";
@@ -15,7 +15,7 @@ export interface zoneProps {
 export type zoneEmit = {
     'move-cards': [from: zone, to: zone, cards: Card[], player: player, prepend?: boolean]
     'change-cards-state': [param: changeCardsStateParams]
-    'group-card': [param: {from: zone, to: zoneGroup, fromCard: Card, toCard: Card, player: player}]
+    'group-card': [param: {from: zone, to: groupableZone, fromCard: Card, toCard: Card, player: player}]
     'shuffle-cards': [from: zone, cards: Card[], player: player]
     'emit-room-state': [player: player]
 }

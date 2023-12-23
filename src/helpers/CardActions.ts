@@ -1,4 +1,4 @@
-import { zone, player, zoneGroup, cardState } from "@/entities";
+import { zone, player, zoneGroup, cardState, groupableZone } from "@/entities";
 import { Util } from "./Util";
 import { Card, CardGroup } from "@/entities/Card";
 
@@ -19,7 +19,7 @@ export interface changeCardsStateParams {
 
 export interface groupCardParams {
   from: zone,
-  to: zoneGroup,
+  to: groupableZone,
   fromCard: Card,
   toCard: Card,
   player: player,
@@ -117,6 +117,9 @@ export class CardActions {
   }
 
   groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
+    if (from !== to) {
+      this.moveCards({ from, to, cards: [fromCard], player, prepend: false })
+    }
     if (toCard.groupId) {
       fromCard.groupId = toCard.groupId
     } else {
@@ -126,62 +129,51 @@ export class CardActions {
       toCard.groupId = groupId
     }
     // fromCardをtoCardの前に移す。
-    Util.arrayInsertBefore(this.players[player]['cards'][from], toCard, fromCard);
+    Util.arrayInsertBefore(this.players[player]['cards'][to], toCard, fromCard);
   }
 
   undoGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
-    let card
-    this.players[player]["cards"][from].forEach((c: Card) => {
-      card = c
+    let cardsInGroup = 0
+    const cards: Card[] = this.players[player]["cards"][to]
+    const groupId = cards.find(c => c.id === fromCard.id)?.groupId as string
+    cards.forEach((c: Card) => {
+      if (c.groupId === groupId) {
+        cardsInGroup += 1
+      }
       if (c.id === fromCard.id) {
-        c.faceDown = fromCard.faceDown
-        c.tapped = fromCard.tapped
-        c.markColor = fromCard.markColor
-        c.group = fromCard.group
         c.groupId = fromCard.groupId
       }
+      // this.ungroupCard({ groupName: to, card: c, player, zone: from })
     })
-    this.ungroupCard({ groupName: to, card: card as Card, player, zone: from })
+    // fromCardを見つけてもとの位置に戻す
+    // カードが一枚だけのグループは消す。
+    if (cardsInGroup <= 2) {
+      cards.map(c => c.id === toCard.id ? c.groupId = toCard.groupId : null)
+    }
+    if (from !== to) {
+      this.moveCards({ from: to, to: from, cards: [fromCard], player, prepend: false })
+    } else {
+      // TODO: 順番をもとに戻す
+    }
   }
 
   // groupNameはbattleCardGroupsかshieldCardGroups
-  ungroupCard({ groupName, card, player, zone }: {
-    groupName: zoneGroup,
+  ungroupCard({ card, player, zone }: {
     card: Card,
     player: player,
     zone: zone,
   }) {
-    // シールドのグループの場合はカードの行き先がわからず、注意が必要。
-    const groupIndex = this.players[player]['cards'][groupName].findIndex(
-      (g: CardGroup) => g.id === card.groupId
-    );
-    const group = this.players[player]['cards'][groupName].find(
-      (g: CardGroup) => g.id === card.groupId
-    );
-    this.players[player]['cards'][groupName][groupIndex].cardIds.splice(
-      group.cardIds.findIndex((id: number) => id === card.id),
-      1
-    );
-    // カードが一枚だけのグループは消す。
-    if (group.cardIds.length === 1) {
-      const lastCardIndex = this.players[player]['cards'][zone].findIndex(
-        (c: Card) => c.id === group.cardIds[0]
-      );
-      if (lastCardIndex) {
-        const lastCard = this.players[player]['cards'][zone][lastCardIndex];
-        this.ungroupCard({
-          groupName,
-          card: lastCard,
-          player,
-          zone,
-        });
+    let cardsInGroup = 0
+    const cards: Card[] = this.players[player]["cards"][zone]
+    const groupId = card.groupId
+    cards.forEach((c: Card) => {
+      if (c.groupId === groupId) {
+        cardsInGroup += 1
       }
+    })
+    // カードが一枚だけのグループは消す。
+    if (cardsInGroup <= 2) {
+      cards.map(c => c.groupId === groupId ? c.groupId = '' : null)
     }
-    // cardIdsが0になったグループは自動で消す。
-    if (group.cardIds.length === 0) {
-      this.players[player]['cards'][groupName].splice(groupIndex, 1);
-    }
-    card.groupId = null;
-    card.group = null;
   }
 }

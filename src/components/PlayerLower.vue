@@ -54,7 +54,6 @@
         :player="player"
         :cards="cards.yamafudaCards"
         @move-cards="moveCards"
-        @group-card="groupCard"
         @change-cards-state="changeCardsState"
       ></DeckZone>
     </template>

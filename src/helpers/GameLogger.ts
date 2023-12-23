@@ -66,7 +66,7 @@ export class GameLogger {
     switch (history.method) {
       case this.moveCards.name:
         const { from, to, cards, player, prepend } = history.args as moveCardsParams
-        this.room?.moveCards(to, from, cards, player, prepend)
+        this.room?.cardActions.moveCards({ from: to, to: from, cards, player, prepend })
         break;
       case this.groupCard.name:
         this.room?.cardActions.undoGroupCard(history.args as groupCardParams)
@@ -92,14 +92,13 @@ export class GameLogger {
     const history = this.histories[this.historyIndex]
     switch (history.method) {
       case this.moveCards.name:
-        const { from, to, cards, player, prepend } = history.args as moveCardsParams
-        this.room?.moveCards(from, to, cards, player, prepend)
+        this.room?.cardActions.moveCards(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
-        this.room?.groupCard(history.args as groupCardParams)
+        this.room?.cardActions.groupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        this.room?.changeCardsState(history.args as changeCardsStateParams)
+        this.room?.cardActions.changeCardsState(history.args as changeCardsStateParams)
         break
       default:
         break;
@@ -131,14 +130,13 @@ export class GameLogger {
     this.histories.push(history)
     switch (history.method) {
       case this.moveCards.name:
-        const { from, to, cards, player, prepend } = history.args as moveCardsParams
-        this.room?.moveCards(from, to, cards, player, prepend)
+        this.room?.cardActions.moveCards(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
-        this.room?.groupCard(history.args as groupCardParams)
+        this.room?.cardActions.groupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        this.room?.changeCardsState(history.args as changeCardsStateParams)
+        this.room?.cardActions.changeCardsState(history.args as changeCardsStateParams)
         break
       default:
         break;

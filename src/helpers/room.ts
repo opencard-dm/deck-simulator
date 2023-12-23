@@ -15,23 +15,30 @@ export function useHistory() {
   }
 }
 
-export function useRoomSetup(props: any) {
+function useRoomListners({
+  players,
+  cardActions,
+  gameLogger,
+  scrollZone,
+  props,
+}: {
+  players: ReturnType<typeof initialData>['players'],
+  cardActions: CardActions,
+  gameLogger: GameLogger,
+  scrollZone: Function,
+  props: any,
+}
+) {
   const route = useRoute();
   const store = useStore();
-  const roomId = route.query.roomId as string || 'single'
-  const players = reactive(initialData(roomId).players);
-  const deckSelectorActive = ref(true);
-  const gameLogger: GameLogger = props.gameLogger
-
-  const cardActions = new CardActions(players)
-
+  
   function onMoveCards(from: zone, to: zone, cards: any[], player: player, prepend = false) {
     if (!cards || cards.length === 0) return;
     if (store.state.displayImageUrl) {
       store.commit('setDisplayImageUrl', '');
     }
     gameLogger.moveCards({ from, to, cards: cards, player, prepend })
-    moveCards(from, to, cards, player, prepend)
+    cardActions.moveCards({ from, to, cards: cards, player, prepend })
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {
       setTimeout(() => {
@@ -53,6 +60,14 @@ export function useRoomSetup(props: any) {
     SocketUtil.socket.emit('cards-moved', players[player]);
   }
 
+  function onGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
+    gameLogger.groupCard({ from, to, fromCard, toCard, player })
+    cardActions.groupCard({ from, to, fromCard, toCard, player })
+    // 状態の変更を送信する
+    if (!SocketUtil.socket) return;
+    SocketUtil.socket.emit('cards-moved', players[player]);
+  }
+
   function onChangeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
     if (!cards || cards.length === 0) return;
     // 実際に変更を加える前に状態を保存する
@@ -66,10 +81,22 @@ export function useRoomSetup(props: any) {
       return;
     }
   }
-
-  function moveCards(from: zone, to: zone, cards: any[], player: player, prepend = false) {
-    cardActions.moveCards({ from, to, cards: cards, player, prepend })
+  return {
+    onMoveCards,
+    onGroupCard,
+    onChangeCardsState,
   }
+}
+
+export function useRoomSetup(props: any) {
+  const route = useRoute();
+  const store = useStore();
+  const roomId = route.query.roomId as string || 'single'
+  const players = reactive(initialData(roomId).players);
+  const deckSelectorActive = ref(true);
+  const gameLogger: GameLogger = props.gameLogger
+
+  const cardActions = new CardActions(players)
 
   function scrollZone(targetSelector: string, direction: string) {
     const target = document.querySelector(targetSelector);
@@ -146,17 +173,6 @@ export function useRoomSetup(props: any) {
     players[player].hasChojigen = !!deck.hasChojigen;
   }
 
-  function groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
-    cardActions.groupCard({ from, to, fromCard, toCard, player })
-    // 状態の変更を送信する
-    if (!SocketUtil.socket) return;
-    SocketUtil.socket.emit('cards-moved', players[player]);
-  }
-
-  function changeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
-    cardActions.changeCardsState({ from, cards, player, cardState })
-  }
-
   function resetGame() {
     players.a = initialData(roomId).players.a;
     players.b = initialData(roomId).players.b;
@@ -170,13 +186,15 @@ export function useRoomSetup(props: any) {
     SocketUtil.socket.emit("cards-moved", players.b);
   }
   return {
+    ...useRoomListners({
+      players,
+      cardActions,
+      gameLogger,
+      props,
+      scrollZone,
+    }),
     cardActions,
-    onMoveCards,
-    moveCards,
-    groupCard,
     setRoomState,
-    changeCardsState,
-    onChangeCardsState,
     props,
     resetGame,
     players,

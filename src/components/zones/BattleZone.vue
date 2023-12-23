@@ -155,7 +155,7 @@
 import { isPhone } from "@/helpers/Util"
 import CardPopup from '../elements/CardPopup.vue'
 import MarkTool from "../mark-tool/MarkTool.vue";
-import type { player, side, zone, zoneGroup } from "@/entities";
+import type { groupableZone, player, side } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
@@ -167,8 +167,7 @@ const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
   side: side
-  zone?: zone
-  groupZone?: zoneGroup
+  zone?: groupableZone
 }>(), {
   zone: 'battleCards',
   groupZone: 'battleCardGroups',
@@ -214,10 +213,12 @@ function clickCard(card: Card) {
     // moveSelectedCardでselectModeがnullになるので、情報を残しておく。
     if (selectMode.value) {
       const fromCard = selectMode.value?.card;
-      moveSelectedCard(props.zone);
+      const from = selectMode.value.zone
+      setSelectMode(null)
+      // moveSelectedCard(props.zone);
       emit("group-card", {
-        from: props.zone,
-        to: props.groupZone,
+        from,
+        to: props.zone,
         fromCard: fromCard,
         toCard: card,
         player: props.player,

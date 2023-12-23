@@ -8,6 +8,7 @@ export type zone = 'tefudaCards'
   | 'manaCards'
   | 'bochiCards'
 
+export type groupableZone = 'shieldCards' | 'battleCards'
 export type zoneGroup = 'shieldCardGroups' | 'battleCardGroups'
 
 export type player = 'a' | 'b'
