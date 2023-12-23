@@ -29,7 +29,7 @@
           }"
         >
           <template v-if="!single && !isPhone()">
-            <PlayerLower
+            <PlaySheet
               :side="'upper'"
               :player="upperPlayer"
               :cards="players[upperPlayer].cards"
@@ -40,7 +40,7 @@
               @move-cards="moveCards"
               @group-card="groupCard"
               @emit-room-state="emitRoomState"
-            ></PlayerLower>
+            ></PlaySheet>
           </template>
 
           <!-- <MessageBox :upper-player="upperPlayer"
@@ -49,7 +49,7 @@
 
           <!-- center -->
           <!-- <MessageButtons :player="lowerPlayer"></MessageButtons> -->
-          <PlayerLower
+          <PlaySheet
             :side="'lower'"
             :player="lowerPlayer"
             :cards="players[lowerPlayer].cards"
@@ -60,7 +60,7 @@
             @move-cards="moveCards"
             @group-card="groupCard"
             @emit-room-state="emitRoomState"
-          ></PlayerLower>
+          ></PlaySheet>
         </div>
       </ImageViewer>
     </div>
@@ -75,7 +75,7 @@ import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
 import DeckSelector from './DeckSelector.vue';
-import PlayerLower from './PlayerLower.vue';
+import PlaySheet from './PlaySheet.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';

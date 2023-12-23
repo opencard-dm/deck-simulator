@@ -33,7 +33,7 @@
             height: playerZoneHeight,
           }"
         >
-          <PlayerLower
+          <PlaySheet
             :side="'lower'"
             :player="lowerPlayer"
             :cards="players[lowerPlayer].cards"
@@ -45,7 +45,7 @@
             @group-card="onGroupCard"
             @emit-room-state="emitRoomState"
             @change-cards-state="onChangeCardsState"
-          ></PlayerLower>
+          ></PlaySheet>
         </div>
       </ImageViewer>
     </div>
@@ -82,7 +82,7 @@
             height: playerZoneHeight,
           }"
         >
-          <PlayerLower
+          <PlaySheet
             :side="'lower'"
             :player="upperPlayer"
             :cards="players[upperPlayer].cards"
@@ -94,7 +94,7 @@
             @group-card="onGroupCard"
             @emit-room-state="emitRoomState"
             @change-cards-state="onChangeCardsState"
-          ></PlayerLower>
+          ></PlaySheet>
         </div>
       </ImageViewer>
     </div>
@@ -109,7 +109,7 @@ import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
 import DeckSelector from './DeckSelector.vue';
-import PlayerLower from './PlayerLower.vue';
+import PlaySheet from './PlaySheet.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
