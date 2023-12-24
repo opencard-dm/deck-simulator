@@ -140,9 +140,13 @@ export class CardActions {
     }
     this.undoCardsState({ from, cards: cardsCopy, player })
   }
-
+  
   changeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
     this.gameLogger?.changeCardsState({ from, cards, player, cardState })
+    this.changeCardsStateWithoutHistory({ from, cards, player, cardState })
+  }
+
+  changeCardsStateWithoutHistory({ from, cards, player, cardState }: changeCardsStateParams) {
     const cardIds = cards.map((c) => c.id);
     this.players[player]["cards"][from].forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
@@ -179,6 +183,10 @@ export class CardActions {
       card.index = index
     })
     this.gameLogger?.groupCard({ from, to, fromCard, toCard, player })
+    this.groupCardWithoutHistory({ from, to, fromCard, toCard, player })
+  }
+
+  groupCardWithoutHistory({ from, to, fromCard, toCard, player }: groupCardParams) {
     if (from !== to) {
       this.moveCardsWithoutHistory({ from, to, cards: [fromCard], player, prepend: false })
     }

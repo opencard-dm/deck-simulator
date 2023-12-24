@@ -88,13 +88,13 @@ export class GameLogger {
     const history = this.histories[this.historyIndex]
     switch (history.method) {
       case this.moveCards.name:
-        this.cardActions.moveCards(history.args as moveCardsParams)
+        this.cardActions.moveCardsWithoutHistory(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
-        this.cardActions.groupCard(history.args as groupCardParams)
+        this.cardActions.groupCardWithoutHistory(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        this.cardActions.changeCardsState(history.args as changeCardsStateParams)
+        this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
         break
       default:
         break;
@@ -126,13 +126,13 @@ export class GameLogger {
     this.histories.push(history)
     switch (history.method) {
       case this.moveCards.name:
-        this.cardActions.moveCards(history.args as moveCardsParams)
+        this.cardActions.moveCardsWithoutHistory(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
-        this.cardActions.groupCard(history.args as groupCardParams)
+        this.cardActions.groupCardWithoutHistory(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        this.cardActions.changeCardsState(history.args as changeCardsStateParams)
+        this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
         break
       default:
         break;
