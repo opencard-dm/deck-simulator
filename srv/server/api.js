@@ -60,28 +60,7 @@ router.get('/api/scrape', async (req, res) => {
   }
   //
   // 取得したデータを処理する。
-  const deck = {
-    name: deckData.name,
-    dmDeckId: deckData.dm_deck_id,
-  }
-  deck.cards = Deck.groupByCardId(deckData.main_cards.map((c) => {
-    return {
-      imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
-      mainCardId: c.main_card_id,
-    }
-  }))
-  deck.chojigenCards = Deck.groupByCardId((deckData.hyper_spatial_cards || []).map((c) => {
-    return {
-      imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
-      mainCardId: c.main_card_id,
-    }
-  }))
-  deck.grCards = Deck.groupByCardId((deckData.gr_cards || []).map((c) => {
-    return {
-      imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
-      mainCardId: c.main_card_id,
-    }
-  }))
+  const deck = Deck.convertGmFormat(deckData)
   // レスポンス
   res.json(deck)
 })

@@ -1,11 +1,12 @@
-import { zone, player, cardState, groupableZone } from "@/entities";
+import { zone, player, cardState, groupableZone, playerCards } from "@/entities";
 import { Util } from "./Util";
 import { Card } from "@/entities/Card";
+import { Deck } from "@/entities/Deck";
 
 export interface moveCardsParams {
   from: zone
   to: zone
-  cards: Card[]
+  cards: readonly Card[]
   player: player
   prepend?: boolean
   index?: number
@@ -35,10 +36,29 @@ export class CardActions {
     public players: any
   ) {}
 
+  static setupForPlayer(deck: Deck): playerCards {
+    return {
+      manaCards: [],
+      battleCards: [],
+      bochiCards: [],
+      shieldCards: deck.cards.slice(0, 5).map(c => {
+        c.faceDown = true
+        return c
+      }),
+      tefudaCards: deck.cards.slice(5, 10),
+      yamafudaCards: deck.cards.slice(10).map(c => {
+        c.faceDown = true
+        return c
+      }),
+      chojigenCards: deck.chojigenCards,
+    }
+  }
+
   moveCards({ from, to, cards, player, prepend, index }: moveCardsParams) {
     if (!cards || cards.length === 0) return;
+    const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
     // 先頭のカードがグループに属していた場合、そのグループから抜ける。
-    const card = cards[0];
+    const card = cardsCopy[0];
     if (card.groupId) {
       this.ungroupCard({
         zone: from,
@@ -46,33 +66,35 @@ export class CardActions {
         player,
       });
     }
+    const cardIds = cardsCopy.map((c) => c.id)
+    const fromCards: Card[] = this.players[player]['cards'][from]
     // 手札、マナ、墓地へ行く場合は表向きにする。
     if (
       ['tefudaCards', 'manaCards', 'bochiCards'].includes(to) &&
       to !== from
     ) {
-      cards.forEach((card) => {
-        card.faceDown = false;
-      });
+      cardsCopy.forEach((c) => {
+        c.faceDown = false
+      })
     }
     // 山札へ行くときは裏向きにする。
     if (['yamafudaCards'].includes(to) && to !== from) {
-      cards.forEach((card) => {
-        card.faceDown = true;
-      });
+      cardsCopy.forEach((c) => {
+        c.faceDown = true
+      })
     }
     // 違うゾーンへ移動するときはタップとマークを解除する。
     if (to !== from) {
-      cards.forEach((card) => {
-        card.markColor = '';
-        card.tapped = false;
-      });
+      cardsCopy.forEach((c) => {
+        c.markColor = ''
+        c.tapped = false
+      })
     }
     this.players[player]['cards'][from] = Util.arrayRemoveCards(
       this.players[player]['cards'][from],
-      cards
+      cardsCopy
     );
-    if (index !== undefined && cards.length === 1) {
+    if (index !== undefined && cardsCopy.length === 1) {
       if (index === 0) {
         this.players[player]['cards'][to].unshift(card)
       } else {
@@ -83,13 +105,13 @@ export class CardActions {
     if (prepend) {
       this.players[player]['cards'][to] = Util.arrayPrependCards(
         this.players[player]['cards'][to],
-        cards
-      );
+        cardsCopy
+      )
     } else {
       this.players[player]['cards'][to] = Util.arrayAppendCards(
         this.players[player]['cards'][to],
-        cards
-      );
+        cardsCopy
+      )
     }
   }
   
@@ -97,9 +119,9 @@ export class CardActions {
     const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
     if (cards.length === 1) {
       console.log({ from, cardsCopy, player })
-      this.moveCards({ from: to, to: from, cards, player, index: cards[0].index })
+      this.moveCards({ from: to, to: from, cards: cardsCopy, player, index: cards[0].index })
     } else {
-      this.moveCards({ from: to, to: from, cards, player, prepend: false })
+      this.moveCards({ from: to, to: from, cards: cardsCopy, player, prepend: false })
     }
     this.undoCardsState({ from, cards: cardsCopy, player })
   }

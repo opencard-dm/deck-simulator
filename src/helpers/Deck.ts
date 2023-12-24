@@ -3,6 +3,7 @@ const START_ID_B = 101;
 
 import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
+import { Deck as DeckType, GmDeckData } from '@/entities/Deck';
 
 export class Deck {
   /**
@@ -26,7 +27,7 @@ export class Deck {
    * @param {Boolean} playerA
    * @returns
    */
-  static async prepareDeckForGame(deck, playerA = false) {
+  static async prepareDeckForGame(deck, playerA = false, withoutApi = false) {
     const mainCards = [];
     const chojigenCards = [];
     const startId = playerA ? START_ID_A : START_ID_B;
@@ -88,26 +89,27 @@ export class Deck {
     } else {
       deck.chojigenCards = chojigenCards;
     }
-    //
-    // カードにテキストを追加
-    const cardMap = await Deck.fetchCardsData([
-      ...deck.cards,
-      ...deck.chojigenCards,
-    ]);
-    deck.cards.forEach((c) => {
-      if (Object.prototype.hasOwnProperty.call(cardMap, c.mainCardId)) {
-        c.text = c.text || cardMap[c.mainCardId].card_text;
-      }
-    });
-    deck.chojigenCards.forEach((c) => {
-      if (Object.prototype.hasOwnProperty.call(cardMap, c.mainCardId)) {
-        c.text = c.text || cardMap[c.mainCardId].card_text;
-        if (cardMap[c.mainCardId].image_paths 
-          && cardMap[c.mainCardId].image_paths.length >= 2) {
-          c.backImageUrl = `https://storage.googleapis.com/ka-nabell-card-images/img/card/${cardMap[c.mainCardId].image_paths[1]}`
+    if (withoutApi === false) {
+      // カードにテキストを追加
+      const cardMap = await Deck.fetchCardsData([
+        ...deck.cards,
+        ...deck.chojigenCards,
+      ]);
+      deck.cards.forEach((c) => {
+        if (Object.prototype.hasOwnProperty.call(cardMap, c.mainCardId)) {
+          c.text = c.text || cardMap[c.mainCardId].card_text;
         }
-      }
-    });
+      });
+      deck.chojigenCards.forEach((c) => {
+        if (Object.prototype.hasOwnProperty.call(cardMap, c.mainCardId)) {
+          c.text = c.text || cardMap[c.mainCardId].card_text;
+          if (cardMap[c.mainCardId].image_paths 
+            && cardMap[c.mainCardId].image_paths.length >= 2) {
+            c.backImageUrl = `https://storage.googleapis.com/ka-nabell-card-images/img/card/${cardMap[c.mainCardId].image_paths[1]}`
+          }
+        }
+      });
+    }
     return deck
   }
 
@@ -164,5 +166,31 @@ export class Deck {
       }
       return result;
     }, []);
+  }
+
+  public static convertGmFormat(deckData: GmDeckData) {
+    const deck: DeckType = {
+      name: deckData.name,
+      dmDeckId: deckData.dm_deck_id,
+      cards: Deck.groupByCardId(deckData.main_cards.map((c) => {
+        return {
+          imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
+          mainCardId: c.main_card_id,
+        }
+      })),
+      chojigenCards: Deck.groupByCardId((deckData.hyper_spatial_cards || []).map((c) => {
+        return {
+          imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
+          mainCardId: c.main_card_id,
+        }
+      })),
+      grCards: Deck.groupByCardId((deckData.gr_cards || []).map((c) => {
+        return {
+          imageUrl: `https://storage.googleapis.com/ka-nabell-card-images/img/card/${c.large_image_url}`,
+          mainCardId: c.main_card_id,
+        }
+      }))
+    }
+    return deck
   }
 }

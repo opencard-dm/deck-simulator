@@ -176,45 +176,12 @@ async function setupDeck(deckData: DeckType) {
   );
   console.log("selected deck", deck);
   // fromのカードは存在しなくても良いため、仮にyamafudaCardsにしている。
-  const shieldCards = deck.cards.slice(0, 5);
-  shieldCards.forEach((c) => {
-    c.faceDown = true;
-  });
-  props.cardActions.moveCards({
-    from: 'yamafudaCards',
-    to: 'shieldCards',
-    cards: shieldCards,
-    player: props.player,
-    prepend: false,
-  })
-  props.cardActions.moveCards({
-    from: 'yamafudaCards',
-    to: 'tefudaCards',
-    cards: deck.cards.slice(5, 10),
-    player: props.player,
-    prepend: false,
-  })
-  const yamafudaCards = deck.cards.slice(10, 40);
-  yamafudaCards.forEach((c) => {
-    c.faceDown = true;
-  });
-  props.cardActions.moveCards({
-    from: 'yamafudaCards',
-    to: 'yamafudaCards',
-    cards: yamafudaCards,
-    player: props.player,
-    prepend: false,
-  })
-  props.cardActions.moveCards({
-    from: 'yamafudaCards',
-    to: 'chojigenCards',
-    cards: deck.chojigenCards,
-    player: props.player,
-    prepend: false,
-  })
+  const playerCards = CardActions.setupForPlayer(deck)
   emit("selected", {
-    deck,
+    playerCards,
+    // TODO: 不要な引数は削除
     player: props.player,
+    deck,
   });
   if (props.partnerIsReady) {
     emit("update:active", false);

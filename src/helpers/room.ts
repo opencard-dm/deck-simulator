@@ -4,7 +4,7 @@ import { useStore } from 'vuex';
 import { SocketUtil } from '../helpers/socket';
 import { useRoute } from 'vue-router';
 import { CardActions, changeCardsStateParams, groupCardParams } from './CardActions';
-import { player, zone } from '@/entities';
+import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { GameLogger } from './GameLogger';
 
@@ -211,14 +211,14 @@ function initialData(roomId: string) {
     players: {
       a: {
         cards: {
-          manaCards: [] as Card[],
-          battleCards: [] as Card[],
-          bochiCards: [] as Card[],
-          shieldCards: [] as Card[],
-          tefudaCards: [] as Card[],
-          yamafudaCards: [] as Card[],
-          chojigenCards: [] as Card[],
-        },
+          manaCards: [],
+          battleCards: [],
+          bochiCards: [],
+          shieldCards: [],
+          tefudaCards: [],
+          yamafudaCards: [],
+          chojigenCards: [],
+        } as playerCards,
         name: 'a',
         roomId: roomId,
         isReady: false,
@@ -226,14 +226,14 @@ function initialData(roomId: string) {
       },
       b: {
         cards: {
-          manaCards: [] as Card[],
-          battleCards: [] as Card[],
-          bochiCards: [] as Card[],
-          shieldCards: [] as Card[],
-          tefudaCards: [] as Card[],
-          yamafudaCards: [] as Card[],
-          chojigenCards: [] as Card[],
-        },
+          manaCards: [],
+          battleCards: [],
+          bochiCards: [],
+          shieldCards: [],
+          tefudaCards: [],
+          yamafudaCards: [],
+          chojigenCards: [],
+        } as playerCards,
         name: 'b',
         roomId: roomId,
         isReady: false,

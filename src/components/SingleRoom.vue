@@ -113,22 +113,25 @@ import PlaySheet from './PlaySheet.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
-import { player, zone } from '@/entities';
+import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { useStore } from 'vuex';
 import { GameLogger } from '@/helpers/GameLogger';
 
 const store = useStore()
 
-const props = defineProps<{
-  upperPlayer: player,
-  lowerPlayer: player,
+const props = withDefaults(defineProps<{
+  upperPlayer?: player,
+  lowerPlayer?: player,
   room: Object,
   loading: boolean,
   deck: Object | null,
   single: boolean,
   gameLogger: GameLogger,
-}>()
+}>(), {
+  upperPlayer: 'b',
+  lowerPlayer: 'a',
+})
 
 const tabId = ref(1);
 const currentPlayer = ref(props.lowerPlayer)
@@ -194,8 +197,11 @@ function shuffleCards(from: zone, cards: Card[], player: player) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
-function onDeckSelected() {
-  players.b.isReady = true;
+function onDeckSelected({ playerCards }: {
+  playerCards: playerCards
+}) {
+  players[props.upperPlayer].isReady = true;
+  players[props.upperPlayer].cards = playerCards
 }
 
 function setMessage() {

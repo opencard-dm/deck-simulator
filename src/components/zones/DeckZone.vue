@@ -49,8 +49,8 @@
             <img :src="cards[0].imageUrl" alt="" />
           </CardPopup>
         </div>
-        <CardPopup :url="cards[0].imageUrl">
-          <div v-if="hasSelectedCard()" class="deck_buttons"
+        <CardPopup v-if="hasSelectedCard()" :url="cards[0].imageUrl">
+          <div class="deck_buttons"
             :style="{
               top: `${deckViews.length * -2}px`,
               left: `${deckViews.length * -2}px`,

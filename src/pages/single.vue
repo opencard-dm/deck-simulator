@@ -1,8 +1,6 @@
 <template>
   <SingleRoom
     ref="roomComponent"
-    :upper-player="'b'"
-    :lower-player="'a'"
     :room="room"
     :loading="loading"
     :deck="deck"
