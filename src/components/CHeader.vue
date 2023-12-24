@@ -112,6 +112,14 @@ const headerHeight = `${Layout.headerHeight()}px`
 const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
+  document.onkeydown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key == 'z') {
+      undo()
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key == 'y') {
+      redo()
+    }
+  }
 });
 
 function undo() {
