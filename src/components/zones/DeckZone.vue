@@ -4,7 +4,11 @@
     position="top-left"
   >
     <div>
-      <div class="deck_zone" :class="side">
+      <div class="deck_zone" 
+        @mouseenter="setHoveredCard(cards[0])"
+        @mouseleave="setHoveredCard(null)"
+        :class="side"
+      >
         <div
           class="deck_card"
           v-for="i in deckViews"
@@ -45,39 +49,41 @@
             <img :src="cards[0].imageUrl" alt="" />
           </CardPopup>
         </div>
-        <div v-if="hasSelectedCard()" class="deck_buttons"
-          :style="{
-            top: `${deckViews.length * -2}px`,
-            left: `${deckViews.length * -2}px`,
-            cursor: 'pointer',
-            width: cardWidth
-          }"
-          @contextmenu.prevent
-        >
-          <o-button
-            v-if="selectMode?.zone === zone"
-            variant="grey-dark"
-            size="small"
-            class="deck_buttons_top"
-            @click.stop="setCardState(cards[0], {
-              faceDown: !cards[0].faceDown
-            })">裏返す</o-button
+        <CardPopup :url="cards[0].imageUrl">
+          <div v-if="hasSelectedCard()" class="deck_buttons"
+            :style="{
+              top: `${deckViews.length * -2}px`,
+              left: `${deckViews.length * -2}px`,
+              cursor: 'pointer',
+              width: cardWidth
+            }"
+            @contextmenu.prevent
           >
-          <o-button
-            v-else
-            variant="grey-dark"
-            size="small"
-            @click.stop="moveSelectedCard(zone, true)"
-            >上へ</o-button
-          >
-          <o-button
-            variant="grey-dark"
-            class="deck_buttons_buttom"
-            size="small"
-            @click.stop="moveSelectedCard(zone, false)"
-            >下へ</o-button
-          >
-        </div>
+            <o-button
+              v-if="selectMode?.zone === zone"
+              variant="grey-dark"
+              size="small"
+              class="deck_buttons_top"
+              @click.stop="setCardState(cards[0], {
+                faceDown: !cards[0].faceDown
+              })">裏返す</o-button
+            >
+            <o-button
+              v-else
+              variant="grey-dark"
+              size="small"
+              @click.stop="moveSelectedCard(zone, true)"
+              >上へ</o-button
+            >
+            <o-button
+              variant="grey-dark"
+              class="deck_buttons_buttom"
+              size="small"
+              @click.stop="moveSelectedCard(zone, false)"
+              >下へ</o-button
+            >
+          </div>
+        </CardPopup>
       </div>
     </div>
   </div>
@@ -113,6 +119,7 @@ const {
   setCardState,
   setSelectMode,
   hasSelectedCard,
+  setHoveredCard,
   moveSelectedCard,
 } = useZone(props, emit)
 
