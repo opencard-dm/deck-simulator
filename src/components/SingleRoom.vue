@@ -116,7 +116,6 @@ import { SocketUtil } from '../helpers/socket';
 import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { useStore } from 'vuex';
-import { GameLogger } from '@/helpers/GameLogger';
 
 const store = useStore()
 
@@ -127,7 +126,6 @@ const props = withDefaults(defineProps<{
   loading: boolean,
   deck: Object | null,
   single: boolean,
-  gameLogger: GameLogger,
 }>(), {
   upperPlayer: 'b',
   lowerPlayer: 'a',
@@ -163,7 +161,8 @@ const {
   onChangeCardsState,
   setRoomState,
   players,
-  cardActions
+  cardActions,
+  gameLogger,
 } = useRoomSetup(props);
 
 defineExpose({

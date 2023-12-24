@@ -2,6 +2,8 @@ import { zone, player, cardState, groupableZone, playerCards } from "@/entities"
 import { Util } from "./Util";
 import { Card } from "@/entities/Card";
 import { Deck } from "@/entities/Deck";
+import { GameLogger } from "./GameLogger";
+import { initialData } from "./room";
 
 export interface moveCardsParams {
   from: zone
@@ -29,12 +31,17 @@ export interface groupCardParams {
 
 export class CardActions {
 
+  private gameLogger?: GameLogger
   /**
    * @param players reactive
    */
   constructor(
-    public players: any
+    public players: ReturnType<typeof initialData>['players']
   ) {}
+
+  setGameLogger(gameLogger: GameLogger) {
+    this.gameLogger = gameLogger
+  }
 
   static setupForPlayer(deck: Deck): playerCards {
     return {
@@ -56,6 +63,15 @@ export class CardActions {
 
   moveCards({ from, to, cards, player, prepend, index }: moveCardsParams) {
     if (!cards || cards.length === 0) return;
+    // カードにインデックスを付与する
+    this.players[player].cards[from].forEach((card, index) => {
+      card.index = index
+    })
+    this.gameLogger?.moveCards({ from, to, cards: cards, player, prepend, index })
+    this.moveCardsWithoutHistory({ from, to, cards, player, prepend, index })
+  }
+
+  moveCardsWithoutHistory({ from, to, cards, player, prepend, index }: moveCardsParams) {
     const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
     // 先頭のカードがグループに属していた場合、そのグループから抜ける。
     const card = cardsCopy[0];
@@ -118,15 +134,15 @@ export class CardActions {
   undoMoveCards({ from, to, cards, player }: moveCardsParams) {
     const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
     if (cards.length === 1) {
-      console.log({ from, cardsCopy, player })
-      this.moveCards({ from: to, to: from, cards: cardsCopy, player, index: cards[0].index })
+      this.moveCardsWithoutHistory({ from: to, to: from, cards: cardsCopy, player, index: cards[0].index })
     } else {
-      this.moveCards({ from: to, to: from, cards: cardsCopy, player, prepend: false })
+      this.moveCardsWithoutHistory({ from: to, to: from, cards: cardsCopy, player, prepend: false })
     }
     this.undoCardsState({ from, cards: cardsCopy, player })
   }
 
   changeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
+    this.gameLogger?.changeCardsState({ from, cards, player, cardState })
     const cardIds = cards.map((c) => c.id);
     this.players[player]["cards"][from].forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
@@ -158,14 +174,18 @@ export class CardActions {
   }
 
   groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
+    // カードにインデックスを付与する
+    this.players[player].cards[from].forEach((card, index) => {
+      card.index = index
+    })
+    this.gameLogger?.groupCard({ from, to, fromCard, toCard, player })
     if (from !== to) {
-      this.moveCards({ from, to, cards: [fromCard], player, prepend: false })
+      this.moveCardsWithoutHistory({ from, to, cards: [fromCard], player, prepend: false })
     }
     // NOTE: redoのときはポインタが外れているため対象のカードをIDで探す
     const toCards: Card[] = this.players[player]["cards"][to]
     const toCardRef = toCards.find(c => c.id === toCard.id) as Card
-    const fromCards: Card[] = this.players[player]["cards"][to]
-    const fromCardRef = fromCards.find(c => c.id === fromCard.id) as Card
+    const fromCardRef = toCards.find(c => c.id === fromCard.id) as Card
     if (toCardRef.groupId) {
       fromCardRef.groupId = toCardRef.groupId
     } else {
@@ -175,7 +195,7 @@ export class CardActions {
       toCardRef.groupId = groupId
     }
     // fromCardをtoCardの前に移す。
-    Util.arrayInsertBefore(this.players[player]['cards'][to], toCard, fromCard);
+    Util.arrayInsertBefore(this.players[player]['cards'][to], toCardRef, fromCardRef);
   }
 
   undoGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {

@@ -1,8 +1,6 @@
-import { Socket } from "socket.io-client"
 import { SocketUtil } from "./socket"
-import SingleRoom from "@/components/SingleRoom.vue"
 import { player } from "@/entities"
-import { changeCardsStateParams, groupCardParams, moveCardsParams } from "./CardActions"
+import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "./CardActions"
 import { reactive } from 'vue'
 
 // Roomコンポーネント内でインスタンス化して利用する。
@@ -11,12 +9,15 @@ export class GameLogger {
   public histories: history[] = []
   public historyIndex: number = -1
   // vue component
-  private who: player = 'a'
-  private room: InstanceType<typeof SingleRoom> | null = null
 
-  static useGameLogger() {
+  constructor(
+    private cardActions: CardActions,
+    private who: player = 'a'
+  ) {}
+
+  static useGameLogger(cardActions: CardActions, who: player) {
     // https://zenn.dev/tanukikyo/articles/40603fbdc88c05#%E3%80%87-object-%C3%97-reactive
-    const gameLogger = reactive(new GameLogger()) as GameLogger
+    const gameLogger = reactive(new GameLogger(cardActions, who)) as GameLogger
     return {
       gameLogger
     }
@@ -50,11 +51,6 @@ export class GameLogger {
     this.historyIndex = histories.length - 1
   }
 
-  setRoom(room: InstanceType<typeof SingleRoom>) {
-    this.room = room
-    this.who = room.$props.lowerPlayer
-  }
-
   canundo() {
     return this.historyIndex !== -1
   }
@@ -65,13 +61,13 @@ export class GameLogger {
     this.historyIndex -= 1
     switch (history.method) {
       case this.moveCards.name:
-        this.room?.cardActions.undoMoveCards(history.args as moveCardsParams)
+        this.cardActions.undoMoveCards(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
-        this.room?.cardActions.undoGroupCard(history.args as groupCardParams)
+        this.cardActions.undoGroupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        this.room?.cardActions.undoCardsState(history.args as changeCardsStateParams)
+        this.cardActions.undoCardsState(history.args as changeCardsStateParams)
         break
       default:
         break;
@@ -91,13 +87,13 @@ export class GameLogger {
     const history = this.histories[this.historyIndex]
     switch (history.method) {
       case this.moveCards.name:
-        this.room?.cardActions.moveCards(history.args as moveCardsParams)
+        this.cardActions.moveCards(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
-        this.room?.cardActions.groupCard(history.args as groupCardParams)
+        this.cardActions.groupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        this.room?.cardActions.changeCardsState(history.args as changeCardsStateParams)
+        this.cardActions.changeCardsState(history.args as changeCardsStateParams)
         break
       default:
         break;
@@ -129,13 +125,13 @@ export class GameLogger {
     this.histories.push(history)
     switch (history.method) {
       case this.moveCards.name:
-        this.room?.cardActions.moveCards(history.args as moveCardsParams)
+        this.cardActions.moveCards(history.args as moveCardsParams)
         break;
       case this.groupCard.name:
-        this.room?.cardActions.groupCard(history.args as groupCardParams)
+        this.cardActions.groupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
-        this.room?.cardActions.changeCardsState(history.args as changeCardsStateParams)
+        this.cardActions.changeCardsState(history.args as changeCardsStateParams)
         break
       default:
         break;

@@ -8,13 +8,6 @@ import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { GameLogger } from './GameLogger';
 
-export function useHistory() {
-  const { gameLogger } = GameLogger.useGameLogger()
-  return {
-    gameLogger,
-  }
-}
-
 function useRoomListners({
   players,
   cardActions,
@@ -37,11 +30,6 @@ function useRoomListners({
     if (store.state.displayImageUrl) {
       store.commit('setDisplayImageUrl', '');
     }
-    // カードにインデックスを付与する
-    players[player].cards[from].forEach((card, index) => {
-      card.index = index
-    })
-    gameLogger.moveCards({ from, to, cards: cards, player, prepend })
     cardActions.moveCards({ from, to, cards: cards, player, prepend })
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {
@@ -65,7 +53,6 @@ function useRoomListners({
   }
 
   function onGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
-    gameLogger.groupCard({ from, to, fromCard, toCard, player })
     cardActions.groupCard({ from, to, fromCard, toCard, player })
     // 状態の変更を送信する
     if (!SocketUtil.socket) return;
@@ -75,7 +62,6 @@ function useRoomListners({
   function onChangeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
     if (!cards || cards.length === 0) return;
     // 実際に変更を加える前に状態を保存する
-    gameLogger.changeCardsState({ from, cards, player, cardState })
     cardActions.changeCardsState({ from, cards, player, cardState })
     if (props.single) {
       sessionStorage.setItem('room', JSON.stringify({
@@ -98,9 +84,10 @@ export function useRoomSetup(props: any) {
   const roomId = route.query.roomId as string || 'single'
   const players = reactive(initialData(roomId).players);
   const deckSelectorActive = ref(true);
-  const gameLogger: GameLogger = props.gameLogger
 
   const cardActions = new CardActions(players)
+  const { gameLogger } = GameLogger.useGameLogger(cardActions, props.lowerPlayer)
+  cardActions.setGameLogger(gameLogger)
 
   function scrollZone(targetSelector: string, direction: string) {
     const target = document.querySelector(targetSelector);
@@ -198,15 +185,15 @@ export function useRoomSetup(props: any) {
       scrollZone,
     }),
     cardActions,
+    gameLogger,
     setRoomState,
     props,
     resetGame,
     players,
-    gameLogger,
   }
 }
 
-function initialData(roomId: string) {
+export function initialData(roomId: string) {
   return {
     players: {
       a: {

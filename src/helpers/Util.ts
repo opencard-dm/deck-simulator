@@ -16,7 +16,7 @@ export class Util {
         return elem.id !== card.id;
       })
     }
-    return result;
+    return result as Card[];
   }
 
   static arrayAppendCards(array: readonly Card[], cards: readonly Card[]) {

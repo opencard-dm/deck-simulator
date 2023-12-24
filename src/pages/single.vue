@@ -5,23 +5,14 @@
     :loading="loading"
     :deck="deck"
     :single="true"
-    :gameLogger="gameLogger"
   ></SingleRoom>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useHistory } from '@/helpers/room';
+import { ref } from 'vue'
 
 import SingleRoom from "@/components/SingleRoom.vue";
 const roomComponent = ref<InstanceType<typeof SingleRoom> | null>(null);
-const { gameLogger } = useHistory()
-
-onMounted(() => {
-  if (roomComponent !== null) {
-    gameLogger.setRoom(roomComponent.value as InstanceType<typeof SingleRoom>)
-  }
-})
 </script>
 
 <script lang="ts">

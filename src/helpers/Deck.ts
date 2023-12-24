@@ -27,7 +27,7 @@ export class Deck {
    * @param {Boolean} playerA
    * @returns
    */
-  static async prepareDeckForGame(deck, playerA = false, withoutApi = false) {
+  static async prepareDeckForGame(deck, playerA = false, withoutApi = false): Promise<DeckType> {
     const mainCards = [];
     const chojigenCards = [];
     const startId = playerA ? START_ID_A : START_ID_B;
