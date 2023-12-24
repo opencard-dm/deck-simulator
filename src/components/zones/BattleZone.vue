@@ -336,6 +336,7 @@ $card-width: 100px;
   }
   .card_bottomButton {
     position: absolute;
+    z-index: 1;
     left: 50%;
     transform: translateX(-50%) translateY(-100%);
     display: flex;
