@@ -18,6 +18,7 @@ export class GameLogger {
   static useGameLogger(cardActions: CardActions, who: player) {
     // https://zenn.dev/tanukikyo/articles/40603fbdc88c05#%E3%80%87-object-%C3%97-reactive
     const gameLogger = reactive(new GameLogger(cardActions, who)) as GameLogger
+    cardActions.setGameLogger(gameLogger)
     return {
       gameLogger
     }

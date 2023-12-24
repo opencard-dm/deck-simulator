@@ -87,7 +87,6 @@ export function useRoomSetup(props: any) {
 
   const cardActions = new CardActions(players)
   const { gameLogger } = GameLogger.useGameLogger(cardActions, props.lowerPlayer)
-  cardActions.setGameLogger(gameLogger)
 
   function scrollZone(targetSelector: string, direction: string) {
     const target = document.querySelector(targetSelector);
