@@ -5,4 +5,10 @@
         "**/*.code-search": true
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "terminal.integrated.autoReplies": {
+        "バッチ ジョブを終了しますか (Y/N)?": "Y\r"
+    }
 }

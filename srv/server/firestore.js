@@ -1,10 +1,9 @@
 import fs from 'fs'
 // vue-cli-plugin-express の都合上cjsファイルをで読み込んでいる
-const { initializeApp, cert } = require('firebase-admin/lib/app')
+import { initializeApp, cert } from 'firebase-admin/app'
 // use version 11.3.0 
 // https://github.com/firebase/firebase-admin-node/issues/2276
-const { getFirestore } = require('firebase-admin/lib/firestore')
-const { Timestamp } = require('firebase-admin/lib/firestore')
+import { getFirestore, Timestamp } from 'firebase-admin/firestore'
 
 const env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev'
 if (fs.existsSync('.credentails.json')) {

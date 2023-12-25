@@ -9,8 +9,8 @@
         variant="primary"
         @click.stop="
           openWorkSpace({
-            zone: 'battleCards',
-            cards: battleCards,
+            zone: zone,
+            cards: cards,
             player: player,
           })
         "
@@ -26,7 +26,7 @@
       <!-- keyをindexにしていると、カード移動後MarkerToolが同じindexの別のカードに移ってしまう。 -->
       <div
         class="card_wrapper"
-        v-for="card in battleZoneCards"
+        v-for="card in visibleCards"
         :key="card.id"
         @mouseenter="setHoveredCard(card)"
         @mouseleave="setHoveredCard(null)"
@@ -47,7 +47,7 @@
               'is-selected': cardIsSelected(card),
             }"
             :draggable="!card.groupId"
-            @click.stop="clickCard($event, card)"
+            @click.stop="clickCard(card)"
           >
             <img
               v-if="card.faceDown === true"
@@ -68,8 +68,8 @@
             size="small"
             @click.stop="
               openWorkSpace({
-                zone: 'battleCards',
-                cards: card.groupId ? group(card).cards : [card],
+                zone: zone,
+                cards: card.groupId ? getGroup(card)?.cards : [card],
                 player: player,
                 single: true,
               })
@@ -78,10 +78,10 @@
           >
           <template v-else>
             <o-button
-              v-if="selectTargetMode() && selectMode.card.id === card.id"
+              v-if="selectTargetMode() && selectMode?.card.id === card.id"
               variant="grey-dark"
               size="small"
-              @click.stop="clickCard($event, card)"
+              @click.stop="clickCard(card)"
               >キャンセル</o-button
             >
             <template v-else>
@@ -142,7 +142,7 @@
           class="battleZoneButton"
           variant="danger"
           rounded
-          @click.stop="moveSelectedCard('battleCards', false)"
+          @click.stop="moveSelectedCard(zone, false)"
         >
           出す
         </o-button>
@@ -151,74 +151,81 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { isPhone } from "@/helpers/Util"
-import CardPopup from '../elements/CardPopup'
-import MarkTool from "../mark-tool/MarkTool";
+import CardPopup from '../elements/CardPopup.vue'
+import MarkTool from "../mark-tool/MarkTool.vue";
+import type { groupableZone, player, side } from "@/entities";
+import { Card } from "@/entities/Card";
+import { useZone, zoneEmit } from "./zone";
+import { useCardGroups } from "./cardGroups";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650
-</script>
 
-<script>
-import mixin from "@/helpers/mixin.js";
+const props = withDefaults(defineProps<{
+  player: player
+  cards: Card[]
+  side: side
+  zone?: groupableZone
+}>(), {
+  zone: 'battleCards',
+})
 
-export default {
-  props: ["player", "battleCards", "battleCardGroups", "side"],
-  mixins: [mixin.zone],
-  computed: {
-    battleZoneCards() {
-      // 表示するカードのIDのリスト
-      const firstCardIds = this.battleCardGroups.map((g) => g.cardIds[0]);
-      const visibleCards = this.battleCards.filter((c) => {
-        return !c.groupId || firstCardIds.includes(c.id);
+const emit = defineEmits<zoneEmit>()
+
+const {
+  openWorkSpace,
+  setHoveredCard,
+  cardIsSelected,
+  setMarkColor,
+  selectTargetMode,
+  selectMode,
+  setCardState,
+  toggleTap,
+  setSelectMode,
+  hasSelectedCard,
+  moveSelectedCard,
+} = useZone(props, emit)
+
+const {
+  visibleCards,
+  getGroup,
+} = useCardGroups(props)
+
+function clickCard(card: Card) {
+  if (cardIsSelected(card)) {
+    // 選択中のカードと同じカードがクリックされた場合、
+    // セレクトモードを終了。
+    setSelectMode(null);
+    return;
+  }
+  if (!selectTargetMode()) {
+    setSelectMode({
+      card,
+      zone: props.zone,
+      player: props.player,
+    });
+    return;
+  } else {
+    // カードを重ねる。
+    // moveSelectedCardでselectModeがnullになるので、情報を残しておく。
+    if (selectMode.value) {
+      const fromCard = selectMode.value?.card;
+      const from = selectMode.value.zone
+      setSelectMode(null)
+      // moveSelectedCard(props.zone);
+      emit("group-card", {
+        from,
+        to: props.zone,
+        fromCard: fromCard,
+        toCard: card,
+        player: props.player,
       });
-      return visibleCards;
-    },
-  },
-  methods: {
-    // リレーション
-    group(card) {
-      if (!card.groupId) {
-        return null;
-      }
-      const group = {
-        ...this.battleCardGroups.find((g) => g.id === card.groupId),
-      };
-      group.cards = this.battleCards.filter((c) => c.groupId === group.id);
-      return group;
-    },
-    clickCard(event, card) {
-      if (this.cardIsSelected(card)) {
-        // 選択中のカードと同じカードがクリックされた場合、
-        // セレクトモードを終了。
-        this.setSelectMode(null);
-        return;
-      }
-      if (!this.selectTargetMode()) {
-        this.setSelectMode({
-          card,
-          zone: "battleCards",
-          player: this.player,
-        });
-        return;
-      } else {
-        // カードを重ねる。
-        // moveSelectedCardでselectModeがnullになるので、情報を残しておく。
-        const fromCard = this.selectMode.card;
-        this.moveSelectedCard("battleCards");
-        this.$emit("group-card", {
-          from: "battleCards",
-          to: "battleCardGroups",
-          fromCard: fromCard,
-          toCard: card,
-          player: this.player,
-        });
-        return;
-      }
-    },
-  },
-};
+      return;
+    }
+  }
+}
 </script>
 
 <style lang="scss">
@@ -329,6 +336,7 @@ $card-width: 100px;
   }
   .card_bottomButton {
     position: absolute;
+    z-index: 1;
     left: 50%;
     transform: translateX(-50%) translateY(-100%);
     display: flex;

@@ -12,14 +12,14 @@ export const useConfig = () => {
   // クライアント側の環境変数は閲覧可能なため、秘密の情報は使ってはいけない。
   // VUE_APP_が着いているものはクライアント側で使用可能。
   return {
-    IMAGE_HOST: process.env.VUE_APP_IMAGE_HOST || 'http://localhost:3000',
-    WS_ENABLED: parseBool(process.env.VUE_APP_WS_ENABLED || true),
+    // IMAGE_HOST: import.meta.env.VUE_APP_IMAGE_HOST || 'http://localhost:3000',
+    // WS_ENABLED: parseBool(import.meta.env.VUE_APP_WS_ENABLED || true),
     // WebSocketのホストとapiのホストは同一の設計にしている。
     API_HOST: '',
-    VUE_APP_API_HOST: process.env.NODE_ENV === 'development' ?
-      `http://localhost:${process.env.VUE_APP_PORT}` : '',
-    ENABLE_REDIS: parseBool(process.env.ENABLE_REDIS) || false,
-    REDIS_URL: process.env.REDIS_URL || 'redis://@localhost:6379',
+    // VUE_APP_API_HOST: import.meta.env.NODE_ENV === 'development' ?
+    //   `http://localhost:${import.meta.env.VUE_APP_PORT}` : '',
+    ENABLE_REDIS: false,
+    // REDIS_URL: import.meta.env.REDIS_URL || 'redis://@localhost:6379',
   }
 }
 export default {

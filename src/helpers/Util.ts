@@ -1,3 +1,4 @@
+import { Card } from "@/entities/Card";
 
 export function isPc() {
   return window.innerWidth >= 800
@@ -8,34 +9,25 @@ export function isPhone() {
 
 export class Util {
 
-  static arrayRemoveCards(array, cards) {
+  static arrayRemoveCards(array: readonly Card[], cards: readonly Card[]) {
     let result = array;
     for (let card of cards) {
       result = result.filter((elem) => {
         return elem.id !== card.id;
       })
     }
-    return result;
+    return result as Card[];
   }
 
-  static arrayAppendCards(array, cards) {
-    let result = array;
-    cards = cards.map((c) => {
-      c.selected = false;
-      return c;
-    })
-    return result.concat(cards);
+  static arrayAppendCards(array: readonly Card[], cards: readonly Card[]) {
+    return array.concat(cards)
   }
 
-  static arrayPrependCards(array, cards) {
-    cards = cards.map((c) => {
-      c.selected = false;
-      return c;
-    })
-    return cards.concat(array);
+  static arrayPrependCards(array: readonly Card[], cards: readonly Card[]) {
+    return cards.concat(array)
   }
 
-  static arrayInsertBefore(array, targetCard, card) {
+  static arrayInsertBefore(array: Card[], targetCard: Card, card: Card) {
     const targetIndex = array.findIndex(c => c.id === targetCard.id)
     // 削除してから挿入しないと一時的にidがかぶる状態ができてしまう。
     array.splice(

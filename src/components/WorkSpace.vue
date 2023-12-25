@@ -235,15 +235,15 @@
 </template>
 
 <script setup>
-import CardPopup from './elements/CardPopup'
+import CardPopup from './elements/CardPopup.vue'
 const cardWidth = isPhone() ? 70 : 120
 const cardHeight = cardWidth * 908 / 650
 
 </script>
 
 <script>
-import mixin from "../helpers/mixin.js";
-import { MarkTool } from "./index.js";
+import mixin from "../helpers/mixin";
+import { MarkTool } from "./index";
 import { isPhone } from '@/helpers/Util';
 
 export default {

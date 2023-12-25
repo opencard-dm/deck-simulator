@@ -1,6 +1,10 @@
 <template>
   <div id="app" style="background-color: lightgray" v-if="isMounted">
-    <CHeader :single="single"></CHeader>
+    <CHeader :single="single"
+      :gameLogger="gameLogger"
+      :currentPlayer="currentPlayer"
+      @switch-tab="switchTab()"
+    ></CHeader>
 
     <div
       v-if="isPhone()"
@@ -16,7 +20,7 @@
       <ImageViewer>
         <WorkSpace
           :lowerPlayer="lowerPlayer"
-          @move-cards="moveCards"
+          @move-cards="onMoveCards"
           @shuffle-cards="shuffleCards"
           @emit-room-state="emitRoomState"
         ></WorkSpace>
@@ -25,21 +29,23 @@
           id="js_gameBoard"
           class="gameBoard"
           :style="{
-            opacity: $store.state.workSpace.active ? 0.3 : 1,
+            opacity: store.state.workSpace.active ? 0.3 : 1,
             height: playerZoneHeight,
           }"
         >
-          <PlayerLower
+          <PlaySheet
+            :side="'lower'"
             :player="lowerPlayer"
             :cards="players[lowerPlayer].cards"
             :name="players[lowerPlayer].name"
             :roomId="players[lowerPlayer].roomId"
             :isReady="players[lowerPlayer].isReady"
             :hasChojigen="players[lowerPlayer].hasChojigen"
-            @move-cards="moveCards"
-            @group-card="groupCard"
+            @move-cards="onMoveCards"
+            @group-card="onGroupCard"
             @emit-room-state="emitRoomState"
-          ></PlayerLower>
+            @change-cards-state="onChangeCardsState"
+          ></PlaySheet>
         </div>
       </ImageViewer>
     </div>
@@ -56,13 +62,14 @@
           :isReady="players[upperPlayer].isReady"
           :partnerIsReady="true"
           :cancelable="true"
-          @moveCards="moveCards"
+          :cardActions="cardActions"
+          @moveCards="onMoveCards"
           @selected="onDeckSelected"
         ></DeckSelector>
 
         <WorkSpace
           :lowerPlayer="upperPlayer"
-          @move-cards="moveCards"
+          @move-cards="onMoveCards"
           @shuffle-cards="shuffleCards"
           @emit-room-state="emitRoomState"
         ></WorkSpace>
@@ -71,28 +78,30 @@
           id="js_gameBoard"
           class="gameBoard"
           :style="{
-            opacity: $store.state.workSpace.active ? 0.3 : 1,
+            opacity: store.state.workSpace.active ? 0.3 : 1,
             height: playerZoneHeight,
           }"
         >
-          <PlayerLower
+          <PlaySheet
+            :side="'lower'"
             :player="upperPlayer"
             :cards="players[upperPlayer].cards"
             :name="players[upperPlayer].name"
             :roomId="players[upperPlayer].roomId"
             :isReady="players[upperPlayer].isReady"
             :hasChojigen="players[upperPlayer].hasChojigen"
-            @move-cards="moveCards"
-            @group-card="groupCard"
+            @move-cards="onMoveCards"
+            @group-card="onGroupCard"
             @emit-room-state="emitRoomState"
-          ></PlayerLower>
+            @change-cards-state="onChangeCardsState"
+          ></PlaySheet>
         </div>
       </ImageViewer>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Layout } from '@/helpers/layout';
 import { isPhone } from '@/helpers/Util';
 import { onMounted, ref, watch } from 'vue';
@@ -100,41 +109,65 @@ import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
 import DeckSelector from './DeckSelector.vue';
-import PlayerLower from './PlayerLower.vue';
+import PlaySheet from './PlaySheet.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
+import { player, playerCards, zone } from '@/entities';
+import { Card } from '@/entities/Card';
+import { useStore } from 'vuex';
+
+const store = useStore()
+
+const props = withDefaults(defineProps<{
+  upperPlayer?: player,
+  lowerPlayer?: player,
+  room: Object,
+  loading: boolean,
+  deck: Object | null,
+  single: boolean,
+}>(), {
+  upperPlayer: 'b',
+  lowerPlayer: 'a',
+})
 
 const tabId = ref(1);
+const currentPlayer = ref(props.lowerPlayer)
+
 function switchTab() {
   if (tabId.value === 1) {
     if (!players.b.isReady) {
       deckSelectorActive.value = true;
     }
     tabId.value = 2;
+    currentPlayer.value = props.upperPlayer
   } else {
     tabId.value = 1;
+    currentPlayer.value = props.lowerPlayer
   }
 }
 
 const deckSelectorActive = ref(true);
 
-const playerZoneHeight = isPhone() ? `${Layout.playerZoneHeight(70)}px` : false;
+const playerZoneHeight = isPhone() ? `${Layout.playerZoneHeight(70)}px` : '';
 const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
 });
 
-const props = defineProps({
-  upperPlayer: String,
-  lowerPlayer: String,
-  room: Object,
-  loading: Boolean,
-  deck: Object,
-  single: Boolean,
-});
+const {
+  onMoveCards,
+  onGroupCard,
+  onChangeCardsState,
+  setRoomState,
+  players,
+  cardActions,
+  gameLogger,
+} = useRoomSetup(props);
 
-const { moveCards, groupCard, setRoomState, players } = useRoomSetup(props);
+defineExpose({
+  cardActions,
+})
 
 watch(
   () => props.loading,
@@ -148,23 +181,26 @@ watch(
 function emitRoomState() {
   if (SocketUtil.socket) {
     // 今のところバトルゾーンとマナゾーンのタップ状態を送信するために使用。
-    SocketUtil.socket.emit('cards-moved', this.players[this.lowerPlayer]);
+    SocketUtil.socket.emit('cards-moved', players[props.lowerPlayer]);
     // SocketUtil.socket.emit("cards-moved", this.players[this.upperPlayer])
   }
 }
 
-function shuffleCards(from, cards, player) {
+function shuffleCards(from: zone, cards: Card[], player: player) {
   players[player]['cards'][from] = Deck.shuffle(cards);
   const shuffleMessage = {
     shieldCards: 'シールド',
     yamafudaCards: '山札',
     tefudaCards: '手札',
   };
-  setMessage(shuffleMessage[from] + 'をシャッフル', player);
+  // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
-function onDeckSelected() {
-  players.b.isReady = true;
+function onDeckSelected({ playerCards }: {
+  playerCards: playerCards
+}) {
+  players[props.upperPlayer].isReady = true;
+  players[props.upperPlayer].cards = playerCards
 }
 
 function setMessage() {

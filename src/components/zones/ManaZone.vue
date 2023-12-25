@@ -3,7 +3,7 @@
     <div class="manaZone" :class="side">
       <RoundButton :style="{color: 'beige', background: 'green'}" @click.stop="clickManaButton">
         <template v-if="hasSelectedCard()">
-          <template v-if="selectMode.zone !== 'manaCards'">
+          <template v-if="selectMode?.zone !== zone">
             <p :style="{fontSize: '12px'}">チャージ</p>
           </template>
           <template v-else-if="selectMode.card.tapped">
@@ -13,7 +13,7 @@
         </template>
         <template v-else>
           <p :style="{fontSize: '10px'}">マナ</p>
-          <p>{{ countNormal }}/{{ manaCards.length }}</p>
+          <p>{{ countNormal }}/{{ cards.length }}</p>
         </template>
       </RoundButton>
       <div class="manaZone_cont" :class="side">
@@ -31,7 +31,7 @@
               @click.stop="clickCard(card)"
             >
               <img v-if="!card.faceDown" :src="card.imageUrl" />
-              <img v-else src="card.backImageUrl" />
+              <img v-else :src="card.backImageUrl" />
             </div>
             <div v-if="cardIsSelected(card)" class="card_bottomButton">
               <o-button
@@ -74,72 +74,84 @@
   </div>
 </template>
 
-<script>
-import mixin from "@/helpers/mixin.js";
-import RoundButton from '../elements/RoundButton'
+<script setup lang="ts">
+import RoundButton from '../elements/RoundButton.vue'
+import { computed } from 'vue'
+import type { player, side, zone } from "@/entities";
+import { Card } from "@/entities/Card";
+import { useZone, zoneEmit } from "./zone";
 
-export default {
-  props: ["player", "manaCards", "side"],
-  mixins: [mixin.zone],
-  components: {RoundButton},
-  data() {
-    return {
-      zone: "manaCards",
-    };
-  },
-  computed: {
-    normalCards() {
-      return this.manaCards.filter((card) => {
-        return card.tapped !== true;
-      });
-    },
-    tappedCards() {
-      return this.manaCards.filter((card) => {
-        return card.tapped === true;
-      });
-    },
-    countNormal() {
-      return this.normalCards.length;
-    },
-  },
-  methods: {
-    clickManaButton() {
-      if (this.hasSelectedCard()) {
-        if (this.selectMode.zone !== "manaCards") {
-          this.moveSelectedCard(this.zone);
-          return;
-        }
-        if (this.selectMode.card.tapped) {
-          this.manaCards.forEach((c) => {
-            c.tapped = false;
-          });
-          this.setSelectMode(null);
-          this.emitState();
-          return;
-        }
-      }
-      this.openWorkSpace({
-        zone: "manaCards",
-        cards: this.manaCards,
-        player: this.player,
-      });
-    },
-    clickCard(card) {
-      if (this.cardIsSelected(card)) {
-        // 選択中のカードと同じカードがクリックされた場合、
-        // セレクトモードを終了。
-        this.setSelectMode(null);
-        return;
-      }
-      this.setSelectMode({
-        card,
-        zone: "manaCards",
-        player: this.player,
-      });
+const props = withDefaults(defineProps<{
+  player: player
+  cards: Card[]
+  side: side
+  zone?: zone
+}>(), {
+  zone: 'manaCards',
+})
+const emit = defineEmits<zoneEmit>()
+
+const {
+  openWorkSpace,
+  setHoveredCard,
+  cardIsSelected,
+  selectMode,
+  toggleTap,
+  setSelectMode,
+  hasSelectedCard,
+  moveSelectedCard,
+  emitState,
+} = useZone(props, emit)
+
+const normalCards = computed(() => {
+  return props.cards.filter((card) => {
+    return card.tapped !== true;
+  });
+})
+const tappedCards = computed(() => {
+  return props.cards.filter((card) => {
+    return card.tapped === true;
+  });
+})
+const countNormal = computed(() => {
+  return normalCards.value.length;
+})
+function clickManaButton() {
+  if (hasSelectedCard()) {
+    if (selectMode.value?.zone !== props.zone) {
+      moveSelectedCard(props.zone);
       return;
-    },
-  },
-};
+    }
+    if (selectMode.value.card.tapped) {
+      props.cards.forEach((c) => {
+        c.tapped = false;
+      });
+      setSelectMode(null);
+      emitState();
+      return;
+    }
+  }
+  openWorkSpace({
+    zone: props.zone,
+    cards: props.cards,
+    player: props.player,
+  });
+}
+
+function clickCard(card: Card) {
+  if (cardIsSelected(card)) {
+    // 選択中のカードと同じカードがクリックされた場合、
+    // セレクトモードを終了。
+    setSelectMode(null);
+    return;
+  }
+  setSelectMode({
+    card,
+    zone: props.zone,
+    player: props.player,
+  });
+  return;
+}
 </script>
 
 <style lang="scss">

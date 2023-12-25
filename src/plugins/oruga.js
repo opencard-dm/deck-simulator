@@ -39,6 +39,8 @@ import {
   faPen,
   faCopy,
   faQuestion,
+  faUndo,
+  faRedo,
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faTimesCircle as farTimesCircle,
@@ -64,4 +66,6 @@ library.add(
   faCopy,
   faQuestion,
   farQuestionCircle,
+  faUndo,
+  faRedo,
 )

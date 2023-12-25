@@ -1,41 +1,51 @@
 <template>
-  <div
-    class="chojigenZone"
-    :class="[{ chojigenZone_hidden: !hasChojigen }, side]"
-    @click.stop="clickChojigenZone"
-  >
+  <div class="bochi" @click.stop="clickBochi()">
     <div
       v-if="selectMode && selectMode.player === player"
-      class="chojigenZone_text"
+      class="bochi_text"
     >
-      超次元<br />ゾーンへ
+      墓地へ
     </div>
-    <div v-else class="chojigenZone_icon">超<br />次<br />元</div>
+    <img
+      v-else-if="lastCard()"
+      :src="lastCard()?.imageUrl"
+      @mouseenter="setHoveredCard(lastCard())"
+      @mouseleave="setHoveredCard(null)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-
 import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
-import { zoneEmit, useZone } from "./zone";
+import { useZone, zoneEmit } from "./zone";
 
 const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
   side: side
-  hasChojigen: boolean
   zone?: zone
 }>(), {
-  zone: 'chojigenCards',
+  zone: 'bochiCards',
 })
+
 const emit = defineEmits<zoneEmit>()
+
 const {
   openWorkSpace,
+  setHoveredCard,
   selectMode,
   moveSelectedCard,
 } = useZone(props, emit)
-function clickChojigenZone() {
+
+function lastCard() {
+  const length = props.cards.length;
+  if (length && 0 < length) {
+    return props.cards[length - 1];
+  }
+  return null;
+}
+function clickBochi() {
   if (!selectMode.value) {
     openWorkSpace({
       zone: props.zone,
@@ -54,37 +64,30 @@ function clickChojigenZone() {
   @return calc($value * 908 / 650);
 }
 $card-width: 50px;
-.chojigenZone {
+
+.bochi {
   position: relative;
   text-align: center;
-  margin-left: 8px;
-  width: 50px;
+  width: 60px;
   height: cardHeight(50px);
-  background-color: #f4c300;
+  background-color: purple;
+  background-size: cover;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  &.upper {
-    margin-left: 0;
-    margin-right: 8px;
-  }
-  &_hidden {
-    opacity: 0;
-  }
-  &_text {
-    flex-shrink: 0;
-    font-size: 12px;
-    width: 100%;
-    color: rgb(121, 121, 121);
+  color: lightgray;
+  .bochi_text {
     text-align: center;
   }
-  &_icon {
-    flex-shrink: 0;
-    font-size: 14px;
-    width: 100%;
-    color: rgb(121, 121, 121);
-    text-align: center;
+  @media screen and (max-device-width: 800px) {
+      width: 50px;
+      img {
+        border-top: 1px solid purple;
+        border-bottom: 1px solid purple;
+        border-left: 2px solid purple;
+        border-right: 2px solid purple;
+      }
   }
 }
 </style>

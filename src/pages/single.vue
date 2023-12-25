@@ -1,7 +1,6 @@
 <template>
   <SingleRoom
-    :upper-player="'b'"
-    :lower-player="'a'"
+    ref="roomComponent"
     :room="room"
     :loading="loading"
     :deck="deck"
@@ -9,11 +8,14 @@
   ></SingleRoom>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ref } from 'vue'
+
 import SingleRoom from "@/components/SingleRoom.vue";
+const roomComponent = ref<InstanceType<typeof SingleRoom> | null>(null);
 </script>
 
-<script>
+<script lang="ts">
 import axios from "axios";
 import { SocketUtil } from "../helpers/socket";
 import { Deck } from "@/helpers/Deck";

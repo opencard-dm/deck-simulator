@@ -2,8 +2,8 @@ import { Server } from 'socket.io';
 import { createAdapter } from "@socket.io/redis-adapter";
 import { RoomData } from './roomData.js'
 import { createClient } from "redis";
-import { useConfig } from '../../src/plugins/useConfig'
-const { instrument } = require("@socket.io/admin-ui");
+import { useConfig } from '../../src/plugins/useConfig.js'
+import { instrument } from "@socket.io/admin-ui";
 
 export async function attachSocketIo(appServer) {
   /** @type {import('socket.io').ServerOptions} */

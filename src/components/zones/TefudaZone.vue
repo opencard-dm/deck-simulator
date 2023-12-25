@@ -4,7 +4,7 @@
       <div
         class="card_wrapper"
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
-        v-for="(card, index) in tefudaCards"
+        v-for="(card, index) in cards"
         :key="index"
         @mouseenter="setHoveredCard(card)"
         @mouseleave="setHoveredCard(null)"
@@ -106,63 +106,69 @@
   </div>
 </template>
 
-<script setup>
-import CardPopup from '../elements/CardPopup'
+<script setup lang="ts">
+import type { player, side } from '@/entities';
+import { Card } from '@/entities/Card';
+import CardPopup from '../elements/CardPopup.vue'
 import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
+import { useZone, zoneEmit } from './zone';
+import { useStore } from 'vuex';
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650
 const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
-  `${Layout.tefudaHeight(cardWidth)}px` : false
-</script>
+  `${Layout.tefudaHeight(cardWidth)}px` : ''
 
-<script>
-import mixin from "@/helpers/mixin.js";
+const store = useStore()
+const props = defineProps<{
+  player: player
+  cards: Card[]
+  side: side
+}>()
+const zone = 'tefudaCards'
 
-export default {
-  props: ["player", "tefudaCards", "side"],
-  mixins: [mixin.zone],
-  emits: ['drawOne'],
-  data() {
-    return {
-      zone: "tefudaCards",
-    };
-  },
-  computed: {
-    cards() {
-      return this.tefudaCards;
-    },
-  },
-  methods: {
-    clickCard(card) {
-      if (this.workSpace.active) {
-        this.closeWorkSpace()
-      }
-      // すでに選択済みのカードであれば、選択解除
-      if (this.selectMode && this.selectMode.card.id === card.id) {
-        this.setSelectMode(null);
-        return;
-      }
-      // カードのプレビューが開いていた場合、表示するカードを切り替える
-      if (!card.faceDown && this.$store.state.displayImageUrl) {
-        this.$store.commit('setDisplayImageUrl', card.imageUrl)
-      }
-      // 選択する
-      this.setSelectMode({
-        player: this.player,
-        card,
-        zone: this.zone,
-      });
-    },
-    clickPlaceholderCard() {
-      if (this.selectMode && this.selectMode.zone !== this.zone) {
-        this.moveSelectedCard(this.zone, false)
-      } else {
-        this.$emit('drawOne');
-      }
-    },
-  },
-};
+const emit = defineEmits<zoneEmit & {
+  drawOne: []
+}>()
+
+const {
+  setHoveredCard,
+  selectTargetMode,
+  selectMode,
+  setSelectMode,
+  moveSelectedCard,
+  moveCard,
+  workSpace,
+  closeWorkSpace,
+} = useZone(props, emit)
+
+function clickCard(card: Card) {
+  if (workSpace.value.active) {
+    closeWorkSpace()
+  }
+  // すでに選択済みのカードであれば、選択解除
+  if (selectMode.value && selectMode.value.card.id === card.id) {
+    setSelectMode(null);
+    return;
+  }
+  // カードのプレビューが開いていた場合、表示するカードを切り替える
+  if (!card.faceDown && store.state.displayImageUrl) {
+    store.commit('setDisplayImageUrl', card.imageUrl)
+  }
+  // 選択する
+  setSelectMode({
+    player: props.player,
+    card,
+    zone: zone,
+  });
+}
+function clickPlaceholderCard() {
+  if (selectMode.value && selectMode.value.zone !== zone) {
+    moveSelectedCard(zone, false)
+  } else {
+    emit('drawOne');
+  }
+}
 </script>
 
 <style lang="scss">

@@ -1,8 +1,10 @@
+import { player, zone } from '@/entities';
+import { Card } from '@/entities/Card';
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
-
+import { mutations } from './mutations'
 // https://next.vuex.vuejs.org/ja/guide/#%E3%82%B7%E3%83%B3%E3%83%97%E3%83%AB%E3%81%AA%E3%82%B9%E3%83%88%E3%82%A2
-const store = createStore({
+export const store = createStore({
   plugins: [createPersistedState({
     // スクレイピングで取得したデッキデータをブラウザのLocal Storageに保存する。
     paths: ['decks', 'setting'],
@@ -45,9 +47,30 @@ const store = createStore({
     }
   },
   state() {
-    return {
+    const initState: {
+      displayImageUrl: string
+      selectMode: {
+        player: player
+        zone: zone
+        card: Card
+        selectingTarget: boolean
+      } | null
+      selectedCard: Card | null
+      hoveredCard: Card | null
+      workSpace: {
+        active: boolean
+        cards: Card[]
+        zone: zone | ''
+        player: player | ''
+        minimal: boolean
+        single: boolean
+      },
+      settings: {
+        dropdownTriggers: string[]
+      }
+    } = {
       displayImageUrl: '',
-      selectMode: false, // カードを重ねるときに使用。
+      selectMode: null, // カードを重ねるときに使用。
       selectedCard: null, // セレクトモードではないが、カードを選択するとき使用する。
       hoveredCard: null,
       workSpace: {
@@ -62,59 +85,9 @@ const store = createStore({
         dropdownTriggers: ['click'],
       },
     }
+    return initState
   },
-  mutations: {
-    setDisplayImageUrl(state, url) {
-      state.displayImageUrl = url
-    },
-    setSelectMode(state, data) {
-      // セレクトモード変化時には選択中のカードを消す。
-      state.selectedCard = null
-      state.selectMode = data
-      if (data === null) {
-        state.displayImageUrl = ''
-      }
-    },
-    setSelectedCard(state, card) {
-      state.selectedCard = card
-    },
-    setHoveredCard(state, card) {
-      state.hoveredCard = card
-    },
-    openWorkSpace(state, { cards, zone, player, single = false }) {
-      // 既に開いている状態で、同じゾーンを開こうとした場合は閉じる。
-      if (state.workSpace.active) {
-        if (state.workSpace.player === player
-          && state.workSpace.zone === zone
-          && state.workSpace.cards.length === cards.length
-        ) {
-          store.commit('closeWorkSpace')
-          return
-        }
-      }
-      state.workSpace = {
-        cards,
-        zone,
-        player,
-        active: true,
-        single,
-      }
-    },
-    closeWorkSpace(state) {
-      state.workSpace = {
-        cards: [],
-        zone: '',
-        player: '',
-        active: false,
-      }
-    },
-    updateSettings(state, settings) {
-      state.settings = {
-        ...state.settings,
-        ...settings,
-      }
-    },
-  },
+  mutations: mutations,
 })
 
 export default store

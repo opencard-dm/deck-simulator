@@ -9,6 +9,28 @@
         style="color: white; margin-left: 20px; font-size: 24px;"
         @click.stop="sidebarOpen = !sidebarOpen"
       ></o-icon>
+      <o-icon
+        pack="fas"
+        icon="undo"
+        size="small"
+        style="margin-left: 40px; font-size: 24px;"
+        :style="{
+          color: gameLogger.canundo() ? '#ddd' : 'gray'
+        }"
+        title="Ctrl + Z"
+        @click.stop="undo()"
+      ></o-icon>
+      <o-icon
+        pack="fas"
+        icon="redo"
+        size="small"
+        style="color: #ddd; margin-left: 20px; font-size: 24px;"
+        :style="{
+          color: gameLogger.canredo() ? '#ddd' : 'gray'
+        }"
+        title="Ctrl + Y"
+        @click.stop="redo()"
+      ></o-icon>
     </div>
     <div
       class="sidebar"
@@ -67,26 +89,65 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Layout } from '@/helpers/layout'
 import { onMounted, ref } from 'vue';
 import { isPhone } from '@/helpers/Util';
+import { GameLogger } from '@/helpers/GameLogger';
+import { player } from '@/entities';
 
-defineProps({
-  single: Boolean,
-})
+const props = defineProps<{
+  single: boolean,
+  gameLogger: GameLogger,
+  currentPlayer: player,
+}>()
+
+const emit = defineEmits([
+  'reset-game',
+  'switch-tab',
+])
 
 const headerHeight = `${Layout.headerHeight()}px`
 
 const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
+  document.onkeydown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key == 'z') {
+      undo()
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key == 'y') {
+      redo()
+    }
+  }
 });
+
+function undo() {
+  if (!props.gameLogger.canundo()) {
+    return
+  }
+  if (isPhone() && props.currentPlayer !== props.gameLogger.currentHistory.player) {
+    emit('switch-tab')
+    return
+  }
+  props.gameLogger.undo()
+}
+
+function redo() {
+  if (!props.gameLogger.canredo()) {
+    return
+  }
+  if (isPhone() && props.currentPlayer !== props.gameLogger.nextHistory.player) {
+    emit('switch-tab')
+    return
+  }
+  props.gameLogger.redo()
+}
+
 </script>
 
-<script>
+<script lang="ts">
 export default {
-  emits: ['reset-game'],
   data() {
     return {
       sidebarOpen: false,
@@ -100,7 +161,7 @@ export default {
       return (
         window.location.origin +
         "/room?roomId=" +
-        encodeURI(this.$route.query.roomId) +
+        encodeURI(this.$route.query.roomId as string) +
         "&player=" +
         opponentPlayer
       );

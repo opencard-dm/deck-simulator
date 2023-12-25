@@ -4,11 +4,6 @@
       <o-button variant="info" size="small" @click="createRoom()"
         >部屋を作る</o-button
       >
-      <div class="index_links">
-        <!-- <p v-if="decks.length > 0">
-          <router-link to="/builder">自分のデッキを編集</router-link>
-        </p> -->
-      </div>
     </div>
     <MarkdownIt class="markdown-body" :source="battlemd"></MarkdownIt>
     <p style="margin-top: 30px;">
@@ -29,7 +24,7 @@
 <script>
 import { makeRandomString } from "@/helpers/makeRandomString";
 import axios from "axios";
-import battlemd from "raw-loader!../assets/markdown/battle.md";
+import battlemd from "../assets/markdown/battle.md";
 
 export default {
   data() {

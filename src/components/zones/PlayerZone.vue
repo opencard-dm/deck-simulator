@@ -2,122 +2,33 @@
   <div class="player-zone-wrapper">
     <div class="player-zone" :class="side">
       <div class="player-counter" :class="side">
-        <RoundButton :style="{background: 'blue', color: 'beige'}" @click.stop="clickShieldButton">
-          <div v-if="hasSelectedCard()" :style="{fontSize: '10px'}">
-            シールドへ
-          </div>
-          <template v-else>
-            <div :style="{fontSize: '10px'}">シールド</div>
-            <div :style="{fontSize: '16px'}">
-              {{ countableShieldCards.length }}
-            </div>
-          </template>
-        </RoundButton>
+        <slot name="shield-button"></slot>
       </div>
       <div class="shield-wrapper" :class="side">
-        <!-- シールドゾーン -->
         <slot name="shield-zone"></slot>
-        <!-- デッキゾーン -->
         <slot name="deck-zone"></slot>
-        <!-- 墓地 -->
         <template v-if="!isPhone()">
-          <div class="bochi" @click.stop="clickBochi">
-            <div
-              v-if="selectMode && selectMode.player === player"
-              class="bochi_text"
-            >
-              墓地へ
-            </div>
-            <img
-              v-else-if="lastCard(bochiCards)"
-              :src="lastCard(bochiCards).imageUrl"
-              @mouseenter="setHoveredCard(lastCard(bochiCards))"
-              @mouseleave="setHoveredCard(null)"
-            />
-          </div>
-          <!-- 超次元ゾーン -->
+          <slot name="bochi-zone"></slot>
           <slot name="chojigenZone"></slot>
         </template>
       </div>
     </div>
     <div v-if="isPhone()" class="player-zone-under">
-      <div class="bochi" @click.stop="clickBochi">
-        <div
-          v-if="selectMode && selectMode.player === player"
-          class="bochi_text"
-        >
-          墓地へ
-        </div>
-        <img
-          v-else-if="lastCard(bochiCards)"
-          :src="lastCard(bochiCards).imageUrl"
-          @mouseenter="setHoveredCard(lastCard(bochiCards))"
-          @mouseleave="setHoveredCard(null)"
-        />
-      </div>
-      <!-- 超次元ゾーン -->
+      <slot name="bochi-zone"></slot>
       <slot name="chojigenZone"></slot>
     </div>
   </div>
 </template>
 
-<script setup>
-import { isPhone } from "@/helpers/Util";
-</script>
+<script setup lang="ts">
+import { isPhone } from "@/helpers/Util"
+import type { player, side } from "@/entities";
 
-<script>
-import mixin from "@/helpers/mixin.js";
-import RoundButton from '../elements/RoundButton'
+const props = defineProps<{
+  player: player
+  side: side
+}>()
 
-export default {
-  props: ["player", "bochiCards", "shieldCards", "shieldCardGroups", "side"],
-  mixins: [mixin.zone],
-  components: {RoundButton},
-  computed: {
-    countableShieldCards() {
-      // グループ化されているカードは一つとカウントする。
-      const firstCardIds = this.shieldCardGroups.map((g) => g.cardIds[0]);
-      return this.shieldCards.filter((c) => {
-        return !c.groupId || firstCardIds.includes(c.id);
-      });
-    },
-    dropdownTriggers() {
-      return this.$store.state.settings.dropdownTriggers;
-    },
-  },
-  methods: {
-    lastCard: function (cards) {
-      const length = cards.length;
-      if (length && 0 < length) {
-        return cards[length - 1];
-      }
-      return null;
-    },
-    clickBochi() {
-      if (!this.selectMode) {
-        this.openWorkSpace({
-          zone: "bochiCards",
-          cards: this.bochiCards,
-          player: this.player,
-        });
-        return;
-      }
-      this.moveSelectedCard("bochiCards");
-    },
-    clickShieldButton() {
-      if (this.hasSelectedCard()) {
-        this.selectMode.card.faceDown = true;
-        this.moveSelectedCard("shieldCards");
-        return;
-      }
-      this.openWorkSpace({
-        zone: "shieldCards",
-        cards: this.shieldCards,
-        player: this.player,
-      });
-    },
-  },
-};
 </script>
 
 <style lang="scss">
@@ -176,31 +87,6 @@ $card-width: 50px;
   }
   img {
     width: 50px;
-  }
-  .bochi {
-    position: relative;
-    text-align: center;
-    width: 60px;
-    height: cardHeight(50px);
-    background-color: purple;
-    background-size: cover;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: lightgray;
-    .bochi_text {
-      text-align: center;
-    }
-    @media screen and (max-device-width: 800px) {
-        width: 50px;
-        img {
-          border-top: 1px solid purple;
-          border-bottom: 1px solid purple;
-          border-left: 2px solid purple;
-          border-right: 2px solid purple;
-        }
-    }
   }
   @media screen and (max-device-width: 800px) {
     .player-zone-under {

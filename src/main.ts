@@ -22,9 +22,6 @@ vueApp.use(useConfig)
 //
 // axios
 import axios from 'axios'
-if (process.env.VUE_APP_WS_HOST) {
-  axios.defaults.baseURL = process.env.VUE_APP_WS_HOST
-}
 
 //
 // oruga ui

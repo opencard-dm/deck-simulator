@@ -1,6 +1,6 @@
-const { spawn, execSync } = require('child_process')
+import { spawn, execSync } from 'child_process'
 
-require('dotenv').config()
+import 'dotenv/config'
 if (!process.env.VERSION) {
   throw new Error('process.env.VERSION is required')
 }

@@ -29,7 +29,8 @@
           }"
         >
           <template v-if="!single && !isPhone()">
-            <PlayerUpper
+            <PlaySheet
+              :side="'upper'"
               :player="upperPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"
@@ -39,7 +40,7 @@
               @move-cards="moveCards"
               @group-card="groupCard"
               @emit-room-state="emitRoomState"
-            ></PlayerUpper>
+            ></PlaySheet>
           </template>
 
           <!-- <MessageBox :upper-player="upperPlayer"
@@ -48,7 +49,8 @@
 
           <!-- center -->
           <!-- <MessageButtons :player="lowerPlayer"></MessageButtons> -->
-          <PlayerLower
+          <PlaySheet
+            :side="'lower'"
             :player="lowerPlayer"
             :cards="players[lowerPlayer].cards"
             :name="players[lowerPlayer].name"
@@ -58,14 +60,14 @@
             @move-cards="moveCards"
             @group-card="groupCard"
             @emit-room-state="emitRoomState"
-          ></PlayerLower>
+          ></PlaySheet>
         </div>
       </ImageViewer>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Layout } from '@/helpers/layout';
 import { isPhone } from '@/helpers/Util';
 import { onMounted, ref, watch } from 'vue';
@@ -73,8 +75,7 @@ import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
 import DeckSelector from './DeckSelector.vue';
-import PlayerLower from './PlayerLower.vue';
-import PlayerUpper from './PlayerUpper.vue';
+import PlaySheet from './PlaySheet.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
@@ -94,7 +95,13 @@ const props = defineProps({
   single: Boolean,
 });
 
-const { moveCards, groupCard, setRoomState, players } = useRoomSetup(props);
+const { moveCards, groupCard, setRoomState, players, changeCardsState } = useRoomSetup(props);
+
+defineExpose({
+  moveCards,
+  groupCard,
+  changeCardsState,
+})
 
 watch(
   () => props.loading,

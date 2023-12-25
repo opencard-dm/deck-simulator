@@ -2,7 +2,7 @@ import { config, RouterLinkStub } from '@vue/test-utils'
 
 // @ts-nocheck
 import { createApp } from 'vue'
-import App from '@/app'
+import App from '@/app.vue'
 
 const vueApp = createApp(App)
 
@@ -24,9 +24,9 @@ vueApp.use(useConfig)
 import { useOruga } from '@/plugins/oruga'
 useOruga(vueApp)
 
-import ClientOnlyStub from './stub/ClientOnlyStub.vue'
-// Mock Router components
-config.global.stubs['router-link'] = RouterLinkStub
-config.global.stubs['client-noly'] = ClientOnlyStub
-config.global.stubs['dropdown'] = ClientOnlyStub
-config.global.stubs['o-icon'] = ClientOnlyStub
+// import ClientOnlyStub from './stub/ClientOnlyStub.vue'
+// // Mock Router components
+// config.global.stubs['router-link'] = RouterLinkStub
+// config.global.stubs['client-noly'] = ClientOnlyStub
+// config.global.stubs['dropdown'] = ClientOnlyStub
+// config.global.stubs['o-icon'] = ClientOnlyStub
