@@ -4,23 +4,27 @@ import path from 'path'
 import { defineConfig } from 'vite'
 import markdownRawPlugin from 'vite-raw-plugin'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import 'dotenv/config'
 
-export default defineConfig({
-    plugins: [
-        vue(),
-        markdownRawPlugin({
-            fileRegex: /\.md$/
-        }),
-        tsconfigPaths(),
-    ],
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, './src')
+export default defineConfig(({ mode }) => {
+    return {
+        plugins: [
+            vue(),
+            markdownRawPlugin({
+                fileRegex: /\.md$/
+            }),
+            tsconfigPaths(),
+        ],
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, './src')
+            },
         },
-    },
-    test: {
-        globals: true,
-        environment: 'happy-dom',
-        setupFiles: './tests/vitest.setup.ts',
-    },
+        test: {
+            globals: true,
+            environment: 'happy-dom',
+            setupFiles: './tests/vitest.setup.ts',
+        },
+
+    }
 })
