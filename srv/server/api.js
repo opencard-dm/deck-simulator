@@ -5,6 +5,7 @@ import { RoomData } from './roomData.js'
 import { FireStore } from './firestore.js'
 import { Deck } from '../../src/helpers/Deck'
 import { getDeckData } from '../gm-deck-maker/index.js'
+import { createRoom } from '../services/roomService'
 import axios from 'axios'
 
 const router = Router()
@@ -27,11 +28,8 @@ router.put('/api/rooms/:roomId', async function (req, res) {
   if (!roomId) {
     return res.json({})
   }
-  const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
-  await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).set({
-    cookie: req.body.cookie || '',
-    ttl: FireStore.Timestamp.fromMillis(Date.now() + (1 * 60 * 60 * 1000)),
-  })
+  const cookie = req.body.cookie || ''
+  await createRoom(roomId, cookie)
   res.json({})
 })
 
