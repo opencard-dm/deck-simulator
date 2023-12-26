@@ -116,20 +116,11 @@ import { SocketUtil } from '../helpers/socket';
 import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { useStore } from 'vuex';
+import { RoomProps } from '.';
 
 const store = useStore()
 
-const props = withDefaults(defineProps<{
-  upperPlayer?: player,
-  lowerPlayer?: player,
-  room: Object,
-  loading: boolean,
-  deck: Object | null,
-  single: boolean,
-}>(), {
-  upperPlayer: 'b',
-  lowerPlayer: 'a',
-})
+const props = defineProps<RoomProps>()
 
 const tabId = ref(1);
 const currentPlayer = ref(props.lowerPlayer)

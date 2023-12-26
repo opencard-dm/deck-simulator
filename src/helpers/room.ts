@@ -7,6 +7,7 @@ import { CardActions, changeCardsStateParams, groupCardParams } from './CardActi
 import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { GameLogger } from './GameLogger';
+import { RoomProps } from '@/components';
 
 function useRoomListners({
   players,
@@ -40,8 +41,8 @@ function useRoomListners({
         );
       }, 300);
     }
-    if (props.single) {
-      sessionStorage.setItem('room', JSON.stringify({
+    if (props.single || props.lowerPlayer === 'a') {
+      sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
         players,
         histories: gameLogger.histories,
       }));
@@ -63,8 +64,8 @@ function useRoomListners({
     if (!cards || cards.length === 0) return;
     // 実際に変更を加える前に状態を保存する
     cardActions.changeCardsState({ from, cards, player, cardState })
-    if (props.single) {
-      sessionStorage.setItem('room', JSON.stringify({
+    if (props.single || props.lowerPlayer === 'a') {
+      sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
         players,
         histories: gameLogger.histories,
       }));
@@ -78,7 +79,7 @@ function useRoomListners({
   }
 }
 
-export function useRoomSetup(props: any) {
+export function useRoomSetup(props: RoomProps) {
   const route = useRoute();
   const store = useStore();
   const roomId = route.query.roomId as string || 'single'
@@ -98,15 +99,15 @@ export function useRoomSetup(props: any) {
   }
 
   function setRoomState() {
-    if (props.single) {
-      const sessionRoom = sessionStorage.getItem('room');
-      if (sessionRoom) {
-        const parsed = JSON.parse(sessionRoom);
-        players.a = parsed.players.a;
-        players.b = parsed.players.b;
-        gameLogger.setHistories(parsed.histories)
-        return;
-      }
+    const sessionRoom = sessionStorage.getItem(`room-${props.roomId}`);
+    if (sessionRoom) {
+      const parsed = JSON.parse(sessionRoom);
+      players.a = parsed.players.a;
+      players.b = parsed.players.b;
+      gameLogger.setHistories(parsed.histories)
+      return;
+    }
+    if (props.single && props.deck) {
       const shieldCards = props.deck.cards.slice(0, 5);
       shieldCards.forEach((c: Card) => {
         c.faceDown = true;
@@ -120,7 +121,7 @@ export function useRoomSetup(props: any) {
       });
       players.a.cards.yamafudaCards = yamafudaCards;
       players.a.cards.chojigenCards = props.deck.chojigenCards || [];
-      players.a.hasChojigen = props.deck.hasChojigen;
+      players.a.hasChojigen = props.deck.chojigenCards.length > 0;
       onDeckSelected({
         deck: props.deck,
         player: 'a',

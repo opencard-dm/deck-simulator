@@ -1,7 +1,9 @@
 <template>
   <SingleRoom
-    ref="roomComponent"
+    :lowerPlayer="'a'"
+    :upperPlayer="'b'"
     :room="room"
+    :roomId="'single'"
     :loading="loading"
     :deck="deck"
     :single="true"
@@ -9,10 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
 import SingleRoom from "@/components/SingleRoom.vue";
-const roomComponent = ref<InstanceType<typeof SingleRoom> | null>(null);
 </script>
 
 <script lang="ts">
@@ -27,7 +26,7 @@ export default {
   data() {
     return {
       loading: true,
-      deck: null,
+      deck: null as any,
       room: {
       },
     };

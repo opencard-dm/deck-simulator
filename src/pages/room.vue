@@ -3,22 +3,29 @@
     :upper-player="upperPlayer"
     :lower-player="lowerPlayer"
     :room="room"
+    :roomId="roomId"
     :loading="loading"
   ></DuelRoom>
 </template>
 
-<script>
+<script setup lang="ts">
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
+const route = useRoute()
+const roomId = route.query.roomId as string || 'single'
+onBeforeRouteLeave((to, from, next) => {
+  SocketUtil.socket?.emit('leave-room', roomId)
+  console.log("room-" + roomId + "から退室しました")
+  next()
+})
+</script>
+
+<script lang="ts">
 import axios from 'axios';
 import DuelRoom from '../components/DuelRoom.vue';
 import { SocketUtil } from '../helpers/socket'
 
 export default {
   components: { DuelRoom },
-  beforeRouteLeave (to, from, next) {
-    SocketUtil.socket.emit('leave-room', this.roomId)
-    console.log("room" + this.roomId + "から退室しました")
-    next()
-  },
   data() {
     return {
       loading: true,
