@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <div v-if="side === 'lower'" class="card_wrapper card-placeholder-wrapper" :style="{height: `${cardHeight}px`}">
+      <div class="card_wrapper card-placeholder-wrapper" :style="{height: `${cardHeight}px`}">
         <div
           class="card"
           style="cursor: pointer;"
@@ -178,12 +178,6 @@ function clickPlaceholderCard() {
 $card-width: 70px;
 
 .tefuda-zone-wrapper {
-  @media screen and (max-device-width: 800px) {
-    position: fixed;
-    bottom: 0px;
-    width: 100%;
-    overflow-y: scroll;
-  }
   .openZoneButton {
     transform: rotate(45deg);
     margin-left: 10px;
@@ -197,10 +191,21 @@ $card-width: 70px;
     }
   }
   &.upper {
-    // マナゾーンがはみ出た時、手札が上になるようにする。
-    z-index: 1;
-    position: relative;
+    margin-top: 20px;
     margin-left: 100px;
+    @media screen and (max-device-width: 800px) {
+      margin-left: 10px;
+      overflow-y: scroll;
+    }
+    .tefuda-zone {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row-reverse;
+      > * {
+        margin-right: 5px;
+        margin-top: 5px;
+      }
+    }
     .card {
       transform: rotate(180deg);
     }
@@ -210,6 +215,10 @@ $card-width: 70px;
     margin-left: 100px;
     @media screen and (max-device-width: 800px) {
       margin-left: 10px;
+      position: fixed;
+      bottom: 0px;
+      width: 100%;
+      overflow-y: scroll;
     }
     .tefuda-zone {
       display: flex;
@@ -224,9 +233,6 @@ $card-width: 70px;
     height: 100%;
     display: flex;
     max-width: 410px;
-    &.upper {
-      overflow-x: auto;
-    }
     .card_wrapper {
       position: relative;
     }
