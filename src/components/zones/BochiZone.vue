@@ -1,5 +1,5 @@
 <template>
-  <div class="bochi" @click.stop="clickBochi()">
+  <div class="bochi" :class="side" @click.stop="clickBochi()">
     <div
       v-if="selectMode && selectMode.player === player"
       class="bochi_text"
@@ -88,6 +88,11 @@ $card-width: 50px;
         border-left: 2px solid purple;
         border-right: 2px solid purple;
       }
+  }
+  &.upper {
+    img {
+      transform: rotate(180deg);
+    }
   }
 }
 </style>

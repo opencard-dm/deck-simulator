@@ -1,5 +1,9 @@
 <template>
   <div class="player-zone-wrapper">
+    <div v-if="isPhone() && side === 'upper'" class="player-zone-above">
+      <slot name="bochi-zone"></slot>
+      <slot name="chojigenZone"></slot>
+    </div>
     <div class="player-zone" :class="side">
       <div class="player-counter" :class="side">
         <slot name="shield-button"></slot>
@@ -13,7 +17,7 @@
         </template>
       </div>
     </div>
-    <div v-if="isPhone()" class="player-zone-under">
+    <div v-if="isPhone() && side === 'lower'" class="player-zone-under">
       <slot name="bochi-zone"></slot>
       <slot name="chojigenZone"></slot>
     </div>
@@ -38,6 +42,7 @@ const props = defineProps<{
 }
 $card-width: 50px;
 .player-zone-wrapper {
+  position: relative;
   .player-zone {
     // background-color: blue;
     display: flex;
@@ -89,6 +94,13 @@ $card-width: 50px;
     width: 50px;
   }
   @media screen and (max-device-width: 800px) {
+    .player-zone-above {
+      width: fit-content;
+      position: absolute;
+      bottom: 95px;
+      margin-left: 65px;
+      display: flex;
+    }
     .player-zone-under {
       width: fit-content;
       float: right;
