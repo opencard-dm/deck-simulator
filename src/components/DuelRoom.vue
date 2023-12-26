@@ -80,11 +80,10 @@
           class="gameBoard"
           :style="{
             opacity: store.state.workSpace.active ? 0.3 : 1,
-            height: playerZoneHeight,
           }"
         >
           <PlaySheet
-            :side="'lower'"
+            :side="'upper'"
             :player="upperPlayer"
             :cards="players[upperPlayer].cards"
             :name="players[upperPlayer].name"
