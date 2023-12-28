@@ -80,6 +80,7 @@
           class="gameBoard"
           :style="{
             opacity: store.state.workSpace.active ? 0.3 : 1,
+            height: `${Layout.upperPlayerZoneHeight()}px`,
           }"
         >
           <PlaySheet

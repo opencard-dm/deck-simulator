@@ -191,10 +191,11 @@ $card-width: 70px;
     }
   }
   &.upper {
-    margin-top: 20px;
+    background: #fff;
     margin-left: 100px;
     @media screen and (max-device-width: 800px) {
-      margin-left: 10px;
+      margin-top: 0px;
+      margin-left: 0px;
       overflow-y: scroll;
     }
     .tefuda-zone {
@@ -233,6 +234,7 @@ $card-width: 70px;
     height: 100%;
     display: flex;
     max-width: 410px;
+    padding-bottom: 10px;
     .card_wrapper {
       position: relative;
     }
