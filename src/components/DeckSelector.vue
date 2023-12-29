@@ -175,12 +175,7 @@ async function setupDeck(deckData: DeckType) {
     props.player === "a"
   );
   console.log("selected deck", deck);
-  // fromのカードは存在しなくても良いため、仮にyamafudaCardsにしている。
-  const playerCards = CardActions.setupForPlayer(deck)
   emit("selected", {
-    playerCards,
-    // TODO: 不要な引数は削除
-    player: props.player,
     deck,
   });
   if (props.partnerIsReady) {

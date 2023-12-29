@@ -7,6 +7,7 @@ import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
+import { Deck } from '@/entities/Deck';
 
 export class RoomConfig {
   static useFirebase = false
@@ -75,10 +76,17 @@ function useRoomListners({
       return;
     }
   }
+
+  function onSelectDeck(player: player, deck: Deck) {
+    players[player].isReady = true;
+    cardActions.selectDeck(player, deck)
+  }
+
   return {
     onMoveCards,
     onGroupCard,
     onChangeCardsState,
+    onSelectDeck,
   }
 }
 

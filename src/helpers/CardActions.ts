@@ -72,6 +72,40 @@ export class CardActions {
     this.moveCardsWithoutHistory({ from, to, cards, player, prepend, index })
   }
 
+  selectDeck(player: player, deck: Deck) {
+    deck.cards.forEach(c => c.faceDown = true)
+    // fromのカードは存在しなくても良いため、仮にyamafudaCardsにしている。
+    this.moveCards({
+      from: 'yamafudaCards',
+      to: 'yamafudaCards',
+      cards: deck.cards,
+      player,
+    })
+    this.moveCards({
+      from: 'yamafudaCards',
+      to: 'shieldCards',
+      cards: deck.cards.slice(-5),
+      player,
+    })
+    this.moveCards({
+      from: 'yamafudaCards',
+      to: 'tefudaCards',
+      cards: deck.cards.slice(-10, -5).map(c => {
+        c.faceDown = false
+        return c
+      }),
+      player,
+    })
+    if (deck.chojigenCards.length > 0) {
+      this.moveCards({
+        from: 'chojigenCards',
+        to: 'chojigenCards',
+        cards: deck.chojigenCards,
+        player,
+      })
+    }
+  }
+
   moveCardsWithoutHistory({ from, to, cards, player, prepend, index }: moveCardsParams) {
     const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
     // 先頭のカードがグループに属していた場合、そのグループから抜ける。

@@ -37,6 +37,20 @@
             }"
           >
             <PlaySheet
+              v-if="!isPhone()"
+              :side="single ? 'lower' : 'upper'"
+              :player="upperPlayer"
+              :cards="players[upperPlayer].cards"
+              :name="players[upperPlayer].name"
+              :roomId="players[upperPlayer].roomId"
+              :isReady="players[upperPlayer].isReady"
+              :hasChojigen="players[upperPlayer].hasChojigen"
+              @move-cards="onMoveCards"
+              @group-card="onGroupCard"
+              @emit-room-state="emitRoomState"
+              @change-cards-state="onChangeCardsState"
+            ></PlaySheet>
+            <PlaySheet
               :side="'lower'"
               :player="lowerPlayer"
               :cards="players[lowerPlayer].cards"
@@ -52,7 +66,7 @@
           </div>
         </ImageViewer>
       </template>
-      <template #upper-player>
+      <template v-if="isPhone()" #upper-player>
         <ImageViewer>
           <WorkSpace
             :lowerPlayer="upperPlayer"
@@ -106,6 +120,7 @@ import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { useStore } from 'vuex';
 import { RoomProps } from '.';
+import { Deck as DeckType } from '@/entities/Deck';
 
 const store = useStore()
 
@@ -125,6 +140,10 @@ function switchTab() {
   }
   // NOTE: tabIdの変更後に記述する必要がある
   if (!players[currentPlayer.value].isReady) {
+    if (players[currentPlayer.value].cards.yamafudaCards.length > 0) {
+      players[currentPlayer.value].isReady = true
+      return
+    }
     deckSelectorActive.value = true;
   }
 }
@@ -144,6 +163,7 @@ const {
   onMoveCards,
   onGroupCard,
   onChangeCardsState,
+  onSelectDeck,
   players,
 } = useRoomSetup(props);
 
@@ -165,11 +185,10 @@ function shuffleCards(from: zone, cards: Card[], player: player) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
-function onDeckSelected({ playerCards }: {
-  playerCards: playerCards
+function onDeckSelected({ deck }: {
+  deck: DeckType
 }) {
-  players[currentPlayer.value].isReady = true;
-  players[currentPlayer.value].cards = playerCards
+  onSelectDeck(currentPlayer.value, deck)
 }
 
 function setMessage() {
