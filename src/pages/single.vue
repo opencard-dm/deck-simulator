@@ -1,61 +1,58 @@
 <template>
-  <SingleRoom
+  <DuelRoom
     :lowerPlayer="'a'"
     :upperPlayer="'b'"
-    :room="room"
+    :room="{}"
     :roomId="'single'"
     :loading="loading"
     :deck="deck"
     :single="true"
-  ></SingleRoom>
+  ></DuelRoom>
 </template>
 
 <script setup lang="ts">
-import SingleRoom from "@/components/SingleRoom.vue";
-</script>
-
-<script lang="ts">
+import DuelRoom from "@/components/DuelRoom.vue";
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
+import { Deck as DeckType } from '@/entities/Deck'
 import axios from "axios";
 import { SocketUtil } from "../helpers/socket";
 import { Deck } from "@/helpers/Deck";
-export default {
-  beforeRouteLeave() {
-    sessionStorage.removeItem('room')
-    console.debug('deleted session storage cache')
-  },
-  data() {
-    return {
-      loading: true,
-      deck: null as any,
-      room: {
+import { computed, reactive, ref } from "vue";
+
+onBeforeRouteLeave(() => {
+  sessionStorage.removeItem('room')
+  console.debug('deleted session storage cache')
+})
+
+const route = useRoute()
+const router = useRouter()
+const deckId = computed<string>(() => route.query.deck_id as string)
+
+// data
+const loading = ref(true)
+const deck = ref<DeckType|null>(null);
+
+// onCreated
+(async function () {
+  // validation
+  if (!deckId.value) {
+    router.push('/')
+  }
+  SocketUtil.socket = null
+  let deckApi
+  try {
+    deckApi = await axios.get('/api/scrape', {
+      params: {
+        deckId: deckId.value,
       },
-    };
-  },
-  computed: {
-    deckId() {
-      return this.$route.query.deck_id;
-    },
-  },
-  async created() {
-    if (!this.deckId) {
-      this.$router.push('/')
-    }
-    SocketUtil.socket = null
-    let deckApi
-    try {
-      deckApi = await axios.get('/api/scrape', {
-        params: {
-          deckId: this.deckId,
-        },
-      });
-    } catch (error) {
-      console.error('デッキデータの取得に失敗しました', error)
-      this.$router.push('/')
-      return;
-    }
-    this.deck = await Deck.prepareDeckForGame(deckApi.data, true);
-    console.debug(this.deck)
-    this.loading = false
-  },
-};
+    });
+  } catch (error) {
+    console.error('デッキデータの取得に失敗しました', error)
+    router.push('/')
+    return;
+  }
+  deck.value = await Deck.prepareDeckForGame(deckApi.data, true);
+  console.debug(deck.value)
+  loading.value = false
+})()
 </script>
