@@ -1,4 +1,3 @@
-import { reactive, ref, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 
 import { SocketUtil } from '../helpers/socket';
@@ -85,13 +84,7 @@ function useRoomListners({
 
 export function useRoomSetup(props: RoomProps) {
   const route = useRoute();
-  const store = useStore();
   const roomId = route.query.roomId as string || 'single'
-  const players = reactive(initialData(roomId).players);
-  const deckSelectorActive = ref(true);
-
-  const cardActions = new CardActions(roomId, players)
-  const { gameLogger } = GameLogger.useGameLogger(cardActions, props.lowerPlayer)
 
   function scrollZone(targetSelector: string, direction: string) {
     const target = document.querySelector(targetSelector);
@@ -102,98 +95,30 @@ export function useRoomSetup(props: RoomProps) {
     });
   }
 
-  function setRoomState() {
-    const sessionRoom = sessionStorage.getItem(`room-${props.roomId}`);
-    if (sessionRoom) {
-      const parsed = JSON.parse(sessionRoom);
-      players.a = parsed.players.a;
-      players.b = parsed.players.b;
-      gameLogger.setHistories(parsed.histories)
-      return;
-    }
-    if (props.single && props.deck) {
-      const shieldCards = props.deck.cards.slice(0, 5);
-      shieldCards.forEach((c: Card) => {
-        c.faceDown = true;
-      });
-      players.a.cards.shieldCards = shieldCards;
-      players.a.cards.tefudaCards = props.deck.cards.slice(5, 10);
-      // 40枚の制限をしない
-      const yamafudaCards = props.deck.cards.slice(10);
-      yamafudaCards.forEach((c: Card) => {
-        c.faceDown = true;
-      });
-      players.a.cards.yamafudaCards = yamafudaCards;
-      players.a.cards.chojigenCards = props.deck.chojigenCards || [];
-      players.a.hasChojigen = props.deck.chojigenCards.length > 0;
-      onDeckSelected({
-        deck: props.deck,
-        player: 'a',
-      });
-      deckSelectorActive.value = false;
-      return;
-    }
-    if (props.room.a) {
-      players.a = props.room.a;
-    }
-    if (props.room.b) {
-      players.b = props.room.b;
-    }
-    // 片方がデッキ未選択であれば、モーダルを表示する。
-    if (!players.a.isReady || !players.b.isReady) {
-      deckSelectorActive.value = true;
-    } else {
-      deckSelectorActive.value = false;
-    }
-    if (SocketUtil.socket) {
-      //
-      // イベントをリッスン
-      SocketUtil.socket.on('cards-moved', (playerData) => {
-        players[playerData.name] = playerData;
-      });
-      // SocketUtil.socket.on(
-      //   'set-message',
-      //   function (data) {
-      //     // this.message[data.player] = data.message;
-      //     this.expireMessage(data.message, data.player);
-      //   }.bind(this)
-      // );
-    }
-  }
-  function onDeckSelected({ deck, player }: {
-    deck: any,
-    player: player
-  }) {
-    players[player].isReady = true;
-    players[player].hasChojigen = !!deck.hasChojigen;
-  }
-
   function resetGame() {
-    players.a = initialData(roomId).players.a;
-    players.b = initialData(roomId).players.b;
+    // TODO: propsを書き換えない
+    props.players.a = initialData(roomId).players.a;
+    props.players.b = initialData(roomId).players.b;
     window.scrollTo({
       top: 0,
       // behavior: "smooth",
     });
     // 状態の変更を送信する
     if (!SocketUtil.socket) return;
-    SocketUtil.socket.emit("cards-moved", players.a);
-    SocketUtil.socket.emit("cards-moved", players.b);
+    SocketUtil.socket.emit("cards-moved", props.players.a);
+    SocketUtil.socket.emit("cards-moved", props.players.b);
   }
   return {
     ...useRoomListners({
-      players,
-      cardActions,
-      gameLogger,
+      players: props.players,
+      cardActions: props.cardActions,
+      gameLogger: props.gameLogger,
       props,
       scrollZone,
     }),
-    cardActions,
-    gameLogger,
-    setRoomState,
     props,
     resetGame,
-    players,
+    players: props.players,
   }
 }
 
@@ -231,6 +156,5 @@ export function initialData(roomId: string) {
         hasChojigen: false,
       },
     },
-    deckSelectorActive: false,
   };
 }

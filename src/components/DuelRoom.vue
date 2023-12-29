@@ -1,5 +1,5 @@
 <template>
-  <div id="app" style="background-color: lightgray" v-if="isMounted">
+  <div id="app" style="background-color: lightgray">
     <CHeader :single="single"
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
@@ -118,13 +118,14 @@ const currentPlayer = computed(() => {
 })
 
 function switchTab() {
-  if (!players[currentPlayer.value].isReady) {
-    deckSelectorActive.value = true;
-}
   if (tabId.value === 1) {
     tabId.value = 2;
   } else {
     tabId.value = 1;
+  }
+  // NOTE: tabIdの変更後に記述する必要がある
+  if (!players[currentPlayer.value].isReady) {
+    deckSelectorActive.value = true;
   }
 }
 
@@ -143,24 +144,8 @@ const {
   onMoveCards,
   onGroupCard,
   onChangeCardsState,
-  setRoomState,
   players,
-  cardActions,
-  gameLogger,
 } = useRoomSetup(props);
-
-defineExpose({
-  cardActions,
-})
-
-watch(
-  () => props.loading,
-  (newVal) => {
-    if (newVal === false) {
-      setRoomState();
-    }
-  }
-);
 
 function emitRoomState() {
   if (SocketUtil.socket) {
