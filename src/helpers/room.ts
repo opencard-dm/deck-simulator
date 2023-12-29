@@ -9,6 +9,10 @@ import { Card } from '@/entities/Card';
 import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
 
+export class RoomConfig {
+  static useFirebase = false
+}
+
 function useRoomListners({
   players,
   cardActions,
@@ -86,7 +90,7 @@ export function useRoomSetup(props: RoomProps) {
   const players = reactive(initialData(roomId).players);
   const deckSelectorActive = ref(true);
 
-  const cardActions = new CardActions(players)
+  const cardActions = new CardActions(roomId, players)
   const { gameLogger } = GameLogger.useGameLogger(cardActions, props.lowerPlayer)
 
   function scrollZone(targetSelector: string, direction: string) {

@@ -1,3 +1,4 @@
+import { GameHistory } from '@/entities/History';
 import { db, env } from '../helpers/firebase'
 import { arrayUnion, doc, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 
@@ -11,15 +12,16 @@ export async function getRoom(roomId: string) {
     return null
 }
 
-export async function pushHistory(roomId: string, history: any) {
+export async function pushHistory(roomId: string, history: GameHistory) {
     const docRef = doc(db, env('rooms'), roomId);
     await updateDoc(docRef, {
         histories: arrayUnion(JSON.stringify(history)),
     })
 }
 
-export async function listenHistoriesChange(roomId: string, callback: Function) {
+export async function listenHistoriesChange(roomId: string, callback: (historied: string[]) => void) {
     const docRef = doc(db, env('rooms'), roomId);
+    console.debug('listening snapshot changes', `${roomId}`)
     const unsubscribe = onSnapshot(docRef, snapshot => {
         callback(snapshot.get('histories'))
     })

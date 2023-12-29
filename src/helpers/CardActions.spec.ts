@@ -14,7 +14,7 @@ it('カードのグループ化', async () => {
   const players = initialData('test').players
   players.a.cards = CardActions.setupForPlayer(deck)
   
-  const cardActions = new CardActions(players)
+  const cardActions = new CardActions('test', players)
   const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
   const playerCards = players.a.cards
   cardActions.moveCards({
@@ -49,7 +49,7 @@ it('山札を裏返す、重ねる、やり直す', async () => {
   const players = initialData('test').players
   players.a.cards = CardActions.setupForPlayer(deck)
   
-  const cardActions = new CardActions(players)
+  const cardActions = new CardActions('test', players)
   const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
   const playerCards = players.a.cards
   cardActions.moveCards({

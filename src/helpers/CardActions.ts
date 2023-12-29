@@ -36,6 +36,7 @@ export class CardActions {
    * @param players reactive
    */
   constructor(
+    public roomId: string,
     public players: ReturnType<typeof initialData>['players']
   ) {}
 

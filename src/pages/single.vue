@@ -18,6 +18,7 @@ import axios from "axios";
 import { SocketUtil } from "../helpers/socket";
 import { Deck } from "@/helpers/Deck";
 import { computed, reactive, ref } from "vue";
+import { RoomConfig } from "@/helpers/room";
 
 onBeforeRouteLeave(() => {
   sessionStorage.removeItem('room')
@@ -38,6 +39,7 @@ const deck = ref<DeckType|null>(null);
   if (!deckId.value) {
     router.push('/')
   }
+  RoomConfig.useFirebase = false
   SocketUtil.socket = null
   let deckApi
   try {

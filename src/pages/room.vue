@@ -5,6 +5,8 @@
     :room="room"
     :roomId="roomId"
     :loading="loading"
+    :single="false"
+    :deck="null"
   ></DuelRoom>
 </template>
 
@@ -23,6 +25,7 @@ onBeforeRouteLeave((to, from, next) => {
 import axios from 'axios';
 import DuelRoom from '../components/DuelRoom.vue';
 import { SocketUtil } from '../helpers/socket'
+import { RoomConfig } from '@/helpers/room';
 
 export default {
   components: { DuelRoom },
@@ -44,6 +47,7 @@ export default {
     if (room.cookie) {
       document.cookie = room.cookie
     }
+    RoomConfig.useFirebase = true
     this.room = room;
     SocketUtil.connect()
     SocketUtil.socket.emit("room", this.roomId);

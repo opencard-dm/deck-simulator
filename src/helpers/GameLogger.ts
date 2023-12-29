@@ -2,18 +2,30 @@ import { SocketUtil } from "./socket"
 import { player } from "@/entities"
 import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "./CardActions"
 import { reactive } from 'vue'
+import { RoomConfig } from "./room"
+import { listenHistoriesChange, pushHistory } from "@/services/roomService"
+import { GameHistory, cardActionMethodParams } from "@/entities/History"
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
 
-  public histories: history[] = []
+  public histories: GameHistory[] = []
   public historyIndex: number = -1
   // vue component
 
   constructor(
     private cardActions: CardActions,
     private who: player = 'a'
-  ) {}
+  ) {
+    const that = this
+    if (RoomConfig.useFirebase) {
+      listenHistoriesChange(cardActions.roomId, (histories) => {
+        if (!Array.isArray(histories)) return
+        if (histories.length === 0) return
+        that.receiveHistory(JSON.parse(histories.at(-1) as string))
+      })
+    }
+  }
 
   static useGameLogger(cardActions: CardActions, who: player) {
     // https://zenn.dev/tanukikyo/articles/40603fbdc88c05#%E3%80%87-object-%C3%97-reactive
@@ -47,7 +59,7 @@ export class GameLogger {
     this.appendHistory(this.changeCardsState.name, argsCopy)
   }
 
-  setHistories(histories: history[]) {
+  setHistories(histories: GameHistory[]) {
     this.histories = histories
     this.historyIndex = histories.length - 1
   }
@@ -101,8 +113,8 @@ export class GameLogger {
     }
   }
 
-  appendHistory(method: string, args: methodParams, message='') {
-    const history: history = {
+  appendHistory(method: string, args: cardActionMethodParams, message='') {
+    const history: GameHistory = {
       canundo: true,
       who: this.who,
       player: args.player,
@@ -117,12 +129,15 @@ export class GameLogger {
     }
     this.histories.push(history)
     this.historyIndex = this.histories.length - 1
+    if (RoomConfig.useFirebase) {
+      pushHistory(this.cardActions.roomId, history)
+    }
     if (SocketUtil.socket) {
       SocketUtil.socket.emit('append-history', history)
     }
   }
 
-  receiveHistory(history: history) {
+  receiveHistory(history: GameHistory) {
     this.histories.push(history)
     switch (history.method) {
       case this.moveCards.name:
@@ -138,15 +153,4 @@ export class GameLogger {
         break;
     }
   }
-}
-
-type methodParams = moveCardsParams | changeCardsStateParams | groupCardParams
-
-interface history {
-  canundo: true
-  who: player
-  player: player
-  method: string
-  args: methodParams
-  message: string
 }
