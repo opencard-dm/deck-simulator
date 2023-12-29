@@ -207,6 +207,9 @@ $card-width: 70px;
         margin-top: 5px;
       }
     }
+    .card_bottomButton > * {
+      transform: rotate(180deg);
+    }
     .card {
       transform: rotate(180deg);
     }
