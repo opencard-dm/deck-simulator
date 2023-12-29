@@ -4,6 +4,7 @@ import { player } from "."
 export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams
 
 export interface GameHistory {
+    id: string
     canundo: true
     who: player
     player: player

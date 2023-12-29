@@ -19,7 +19,7 @@ export async function pushHistory(roomId: string, history: GameHistory) {
     })
 }
 
-export async function listenHistoriesChange(roomId: string, callback: (historied: string[]) => void) {
+export function listenHistoriesChange(roomId: string, callback: (historied: string[]) => void) {
     const docRef = doc(db, env('rooms'), roomId);
     console.debug('listening snapshot changes', `${roomId}`)
     const unsubscribe = onSnapshot(docRef, snapshot => {

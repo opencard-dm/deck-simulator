@@ -5,25 +5,32 @@ import { reactive } from 'vue'
 import { RoomConfig } from "./room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
 import { GameHistory, cardActionMethodParams } from "@/entities/History"
+import { v4 as uuidv4 } from 'uuid'
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
 
   public histories: GameHistory[] = []
   public historyIndex: number = -1
+  private doneIds: string[] = []
+  public unsubscribes: any[] = []
   // vue component
 
   constructor(
     private cardActions: CardActions,
     private who: player = 'a'
-  ) {
-    const that = this
+  ) {}
+
+  listenChanges() {
     if (RoomConfig.useFirebase) {
-      listenHistoriesChange(cardActions.roomId, (histories) => {
+      this.unsubscribes.push(listenHistoriesChange(this.cardActions.roomId, (histories) => {
         if (!Array.isArray(histories)) return
         if (histories.length === 0) return
-        that.receiveHistory(JSON.parse(histories.at(-1) as string))
-      })
+        const newHistories = histories.slice(this.historyIndex + 1)
+        newHistories.forEach((history) => {
+          this.receiveHistory(JSON.parse(history))
+        })
+      }))
     }
   }
 
@@ -115,6 +122,7 @@ export class GameLogger {
 
   appendHistory(method: string, args: cardActionMethodParams, message='') {
     const history: GameHistory = {
+      id: uuidv4(),
       canundo: true,
       who: this.who,
       player: args.player,
@@ -124,7 +132,7 @@ export class GameLogger {
     }
     // 履歴を切り捨てる
     if (this.historyIndex < this.histories.length - 1) {
-      console.debug(`${this.histories.length - this.historyIndex - 1}件の履歴を削除しました`)
+      console.debug(`deleted ${this.histories.length - this.historyIndex - 1} histories.`)
       this.histories = this.histories.slice(0, this.historyIndex + 1)
     }
     this.histories.push(history)
@@ -138,7 +146,9 @@ export class GameLogger {
   }
 
   receiveHistory(history: GameHistory) {
+    if (this.doneIds.includes(history.id)) return
     this.histories.push(history)
+    this.historyIndex = this.histories.length - 1
     switch (history.method) {
       case this.moveCards.name:
         this.cardActions.moveCardsWithoutHistory(history.args as moveCardsParams)

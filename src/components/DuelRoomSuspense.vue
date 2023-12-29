@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import axios from 'axios';
 import DuelRoom from './DuelRoom.vue';
 import { initialData } from '@/helpers/room';
@@ -58,6 +58,10 @@ export default defineComponent({
     const players = reactive(initialData(roomId).players)
     const cardActions = new CardActions(roomId, players)
     const { gameLogger } = GameLogger.useGameLogger(cardActions, lowerPlayer)
+    gameLogger.listenChanges()
+    onBeforeRouteLeave(() => {
+      gameLogger.unsubscribes.forEach(u => u())
+    })
 
     // oncreated
     const sessionRoom = sessionStorage.getItem(`room-${roomId}`);
