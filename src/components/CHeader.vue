@@ -10,6 +10,7 @@
         @click.stop="sidebarOpen = !sidebarOpen"
       ></o-icon>
       <o-icon
+        v-if="single"
         pack="fas"
         icon="undo"
         size="small"
@@ -21,6 +22,7 @@
         @click.stop="undo()"
       ></o-icon>
       <o-icon
+        v-if="single"
         pack="fas"
         icon="redo"
         size="small"
