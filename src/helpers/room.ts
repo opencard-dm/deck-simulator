@@ -8,6 +8,7 @@ import { Card } from '@/entities/Card';
 import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
 import { Deck } from '@/entities/Deck';
+import axios from 'axios';
 
 export class RoomConfig {
   static useFirebase = false
@@ -111,6 +112,9 @@ export function useRoomSetup(props: RoomProps) {
       top: 0,
       // behavior: "smooth",
     });
+    if (RoomConfig.useFirebase) {
+      axios.delete(`/api/rooms/${props.roomId}`)
+    }
     // 状態の変更を送信する
     if (!SocketUtil.socket) return;
     SocketUtil.socket.emit("cards-moved", props.players.a);

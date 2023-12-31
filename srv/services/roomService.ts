@@ -10,3 +10,9 @@ export async function createRoom(roomId: string, cookie: string) {
   })
   return roomDoc
 }
+
+export async function deleteRoom(roomId: string) {
+  const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
+  await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).delete()
+  return roomDoc
+}

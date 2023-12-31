@@ -4,6 +4,7 @@
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
       @switch-tab="switchTab()"
+      @reset-game="resetGame()"
     ></CHeader>
 
     <DeckSelector
@@ -165,6 +166,7 @@ const {
   onChangeCardsState,
   onSelectDeck,
   players,
+  resetGame,
 } = useRoomSetup(props);
 
 function emitRoomState() {
