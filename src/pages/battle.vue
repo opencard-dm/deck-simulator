@@ -5,6 +5,13 @@
         >部屋を作る</o-button
       >
     </div>
+    <div v-if="isDevelopment">
+      <RouterLink to="/room?roomId=1&player=a">
+        <o-button variant="info" size="small"
+          >部屋1(開発者向け)</o-button
+        >
+      </RouterLink>
+    </div>
     <MarkdownIt class="markdown-body" :source="battlemd"></MarkdownIt>
     <p style="margin-top: 30px;">
       <o-tooltip
@@ -31,6 +38,7 @@ export default {
     return {
       sending: false,
       battlemd,
+      isDevelopment: process.env.NODE_ENV === 'development'
     };
   },
   computed: {

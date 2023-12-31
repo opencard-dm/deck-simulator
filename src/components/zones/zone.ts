@@ -44,10 +44,6 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
       emit('move-cards', from, to, [card], props.player, prepend);
     }
     function toggleTap(card: Card) {
-      // if (selectMode.value?.zone === 'manaCards') {
-      //   // マナゾーンの場合タップ後に位置が変わるため、配列にプッシュして移動先の最後に表示されるようにする。
-      //   emit('move-cards', 'manaCards', 'manaCards', [card], selectMode.value.player, false);
-      // }
       if (selectMode.value) {
         emit('change-cards-state', {
           from: selectMode.value.zone,
