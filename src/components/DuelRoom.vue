@@ -8,12 +8,11 @@
     ></CHeader>
 
     <DeckSelector
-      v-if="!players[currentPlayer].isReady"
+      v-if="deckSelectorActiveWatch"
       v-model:active="deckSelectorActive"
       :player="currentPlayer"
       :isReady="players[currentPlayer].isReady"
       :partnerIsReady="true"
-      :cancelable="true"
       :cardActions="cardActions"
       @moveCards="onMoveCards"
       @selected="onDeckSelected"
@@ -150,6 +149,21 @@ function switchTab() {
 }
 
 const deckSelectorActive = ref(false);
+const deckSelectorActiveWatch = computed<boolean>({
+  get() {
+    if (players[currentPlayer.value].cards.yamafudaCards.length > 0) {
+      players[currentPlayer.value].isReady = true
+      return false
+    }
+    if (players[currentPlayer.value].isReady) {
+      return false
+    }
+    return true
+  },
+  set(value) {
+    deckSelectorActive.value = value
+  }
+})
 
 const playerZoneHeight = isPhone() ? `${Layout.playerZoneHeight(70)}px` : '';
 const isMounted = ref(false);

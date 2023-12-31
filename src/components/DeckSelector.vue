@@ -91,6 +91,7 @@ import type { player } from "@/entities";
 import type { Deck as DeckType } from "@/entities/Deck";
 import { CardActions } from "@/helpers/CardActions";
 import { Deck } from "@/helpers/Deck";
+import { isPhone } from "@/helpers/Util";
 import axios from "axios";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -103,7 +104,6 @@ const props = defineProps<{
   isReady: boolean
   partnerIsReady: boolean
   active: boolean
-  cancelable: boolean
   cardActions: CardActions
 }>()
 const emit = defineEmits(['move-cards', 'selected', 'update:active'])
@@ -131,7 +131,7 @@ function validateUrl() {
 }
 // computed
 const canCansel = computed(() => {
-  if (props.cancelable) return true
+  if (isPhone()) return true
   return props.isReady;
 })
 const tabUrl = computed(() => {
