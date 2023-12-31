@@ -135,10 +135,11 @@ export class GameLogger {
       console.debug(`deleted ${this.histories.length - this.historyIndex - 1} histories.`)
       this.histories = this.histories.slice(0, this.historyIndex + 1)
     }
-    this.histories.push(history)
-    this.historyIndex = this.histories.length - 1
     if (RoomConfig.useFirebase) {
       pushHistory(this.cardActions.roomId, history)
+    } else {
+      this.histories.push(history)
+      this.historyIndex = this.histories.length - 1
     }
     if (SocketUtil.socket) {
       SocketUtil.socket.emit('append-history', history)

@@ -3,7 +3,7 @@ import { Util } from "./Util";
 import { Card } from "@/entities/Card";
 import { Deck } from "@/entities/Deck";
 import { GameLogger } from "./GameLogger";
-import { initialData } from "./room";
+import { RoomConfig, initialData } from "./room";
 
 export interface moveCardsParams {
   from: zone
@@ -69,7 +69,9 @@ export class CardActions {
       card.index = index
     })
     this.gameLogger?.moveCards({ from, to, cards: cards, player, prepend, index })
-    this.moveCardsWithoutHistory({ from, to, cards, player, prepend, index })
+    if (!RoomConfig.useFirebase) {
+      this.moveCardsWithoutHistory({ from, to, cards, player, prepend, index })
+    }
   }
 
   selectDeck(player: player, deck: Deck) {
@@ -178,7 +180,9 @@ export class CardActions {
   
   changeCardsState({ from, cards, player, cardState }: changeCardsStateParams) {
     this.gameLogger?.changeCardsState({ from, cards, player, cardState })
-    this.changeCardsStateWithoutHistory({ from, cards, player, cardState })
+    if (!RoomConfig.useFirebase) {
+      this.changeCardsStateWithoutHistory({ from, cards, player, cardState })
+    }
   }
 
   changeCardsStateWithoutHistory({ from, cards, player, cardState }: changeCardsStateParams) {
@@ -218,7 +222,9 @@ export class CardActions {
       card.index = index
     })
     this.gameLogger?.groupCard({ from, to, fromCard, toCard, player })
-    this.groupCardWithoutHistory({ from, to, fromCard, toCard, player })
+    if (!RoomConfig.useFirebase) {
+      this.groupCardWithoutHistory({ from, to, fromCard, toCard, player })
+    }
   }
 
   groupCardWithoutHistory({ from, to, fromCard, toCard, player }: groupCardParams) {
