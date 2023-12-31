@@ -4,6 +4,7 @@ import { initialData } from './room'
 import { CardActions } from './CardActions'
 import { expect } from 'vitest'
 import { GameLogger } from './GameLogger'
+import { it } from 'vitest'
 
 it('カードのグループ化', async () => {
   const deck = await Deck.prepareDeckForGame(
