@@ -25,7 +25,6 @@ import { getCloudRunCookie } from '@/helpers/Util';
 
 async function fetchDeck(deckId: string) {
   let deckApi
-  const router = useRouter()
   try {
     deckApi = await axios.get('/api/scrape', {
       params: {
@@ -34,11 +33,10 @@ async function fetchDeck(deckId: string) {
     });
   } catch (error) {
     console.error('デッキデータの取得に失敗しました', error)
-    router.push('/')
     return;
   }
   const deck = await Deck.prepareDeckForGame(deckApi.data, true);
-  return CardActions.setupForPlayer(deck)
+  return deck
 }
 
 export default defineComponent({
@@ -48,7 +46,8 @@ export default defineComponent({
     roomId: String,
   },
   async setup(props) {
-    const route = useRoute()
+    const route = useRoute()  
+    const router = useRouter()
     const roomId = props.roomId as string
     const deckId = route.query.deck_id as string
     // クエリストリングのplayerが未設定の場合はaにする
@@ -84,11 +83,22 @@ export default defineComponent({
       }
     }
     if (RoomConfig.useFirebase) {
-      await axios.get(`/api/rooms/${roomId}`, {
+      const { data: room } = await axios.get(`/api/rooms/${roomId}`, {
         params: {
           cookie: getCloudRunCookie(),
         }
       });
+      if (Array.isArray(room.histories) && room.histories.length === 0) {
+        // console.log(await fetchDeck(deckId) as any)
+        if (typeof route.query.deck_a === 'string' && route.query.deck_a) {
+          cardActions.selectDeck('a', await fetchDeck(route.query.deck_a) as any)
+          players.a.isReady = true
+        }
+        if (typeof route.query.deck_b === 'string' && route.query.deck_b) {
+          cardActions.selectDeck('b', await fetchDeck(route.query.deck_b) as any)
+          players.b.isReady = true
+        }
+      }
     }
     if (deckId) {
       players.a.cards = await fetchDeck(deckId) as any
