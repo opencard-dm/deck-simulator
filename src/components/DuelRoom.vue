@@ -36,9 +36,20 @@
               height: playerZoneHeight,
             }"
           >
+            <div v-if="!isPhone() && !players[upperPlayer].isReady"
+              style="float: right;">
+              <o-button
+                variant="grey-dark"
+                size="small"
+                @click="() => {
+                  currentPlayer = upperPlayer;
+                  deckSelectorActive = true;
+                }"
+              >相手のデッキを選択する</o-button>
+            </div>
             <PlaySheet
-              v-if="!isPhone()"
-              :side="single ? 'lower' : 'upper'"
+              v-if="!isPhone() && players[upperPlayer].isReady"
+              :side="'upper'"
               :player="upperPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"
@@ -127,9 +138,18 @@ const store = useStore()
 const props = defineProps<RoomProps>()
 
 const tabId = ref(1);
-const currentPlayer = computed(() => {
-  return tabId.value === 1 ? props.lowerPlayer
-    : props.upperPlayer
+const currentPlayer = computed({
+  get() {
+    return tabId.value === 1 ? props.lowerPlayer
+      : props.upperPlayer
+  },
+  set(value) {
+    if (value === props.lowerPlayer) {
+      tabId.value = 1
+    } else {
+      tabId.value = 2
+    }
+  }
 })
 
 function switchTab() {
