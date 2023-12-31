@@ -94,10 +94,11 @@ import { Deck } from "@/helpers/Deck";
 import { isPhone } from "@/helpers/Util";
 import axios from "axios";
 import { computed, onMounted, reactive, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 const route = useRoute()
+const router = useRouter()
 const store = useStore()
 const props = defineProps<{
   player: player
@@ -198,6 +199,12 @@ function scrape() {
       //   res.data,
       //   ...this.$store.state.decks.data,
       // ]);
+      const currentQuery = {...route.query}
+      currentQuery[`deck_${props.player}`] = deckId
+      router.replace({
+        path: route.path,
+        query: currentQuery,
+      })
       scrapeUrl.value = "";
       scraping.value = false;
       setupDeck(res.data)
