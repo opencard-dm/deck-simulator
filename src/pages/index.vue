@@ -135,8 +135,8 @@ const DeckForm = useDeckForm()
 
 const defaultDecks = [
   {
-    name: "赤単我我我ブランド【2021/12・オリジナル】",
-    id: "a4c9f4ea-0c42-4c7b-987b-a589f549f1d8",
+    name: "アナカラージャオウガ【2023/10・オリジナル】",
+    id: "e724180f-a3a9-40d9-8e70-e11d85e9ec03",
   },
   {
     name: "4cガイアッシュ覇道【2021/12・オリジナル】",
