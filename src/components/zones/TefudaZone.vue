@@ -74,7 +74,7 @@
         <div
           class="card"
           style="cursor: pointer;"
-          @click="clickPlaceholderCard()" 
+          @click.stop="clickPlaceholderCard()" 
         >
           <div style="opacity: 0.2;">
             <img src="/images/card-back.jpg" :width="cardWidth" />
@@ -92,6 +92,13 @@
             >
               手札へ
             </o-button>
+            <o-button
+              v-else-if="side === 'upper'"
+              variant="grey-dark"
+              size="small"
+              :disabled="true"
+              >見る</o-button
+            >
             <o-button
               v-else
               variant="grey-dark"
@@ -139,6 +146,7 @@ const {
   moveSelectedCard,
   moveCard,
   workSpace,
+  openWorkSpace,
   closeWorkSpace,
 } = useZone(props, emit)
 
@@ -165,6 +173,12 @@ function clickCard(card: Card) {
 function clickPlaceholderCard() {
   if (selectMode.value && selectMode.value.zone !== zone) {
     moveSelectedCard(zone, false)
+  } else if (props.side === 'upper') {
+    openWorkSpace({
+      zone: zone,
+      cards: props.cards,
+      player: props.player,
+    })
   } else {
     emit('drawOne');
   }
