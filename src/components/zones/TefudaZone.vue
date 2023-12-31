@@ -6,8 +6,8 @@
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         v-for="(card, index) in cards"
         :key="index"
-        @mouseenter="setHoveredCard(card)"
-        @mouseleave="setHoveredCard(null)"
+        @mouseenter="side === 'lower' ? setHoveredCard(card) : null"
+        @mouseleave="side === 'lower' ? setHoveredCard(null) : null"
       >
         <div
           class="card"
@@ -207,8 +207,10 @@ $card-width: 70px;
         margin-top: 5px;
       }
     }
-    .card_bottomButton > * {
-      transform: rotate(180deg);
+    .card-placeholder-wrapper {
+      .card_bottomButton > * {
+        transform: rotate(180deg);
+      }
     }
     .card {
       transform: rotate(180deg);
@@ -242,8 +244,8 @@ $card-width: 70px;
       position: relative;
     }
     .card {
+      width: 100%;
       position: relative;
-      margin-right: 5px;
       img {
         box-sizing: border-box;
       }
@@ -253,21 +255,21 @@ $card-width: 70px;
           border-radius: 5px;
         }
       }
-      &_bottomButton {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        > * + * {
-          margin-top: 15px;
-        }
-        > * {
-          width: fit-content;
-        }
+    }
+    .card_bottomButton {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      > * + * {
+        margin-top: 15px;
+      }
+      > * {
+        width: fit-content;
       }
     }
   }
