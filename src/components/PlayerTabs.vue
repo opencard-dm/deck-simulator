@@ -1,28 +1,32 @@
 <template>
   <div>
-    <div
-      v-if="isPhone()"
-      class="circleTab"
-      :class="{
-        circleTab_left: tab === 2,
-        circleTab_right: tab === 1,
-      }"
-      @click="$emit('switch-tab')"
-    ></div>
-    <div class="app-wrapper main" :class="{
-      active: tab === 1,
-      playerTab: true,
-      tab1: true,
-    }">
+    <div class="app-wrapper main" v-if="!isPhone()">
       <slot name="lower-player"></slot>
     </div>
-    <div class="app-wrapper main" :class="{
-      active: tab === 2,
-      playerTab: true,
-      tab1: true,
-    }">
-      <slot name="upper-player"></slot>
-    </div>
+    <template v-else>
+      <div
+        class="circleTab"
+        :class="{
+          circleTab_left: tab === 2,
+          circleTab_right: tab === 1,
+        }"
+        @click="$emit('switch-tab')"
+      ></div>
+      <div class="app-wrapper main" :class="{
+        active: tab === 1,
+        playerTab: true,
+        tab1: true,
+      }">
+        <slot name="lower-player"></slot>
+      </div>
+      <div class="app-wrapper main" :class="{
+        active: tab === 2,
+        playerTab: true,
+        tab1: true,
+      }">
+        <slot name="upper-player"></slot>
+      </div>
+    </template>
   </div>
 </template>
 
