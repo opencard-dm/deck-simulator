@@ -81,6 +81,10 @@ export default defineComponent({
           players,
         }
       }
+      if (deckId) {
+        cardActions.selectDeck('a', await fetchDeck(deckId) as any)
+        players.a.isReady = true
+      }
     }
     if (RoomConfig.useFirebase) {
       const { data: room } = await axios.get(`/api/rooms/${roomId}`, {
@@ -99,10 +103,6 @@ export default defineComponent({
           players.b.isReady = true
         }
       }
-    }
-    if (deckId) {
-      players.a.cards = await fetchDeck(deckId) as any
-      players.a.isReady = true
     }
     return {
       upperPlayer,
