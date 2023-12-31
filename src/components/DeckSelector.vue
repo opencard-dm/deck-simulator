@@ -132,7 +132,7 @@ function validateUrl() {
 // computed
 const canCansel = computed(() => {
   if (isPhone()) return true
-  return props.isReady;
+  return props.isReady || props.player !== 'a';
 })
 const tabUrl = computed(() => {
   // 相手プレイヤーのルームのURL
