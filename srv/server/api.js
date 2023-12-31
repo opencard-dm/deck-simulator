@@ -16,10 +16,10 @@ router.get('/api/rooms/:roomId', async function (req, res) {
     return res.json({})
   }
   // const room = (await RoomData.getRoomCache(roomId)) || {}
-  const room = {}
+  let room = {}
   const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
   if (roomDoc.exists) {
-    room.cookie = roomDoc.get('cookie')
+    room = roomDoc.data()
   } else {
     const cookie = req.body.cookie || ''
     await createRoom(roomId, cookie)

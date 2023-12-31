@@ -114,6 +114,10 @@ export function useRoomSetup(props: RoomProps) {
     });
     if (RoomConfig.useFirebase) {
       axios.delete(`/api/rooms/${props.roomId}`)
+      props.gameLogger.unsubscribes.forEach(u => u())
+      props.gameLogger.listenChanges()
+      props.gameLogger.histories = []
+      props.gameLogger.historyIndex = -1
     }
     // 状態の変更を送信する
     if (!SocketUtil.socket) return;

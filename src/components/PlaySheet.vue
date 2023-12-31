@@ -89,6 +89,7 @@
       :side="side"
       :player="player"
       :cards="cards.tefudaCards"
+      :single="single"
       @move-cards="moveCards"
       @drawOne="deckZone?.drawOne()"
     ></TefudaZone>

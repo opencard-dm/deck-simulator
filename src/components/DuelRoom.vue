@@ -4,7 +4,7 @@
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
       @switch-tab="switchTab()"
-      @reset-game="resetGame()"
+      @reset-game="onResetGame()"
     ></CHeader>
 
     <DeckSelector
@@ -119,7 +119,7 @@
 
 <script setup lang="ts">
 import { Layout } from '@/helpers/layout';
-import { isPhone } from '@/helpers/Util';
+import { getCloudRunCookie, isPhone } from '@/helpers/Util';
 import { computed, onMounted, ref, watch } from 'vue';
 import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
@@ -135,6 +135,7 @@ import { Card } from '@/entities/Card';
 import { useStore } from 'vuex';
 import { RoomProps } from '.';
 import { Deck as DeckType } from '@/entities/Deck';
+import axios from 'axios';
 
 const store = useStore()
 
@@ -205,6 +206,11 @@ const {
   players,
   resetGame,
 } = useRoomSetup(props);
+
+function onResetGame() {
+  resetGame();
+  deckSelectorActive.value = true
+}
 
 function emitRoomState() {
   if (SocketUtil.socket) {

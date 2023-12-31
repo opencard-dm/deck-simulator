@@ -12,7 +12,8 @@ export async function createRoom(roomId: string, cookie: string) {
 }
 
 export async function deleteRoom(roomId: string) {
-  const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
-  await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).delete()
-  return roomDoc
+  await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).set({
+    histories: [],
+    ttl: FireStore.Timestamp.fromMillis(Date.now() + (1 * 60 * 60 * 1000)),
+  }, { merge: true })
 }
