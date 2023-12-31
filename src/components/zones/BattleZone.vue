@@ -34,6 +34,7 @@
       >
         <MarkTool
           :reverse="side === 'upper'"
+          :tapped="card.tapped"
           :active="cardIsSelected(card)"
           :color="card.markColor"
           @change="setMarkColor(card, $event)"
@@ -282,6 +283,7 @@ $card-width: 100px;
       margin: 0 10px 10px 0;
     }
     &.upper {
+      flex-wrap: wrap;
       margin-top: 10px;
       // box-shadowが見えるようにするため。
       padding-top: 10px;
@@ -290,7 +292,7 @@ $card-width: 100px;
         &.tapped {
           // 回転中心が左下の時ちょうど、回転後の位置がx軸方向について中心になる。
           // あとはtranslateXでy座標を調整する。
-          transform: rotate(90deg) translateX(-100%);
+          transform: rotate(-90deg) translateY(100%);
           transform-origin: left bottom;
         }
       }
@@ -300,8 +302,8 @@ $card-width: 100px;
       // box-shadowが見えるようにするため。
       padding-bottom: 10px;
       .card.tapped {
-        transform: rotate(-90deg) translateX(100%);
-        transform-origin: right bottom;
+        transform: rotate(-90deg) translateY(100%);
+        transform-origin: left bottom;
       }
     }
   }
