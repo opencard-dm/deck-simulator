@@ -82,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import { getCloudRunCookie } from "@/helpers/Util";
 import { makeRandomString } from "@/helpers/makeRandomString";
 import axios from "axios";
 
@@ -150,19 +151,6 @@ const defaultDecks = [
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
-}
-function getCloudRunCookie() {
-  const cookie = document.cookie;
-  let target = "";
-  if (cookie) {
-    cookie.split(";").forEach((seg) => {
-      const trimed = seg.trim();
-      if (trimed.startsWith("GAESA=")) {
-        target = trimed;
-      }
-    });
-  }
-  return target;
 }
 async function createRoom() {
   const router = useRouter()

@@ -42,3 +42,17 @@ export class Util {
     return array
   }
 }
+
+export function getCloudRunCookie() {
+  const cookie = document.cookie;
+  let target = "";
+  if (cookie) {
+    cookie.split(";").forEach((seg) => {
+      const trimed = seg.trim();
+      if (trimed.startsWith("GAESA=")) {
+        target = trimed;
+      }
+    });
+  }
+  return target;
+}

@@ -15,12 +15,13 @@
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import axios from 'axios';
 import DuelRoom from './DuelRoom.vue';
-import { initialData } from '@/helpers/room';
+import { RoomConfig, initialData } from '@/helpers/room';
 import { defineComponent, reactive } from 'vue';
 import { CardActions } from '@/helpers/CardActions';
 import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
 import { Deck } from '@/helpers/Deck';
+import { getCloudRunCookie } from '@/helpers/Util';
 
 async function fetchDeck(deckId: string) {
   let deckApi
@@ -64,26 +65,34 @@ export default defineComponent({
     })
 
     // oncreated
-    const sessionRoom = sessionStorage.getItem(`room-${roomId}`);
-    if (sessionRoom) {
-      const parsed = JSON.parse(sessionRoom);
-      players.a = parsed.players.a;
-      players.b = parsed.players.b;
-      gameLogger.setHistories(parsed.histories)
-      console.debug('get room data from session storage. key=' + `room-${roomId}`)
-    } else {
-      if (deckId) {
-        players.a.cards = await fetchDeck(deckId) as any
-        players.a.isReady = true
+    if (props.single) {
+      const sessionRoom = sessionStorage.getItem(`room-${roomId}`)
+      if (sessionRoom) {
+        const parsed = JSON.parse(sessionRoom)
+        players.a = parsed.players.a
+        players.b = parsed.players.b
+        gameLogger.setHistories(parsed.histories)
+        console.debug('get room data from session storage. key=' + `room-${roomId}`)
+        return {
+          upperPlayer,
+          lowerPlayer,
+          cardActions,
+          gameLogger,
+          roomId,
+          players,
+        }
       }
-      if (!props.single) {
-        axios.get(`/api/rooms/${roomId}`).then(res => {
-          if (res.data.cookie) {
-            document.cookie = res.data.cookie
-
-          }
-        })
-      }
+    }
+    if (RoomConfig.useFirebase) {
+      await axios.get(`/api/rooms/${roomId}`, {
+        params: {
+          cookie: getCloudRunCookie(),
+        }
+      });
+    }
+    if (deckId) {
+      players.a.cards = await fetchDeck(deckId) as any
+      players.a.isReady = true
     }
     return {
       upperPlayer,

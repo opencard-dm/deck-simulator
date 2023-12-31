@@ -8,6 +8,7 @@
 import { RoomConfig } from '@/helpers/room';
 import { onBeforeRouteLeave, useRoute } from 'vue-router';
 import DuelRoomSuspense from '../components/DuelRoomSuspense.vue'
+import { SocketUtil } from '@/helpers/socket';
 
 const route = useRoute()
 const roomId = route.query.roomId as string
@@ -18,4 +19,5 @@ onBeforeRouteLeave((to, from, next) => {
 })
 
 RoomConfig.useFirebase = true
+SocketUtil.socket = null
 </script>
