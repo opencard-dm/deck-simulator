@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development ts-node -T srv/index.js",
+    "dev": "NODE_ENV=development ts-node -T srv/index.ts",
     "build": "vite build",
     "lint": "vite lint",
-    "start": "NODE_ENV=production ts-node -T srv/index.js",
+    "start": "NODE_ENV=production ts-node -T srv/index.ts",
     "test": "vitest"
   },
   "dependencies": {
