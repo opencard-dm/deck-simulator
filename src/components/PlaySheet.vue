@@ -99,6 +99,7 @@
       :cards="cards.battleCards"
       @move-cards="moveCards"
       @group-card="groupCard"
+      @change-cards-state="changeCardsState"
       @emit-room-state="emitRoomState"
     ></BattleZone>
   </template>
