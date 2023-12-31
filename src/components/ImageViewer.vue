@@ -25,6 +25,7 @@
         {{ cardText }}
       </div>
     </div>
+    <!-- スマホでカードをプッシュしたときに表示される画像 -->
     <div v-if="imageUrl" class="phoneImageDisplay" @contextmenu.prevent>
       <img :src="imageUrl" @click="$store.commit('setDisplayImageUrl', '')">
     </div>
@@ -199,6 +200,7 @@ export default {
   z-index: 100;
   img {
     width: 90vw;
+    max-width: 400px;
   }
 }
 </style>
