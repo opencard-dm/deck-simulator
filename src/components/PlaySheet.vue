@@ -15,6 +15,7 @@
       :side="side"
       :player="player"
       :cards="cards.tefudaCards"
+      :single="single"
       @move-cards="moveCards"
       @drawOne="deckZone?.drawOne()"
     ></TefudaZone>
@@ -77,20 +78,20 @@
     </template>
   </player-zone>
   <template v-if="side === 'lower'">
-    <mana-zone
+    <ManaZone
       :side="side"
       :player="player"
       :cards="cards.manaCards"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
-    ></mana-zone>
-    <tefuda-zone
+    ></ManaZone>
+    <TefudaZone
       :side="side"
       :player="player"
       :cards="cards.tefudaCards"
       @move-cards="moveCards"
       @drawOne="deckZone?.drawOne()"
-    ></tefuda-zone>
+    ></TefudaZone>
   </template>
   <template v-if="side === 'upper'">
     <BattleZone
@@ -137,6 +138,7 @@ const props = defineProps<{
   roomId: string,
   isReady: boolean,
   hasChojigen: boolean,
+  single: boolean,
 }>();
 
 const emit = defineEmits<zoneEmit>();

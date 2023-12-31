@@ -6,8 +6,8 @@
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         v-for="(card, index) in cards"
         :key="index"
-        @mouseenter="side === 'lower' ? setHoveredCard(card) : null"
-        @mouseleave="side === 'lower' ? setHoveredCard(null) : null"
+        @mouseenter="!hideTefuda ? setHoveredCard(card) : null"
+        @mouseleave="!hideTefuda ? setHoveredCard(null) : null"
       >
         <div
           class="card"
@@ -16,7 +16,7 @@
           ]"
         >
           <!-- 対戦相手の手札は常に裏向き -->
-          <div v-if="side === 'upper'">
+          <div v-if="side === 'upper' && !single">
             <img 
               :src="card.backImageUrl" 
               @click.stop="clickCard(card)"
@@ -93,7 +93,7 @@
               手札へ
             </o-button>
             <o-button
-              v-else-if="side === 'upper'"
+              v-else-if="hideTefuda"
               variant="grey-dark"
               size="small"
               :disabled="true"
@@ -121,6 +121,7 @@ import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
 import { useZone, zoneEmit } from './zone';
 import { useStore } from 'vuex';
+import { computed } from 'vue';
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650
 const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
@@ -131,8 +132,12 @@ const props = defineProps<{
   player: player
   cards: Card[]
   side: side
+  single: boolean
 }>()
 const zone = 'tefudaCards'
+const hideTefuda = computed(() => {
+  return !props.single && props.side === 'upper'
+})
 
 const emit = defineEmits<zoneEmit & {
   drawOne: []
@@ -173,7 +178,7 @@ function clickCard(card: Card) {
 function clickPlaceholderCard() {
   if (selectMode.value && selectMode.value.zone !== zone) {
     moveSelectedCard(zone, false)
-  } else if (props.side === 'upper') {
+  } else if (hideTefuda.value) {
     openWorkSpace({
       zone: zone,
       cards: props.cards,
