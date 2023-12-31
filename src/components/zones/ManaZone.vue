@@ -165,7 +165,7 @@ $card-margin: -35px;
 .manaZone {
   display: flex;
   margin-left: 20px;
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     margin-left: 5px;
   }
   align-items: center;
@@ -204,7 +204,7 @@ $card-margin: -35px;
     height: cardHeight($card-width);
     position: relative;
     display: flex;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
         display: none;
     }
     &.upper {

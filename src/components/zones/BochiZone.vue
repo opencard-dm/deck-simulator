@@ -80,7 +80,7 @@ $card-width: 50px;
   .bochi_text {
     text-align: center;
   }
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
       width: 50px;
       img {
         border-top: 1px solid purple;

@@ -439,7 +439,7 @@ export default {
   background-color: #fff;
   padding: 10px;
   border-radius: 10px;
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     width: 96%;
     margin: 0 2%;
   }
@@ -457,7 +457,7 @@ export default {
     // height: 60vh;
     max-height: 60vh;
     overflow-y: auto;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin: 0;
       max-width: 100%;
       max-height: 80vh;

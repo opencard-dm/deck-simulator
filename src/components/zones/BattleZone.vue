@@ -241,7 +241,7 @@ $card-width: 100px;
     margin-right: 10px;
     width: 70px;
     height: 50px;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-left: 5px;
       width: 50px;
     }
@@ -257,7 +257,7 @@ $card-width: 100px;
   .battleZoneButton {
     // align-self: flex-end;
     &.o-btn {
-      @media screen and (max-device-width: 800px) {
+      @media screen and (max-width: 800px) {
         // width: 45px;
         // font-size: 12px;
       }
@@ -274,7 +274,7 @@ $card-width: 100px;
     min-height: cardHeight($card-width);
     // overflow-x: scroll;
     max-width: 700px; // 800 - margin-left
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-left: 20px;
     }
     > * {

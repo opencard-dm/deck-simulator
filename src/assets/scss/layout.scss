@@ -21,7 +21,7 @@ body {
 }
 .main {
   margin-left: 10px;
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
       margin-left: 0px;
   }
 }
@@ -32,14 +32,14 @@ body {
   // height: 600px;
   background-color: rgb(241, 241, 241);
   position: relative;
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     width: 100%;
     min-height: unset;
     overflow: hidden; // これがないと右側に余白ができた
   }
   .gameBoard {
     min-height: 100vh;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       min-height: unset;
       overflow-y: scroll;
       width: 100%;

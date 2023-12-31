@@ -193,7 +193,7 @@ $card-width: 70px;
   &.upper {
     background: #fff;
     margin-left: 100px;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-top: 0px;
       margin-left: 0px;
       overflow-y: scroll;
@@ -217,7 +217,7 @@ $card-width: 70px;
   &.lower {
     margin-top: 20px;
     margin-left: 100px;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-left: 10px;
       position: fixed;
       bottom: 0px;

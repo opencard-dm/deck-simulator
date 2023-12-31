@@ -51,7 +51,7 @@ $card-width: 50px;
       align-self: center;
     }
     margin-left: 20px;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-left: 5px;
       width: 100%;
     }
@@ -67,7 +67,7 @@ $card-width: 50px;
     display: flex;
     align-items: center;
     width: 430px;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       // シールドボタン50px マージン15px
       width: calc(100% - 75px);
     }
@@ -93,7 +93,7 @@ $card-width: 50px;
   img {
     width: 50px;
   }
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     .player-zone-above {
       width: fit-content;
       position: absolute;

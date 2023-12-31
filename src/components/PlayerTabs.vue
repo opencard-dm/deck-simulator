@@ -44,7 +44,7 @@ const emit = defineEmits<{
   border: 2px solid whitesmoke;
   background: #005c98;
   position: absolute;
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     position: fixed;
   }
   top: 50px;
@@ -61,7 +61,7 @@ const emit = defineEmits<{
   transform: translateX(50%);
 }
 .app-wrapper {
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     display: none;
     opacity: 0;
     transition: all 1s;
