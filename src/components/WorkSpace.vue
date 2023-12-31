@@ -236,7 +236,7 @@
 
 <script setup>
 import CardPopup from './elements/CardPopup.vue'
-const cardWidth = isPhone() ? 70 : 120
+const cardWidth = isPhone() ? 70 : 100
 const cardHeight = cardWidth * 908 / 650
 
 </script>
@@ -457,6 +457,7 @@ export default {
     // height: 60vh;
     max-height: 60vh;
     overflow-y: auto;
+    overflow-x: hidden;
     @media screen and (max-width: 800px) {
       margin: 0;
       max-width: 100%;
@@ -518,15 +519,19 @@ export default {
   .o-drop__menu {
     top: 20px;
     padding: 0;
+    width: 120px;
+    min-width: unset;
   }
   .o-drop__item {
     display: flex;
     justify-content: space-between;
   }
   .drop-item {
+    padding: 5px 0px;
+    width: 120px;
   }
   .drop-item-2 {
-    font-size: 14px;
+    font-size: 12px;
     display: inline-block;
     width: 100%;
     height: 100%;
