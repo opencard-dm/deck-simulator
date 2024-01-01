@@ -13,13 +13,19 @@
       <table class="roomTable" style="margin-top: 20px">
         <thead>
           <th><div>デッキ名</div></th>
+          <th><div>デッキレシピ</div></th>
           <th><div></div></th>
         </thead>
         <tr v-for="deck in defaultDecks" :key="deck.id">
           <td>
-            <div>{{ deck.name }}</div>
+            <div style="text-align: left;">{{ deck.name }}</div>
           </td>
-          <td>
+          <td style="text-align: center;">
+            <a :href="deckRecipeLink(deck.id)" target="deckRecipe">
+              <o-icon pack="fas" icon="arrow-up-right-from-square"></o-icon>
+            </a>
+          </td>
+          <td style="text-align: center;">
             <router-link
               :to="{
                 path: '/single',
@@ -90,6 +96,10 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
+function deckRecipeLink(deckId: string) {
+  return `https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=${deckId}`
+}
+
 function useDeckForm() {
   const deckUrl = ref('')
   const deckUrlError = ref('')
@@ -133,21 +143,7 @@ function useDeckForm() {
 
 const DeckForm = useDeckForm()
 
-const defaultDecks = [
-  {
-    name: "アナカラージャオウガ【2023/10・オリジナル】",
-    id: "e724180f-a3a9-40d9-8e70-e11d85e9ec03",
-  },
-  {
-    name: "4cガイアッシュ覇道【2021/12・オリジナル】",
-    id: "da3e7dfb-948e-47d8-8924-d277368ca399",
-  },
-  {
-    name: "デアリガズ墓地ソース【2021/12・オリジナル】",
-    id: "a7aa7e2f-f2af-4271-b5d1-08ddaee92362",
-  },
-]
-
+import defaultDecks from '../decks.json'
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
@@ -186,11 +182,6 @@ async function createRoom() {
   td {
     border: 1px solid darkgray;
     padding: 5px 10px;
-    > * {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
   }
 }
 a {

@@ -96,6 +96,7 @@ import axios from "axios";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+import deckList from '../decks.json'
 
 const route = useRoute()
 const router = useRouter()
@@ -111,7 +112,6 @@ const emit = defineEmits(['move-cards', 'selected', 'update:active'])
 
 // data
 const deckId = ref(0)
-const deckList = reactive([])
 const scrapeUrl = ref("")
 const scraping = ref(false)
 const errors = reactive({
@@ -167,7 +167,7 @@ onMounted(() => {
 
 function onClickSelectButton() {
   errors.scrapeUrl = ''
-  scrapeUrl.value = allDecks.value[deckId.value].url
+  scrapeUrl.value = 'https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=' + allDecks.value[deckId.value].id
   scrape()
 }
 async function setupDeck(deckData: DeckType) {
