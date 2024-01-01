@@ -2,7 +2,7 @@
   <div class="content_wrapper">
     <div id="app" style="padding: 20px; background-color: white">
       <div style="text-align: end;">
-        <RouterLink class="topLink" to="/battle">
+        <RouterLink class="link" to="/battle">
           対戦ツールはこちら(試作品)
         </RouterLink>
       </div>
@@ -37,7 +37,8 @@
           </td>
         </tr>
       </table>
-      <div style="margin-top: 40px">
+      <div style="font-weight: bolder; margin-top: 3rem;">ガチまとめに公開されているデッキを使いたい場合</div>
+      <div>
         <span
           >次の入力欄にガチまとめの公開済みデッキのURLを貼り付けることで、好きなデッキを動かすことができます。
         </span>
@@ -50,7 +51,6 @@
           <o-icon pack="far" icon="question-circle"></o-icon>
         </a> -->
       </div>
-      <div>自分で作成したデッキを使いたい場合、公開する必要があることに注意してください。</div>
       <OField
         class="deckForm_searchField"
         style="margin-top: 10px; max"
@@ -69,20 +69,41 @@
         >
         </OInput>
       </OField>
-      <div style="margin-top: 20px;">例）</div>
+      <div style="margin-top: 10px;">例）https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=xxx</div>
       <img src="/images/gachimatome-deck-detail.png" width="100%" alt="">
-      <!-- <p style="margin-top: 20px;">
-        部屋を選択してください<a
-          class="deckForm_searchField_help"
-          href="https://note.com/tcgsimulator/n/n3f94a7d126f3#46479139-fd8d-4731-8329-32a75616f604"
-          target="_blank"
-          rel="noopener"
-          style="vertical-align: middle"
+      <div style="font-weight: bolder; margin-top: 3rem;">自分で作成したデッキを使いたい場合 ※動画あり</div>
+      <div>1. デッキメーカーでデッキを作成する</div>
+      <div>
+        <a class="link" target="_blank" rel="noopener" style="margin-left: 1rem;" href="https://deck-maker.com/dm/decks">https://deck-maker.com/dm/decks</a>
+      </div>
+      <div>2. 作成したデッキを公開する</div>
+      <div>3. マイデッキ一覧で作成したデッキを選択し、「デッキを共有」、「note埋め込み用URLコピー」の順でデッキのURLをコピーする</div>
+      <div>4. 下の入力欄にコピーしたURLをペーストする</div>
+      <OField
+        class="deckForm_searchField"
+        style="margin-top: 10px; max"
+        :variant="DeckForm.deckUrlError.value ? 'danger' : ''"
+        :message="DeckForm.scraping.value ? 'デッキ取得中です' : DeckForm.deckUrlError.value"
+      >
+        <OInput
+          v-model="DeckForm.deckUrl.value"
+          placeholder="デッキメーカーのURLを貼り付ける"
+          type="text"
+          icon="search"
+          :expanded="true"
+          :disabled="DeckForm.scraping.value"
+          @keypress.prevent="DeckForm.onKeyPress()"
+          @input="DeckForm.onDeckUrlChange()"
         >
-          <o-icon pack="far" icon="question-circle"></o-icon>
-        </a>
-      </p>
-      <o-button variant="info" size="small" @click="createRoom()">部屋を作る</o-button> -->
+        </OInput>
+      </OField>
+      <iframe width="360" height="640" 
+        src="https://www.youtube.com/embed/XNTerDbltMU?loop=1&rel=0" 
+        title="DECK SIMULATORで自分のデッキを使う方法" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen
+      ></iframe>
     </div>
   </div>
 </template>
@@ -162,7 +183,7 @@ async function createRoom() {
 </script>
 
 <style lang="scss" scoped>
-.topLink {
+.link {
   color: #0969da;
   font-size: 14px;
 }
