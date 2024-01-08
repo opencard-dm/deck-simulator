@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "vite lint",
     "start": "NODE_ENV=production ts-node -T srv/index.ts",
+    "ts-node": "NODE_ENV=production ts-node",
     "test": "vitest"
   },
   "dependencies": {
