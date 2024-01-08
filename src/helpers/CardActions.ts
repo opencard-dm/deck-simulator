@@ -276,14 +276,10 @@ export class CardActions {
     player: player,
     zone: zone,
   }) {
-    let cardsInGroup = 0
     const cards: Card[] = this.players[player]["cards"][zone]
     const groupId = card.groupId
-    cards.forEach((c: Card) => {
-      if (c.groupId === groupId) {
-        cardsInGroup += 1
-      }
-    })
+    card.groupId = ''
+    const cardsInGroup = cards.filter(c => c.groupId === groupId).length
     // カードが一枚だけのグループは消す。
     if (cardsInGroup <= 2) {
       cards.map(c => c.groupId === groupId ? c.groupId = '' : null)
