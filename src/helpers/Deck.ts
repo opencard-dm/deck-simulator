@@ -66,18 +66,6 @@ export class Deck {
           });
         }
       });
-      (deck.grCards || []).forEach(c => {
-        const times = c.time || 1
-        for (let i = 0; i < times; i++) {
-          chojigenCards.push({
-            ...c,
-            imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
-            mainCardId: c.mainCardId,
-            isGr: true,
-          });
-        }
-      })
       // 超次元のカードはシャッフル不要
       deck.chojigenCards = chojigenCards.map(c => {
         return {
@@ -88,6 +76,21 @@ export class Deck {
       deck.hasChojigen = true
     } else {
       deck.chojigenCards = chojigenCards;
+    }
+    // grゾーン
+    if (deck.grCards && deck.grCards.length > 0) {
+      deck.grCards.forEach(c => {
+        const times = c.time || 1
+        for (let i = 0; i < times; i++) {
+          deck.chojigenCards.push({
+            ...c,
+            imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
+            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+            mainCardId: c.mainCardId,
+            isGr: true,
+          });
+        }
+      })
     }
     if (withoutApi === false) {
       // カードにテキストを追加

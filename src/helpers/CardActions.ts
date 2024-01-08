@@ -105,6 +105,7 @@ export class CardActions {
         cards: deck.chojigenCards,
         player,
       })
+      this.players[player].hasChojigen = true
     }
   }
 
