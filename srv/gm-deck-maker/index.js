@@ -31,7 +31,14 @@ export async function getDeckData(deckId) {
   );
 
   await deckRecipeInfo.updateDeckDetail();
-  firebase.app(APP_NAME).delete(); // これを書かない場合、実行の終了に時間がかかった
+  // FIXME: 4000回ほど、ここで'gm'というアプリがないというエラーが起こっている
+  try {
+    if (firebase.apps.length > 0) {
+      firebase.app(APP_NAME).delete(); // これを書かない場合、実行の終了に時間がかかった
+    }
+  } catch (error) {
+    console.error(error)
+  }
   return deckRecipeInfo.deckCardData;
 }
 
