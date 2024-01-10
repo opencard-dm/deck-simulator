@@ -93,6 +93,15 @@
               @click.stop="moveSelectedCard(zone, false)"
               >下へ</o-button
             >
+            <o-button
+              v-if="!isPhone()"
+              style="z-index: 1;"
+              variant="grey-dark"
+              class="deck_buttons_out_buttom"
+              size="small"
+              @click.stop="openDeck()"
+              >山札を見る</o-button
+            >
           </div>
         </CardPopup>
       </div>
@@ -108,6 +117,7 @@ import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { defineExpose } from 'vue';
 import type { player, side, zone } from "@/entities";
+import { isPhone } from '@/helpers/Util';
 
 const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`
@@ -243,6 +253,10 @@ $card-width: 50px;
     .deck_buttons_buttom {
       position: absolute;
       bottom: 0;
+    }
+    .deck_buttons_out_buttom {
+      position: absolute;
+      bottom: -70%;
     }
   }
 }
