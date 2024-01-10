@@ -44,6 +44,15 @@
               @click.stop="shuffleCards('yamafudaCards', workSpace.cards)"
               >シャッフル</o-button
             >
+            <o-button
+              v-if="
+                ['yamafudaCards', 'shieldCards'].includes(workSpace.zone) &&
+                isOwner
+              "
+              variant="grey-dark"
+              @click.stop="openAllCards"
+              >全て見る</o-button
+            >
             <template v-if="
                 ['chojigenCards'].includes(workSpace.zone)
               ">
@@ -124,7 +133,7 @@
                   >シールドへ</span
                 >
                 <span
-                  v-if="isOwner"
+                  v-if="!card.showInWorkSpace"
                   class="drop-item-2"
                   @click="openCard(card)"
                   >裏返す</span
@@ -156,6 +165,7 @@
                 <!-- 見られる状態になったカードを場に出すボタン -->
                 <o-button
                   v-if="card.showInWorkSpace"
+                  variant="danger"
                   @click.stop="moveCard(card, 'battleCards')"
                   :size="isPhone() ? 'small' : ''"
                   >出す</o-button
@@ -215,14 +225,6 @@
         </div>
         <!-- 全て〇〇する系 -->
         <template v-if="!workSpace.single">
-          <o-button
-            v-if="
-              ['yamafudaCards', 'shieldCards'].includes(workSpace.zone) &&
-              isOwner
-            "
-            @click.stop="openAllCards"
-            >全て見る</o-button
-          >
           <o-button
             v-if="['manaCards', 'battleCards'].includes(workSpace.zone)"
             @click.stop="tapAllCards"
