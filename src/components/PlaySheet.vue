@@ -69,7 +69,6 @@
     <template #chojigenZone>
       <ChojigenZone
         :side="side"
-        v-if="cards.chojigenCards.length > 0"
         :player="player"
         :cards="cards.chojigenCards"
         :hasChojigen="hasChojigen"
