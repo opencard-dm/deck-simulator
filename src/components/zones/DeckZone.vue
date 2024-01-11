@@ -94,7 +94,7 @@
               >下へ</o-button
             >
             <o-button
-              v-if="!isPhone()"
+              v-if="selectMode?.zone === zone && !isPhone()"
               style="z-index: 1;"
               variant="grey-dark"
               class="deck_buttons_out_buttom"
