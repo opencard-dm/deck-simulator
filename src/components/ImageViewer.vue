@@ -32,10 +32,9 @@
     <!-- slot -->
     <slot></slot>
   </div>
-  <div class="tool-footer" v-if="!isPhone()">
+  <!-- <div class="tool-footer" v-if="!isPhone()">
     <div>
       <label>
-        <!-- v-modelだと値の更新が行われなかった。 -->
         <input
           type="checkbox"
           :checked="!display.hidden"
@@ -49,18 +48,18 @@
           @change="display.blur = $event.target.checked"
         />画像透過
       </label>
-      <!-- <label>
+      <label>
         <input
           type="checkbox"
           :checked="explanation.show"
           @change="explanation.show = $event.target.checked"
         />説明表示
-      </label> -->
+      </label>
     </div>
     <div id="explanation" v-if="explanation.show">
       <p></p>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script setup>
