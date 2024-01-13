@@ -61,6 +61,11 @@ export class GameLogger {
     this.appendHistory(this.groupCard.name, argsCopy)
   }
 
+  undoGroupCard(args: groupCardParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
+    this.appendHistory(this.undoGroupCard.name, argsCopy)
+  }
+
   changeCardsState(args: changeCardsStateParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as changeCardsStateParams
     this.appendHistory(this.changeCardsState.name, argsCopy)
@@ -85,6 +90,9 @@ export class GameLogger {
         break;
       case this.groupCard.name:
         this.cardActions.undoGroupCard(history.args as groupCardParams)
+        break
+      case this.undoGroupCard.name:
+        this.cardActions.groupCardWithoutHistory(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
         this.cardActions.undoCardsState(history.args as changeCardsStateParams)
@@ -111,6 +119,9 @@ export class GameLogger {
         break;
       case this.groupCard.name:
         this.cardActions.groupCardWithoutHistory(history.args as groupCardParams)
+        break
+      case this.undoGroupCard.name:
+        this.cardActions.undoGroupCard(history.args as groupCardParams)
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)

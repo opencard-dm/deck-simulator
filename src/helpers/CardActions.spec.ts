@@ -83,3 +83,47 @@ it('山札を裏返す、重ねる、やり直す', async () => {
   expect(playerCards.yamafudaCards[0].id).toEqual(yamafudaTopCardId)
   expect(playerCards.yamafudaCards[0].faceDown, '山札の上のカードが表向き').toEqual(false)
 })
+
+it('ギャラクシールド', async () => {
+  const deck = await Deck.prepareDeckForGame(
+    Deck.convertGmFormat(deckList[0] as any),
+    true,
+    true
+  )
+  const players = initialData('test').players
+  players.a.cards = CardActions.setupForPlayer(deck)
+  
+  const cardActions = new CardActions('test', players)
+  const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
+  const playerCards = players.a.cards
+  const firstTefudaCardId = playerCards.tefudaCards[0].id
+  const firstShieldCardId = playerCards.shieldCards[0].id
+  cardActions.groupCard({
+    from: 'tefudaCards',
+    to: 'shieldCards',
+    fromCard: playerCards.tefudaCards[0],
+    toCard: playerCards.shieldCards[0],
+    player: 'a',
+  })
+  expect(playerCards.tefudaCards.length).toEqual(4)
+  expect(playerCards.shieldCards.length).toEqual(6)
+  expect(playerCards.shieldCards[0].id).toEqual(firstTefudaCardId)
+  expect(playerCards.shieldCards[1].id).toEqual(firstShieldCardId)
+  expect(playerCards.shieldCards[0].groupId).toBeTruthy()
+  expect(playerCards.shieldCards[1].groupId).toBeTruthy()
+  cardActions.moveCards({
+    from: 'shieldCards',
+    to: 'battleCards',
+    cards: [playerCards.shieldCards[0]],
+    player: 'a',
+  })
+  expect(playerCards.battleCards[0].id).toEqual(firstTefudaCardId)
+  expect(playerCards.shieldCards.length).toEqual(5)
+  gameLogger.undo()
+  expect(playerCards.tefudaCards.length).toEqual(4)
+  expect(playerCards.shieldCards.length).toEqual(6)
+  expect(playerCards.shieldCards[0].id).toEqual(firstTefudaCardId)
+  expect(playerCards.shieldCards[1].id).toEqual(firstShieldCardId)
+  expect(playerCards.shieldCards[0].groupId).toBeTruthy()
+  expect(playerCards.shieldCards[1].groupId).toBeTruthy()
+})

@@ -68,6 +68,35 @@ export class CardActions {
     this.players[player].cards[from].forEach((card, index) => {
       card.index = index
     })
+    const card = cards[0];
+    if (card.groupId && cards.length === 1) {
+      // 先頭のカードがグループに属していた場合、そのグループから抜ける。
+      // NOTE: グループの中で一番最後のカードがベースとなる
+      const toCard = this.players[player].cards[from].filter(c => c.groupId === card.groupId
+        && c.id !== card.id).slice(-1)[0]
+      const fromCard = {
+        ...card,
+        groupId: null,
+        index: prepend ? 0 : this.players[player].cards[to].length,
+      }
+      this.gameLogger?.undoGroupCard({
+        from: to as groupableZone,
+        to: from as groupableZone,
+        fromCard,
+        toCard,
+        player,
+      })
+      if (!RoomConfig.useFirebase) {
+        this.undoGroupCard({
+          from: to as groupableZone,
+          to: from as groupableZone,
+          fromCard,
+          toCard,
+          player,
+        });
+      }
+      return
+    }
     this.gameLogger?.moveCards({ from, to, cards: cards, player, prepend, index })
     if (!RoomConfig.useFirebase) {
       this.moveCardsWithoutHistory({ from, to, cards, player, prepend, index })
@@ -111,15 +140,7 @@ export class CardActions {
 
   moveCardsWithoutHistory({ from, to, cards, player, prepend, index }: moveCardsParams) {
     const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
-    // 先頭のカードがグループに属していた場合、そのグループから抜ける。
     const card = cardsCopy[0];
-    if (card.groupId) {
-      this.ungroupCard({
-        zone: from,
-        card,
-        player,
-      });
-    }
     const cardIds = cardsCopy.map((c) => c.id)
     const fromCards: Card[] = this.players[player]['cards'][from]
     // 手札、マナ、墓地へ行く場合は表向きにする。
@@ -263,13 +284,10 @@ export class CardActions {
     // fromCardを見つけてもとの位置に戻す
     // カードが一枚だけのグループは消す。
     if (cardsInGroup <= 2) {
-      cards.map(c => c.id === toCard.id ? c.groupId = toCard.groupId : null)
+      cards.map(c => c.id === toCard.id ? c.groupId = null : null)
     }
-    if (from !== to) {
-      this.undoMoveCards({ from, to, cards: [fromCard], player })
-    } else {
-      // TODO: 順番をもとに戻す
-    }
+    // NOTE: 同じゾーン内のグループ化の場合もこれでよい
+    this.undoMoveCards({ from, to, cards: [fromCard], player })
   }
 
   ungroupCard({ card, player, zone }: {
