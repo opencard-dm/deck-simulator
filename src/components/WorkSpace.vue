@@ -358,10 +358,6 @@ export default {
       if (card.showInWorkSpace) card.faceDown = false;
       // 見られる状態を解除
       card.showInWorkSpace = false;
-      // バトルゾーン以外からシールドへ移動するときは裏向きにする。
-      if (to === "shieldCards" && from !== "battleCards") {
-        card.faceDown = true;
-      }
       this.$emit(
         "move-cards",
         from,

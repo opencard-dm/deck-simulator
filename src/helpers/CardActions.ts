@@ -141,8 +141,6 @@ export class CardActions {
   moveCardsWithoutHistory({ from, to, cards, player, prepend, index }: moveCardsParams) {
     const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
     const card = cardsCopy[0];
-    const cardIds = cardsCopy.map((c) => c.id)
-    const fromCards: Card[] = this.players[player]['cards'][from]
     // 手札、マナ、墓地へ行く場合は表向きにする。
     if (
       ['tefudaCards', 'manaCards', 'bochiCards'].includes(to) &&
