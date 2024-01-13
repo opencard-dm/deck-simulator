@@ -28,12 +28,12 @@ export class Util {
   }
 
   static arrayInsertBefore(array: Card[], targetCard: Card, card: Card) {
-    const targetIndex = array.findIndex(c => c.id === targetCard.id)
     // 削除してから挿入しないと一時的にidがかぶる状態ができてしまう。
     array.splice(
       array.findIndex(c => c.id === card.id),
       1
     )
+    const targetIndex = array.findIndex(c => c.id === targetCard.id)
     array.splice(
       targetIndex,
       0,

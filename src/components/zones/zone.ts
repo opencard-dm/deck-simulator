@@ -85,7 +85,6 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
     function selectTargetMode() {
       return hasSelectedCard()
         && selectMode.value
-        && !selectMode.value.card.groupId
         && selectMode.value.selectingTarget
     }
     function cardIsSelected(card: Card) {

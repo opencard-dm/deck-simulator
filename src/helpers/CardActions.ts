@@ -1,6 +1,6 @@
 import { zone, player, cardState, groupableZone, playerCards } from "@/entities";
 import { Util } from "./Util";
-import { Card } from "@/entities/Card";
+import { Card, CardGroup } from "@/entities/Card";
 import { Deck } from "@/entities/Deck";
 import { GameLogger } from "./GameLogger";
 import { RoomConfig, initialData } from "./room";
@@ -27,6 +27,13 @@ export interface groupCardParams {
   fromCard: Card,
   toCard: Card,
   player: player,
+}
+
+function getCardGroup(cards: Card[], groupId: string): CardGroup {
+  return {
+    cards: cards.filter(c => c.groupId === groupId),
+    id: groupId,
+  }
 }
 
 export class CardActions {
@@ -248,29 +255,65 @@ export class CardActions {
   }
 
   groupCardWithoutHistory({ from, to, fromCard, toCard, player }: groupCardParams) {
+    /**
+     * fromCardが単独でもグループでも、上になるようにする
+     */
     if (from !== to) {
       this.moveCardsWithoutHistory({ from, to, cards: [fromCard], player, prepend: false })
     }
     // NOTE: redoのときはポインタが外れているため対象のカードをIDで探す
     const toCards: Card[] = this.players[player]["cards"][to]
+    const fromCards: Card[] = this.players[player]["cards"][from]
     const toCardRef = toCards.find(c => c.id === toCard.id) as Card
     const fromCardRef = toCards.find(c => c.id === fromCard.id) as Card
-    if (toCardRef.groupId) {
+
+    // TODO: 両方がグループの場合はひとまずスルーする
+    if (fromCardRef.groupId && toCardRef.groupId) return
+
+    // グループを単独カードに重ねる場合、単独カードを下に
+    if (fromCardRef.groupId && !toCardRef.groupId) {
+      if (from === to && to === 'battleCards') {
+        toCardRef.groupId = fromCardRef.groupId
+        getCardGroup(fromCards, fromCardRef.groupId).cards.forEach(c => {
+          Util.arrayInsertBefore(this.players[player]['cards'][to], toCardRef, c);
+        })
+      }
+      return
+    }
+    // 単独カードをグループに重ねる場合、単独カードを上に
+    if (toCardRef.groupId && !fromCardRef.groupId) {
       fromCardRef.groupId = toCardRef.groupId
-    } else {
-      const groupId = `${toCard.id}-${fromCard.id}`;
+      Util.arrayInsertBefore(this.players[player]['cards'][to], toCardRef, fromCardRef);
+      return
+    }
+    // 両方単独カードの場合
+    if (!toCardRef.groupId && !fromCardRef.groupId) {
+      const groupId = `${fromCard.id}-${toCard.id}`;
       console.debug(`created group '${groupId}'`)
       fromCardRef.groupId = groupId
       toCardRef.groupId = groupId
+      console.log(toCards)
+      Util.arrayInsertBefore(toCards, toCardRef, fromCardRef);
+      return;
     }
-    // fromCardをtoCardの前に移す。
-    Util.arrayInsertBefore(this.players[player]['cards'][to], toCardRef, fromCardRef);
   }
 
   undoGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
     let cardsInGroup = 0
     const cards: Card[] = this.players[player]["cards"][to]
     const groupId = cards.find(c => c.id === fromCard.id)?.groupId as string
+    if (fromCard.groupId) {
+      if (from === to && to === 'battleCards') {
+        console.log(fromCard.groupId)
+        // TODO: 順番の変更を元に戻す関数に一本化する
+        getCardGroup(cards, fromCard.groupId).cards.forEach(c => {
+          if (c.id === toCard.id) return true
+          this.undoMoveCards({ from, to, cards: [c], player })
+        })
+      }
+    } else {
+      this.undoMoveCards({ from, to, cards: [fromCard], player })
+    }
     cards.forEach((c: Card) => {
       if (c.groupId === groupId) {
         cardsInGroup += 1
@@ -278,14 +321,16 @@ export class CardActions {
       if (c.id === fromCard.id) {
         c.groupId = fromCard.groupId
       }
+      if (c.id === toCard.id) {
+        console.log('ungroup to card', toCard.groupId)
+        c.groupId = toCard.groupId
+      }
     })
-    // fromCardを見つけてもとの位置に戻す
     // カードが一枚だけのグループは消す。
     if (cardsInGroup <= 2) {
-      cards.map(c => c.id === toCard.id ? c.groupId = null : null)
+      console.debug(`deleted group '${groupId}'`)
+      cards.forEach(c => c.id === toCard.id ? c.groupId = null : null)
     }
-    // NOTE: 同じゾーン内のグループ化の場合もこれでよい
-    this.undoMoveCards({ from, to, cards: [fromCard], player })
   }
 
   ungroupCard({ card, player, zone }: {

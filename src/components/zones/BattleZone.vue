@@ -70,7 +70,7 @@
             @click.stop="
               openWorkSpace({
                 zone: zone,
-                cards: card.groupId ? getGroup(card)?.cards : [card],
+                cards: getGroup(card)?.cards,
                 player: player,
                 single: true,
               })
