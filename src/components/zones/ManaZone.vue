@@ -201,7 +201,6 @@ $card-margin: -35px;
   }
   .manaZone_cont {
     width: 390px;
-    height: cardHeight($card-width);
     position: relative;
     display: flex;
     @media screen and (max-width: 800px) {
