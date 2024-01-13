@@ -79,32 +79,12 @@
           >
           <template v-else>
             <o-button
-              v-if="selectTargetMode() && selectMode?.card.id === card.id"
+              v-if="card.isChojigen"
               variant="grey-dark"
               size="small"
-              @click.stop="clickCard(card)"
-              >キャンセル</o-button
+              @click.stop="setCardState(card, { faceDown: !card.faceDown })"
+              >裏返す</o-button
             >
-            <template v-else>
-              <o-button
-                v-if="card.isChojigen"
-                variant="grey-dark"
-                size="small"
-                @click.stop="setCardState(card, { faceDown: !card.faceDown })"
-                >裏返す</o-button
-              >
-              <o-button
-                variant="grey-dark"
-                size="small"
-                @click.stop="
-                  setSelectMode({
-                    ...selectMode,
-                    selectingTarget: true,
-                  })
-                "
-                >重ねる</o-button
-              >
-            </template>
           </template>
           <o-button
             v-if="card.faceDown && !card.isChojigen"
@@ -206,6 +186,7 @@ function clickCard(card: Card) {
       card,
       zone: props.zone,
       player: props.player,
+      selectingTarget: true,
     });
     return;
   } else {
