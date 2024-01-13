@@ -30,6 +30,7 @@ function useRoomListners({
 ) {
   const route = useRoute();
   const store = useStore();
+  const side = (player: player) => player === props.upperPlayer ? 'upper' : 'lower'
   
   function onMoveCards(from: zone, to: zone, cards: Card[], player: player, prepend = false) {
     if (!cards || cards.length === 0) return;
@@ -41,9 +42,19 @@ function useRoomListners({
     if (to === 'tefudaCards') {
       setTimeout(() => {
         scrollZone(
-          '.tefuda-zone.' + (player === props.upperPlayer ? 'upper' : 'lower'),
+          '.tefuda-zone.' + side(player),
           'left'
         );
+      }, 300);
+    }
+    // 少し待てば、レンダリングが完了しているため、うまくいった。
+    if (to === 'shieldCards') {
+      setTimeout(() => {
+        const shieldZone = document.querySelector('.shield-zone.' + side(player))
+        shieldZone?.scrollTo({
+          left: - shieldZone.scrollWidth,
+          behavior: 'smooth',
+        })
       }, 300);
     }
     if (props.single || props.lowerPlayer === 'a') {
@@ -97,7 +108,7 @@ export function useRoomSetup(props: RoomProps) {
 
   function scrollZone(targetSelector: string, direction: string) {
     const target = document.querySelector(targetSelector);
-    if (!target) return
+        if (!target) return
     target.scrollTo({
       behavior: 'smooth',
       [direction]: target.scrollWidth,
