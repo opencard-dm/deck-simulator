@@ -5,7 +5,7 @@
       :key="index"
       class="shield"
       :class="{
-        'is-selectMode': selectTargetMode(),
+        'is-selectMode': canPileUp(),
         'is-selected': cardIsSelected(card),
       }"
       @click.stop="clickShield(card)"
@@ -83,6 +83,10 @@ const {
   getGroup,
 } = useCardGroups(props)
 
+function canPileUp() {
+  return selectTargetMode() && !selectMode.value?.card.groupId
+}
+
 function clickShield(card: Card) {
   if (cardIsSelected(card)) {
     // 選択中のカードと同じカードがクリックされた場合、
@@ -90,7 +94,7 @@ function clickShield(card: Card) {
     setSelectMode(null);
     return;
   }
-  if (selectTargetMode()) {
+  if (canPileUp()) {
     if (selectMode.value?.player === props.player) {
       // カードを重ねる。
       const fromCard = selectMode.value?.card;
