@@ -39,27 +39,16 @@
           class="card_bottomButton"
         >
           <o-button
-            v-if="selectTargetMode() && selectMode.card.id === card.id"
-            variant="grey-dark"
-            size="small"
-            @click.stop="clickCard(card)"
-            >キャンセル</o-button
-          >
-          <o-button
-            v-else
             variant="grey-dark"
             size="small"
             @click.stop="
-              setSelectMode({
-                ...selectMode,
-                selectingTarget: true,
-              })
-            "
-            >重ねる</o-button
+              setSelectMode(null);
+              setCardState(card, { faceDown: !card.faceDown })"
+            >裏返す</o-button
           >
           <o-button
             v-if="!isPhone()"
-            variant="grey-dark"
+            variant="danger"
             size="small"
             @click.stop="
               setSelectMode(null);
@@ -114,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import type { player, side } from '@/entities';
+import type { player, side, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import CardPopup from '../elements/CardPopup.vue'
 import { isPhone } from '@/helpers/Util'
@@ -128,13 +117,15 @@ const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
   `${Layout.tefudaHeight(cardWidth)}px` : ''
 
 const store = useStore()
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
   side: side
   single: boolean
-}>()
-const zone = 'tefudaCards'
+  zone?: zone
+}>(), {
+  zone: 'tefudaCards'
+})
 const hideTefuda = computed(() => {
   return !props.single && props.side === 'upper'
 })
@@ -148,6 +139,7 @@ const {
   selectTargetMode,
   selectMode,
   setSelectMode,
+  setCardState,
   moveSelectedCard,
   moveCard,
   workSpace,
@@ -172,15 +164,16 @@ function clickCard(card: Card) {
   setSelectMode({
     player: props.player,
     card,
-    zone: zone,
+    zone: props.zone,
+    selectingTarget: true,
   });
 }
 function clickPlaceholderCard() {
-  if (selectMode.value && selectMode.value.zone !== zone) {
-    moveSelectedCard(zone, false)
+  if (selectMode.value && selectMode.value.zone !== props.zone) {
+    moveSelectedCard(props.zone, false)
   } else if (hideTefuda.value) {
     openWorkSpace({
-      zone: zone,
+      zone: props.zone,
       cards: props.cards,
       player: props.player,
     })

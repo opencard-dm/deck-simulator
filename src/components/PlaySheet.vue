@@ -17,6 +17,7 @@
       :cards="cards.tefudaCards"
       :single="single"
       @move-cards="moveCards"
+      @change-cards-state="changeCardsState"
       @drawOne="deckZone?.drawOne()"
     ></TefudaZone>
     <ManaZone
@@ -90,6 +91,7 @@
       :cards="cards.tefudaCards"
       :single="single"
       @move-cards="moveCards"
+      @change-cards-state="changeCardsState"
       @drawOne="deckZone?.drawOne()"
     ></TefudaZone>
   </template>
