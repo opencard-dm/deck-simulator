@@ -292,7 +292,6 @@ export class CardActions {
       console.debug(`created group '${groupId}'`)
       fromCardRef.groupId = groupId
       toCardRef.groupId = groupId
-      console.log(toCards)
       Util.arrayInsertBefore(toCards, toCardRef, fromCardRef);
       return;
     }
@@ -304,7 +303,6 @@ export class CardActions {
     const groupId = cards.find(c => c.id === fromCard.id)?.groupId as string
     if (fromCard.groupId) {
       if (from === to && to === 'battleCards') {
-        console.log(fromCard.groupId)
         // TODO: 順番の変更を元に戻す関数に一本化する
         getCardGroup(cards, fromCard.groupId).cards.forEach(c => {
           if (c.id === toCard.id) return true
@@ -322,7 +320,6 @@ export class CardActions {
         c.groupId = fromCard.groupId
       }
       if (c.id === toCard.id) {
-        console.log('ungroup to card', toCard.groupId)
         c.groupId = toCard.groupId
       }
     })
