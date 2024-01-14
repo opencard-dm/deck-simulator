@@ -1,17 +1,16 @@
-import { Features } from "@/features";
-import { initializeApp } from "firebase/app";
-import { getFirestore } from 'firebase/firestore'
+import { FirebaseApp, initializeApp } from "firebase/app";
+import { Firestore, getFirestore } from 'firebase/firestore'
 
 export class Firebase {
 
-    static firebaseConfig: any;
-    static firebase: any;
-    static db: any;
+    static firebaseConfig: any
+    static app: FirebaseApp
+    static db: Firestore
     static {
-        if (Features.battle) {
+        if (import.meta.env.VITE_FS_PUBLIC_KEY) {
             this.firebaseConfig = JSON.parse(atob(import.meta.env.VITE_FS_PUBLIC_KEY as string));
-            this.firebase = initializeApp(this.firebaseConfig)
-            this.db = getFirestore(this.firebase)
+            this.app = initializeApp(this.firebaseConfig)
+            this.db = getFirestore(this.app)
         }
     }
 
