@@ -24,7 +24,7 @@ export class Deck {
     if (mainCardIds.length === 0) {
       return {}
     }
-    const res = await axios.get(`${useConfig().API_HOST}/api/cards?cardIds=${mainCardIds.join(',')}`)
+    const res = await axios.get(`/api/cards?cardIds=${mainCardIds.join(',')}`)
     return res.data
   }
 

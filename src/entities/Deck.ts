@@ -6,6 +6,7 @@ export interface Deck {
     cards: Card[]
     chojigenCards: Card[]
     grCards: Card[]
+    cardDetails?: any
 }
 
 export type GmCard = {
