@@ -18,42 +18,44 @@
         :style="{ marginTop: '20px' }"
         >選択</o-button
       >
-      <div :style="{ marginTop: '20px', width: '250px' }">
-        <o-field
-          class="deckForm_searchField"
-          :variant="errors.scrapeUrl ? 'danger' : ''"
-          :message="scraping ? 'デッキ取得中です' : errors.scrapeUrl"
-        >
-          <o-input
-            v-model="scrapeUrl"
-            placeholder="デッキメーカーのURLを貼り付ける"
-            type="text"
-            icon="search"
-            :icon-clickable="!scraping"
-            size="small"
-            :expanded="true"
-            :disabled="scraping"
-            @input="validateUrl()"
-            @keypress.prevent="onKeyPress"
-            @icon-click="scrape"
+      <template v-if="Features.using_my_deck">
+        <div :style="{ marginTop: '20px', width: '250px' }">
+          <o-field
+            class="deckForm_searchField"
+            :variant="errors.scrapeUrl ? 'danger' : ''"
+            :message="scraping ? 'デッキ取得中です' : errors.scrapeUrl"
           >
-          </o-input>
-          <a
-            class="deckForm_searchField_help"
-            href="https://note.com/tcgsimulator/n/n3f94a7d126f3#a7ea3459-6fe4-46d1-bc53-3bb7da71b792"
-            target="_blank"
-            rel="noopener"
-          >
-            <o-icon pack="far" icon="question-circle"></o-icon>
-          </a>
-        </o-field>
-      </div>
-      <div class="deckForm_example">
-        <p>
-          例:
-          https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=xxxx
-        </p>
-      </div>
+            <o-input
+              v-model="scrapeUrl"
+              placeholder="デッキメーカーのURLを貼り付ける"
+              type="text"
+              icon="search"
+              :icon-clickable="!scraping"
+              size="small"
+              :expanded="true"
+              :disabled="scraping"
+              @input="validateUrl()"
+              @keypress.prevent="onKeyPress"
+              @icon-click="scrape"
+            >
+            </o-input>
+            <a
+              class="deckForm_searchField_help"
+              href="https://note.com/tcgsimulator/n/n3f94a7d126f3#a7ea3459-6fe4-46d1-bc53-3bb7da71b792"
+              target="_blank"
+              rel="noopener"
+            >
+              <o-icon pack="far" icon="question-circle"></o-icon>
+            </a>
+          </o-field>
+        </div>
+        <div class="deckForm_example">
+          <p>
+            例:
+            https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=xxxx
+          </p>
+        </div>
+      </template>
     </div>
 
     <template v-if="!isReady || !partnerIsReady">
@@ -97,6 +99,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import deckList from '../decks.json'
+import { Features } from "@/features";
 
 const route = useRoute()
 const router = useRouter()
@@ -167,7 +170,7 @@ onMounted(() => {
 
 function onClickSelectButton() {
   errors.scrapeUrl = ''
-  scrapeUrl.value = 'https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=' + allDecks.value[deckId.value].id
+  scrapeUrl.value = 'https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=' + allDecks.value[deckId.value].dmDeckId
   scrape()
 }
 async function setupDeck(deckData: DeckType) {
@@ -183,38 +186,42 @@ async function setupDeck(deckData: DeckType) {
     emit("update:active", false);
   }
 }
-function scrape() {
+function updateUrl(deckId: string) {
+  const currentQuery = {...route.query}
+  currentQuery[`deck_${props.player}`] = deckId
+  router.replace({
+    path: route.path,
+    query: currentQuery,
+  })
+}
+async function scrape() {
   if (!scrapeUrl.value || scraping.value || errors.scrapeUrl) return;
   scraping.value = true;
   const deckId = scrapeUrl.value.split('tcgrevo_deck_maker_deck_id=')[1]
-  axios
-    .get('/api/scrape', {
-      params: {
-        deckId,
-      }
-    })
-    .then((res) => {
+  if (!deckId) {
+    console.error('deckId is required')
+  }
+  let deck = Deck.getFromId(deckId)
+  if (!deck) {
+    try {
+      const res = await axios
+        .get('/api/scrape', {
+          params: {
+            deckId,
+          }
+        })
       console.log("fetched deck", res);
-      // this.$store.commit("decks/setData", [
-      //   res.data,
-      //   ...this.$store.state.decks.data,
-      // ]);
-      const currentQuery = {...route.query}
-      currentQuery[`deck_${props.player}`] = deckId
-      router.replace({
-        path: route.path,
-        query: currentQuery,
-      })
-      scrapeUrl.value = "";
-      scraping.value = false;
-      setupDeck(res.data)
-    })
-    .catch((err) => {
-      // this.scrapeUrl = "";
+      deck = res.data
+    } catch (error) {
       scraping.value = false;
       errors.scrapeUrl = "デッキデータの取得に失敗しました";
-      console.log(err);
-    });
+      console.log(error);
+    }
+  }
+  updateUrl(deckId)
+  scrapeUrl.value = "";
+  scraping.value = false;
+  setupDeck(deck as DeckType)
 }
 function onKeyPress() {
   errors.scrapeUrl = "ペーストのみ可能です";
