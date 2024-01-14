@@ -17,11 +17,12 @@
         >
           <!-- 対戦相手の手札は常に裏向き -->
           <div v-if="side === 'upper' && !single">
-            <img 
-              :src="card.backImageUrl" 
+            <TextCard
+              :width="cardWidth"
+              :card="card"
+              :selected="selectMode && selectMode.card.id === card.id"
               @click.stop="clickCard(card)"
-              :style="{width: `${cardWidth}px`}"
-            />
+            ></TextCard>
           </div>
           <div v-else @click.stop="clickCard(card)">
             <img 
@@ -29,8 +30,12 @@
               :src="card.backImageUrl"
               :style="{width: `${cardWidth}px`}"
             />
-            <CardPopup v-else :url="card.imageUrl">
-              <img :src="card.imageUrl" :style="{width: `${cardWidth}px`}" />
+            <CardPopup v-else :url="card.imageUrl" :card="card">
+              <TextCard
+                :width="cardWidth"
+                :card="card"
+                :selected="selectMode && selectMode.card.id === card.id"
+              ></TextCard>
             </CardPopup>
           </div>
         </div>
@@ -106,6 +111,7 @@
 import type { player, side, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import CardPopup from '../elements/CardPopup.vue'
+import TextCard from '../elements/TextCard.vue'
 import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
 import { useZone, zoneEmit } from './zone';

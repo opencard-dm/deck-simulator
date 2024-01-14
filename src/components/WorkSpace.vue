@@ -91,12 +91,16 @@
                     <div>
                       <!-- ワークスペース内だけでみられる状態がある -->
                       <img
+                        v-if="card.faceDown === true && !card.showInWorkSpace"
                         :src="card.backImageUrl"
                         :width="cardWidth"
-                        v-if="card.faceDown === true && !card.showInWorkSpace"
                       />
-                      <CardPopup v-else :url="card.imageUrl">
-                        <img :src="card.imageUrl" :width="cardWidth" />
+                      <CardPopup v-else :url="card.imageUrl" :card="card">
+                        <TextCard
+                          :card="card"
+                          :width="cardWidth"
+                          :selected="false"
+                        ></TextCard>
                       </CardPopup>
                     </div>
                   </div>
@@ -202,6 +206,7 @@
                 <template v-else>
                   <o-button @click.stop="moveCard(card, 'battleCards')"
                     :size="isPhone() ? 'small' : ''"
+                    variant="danger"
                     >出す</o-button
                   >
                   <o-button @click.stop="moveCard(card, 'tefudaCards')"
@@ -236,14 +241,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardPopup from './elements/CardPopup.vue'
+import TextCard from "./elements/TextCard.vue";
 const cardWidth = isPhone() ? 70 : 100
 const cardHeight = cardWidth * 908 / 650
-
 </script>
 
-<script>
+<script lang="ts">
 import mixin from "../helpers/mixin";
 import { MarkTool } from "./index";
 import { isPhone } from '@/helpers/Util';
@@ -513,6 +518,7 @@ export default {
     font-size: 12px;
     font-weight: bold;
     color: beige;
+    z-index: 1;
   }
   .o-drop__menu {
     top: 20px;

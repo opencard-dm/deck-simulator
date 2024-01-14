@@ -56,8 +56,13 @@
               :width="cardWidth"
               draggable="false"
             />
-            <CardPopup v-else :url="card.imageUrl">
-              <img :src="card.imageUrl" draggable="false" :width="cardWidth" />
+            <CardPopup v-else :card="card" :url="card.imageUrl">
+              <TextCard
+                :card="card"
+                :width="cardWidth"
+                :selected="cardIsSelected(card)"
+                :canBeTarget="selectTargetMode()"
+              ></TextCard>
             </CardPopup>
           </div>
         </MarkTool>
@@ -140,6 +145,7 @@ import type { groupableZone, player, side } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
+import TextCard from "../elements/TextCard.vue";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650

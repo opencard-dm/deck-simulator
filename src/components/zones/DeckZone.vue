@@ -39,7 +39,12 @@
               :src="cards[0].backImageUrl"
               alt=""
             />
-            <img v-else :src="cards[0].imageUrl" alt="" />
+            <TextCard
+              v-else
+              :card="cards[0]"
+              :width="cardWidthNum"
+              :selected="cardIsSelected(cards[0])"
+            ></TextCard>
           </OnLongPress>
         </div>
         <div
@@ -60,6 +65,7 @@
         <CardPopup
           v-if="hasSelectedCard()" 
           :url="cards.length > 0 ? cards[0].imageUrl : ''"
+          :card="cards.length > 0 ? cards[0] : null"
         >
           <div class="deck_buttons"
             :style="{
@@ -118,6 +124,7 @@ import { useZone, zoneEmit } from "./zone";
 import { defineExpose } from 'vue';
 import type { player, side, zone } from "@/entities";
 import { isPhone } from '@/helpers/Util';
+import TextCard from "../elements/TextCard.vue";
 
 const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`

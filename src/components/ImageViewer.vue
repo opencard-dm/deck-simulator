@@ -8,7 +8,7 @@
       :style="[display.left ? { left: '5px' } : { left: '820px' }]"
     >
       <div
-        v-if="cardIsVisible"
+        v-if="Features.using_image && cardIsVisible"
         class="imageDisplay_image"
         :style="{ width: `${style.width}px` }"
       >
@@ -20,14 +20,21 @@
       </div>
       <div
         class="imageDisplay_cardText"
-        v-if="cardIsVisible && hoveredCard.text"
+        v-if="cardIsVisible && cardDetail.card_text"
       >
         {{ cardText }}
       </div>
     </div>
     <!-- スマホでカードをプッシュしたときに表示される画像 -->
     <div v-if="imageUrl" class="phoneImageDisplay" @contextmenu.prevent>
-      <img :src="imageUrl" @click="$store.commit('setDisplayImageUrl', '')">
+      <img v-if="Features.using_image" :src="imageUrl" @click="closePopup()">
+      <TextCard
+        v-else
+        :card="hoveredCard"
+        :selected="false"
+        :large="true"
+        @click="closePopup()"
+      ></TextCard>
     </div>
     <!-- slot -->
     <slot></slot>
@@ -62,17 +69,30 @@
   </div> -->
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { CardDetail } from '@/entities/Deck';
 import { isPhone } from '@/helpers/Util';
 import { onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
+import { Features } from '@/features';
+import TextCard from './elements/TextCard.vue';
+
 const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
 });
 </script>
 
-<script>
+<script lang="ts">
 import { mapMutations, mapState } from "vuex/dist/vuex.cjs";
+function getCardDetail(cardId: string) {
+  try {
+    return useStore().state.cardDetails[cardId]
+  } catch (error) {
+    console.error('card not found:', cardId)
+    return {}
+  }
+}
 
 export default {
   data() {
@@ -96,6 +116,10 @@ export default {
     imageUrl() {
       return this.$store.state.displayImageUrl
     },
+    cardDetail() {
+      if (!this.hoveredCard) return {}
+      return getCardDetail(this.hoveredCard.mainCardId)
+    },
     cardIsVisible() {
       if (this.hoveredCard) {
         if (!this.hoveredCard.faceDown || this.hoveredCard.showInWorkSpace) {
@@ -112,7 +136,7 @@ export default {
     },
     cardText() {
       /** @type {String} */
-      const text = this.hoveredCard.text;
+      const text = this.cardDetail.card_text;
       if (this.hoveredCard && text) {
         if (this.hoveredCard.faceDown) {
           if (this.hoveredCard.backText) {
@@ -156,6 +180,10 @@ export default {
         this.display.left = true;
       }
     },
+    closePopup() {
+      this.$store.commit('setDisplayImageUrl', '')
+      this.$store.commit('setHoveredCard', null)
+    }
   },
   mounted() {
     if (window.innerWidth > 800) {
@@ -197,7 +225,7 @@ export default {
   justify-content: center;
   width: 100%;
   z-index: 100;
-  img {
+  > * {
     width: 90vw;
     max-width: 400px;
   }

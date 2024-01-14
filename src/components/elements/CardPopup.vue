@@ -8,18 +8,23 @@
   </OnLongPress>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { OnLongPress } from '@vueuse/components'
 import { isPhone } from '@/helpers/Util'
 import { useStore } from 'vuex';
+import { Card } from '@/entities/Card';
 
-defineProps({
-  url: String
+const props = withDefaults(defineProps<{
+  url: string,
+  card?: Card
+}>(), {
+  // card: null
 })
 const store = useStore()
-const openPopup = (url) => {
+const openPopup = (url: string) => {
   if (isPhone()) {
     store.commit('setDisplayImageUrl', url)
+    store.commit('setHoveredCard', props.card)
   }
 }
 </script>
