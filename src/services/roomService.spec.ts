@@ -1,6 +1,6 @@
 import { it, expect } from 'vitest'
 import { getRoom, pushHistory } from './roomService'
-import { db, env } from '../helpers/firebase'
+import { Firebase } from '../helpers/firebase'
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { FirebaseError } from 'firebase/app';
 
@@ -16,7 +16,7 @@ it.skip('pushHistory', async () => {
 
 it.skip('check permission denied', async () => {
     // 例外のテストが失敗する
-    const docRef = doc(db, env('rooms'), '1');
+    const docRef = doc(Firebase.db, Firebase.env('rooms'), '1');
     // expect(async () => {
         await updateDoc(docRef, {
             cookie: 'aaa',
