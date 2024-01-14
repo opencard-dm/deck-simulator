@@ -30,8 +30,13 @@
               :class="{ 'is-selected': cardIsSelected(card) }"
               @click.stop="clickCard(card)"
             >
-              <img v-if="!card.faceDown" :src="card.imageUrl" />
-              <img v-else :src="card.backImageUrl" />
+              <img v-if="card.faceDown" :src="card.backImageUrl" />
+              <TextCard
+                v-else
+                :card="card"
+                :width="50"
+                :selected="cardIsSelected(card)"
+              ></TextCard>
             </div>
             <div v-if="cardIsSelected(card)" class="card_bottomButton">
               <o-button
@@ -56,8 +61,13 @@
               :class="{ 'is-selected': cardIsSelected(card) }"
               @click.stop="clickCard(card)"
             >
-              <img v-if="!card.faceDown" :src="card.imageUrl" />
-              <img v-else :src="card.backImageUrl" />
+              <img v-if="card.faceDown" :src="card.backImageUrl" />
+              <TextCard
+                v-else
+                :card="card"
+                :width="50"
+                :selected="cardIsSelected(card)"
+              ></TextCard>
             </div>
             <div v-if="cardIsSelected(card)" class="card_bottomButton">
               <o-button
@@ -80,6 +90,7 @@ import { computed } from 'vue'
 import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
+import TextCard from "../elements/TextCard.vue";
 
 const props = withDefaults(defineProps<{
   player: player
@@ -165,7 +176,7 @@ $card-margin: -35px;
 .manaZone {
   display: flex;
   margin-left: 20px;
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     margin-left: 5px;
   }
   align-items: center;
@@ -201,10 +212,9 @@ $card-margin: -35px;
   }
   .manaZone_cont {
     width: 390px;
-    height: cardHeight($card-width);
     position: relative;
     display: flex;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
         display: none;
     }
     &.upper {

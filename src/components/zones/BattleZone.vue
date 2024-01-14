@@ -34,6 +34,7 @@
       >
         <MarkTool
           :reverse="side === 'upper'"
+          :tapped="card.tapped"
           :active="cardIsSelected(card)"
           :color="card.markColor"
           @change="setMarkColor(card, $event)"
@@ -55,8 +56,13 @@
               :width="cardWidth"
               draggable="false"
             />
-            <CardPopup v-else :url="card.imageUrl">
-              <img :src="card.imageUrl" draggable="false" :width="cardWidth" />
+            <CardPopup v-else :card="card" :url="card.imageUrl">
+              <TextCard
+                :card="card"
+                :width="cardWidth"
+                :selected="cardIsSelected(card)"
+                :canBeTarget="selectTargetMode()"
+              ></TextCard>
             </CardPopup>
           </div>
         </MarkTool>
@@ -69,7 +75,7 @@
             @click.stop="
               openWorkSpace({
                 zone: zone,
-                cards: card.groupId ? getGroup(card)?.cards : [card],
+                cards: getGroup(card)?.cards,
                 player: player,
                 single: true,
               })
@@ -78,32 +84,12 @@
           >
           <template v-else>
             <o-button
-              v-if="selectTargetMode() && selectMode?.card.id === card.id"
+              v-if="card.isChojigen"
               variant="grey-dark"
               size="small"
-              @click.stop="clickCard(card)"
-              >キャンセル</o-button
+              @click.stop="setCardState(card, { faceDown: !card.faceDown })"
+              >裏返す</o-button
             >
-            <template v-else>
-              <o-button
-                v-if="card.isChojigen"
-                variant="grey-dark"
-                size="small"
-                @click.stop="setCardState(card, { faceDown: !card.faceDown })"
-                >裏返す</o-button
-              >
-              <o-button
-                variant="grey-dark"
-                size="small"
-                @click.stop="
-                  setSelectMode({
-                    ...selectMode,
-                    selectingTarget: true,
-                  })
-                "
-                >重ねる</o-button
-              >
-            </template>
           </template>
           <o-button
             v-if="card.faceDown && !card.isChojigen"
@@ -159,6 +145,7 @@ import type { groupableZone, player, side } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
+import TextCard from "../elements/TextCard.vue";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650
@@ -205,6 +192,7 @@ function clickCard(card: Card) {
       card,
       zone: props.zone,
       player: props.player,
+      selectingTarget: true,
     });
     return;
   } else {
@@ -241,7 +229,7 @@ $card-width: 100px;
     margin-right: 10px;
     width: 70px;
     height: 50px;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-left: 5px;
       width: 50px;
     }
@@ -257,7 +245,7 @@ $card-width: 100px;
   .battleZoneButton {
     // align-self: flex-end;
     &.o-btn {
-      @media screen and (max-device-width: 800px) {
+      @media screen and (max-width: 800px) {
         // width: 45px;
         // font-size: 12px;
       }
@@ -274,7 +262,7 @@ $card-width: 100px;
     min-height: cardHeight($card-width);
     // overflow-x: scroll;
     max-width: 700px; // 800 - margin-left
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-left: 20px;
     }
     > * {
@@ -282,6 +270,7 @@ $card-width: 100px;
       margin: 0 10px 10px 0;
     }
     &.upper {
+      flex-wrap: wrap;
       margin-top: 10px;
       // box-shadowが見えるようにするため。
       padding-top: 10px;
@@ -290,7 +279,7 @@ $card-width: 100px;
         &.tapped {
           // 回転中心が左下の時ちょうど、回転後の位置がx軸方向について中心になる。
           // あとはtranslateXでy座標を調整する。
-          transform: rotate(90deg) translateX(-100%);
+          transform: rotate(-90deg) translateY(100%);
           transform-origin: left bottom;
         }
       }
@@ -300,8 +289,8 @@ $card-width: 100px;
       // box-shadowが見えるようにするため。
       padding-bottom: 10px;
       .card.tapped {
-        transform: rotate(-90deg) translateX(100%);
-        transform-origin: right bottom;
+        transform: rotate(-90deg) translateY(100%);
+        transform-origin: left bottom;
       }
     }
   }
@@ -351,7 +340,7 @@ $card-width: 100px;
     position: absolute;
     width: 100%;
     height: 100%;
-    background: radial-gradient(rgb(254, 218, 151), rgb(241, 241, 241));
+    background: radial-gradient(rgba(254, 218, 151, 0.5), rgba(241, 241, 241, 0));
     border-radius: 10px;
   }
   .card-placeholder-wrapper {

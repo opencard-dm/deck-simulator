@@ -4,8 +4,15 @@ const START_ID_B = 101;
 import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
 import { Deck as DeckType, GmDeckData } from '@/entities/Deck';
+import decks from '../decks.json' assert { type: "json" }
 
 export class Deck {
+
+  static getFromId(id: string) {
+    const localDeck = decks.find(d => d.dmDeckId === id) as DeckType|undefined
+    return localDeck
+  }
+
   /**
    *
    * @param {Array} cards
@@ -17,7 +24,7 @@ export class Deck {
     if (mainCardIds.length === 0) {
       return {}
     }
-    const res = await axios.get(`${useConfig().API_HOST}/api/cards?cardIds=${mainCardIds.join(',')}`)
+    const res = await axios.get(`/api/cards?cardIds=${mainCardIds.join(',')}`)
     return res.data
   }
 
@@ -66,18 +73,6 @@ export class Deck {
           });
         }
       });
-      (deck.grCards || []).forEach(c => {
-        const times = c.time || 1
-        for (let i = 0; i < times; i++) {
-          chojigenCards.push({
-            ...c,
-            imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
-            mainCardId: c.mainCardId,
-            isGr: true,
-          });
-        }
-      })
       // 超次元のカードはシャッフル不要
       deck.chojigenCards = chojigenCards.map(c => {
         return {
@@ -88,6 +83,21 @@ export class Deck {
       deck.hasChojigen = true
     } else {
       deck.chojigenCards = chojigenCards;
+    }
+    // grゾーン
+    if (deck.grCards && deck.grCards.length > 0) {
+      deck.grCards.forEach(c => {
+        const times = c.time || 1
+        for (let i = 0; i < times; i++) {
+          deck.chojigenCards.push({
+            ...c,
+            imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
+            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+            mainCardId: c.mainCardId,
+            isGr: true,
+          });
+        }
+      })
     }
     if (withoutApi === false) {
       // カードにテキストを追加

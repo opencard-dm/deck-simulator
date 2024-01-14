@@ -15,7 +15,9 @@
       :side="side"
       :player="player"
       :cards="cards.tefudaCards"
+      :single="single"
       @move-cards="moveCards"
+      @change-cards-state="changeCardsState"
       @drawOne="deckZone?.drawOne()"
     ></TefudaZone>
     <ManaZone
@@ -68,7 +70,6 @@
     <template #chojigenZone>
       <ChojigenZone
         :side="side"
-        v-if="cards.chojigenCards.length > 0"
         :player="player"
         :cards="cards.chojigenCards"
         :hasChojigen="hasChojigen"
@@ -77,20 +78,22 @@
     </template>
   </player-zone>
   <template v-if="side === 'lower'">
-    <mana-zone
+    <ManaZone
       :side="side"
       :player="player"
       :cards="cards.manaCards"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
-    ></mana-zone>
-    <tefuda-zone
+    ></ManaZone>
+    <TefudaZone
       :side="side"
       :player="player"
       :cards="cards.tefudaCards"
+      :single="single"
       @move-cards="moveCards"
+      @change-cards-state="changeCardsState"
       @drawOne="deckZone?.drawOne()"
-    ></tefuda-zone>
+    ></TefudaZone>
   </template>
   <template v-if="side === 'upper'">
     <BattleZone
@@ -99,6 +102,7 @@
       :cards="cards.battleCards"
       @move-cards="moveCards"
       @group-card="groupCard"
+      @change-cards-state="changeCardsState"
       @emit-room-state="emitRoomState"
     ></BattleZone>
   </template>
@@ -136,6 +140,7 @@ const props = defineProps<{
   roomId: string,
   isReady: boolean,
   hasChojigen: boolean,
+  single: boolean,
 }>();
 
 const emit = defineEmits<zoneEmit>();

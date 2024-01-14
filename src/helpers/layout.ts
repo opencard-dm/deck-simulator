@@ -16,6 +16,14 @@ export class Layout {
     return false
   }
 
+  static upperPlayerZoneHeight() {
+    if (isPhone()) {
+      const height = window.innerHeight - this.headerHeight()
+      return height
+    }
+    return false
+  }
+
   static tefudaHeight(cardWidth) {
     if (isPhone()) {
       return cardWidth * 2 + 40

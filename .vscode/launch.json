@@ -13,9 +13,12 @@
             ],
             "program": "${workspaceRoot}/node_modules/.bin/vue-cli-service",
             "windows": {
-                "program": "${workspaceRoot}/node_modules/@vue/cli-service/bin/vue-cli-service.js",
+                "program": "${workspaceRoot}/node_modules/ts-node/dist/bin.js",
             },
-            "args": ["express:watch"],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "args": ["-T", "srv/index.ts"],
             "console": "internalConsole",
             "sourceMaps": true,
             "outFiles": []

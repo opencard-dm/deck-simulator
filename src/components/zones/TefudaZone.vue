@@ -6,8 +6,8 @@
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         v-for="(card, index) in cards"
         :key="index"
-        @mouseenter="setHoveredCard(card)"
-        @mouseleave="setHoveredCard(null)"
+        @mouseenter="!hideTefuda ? setHoveredCard(card) : null"
+        @mouseleave="!hideTefuda ? setHoveredCard(null) : null"
       >
         <div
           class="card"
@@ -16,12 +16,13 @@
           ]"
         >
           <!-- 対戦相手の手札は常に裏向き -->
-          <div v-if="side === 'upper'">
-            <img 
-              :src="card.backImageUrl" 
+          <div v-if="side === 'upper' && !single">
+            <TextCard
+              :width="cardWidth"
+              :card="card"
+              :selected="selectMode && selectMode.card.id === card.id"
               @click.stop="clickCard(card)"
-              :style="{width: `${cardWidth}px`}"
-            />
+            ></TextCard>
           </div>
           <div v-else @click.stop="clickCard(card)">
             <img 
@@ -29,8 +30,12 @@
               :src="card.backImageUrl"
               :style="{width: `${cardWidth}px`}"
             />
-            <CardPopup v-else :url="card.imageUrl">
-              <img :src="card.imageUrl" :style="{width: `${cardWidth}px`}" />
+            <CardPopup v-else :url="card.imageUrl" :card="card">
+              <TextCard
+                :width="cardWidth"
+                :card="card"
+                :selected="selectMode && selectMode.card.id === card.id"
+              ></TextCard>
             </CardPopup>
           </div>
         </div>
@@ -39,27 +44,16 @@
           class="card_bottomButton"
         >
           <o-button
-            v-if="selectTargetMode() && selectMode.card.id === card.id"
-            variant="grey-dark"
-            size="small"
-            @click.stop="clickCard(card)"
-            >キャンセル</o-button
-          >
-          <o-button
-            v-else
             variant="grey-dark"
             size="small"
             @click.stop="
-              setSelectMode({
-                ...selectMode,
-                selectingTarget: true,
-              })
-            "
-            >重ねる</o-button
+              setSelectMode(null);
+              setCardState(card, { faceDown: !card.faceDown })"
+            >裏返す</o-button
           >
           <o-button
             v-if="!isPhone()"
-            variant="grey-dark"
+            variant="danger"
             size="small"
             @click.stop="
               setSelectMode(null);
@@ -70,11 +64,11 @@
         </div>
       </div>
 
-      <div v-if="side === 'lower'" class="card_wrapper card-placeholder-wrapper" :style="{height: `${cardHeight}px`}">
+      <div class="card_wrapper card-placeholder-wrapper" :style="{height: `${cardHeight}px`}">
         <div
           class="card"
           style="cursor: pointer;"
-          @click="clickPlaceholderCard()" 
+          @click.stop="clickPlaceholderCard()" 
         >
           <div style="opacity: 0.2;">
             <img src="/images/card-back.jpg" :width="cardWidth" />
@@ -93,6 +87,13 @@
               手札へ
             </o-button>
             <o-button
+              v-else-if="hideTefuda"
+              variant="grey-dark"
+              size="small"
+              :disabled="true"
+              >見る</o-button
+            >
+            <o-button
               v-else
               variant="grey-dark"
               size="small"
@@ -107,25 +108,33 @@
 </template>
 
 <script setup lang="ts">
-import type { player, side } from '@/entities';
+import type { player, side, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import CardPopup from '../elements/CardPopup.vue'
+import TextCard from '../elements/TextCard.vue'
 import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
 import { useZone, zoneEmit } from './zone';
 import { useStore } from 'vuex';
+import { computed } from 'vue';
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650
 const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
   `${Layout.tefudaHeight(cardWidth)}px` : ''
 
 const store = useStore()
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
   side: side
-}>()
-const zone = 'tefudaCards'
+  single: boolean
+  zone?: zone
+}>(), {
+  zone: 'tefudaCards'
+})
+const hideTefuda = computed(() => {
+  return !props.single && props.side === 'upper'
+})
 
 const emit = defineEmits<zoneEmit & {
   drawOne: []
@@ -136,9 +145,11 @@ const {
   selectTargetMode,
   selectMode,
   setSelectMode,
+  setCardState,
   moveSelectedCard,
   moveCard,
   workSpace,
+  openWorkSpace,
   closeWorkSpace,
 } = useZone(props, emit)
 
@@ -159,12 +170,19 @@ function clickCard(card: Card) {
   setSelectMode({
     player: props.player,
     card,
-    zone: zone,
+    zone: props.zone,
+    selectingTarget: true,
   });
 }
 function clickPlaceholderCard() {
-  if (selectMode.value && selectMode.value.zone !== zone) {
-    moveSelectedCard(zone, false)
+  if (selectMode.value && selectMode.value.zone !== props.zone) {
+    moveSelectedCard(props.zone, false)
+  } else if (hideTefuda.value) {
+    openWorkSpace({
+      zone: props.zone,
+      cards: props.cards,
+      player: props.player,
+    })
   } else {
     emit('drawOne');
   }
@@ -178,12 +196,6 @@ function clickPlaceholderCard() {
 $card-width: 70px;
 
 .tefuda-zone-wrapper {
-  @media screen and (max-device-width: 800px) {
-    position: fixed;
-    bottom: 0px;
-    width: 100%;
-    overflow-y: scroll;
-  }
   .openZoneButton {
     transform: rotate(45deg);
     margin-left: 10px;
@@ -197,10 +209,27 @@ $card-width: 70px;
     }
   }
   &.upper {
-    // マナゾーンがはみ出た時、手札が上になるようにする。
-    z-index: 1;
-    position: relative;
+    background: #fff;
     margin-left: 100px;
+    @media screen and (max-width: 800px) {
+      margin-top: 0px;
+      margin-left: 0px;
+      overflow-y: scroll;
+    }
+    .tefuda-zone {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row-reverse;
+      > * {
+        margin-right: 5px;
+        margin-top: 5px;
+      }
+    }
+    .card-placeholder-wrapper {
+      .card_bottomButton > * {
+        transform: rotate(180deg);
+      }
+    }
     .card {
       transform: rotate(180deg);
     }
@@ -208,8 +237,12 @@ $card-width: 70px;
   &.lower {
     margin-top: 20px;
     margin-left: 100px;
-    @media screen and (max-device-width: 800px) {
+    @media screen and (max-width: 800px) {
       margin-left: 10px;
+      position: fixed;
+      bottom: 0px;
+      width: 100%;
+      overflow-y: scroll;
     }
     .tefuda-zone {
       display: flex;
@@ -224,15 +257,13 @@ $card-width: 70px;
     height: 100%;
     display: flex;
     max-width: 410px;
-    &.upper {
-      overflow-x: auto;
-    }
+    padding-bottom: 10px;
     .card_wrapper {
       position: relative;
     }
     .card {
+      width: 100%;
       position: relative;
-      margin-right: 5px;
       img {
         box-sizing: border-box;
       }
@@ -242,21 +273,21 @@ $card-width: 70px;
           border-radius: 5px;
         }
       }
-      &_bottomButton {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        > * + * {
-          margin-top: 15px;
-        }
-        > * {
-          width: fit-content;
-        }
+    }
+    .card_bottomButton {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      > * + * {
+        margin-top: 15px;
+      }
+      > * {
+        width: fit-content;
       }
     }
   }

@@ -1,6 +1,7 @@
 
 export interface Card {
     id: number
+    mainCardId: number
     /** location in zone */
     index?: number
     tapped: boolean

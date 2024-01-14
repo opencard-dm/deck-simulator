@@ -5,7 +5,7 @@
       :key="index"
       class="shield"
       :class="{
-        'is-selectMode': selectTargetMode(),
+        'is-selectMode': canPileUp(),
         'is-selected': cardIsSelected(card),
       }"
       @click.stop="clickShield(card)"
@@ -21,8 +21,14 @@
         <div class="shield-card card">
           <span class="shield-id">{{ card.shieldId }}</span>
           <!-- 裏向きのカードの場合表示されない。 -->
-          <img v-if="!card.faceDown" :src="card.imageUrl" />
-          <img v-else :src="card.backImageUrl" />
+          <img v-if="card.faceDown" :src="card.backImageUrl" />
+          <TextCard
+            v-else
+            :card="card"
+            :width="50"
+            :selected="cardIsSelected(card)"
+            :canBeTarget="selectTargetMode()"
+          ></TextCard>
           <div
             v-if="card.groupId"
             class="shield-num"
@@ -56,6 +62,7 @@ import type { groupableZone, player, side } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
+import TextCard from "../elements/TextCard.vue";
 
 const props = withDefaults(defineProps<{
   player: player
@@ -83,6 +90,10 @@ const {
   getGroup,
 } = useCardGroups(props)
 
+function canPileUp() {
+  return selectTargetMode() && !selectMode.value?.card.groupId
+}
+
 function clickShield(card: Card) {
   if (cardIsSelected(card)) {
     // 選択中のカードと同じカードがクリックされた場合、
@@ -90,7 +101,7 @@ function clickShield(card: Card) {
     setSelectMode(null);
     return;
   }
-  if (selectTargetMode()) {
+  if (canPileUp()) {
     if (selectMode.value?.player === props.player) {
       // カードを重ねる。
       const fromCard = selectMode.value?.card;

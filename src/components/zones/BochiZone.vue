@@ -1,17 +1,19 @@
 <template>
-  <div class="bochi" @click.stop="clickBochi()">
+  <div class="bochi" :class="side" @click.stop="clickBochi()">
     <div
       v-if="selectMode && selectMode.player === player"
       class="bochi_text"
     >
       墓地へ
     </div>
-    <img
+    <TextCard
       v-else-if="lastCard()"
-      :src="lastCard()?.imageUrl"
+      :card="(lastCard() as Card)"
+      :width="50"
+      :selected="false"
       @mouseenter="setHoveredCard(lastCard())"
       @mouseleave="setHoveredCard(null)"
-    />
+    ></TextCard>
   </div>
 </template>
 
@@ -19,6 +21,7 @@
 import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
+import TextCard from "../elements/TextCard.vue";
 
 const props = withDefaults(defineProps<{
   player: player
@@ -80,7 +83,7 @@ $card-width: 50px;
   .bochi_text {
     text-align: center;
   }
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
       width: 50px;
       img {
         border-top: 1px solid purple;
@@ -88,6 +91,11 @@ $card-width: 50px;
         border-left: 2px solid purple;
         border-right: 2px solid purple;
       }
+  }
+  &.upper {
+    img {
+      transform: rotate(180deg);
+    }
   }
 }
 </style>

@@ -43,7 +43,6 @@ const {
 
 function clickShieldButton() {
   if (hasSelectedCard() && selectMode.value) {
-    selectMode.value.card.faceDown = true;
     moveSelectedCard(props.zone);
     return;
   }

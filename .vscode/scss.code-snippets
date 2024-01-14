@@ -2,7 +2,7 @@
 	"sm": {
 		"prefix": "sm",
 		"body": [
-			"@media screen and (max-device-width: 800px) {",
+			"@media screen and (max-width: 800px) {",
 			"    $1",
 			"}"
 		],

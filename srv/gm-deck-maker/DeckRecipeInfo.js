@@ -1,18 +1,12 @@
-import firebase from 'firebase/app/dist/index.cjs.js';
-import 'firebase/firestore/dist/index.cjs.js';
 import { getRegulationName, getImageUrl } from './DeckMakerUtil.js';
 
 // Firestoreからデッキリストを取得するクラス
 // {{{ DeckRecipeInfo = function(categoryId, deckId, noImageUrl) {
 // コンストラクタを作成
-export function DeckRecipeInfo(categoryId, deckId, noImageUrl, firebaseConfig) {
+export function DeckRecipeInfo(categoryId, deckId, noImageUrl, db) {
   this.categoryId = categoryId
   this.deckId = deckId
-  if (firebase.apps.length === 0) {
-    // Firestoreの初期化
-    firebase.initializeApp(firebaseConfig)
-  }
-  this.db = firebase.firestore()
+  this.db = db
   this.publicDeckData = null
   this.deckCardData = null
   this.noImageUrl = noImageUrl
@@ -20,8 +14,6 @@ export function DeckRecipeInfo(categoryId, deckId, noImageUrl, firebaseConfig) {
   // this.db.settings({
   //   timestampsInSnapshots: true
   // })
-  const { increment } = firebase.firestore.FieldValue
-  this.increment = increment
   // const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp()
 }
 // }}}
@@ -304,12 +296,6 @@ DeckRecipeInfo.prototype.loadComplete = async function(embedFlag) {
     document.getElementById(`close-modal-${this.deckId}`).click()
   })
 
-  // 閲覧数を「+1」する（記事ではカウントしない）
-  if (!embedFlag) {
-    const publicDeckIncrementResult = await this.getGachiMatomeBaseRef()
-      .doc(this.deckId)
-      .set({ views: this.increment(1) }, { merge: true })
-  }
   // 最後に関数化する
   // Cookieを取得する
   const cookies = this.getCookies()
@@ -389,15 +375,6 @@ DeckRecipeInfo.prototype.getDmPubdeckFavoFlag = function (cookies) {
     }
   })
   return isDmPubdeckFavoFlag
-}
-// }}}
-// {{{ DeckRecipeInfo.prototype.updatePublicDeckFavoCount = async function (count) {
-// いいね数の更新
-DeckRecipeInfo.prototype.updatePublicDeckFavoCount = async function (count) {
-  await this.getGachiMatomeBaseRef()
-    .doc(this.deckId)
-    // .setでfavoを-1する
-    .set({ favo: this.increment(count) }, { merge: true })
 }
 // }}}
 // {{{ DeckRecipeInfo.prototype.getPublicDeckSnap = function () {

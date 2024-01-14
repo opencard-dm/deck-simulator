@@ -10,6 +10,7 @@
         @click.stop="sidebarOpen = !sidebarOpen"
       ></o-icon>
       <o-icon
+        v-if="single"
         pack="fas"
         icon="undo"
         size="small"
@@ -21,6 +22,7 @@
         @click.stop="undo()"
       ></o-icon>
       <o-icon
+        v-if="single"
         pack="fas"
         icon="redo"
         size="small"
@@ -81,7 +83,7 @@
       contentClass="sidebarModal__content"
     >
     </o-modal>
-    <o-modal v-model:active="resetGameModal" rootClass="resetGameModal">
+    <o-modal v-model:active="resetGameModal" :width="'fit-content'">
       <o-button variant="grey-dark" @click="resetGame()"
         >ゲームをリセットする</o-button
       >
@@ -249,11 +251,6 @@ export default {
     line-height: 1.25rem;
     font-size: 1.1rem;
     padding: 0.5rem 0 0.5rem 1.5rem;
-  }
-}
-.resetGameModal {
-  :deep(.o-modal__content) {
-    width: fit-content;
   }
 }
 </style>

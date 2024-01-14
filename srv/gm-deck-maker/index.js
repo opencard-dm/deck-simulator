@@ -1,20 +1,23 @@
-import firebase from "firebase/app/dist/index.cjs.js";
-// import firebase from 'firebase/app';
 import { DeckRecipeInfo } from "./DeckRecipeInfo.js";
 import { deckList } from '../../src/helpers/data.js'
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 export async function getDeckData(deckId) {
-  // 開発環境では通信の節約
-  if (process.env.NODE_ENV === 'development') {
-    for (const deck of deckList) {
-      if (deck.deck_id === deckId) {
-        console.log('deck is found in local')
-        return deck
-      }
+  // サンプルデッキはローカルのファイルから取得する
+  for (const deck of deckList) {
+    if (deck.deck_id === deckId) {
+      console.log('deck is found in local')
+      return deck
     }
   }
+
+  const APP_NAME = 'gm'
+  const firebaseConfig = JSON.parse(atob(process.env.DM_KEY));
+  const app = firebase.initializeApp(firebaseConfig, APP_NAME)
+  const db = firebase.firestore(app)
+
   // https://stackoverflow.com/questions/37482366/is-it-safe-to-expose-firebase-apikey-to-the-public
-  const firebaseConfig = JSON.parse(Buffer.from(process.env.DM_KEY, 'base64'));
   const defalutCardUrl =
     "https://storage.googleapis.com/ka-nabell-card-images/img/s/card/card100244663_1.jpg";
   // 2: 'dm'
@@ -22,12 +25,23 @@ export async function getDeckData(deckId) {
     2,
     deckId,
     defalutCardUrl,
-    firebaseConfig
+    db
   );
 
   await deckRecipeInfo.updateDeckDetail();
-  firebase.app().delete(); // これを書かない場合、実行の終了に時間がかかった
-  return deckRecipeInfo.deckCardData;
+  // FIXME: 4000回ほど、ここで'gm'というアプリがないというエラーが起こっている
+  try {
+    if (firebase.apps.length > 0) {
+      firebase.app(APP_NAME).delete(); // これを書かない場合、実行の終了に時間がかかった
+    }
+  } catch (error) {
+    console.error(error)
+  }
+  const data = deckRecipeInfo.deckCardData
+  delete data.main
+  delete data.gr
+  delete data.chojigen
+  return data;
 }
 
 /**

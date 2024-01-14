@@ -31,7 +31,7 @@ function prepareApp(app, http) {
     next();
   });
   RoomData.init()
-  attachSocketIo(http)
+  // attachSocketIo(http)
   createApp(app)
 
   // optional support for socket.io

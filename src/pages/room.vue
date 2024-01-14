@@ -1,47 +1,23 @@
 <template>
-  <DuelRoom
-    :upper-player="upperPlayer"
-    :lower-player="lowerPlayer"
-    :room="room"
-    :loading="loading"
-  ></DuelRoom>
+  <Suspense>
+    <DuelRoomSuspense :single="false" :room-id="roomId"></DuelRoomSuspense>
+  </Suspense>
 </template>
 
-<script>
-import axios from 'axios';
-import DuelRoom from '../components/DuelRoom.vue';
-import { SocketUtil } from '../helpers/socket'
+<script setup lang="ts">
+import { RoomConfig } from '@/helpers/room';
+import { onBeforeRouteLeave, useRoute } from 'vue-router';
+import DuelRoomSuspense from '../components/DuelRoomSuspense.vue'
+import { SocketUtil } from '@/helpers/socket';
 
-export default {
-  components: { DuelRoom },
-  beforeRouteLeave (to, from, next) {
-    SocketUtil.socket.emit('leave-room', this.roomId)
-    console.log("room" + this.roomId + "から退室しました")
-    next()
-  },
-  data() {
-    return {
-      loading: true,
-      room: {},
-      upperPlayer: this.$route.query.player === "a" ? "b" : "a",
-      lowerPlayer: this.$route.query.player,
-    };
-  },
-  computed: {
-    roomId() {
-      return this.$route.query.roomId
-    }
-  },
-  async created() {
-    const { data: room } = await axios.get(`/api/rooms/${this.roomId}`)
-    if (room.cookie) {
-      document.cookie = room.cookie
-    }
-    this.room = room;
-    SocketUtil.connect()
-    SocketUtil.socket.emit("room", this.roomId);
-    console.log("room" + this.roomId + "に入室しました")
-    this.loading = false;
-  },
-}
+const route = useRoute()
+const roomId = route.query.roomId as string
+
+onBeforeRouteLeave((to, from, next) => {
+  console.log("room-" + roomId + "から退室しました")
+  next()
+})
+
+RoomConfig.useFirebase = true
+SocketUtil.socket = null
 </script>

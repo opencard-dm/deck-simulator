@@ -32,6 +32,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    tapped: {
+      type: Boolean,
+      default: false,
+    },
     reverse: {
       type: Boolean,
       default: false,
@@ -50,11 +54,23 @@ export default {
   computed: {
     markStyle() {
       if (this.reverse) {
+        if (this.tapped) {
+          return {
+            top: '30%',
+            left: "2px",
+          };
+        }
         return {
           bottom: "2px",
           left: "2px",
         };
       } else {
+        if (this.tapped) {
+          return {
+            top: '30%',
+            left: "2px",
+          };
+        }
         return {
           top: "2px",
           right: "2px",

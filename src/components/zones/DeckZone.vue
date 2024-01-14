@@ -27,29 +27,46 @@
             left: `${deckViews.length * -2}px`,
             cursor: 'pointer',
           }"
-          @click.stop="setSelectMode({
-            zone: zone,
-            card: cards[0],
-            player,
-            selectingTarget: true,
-          })"
+          @click.stop="clickDeck()"
         >
           <OnLongPress
-            v-if="cards[0].faceDown"
             @trigger="openDeck()"
             @contextmenu.prevent
             :prevent="true"
           >
             <img
+              v-if="cards[0].faceDown"
               :src="cards[0].backImageUrl"
               alt=""
             />
+            <TextCard
+              v-else
+              :card="cards[0]"
+              :width="cardWidthNum"
+              :selected="cardIsSelected(cards[0])"
+            ></TextCard>
           </OnLongPress>
-          <CardPopup v-else :url="cards[0].imageUrl">
-            <img :src="cards[0].imageUrl" alt="" />
-          </CardPopup>
         </div>
-        <CardPopup v-if="hasSelectedCard()" :url="cards[0].imageUrl">
+        <div
+          class="deck_topImg"
+          v-else
+          :style="{
+            top: `${deckViews.length * -2}px`,
+            left: `${deckViews.length * -2}px`,
+            cursor: 'pointer',
+            opacity: '0.2',
+          }"
+        >
+          <img
+            src="/images/card-back.jpg"
+            alt=""
+          />
+        </div>
+        <CardPopup
+          v-if="hasSelectedCard()" 
+          :url="cards.length > 0 ? cards[0].imageUrl : ''"
+          :card="cards.length > 0 ? cards[0] : null"
+        >
           <div class="deck_buttons"
             :style="{
               top: `${deckViews.length * -2}px`,
@@ -82,6 +99,15 @@
               @click.stop="moveSelectedCard(zone, false)"
               >下へ</o-button
             >
+            <o-button
+              v-if="selectMode?.zone === zone && !isPhone()"
+              style="z-index: 1;"
+              variant="grey-dark"
+              class="deck_buttons_out_buttom"
+              size="small"
+              @click.stop="openDeck()"
+              >山札を見る</o-button
+            >
           </div>
         </CardPopup>
       </div>
@@ -97,6 +123,8 @@ import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { defineExpose } from 'vue';
 import type { player, side, zone } from "@/entities";
+import { isPhone } from '@/helpers/Util';
+import TextCard from "../elements/TextCard.vue";
 
 const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`
@@ -113,6 +141,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<zoneEmit>()
 
 const {
+  workSpace,
   openWorkSpace,
   cardIsSelected,
   selectMode,
@@ -155,15 +184,22 @@ const deckViews = computed(() => {
   return deckViews;
 })
 function openDeck() {
-  // デッキを開くときはデフォルトで全て裏にする。
-  props.cards.forEach((c) => {
-    c.faceDown = true;
-  });
   openWorkSpace({
     zone: props.zone,
     cards: props.cards,
     player: props.player,
   });
+}
+function clickDeck() {
+  if (workSpace.value.active) {
+    return
+  }
+  setSelectMode({
+    zone: props.zone,
+    card: props.cards[0],
+    player: props.player,
+    selectingTarget: true,
+  })
 }
 </script>
 
@@ -224,6 +260,10 @@ $card-width: 50px;
     .deck_buttons_buttom {
       position: absolute;
       bottom: 0;
+    }
+    .deck_buttons_out_buttom {
+      position: absolute;
+      bottom: -70%;
     }
   }
 }

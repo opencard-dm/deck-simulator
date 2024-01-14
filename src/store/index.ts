@@ -3,6 +3,32 @@ import { Card } from '@/entities/Card';
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import { mutations } from './mutations'
+import { CardDetail } from '@/entities/Deck';
+
+export interface state {
+  displayImageUrl: string
+  selectMode: {
+    player: player
+    zone: zone
+    card: Card
+    selectingTarget: boolean
+  } | null
+  selectedCard: Card | null
+  hoveredCard: Card | null
+  workSpace: {
+    active: boolean
+    cards: Card[]
+    zone: zone | ''
+    player: player | ''
+    minimal: boolean
+    single: boolean
+  }
+  settings: {
+    dropdownTriggers: string[]
+  }
+  cardDetails: {[key: string]: CardDetail}
+}
+
 // https://next.vuex.vuejs.org/ja/guide/#%E3%82%B7%E3%83%B3%E3%83%97%E3%83%AB%E3%81%AA%E3%82%B9%E3%83%88%E3%82%A2
 export const store = createStore({
   plugins: [createPersistedState({
@@ -47,28 +73,7 @@ export const store = createStore({
     }
   },
   state() {
-    const initState: {
-      displayImageUrl: string
-      selectMode: {
-        player: player
-        zone: zone
-        card: Card
-        selectingTarget: boolean
-      } | null
-      selectedCard: Card | null
-      hoveredCard: Card | null
-      workSpace: {
-        active: boolean
-        cards: Card[]
-        zone: zone | ''
-        player: player | ''
-        minimal: boolean
-        single: boolean
-      },
-      settings: {
-        dropdownTriggers: string[]
-      }
-    } = {
+    const initState: state = {
       displayImageUrl: '',
       selectMode: null, // カードを重ねるときに使用。
       selectedCard: null, // セレクトモードではないが、カードを選択するとき使用する。
@@ -84,6 +89,7 @@ export const store = createStore({
       settings: {
         dropdownTriggers: ['click'],
       },
+      cardDetails: {},
     }
     return initState
   },

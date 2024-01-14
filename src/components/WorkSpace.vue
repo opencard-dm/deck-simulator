@@ -44,6 +44,15 @@
               @click.stop="shuffleCards('yamafudaCards', workSpace.cards)"
               >シャッフル</o-button
             >
+            <o-button
+              v-if="
+                ['yamafudaCards', 'shieldCards'].includes(workSpace.zone) &&
+                isOwner
+              "
+              variant="grey-dark"
+              @click.stop="openAllCards"
+              >全て見る</o-button
+            >
             <template v-if="
                 ['chojigenCards'].includes(workSpace.zone)
               ">
@@ -82,12 +91,16 @@
                     <div>
                       <!-- ワークスペース内だけでみられる状態がある -->
                       <img
+                        v-if="card.faceDown === true && !card.showInWorkSpace"
                         :src="card.backImageUrl"
                         :width="cardWidth"
-                        v-if="card.faceDown === true && !card.showInWorkSpace"
                       />
-                      <CardPopup v-else :url="card.imageUrl">
-                        <img :src="card.imageUrl" :width="cardWidth" />
+                      <CardPopup v-else :url="card.imageUrl" :card="card">
+                        <TextCard
+                          :card="card"
+                          :width="cardWidth"
+                          :selected="false"
+                        ></TextCard>
                       </CardPopup>
                     </div>
                   </div>
@@ -124,7 +137,7 @@
                   >シールドへ</span
                 >
                 <span
-                  v-if="isOwner"
+                  v-if="!card.showInWorkSpace"
                   class="drop-item-2"
                   @click="openCard(card)"
                   >裏返す</span
@@ -156,6 +169,7 @@
                 <!-- 見られる状態になったカードを場に出すボタン -->
                 <o-button
                   v-if="card.showInWorkSpace"
+                  variant="danger"
                   @click.stop="moveCard(card, 'battleCards')"
                   :size="isPhone() ? 'small' : ''"
                   >出す</o-button
@@ -192,6 +206,7 @@
                 <template v-else>
                   <o-button @click.stop="moveCard(card, 'battleCards')"
                     :size="isPhone() ? 'small' : ''"
+                    variant="danger"
                     >出す</o-button
                   >
                   <o-button @click.stop="moveCard(card, 'tefudaCards')"
@@ -216,14 +231,6 @@
         <!-- 全て〇〇する系 -->
         <template v-if="!workSpace.single">
           <o-button
-            v-if="
-              ['yamafudaCards', 'shieldCards'].includes(workSpace.zone) &&
-              isOwner
-            "
-            @click.stop="openAllCards"
-            >全て見る</o-button
-          >
-          <o-button
             v-if="['manaCards', 'battleCards'].includes(workSpace.zone)"
             @click.stop="tapAllCards"
             >全てタップする</o-button
@@ -234,14 +241,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CardPopup from './elements/CardPopup.vue'
-const cardWidth = isPhone() ? 70 : 120
+import TextCard from "./elements/TextCard.vue";
+const cardWidth = isPhone() ? 70 : 100
 const cardHeight = cardWidth * 908 / 650
-
 </script>
 
-<script>
+<script lang="ts">
 import mixin from "../helpers/mixin";
 import { MarkTool } from "./index";
 import { isPhone } from '@/helpers/Util';
@@ -356,10 +363,6 @@ export default {
       if (card.showInWorkSpace) card.faceDown = false;
       // 見られる状態を解除
       card.showInWorkSpace = false;
-      // バトルゾーン以外からシールドへ移動するときは裏向きにする。
-      if (to === "shieldCards" && from !== "battleCards") {
-        card.faceDown = true;
-      }
       this.$emit(
         "move-cards",
         from,
@@ -439,7 +442,7 @@ export default {
   background-color: #fff;
   padding: 10px;
   border-radius: 10px;
-  @media screen and (max-device-width: 800px) {
+  @media screen and (max-width: 800px) {
     width: 96%;
     margin: 0 2%;
   }
@@ -457,7 +460,8 @@ export default {
     // height: 60vh;
     max-height: 60vh;
     overflow-y: auto;
-    @media screen and (max-device-width: 800px) {
+    overflow-x: hidden;
+    @media screen and (max-width: 800px) {
       margin: 0;
       max-width: 100%;
       max-height: 80vh;
@@ -514,19 +518,24 @@ export default {
     font-size: 12px;
     font-weight: bold;
     color: beige;
+    z-index: 1;
   }
   .o-drop__menu {
     top: 20px;
     padding: 0;
+    width: 120px;
+    min-width: unset;
   }
   .o-drop__item {
     display: flex;
     justify-content: space-between;
   }
   .drop-item {
+    padding: 5px 0px;
+    width: 120px;
   }
   .drop-item-2 {
-    font-size: 14px;
+    font-size: 12px;
     display: inline-block;
     width: 100%;
     height: 100%;

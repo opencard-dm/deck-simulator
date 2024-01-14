@@ -41,6 +41,7 @@ import {
   faQuestion,
   faUndo,
   faRedo,
+  faArrowUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faTimesCircle as farTimesCircle,
@@ -68,4 +69,5 @@ library.add(
   farQuestionCircle,
   faUndo,
   faRedo,
+  faArrowUpRightFromSquare,
 )

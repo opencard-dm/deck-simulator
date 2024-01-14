@@ -1,7 +1,7 @@
 <template>
   <div
     class="chojigenZone"
-    :class="[{ chojigenZone_hidden: !hasChojigen }, side]"
+    :class="[side]"
     @click.stop="clickChojigenZone"
   >
     <div
