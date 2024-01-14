@@ -25,6 +25,10 @@ import { getCloudRunCookie } from '@/helpers/Util';
 
 async function fetchDeck(deckId: string) {
   let deckApi
+  const localDeck = Deck.getFromId(deckId)
+  if (localDeck) {
+    return await Deck.prepareDeckForGame(localDeck, true, true);
+  }
   try {
     deckApi = await axios.get('/api/scrape', {
       params: {

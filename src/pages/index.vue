@@ -2,9 +2,9 @@
   <div class="content_wrapper">
     <div id="app" style="padding: 20px; background-color: white">
       <div style="text-align: end;">
-        <RouterLink class="link" to="/battle">
+        <!-- <RouterLink class="link" to="/battle">
           対戦ツールはこちら(試作品)
-        </RouterLink>
+        </RouterLink> -->
       </div>
       <div>
         このサイトではDECK MAKERで作成したデッキを動かすことができます。
@@ -16,12 +16,12 @@
           <th><div>デッキレシピ</div></th>
           <th><div></div></th>
         </thead>
-        <tr v-for="deck in defaultDecks" :key="deck.id">
+        <tr v-for="deck in defaultDecks" :key="deck.dmDeckId">
           <td>
             <div style="text-align: left;">{{ deck.name }}</div>
           </td>
           <td style="text-align: center;">
-            <a :href="deckRecipeLink(deck.id)" target="deckRecipe">
+            <a :href="deckRecipeLink(deck.dmDeckId)" target="deckRecipe">
               <o-icon pack="fas" icon="arrow-up-right-from-square"></o-icon>
             </a>
           </td>
@@ -29,7 +29,7 @@
             <router-link
               :to="{
                 path: '/single',
-                query: { deck_id: deck.id },
+                query: { deck_id: deck.dmDeckId },
               }"
             >
               <o-button variant="info" size="small">動かしてみる</o-button>

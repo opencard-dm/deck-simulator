@@ -4,13 +4,11 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
 export async function getDeckData(deckId) {
-  // 開発環境では通信の節約
-  if (process.env.NODE_ENV === 'development') {
-    for (const deck of deckList) {
-      if (deck.deck_id === deckId) {
-        console.log('deck is found in local')
-        return deck
-      }
+  // サンプルデッキはローカルのファイルから取得する
+  for (const deck of deckList) {
+    if (deck.deck_id === deckId) {
+      console.log('deck is found in local')
+      return deck
     }
   }
 
@@ -39,7 +37,11 @@ export async function getDeckData(deckId) {
   } catch (error) {
     console.error(error)
   }
-  return deckRecipeInfo.deckCardData;
+  const data = deckRecipeInfo.deckCardData
+  delete data.main
+  delete data.gr
+  delete data.chojigen
+  return data;
 }
 
 /**

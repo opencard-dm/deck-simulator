@@ -6,7 +6,7 @@
     name = name.replaceAll('【サンプルリスト】', '')
     decks.push({
       name,
-      id: deckId,
+      dmDeckId: deckId,
     })
   })
   console.log(JSON.stringify(decks, null, 2))

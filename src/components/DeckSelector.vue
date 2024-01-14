@@ -155,14 +155,14 @@ const inviteLink = computed(() => {
   );
 })
 onMounted(() => {
-  axios
-      .get('/api/decks')
-      .then((res) => {
-        deckList.push(...res.data as never[]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  // axios
+  //     .get('/api/decks')
+  //     .then((res) => {
+  //       deckList.push(...res.data as never[]);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
 })
 
 function onClickSelectButton() {

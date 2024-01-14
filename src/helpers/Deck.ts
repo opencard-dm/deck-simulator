@@ -4,8 +4,15 @@ const START_ID_B = 101;
 import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
 import { Deck as DeckType, GmDeckData } from '@/entities/Deck';
+import decks from '../decks.json' assert { type: "json" }
 
 export class Deck {
+
+  static getFromId(id: string) {
+    const localDeck = decks.find(d => d.dmDeckId === id) as DeckType|undefined
+    return localDeck
+  }
+
   /**
    *
    * @param {Array} cards
