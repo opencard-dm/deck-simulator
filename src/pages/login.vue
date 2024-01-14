@@ -35,6 +35,7 @@ function login() {
     // IdP data available using getAdditionalUserInfo(result)
     // ...
   }).catch((error) => {
+    alert('指定したアカウントではログインできません')
     // Handle Errors here.
     const errorCode = error.code;
     const errorMessage = error.message;
