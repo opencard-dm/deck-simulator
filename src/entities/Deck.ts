@@ -10,6 +10,7 @@ export interface CardDetail {
         name: string
         sort: number
     }[]
+    // 文明の順番に注意
     is_light: boolean
     is_water: boolean
     is_dark: boolean

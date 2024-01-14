@@ -22,11 +22,13 @@ import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
 import { Deck } from '@/helpers/Deck';
 import { getCloudRunCookie } from '@/helpers/Util';
+import { useStore } from 'vuex';
 
 async function fetchDeck(deckId: string) {
   let deckApi
   const localDeck = Deck.getFromId(deckId)
   if (localDeck) {
+    useStore().commit('addCardDetails', localDeck.cardDetails)
     return await Deck.prepareDeckForGame(localDeck, true, true);
   }
   try {
@@ -74,6 +76,7 @@ export default defineComponent({
         const parsed = JSON.parse(sessionRoom)
         players.a = parsed.players.a
         players.b = parsed.players.b
+        useStore().commit('addCardDetails', parsed.cardDetails)
         gameLogger.setHistories(parsed.histories)
         console.debug('get room data from session storage. key=' + `room-${roomId}`)
         return {
