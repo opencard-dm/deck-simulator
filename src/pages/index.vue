@@ -37,6 +37,47 @@
           </td>
         </tr>
       </table>
+      <div>
+        <OField
+          class="deckForm_searchField"
+          style="margin-top: 10px; max"
+          :message="sheetApi.loading ? 
+            'Google Sheetの情報を取得中です' : ''"
+        >
+          <OInput
+            v-model="sheetApi.url"
+            placeholder="Google SheetのデプロイしたURLを貼り付ける"
+            type="text"
+            icon="search"
+            :expanded="true"
+            :disabled="sheetApi.loading"
+            @keypress.prevent="DeckForm.onKeyPress()"
+            @input="getDecks()"
+          >
+          </OInput>
+        </OField>
+      </div>
+      <table class="roomTable" style="margin-top: 20px">
+        <thead>
+          <th><div>デッキ名</div></th>
+          <th><div></div></th>
+        </thead>
+        <tr v-for="deck in userDecks" :key="deck.name">
+          <td>
+            <div style="text-align: left;">{{ deck.name }}</div>
+          </td>
+          <td style="text-align: center;">
+            <router-link
+              :to="{
+                path: '/single',
+                query: { deck_id: deck.name },
+              }"
+            >
+              <o-button variant="info" size="small">動かす</o-button>
+            </router-link>
+          </td>
+        </tr>
+      </table>
       <template v-if="Features.using_my_deck">
         <div style="font-weight: bolder; margin-top: 3rem;">ガチまとめに公開されているデッキを使いたい場合</div>
         <div>
@@ -116,12 +157,48 @@ import { makeRandomString } from "@/helpers/makeRandomString";
 import axios from "axios";
 import { Features } from "@/features";
 
-import { ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
 function deckRecipeLink(deckId: string) {
   return `https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=${deckId}`
+}
+
+const store = useStore()
+const userDecks = computed(() => {
+  return store.state.decks.data
+})
+
+function useSheetApi() {
+  const store = useStore()
+  const url = ref('')
+  const loading = ref(false)
+  const decks = reactive([])
+  async function getDecks() {
+    if (!url.value) return
+    if (loading.value) return
+    loading.value = true
+    try {
+      const response = await axios.get(url.value)
+      if (!response.data[0].name) throw Error()
+      console.debug(response)
+      store.commit("decks/setData", response.data)
+      decks.push(...response.data as never[])
+    } catch (error) {
+      url.value = ''
+      console.error(error)
+    }
+    loading.value = false
+  }
+  return {
+    sheetApi: reactive({
+      url,
+      loading,
+      decks,
+    }),
+    getDecks,
+  }
 }
 
 function useDeckForm() {
@@ -165,9 +242,14 @@ function useDeckForm() {
   }
 }
 
+const {
+  sheetApi,
+  getDecks,
+} = useSheetApi()
 const DeckForm = useDeckForm()
 
 import defaultDecks from '../decks.json'
+import { useStore } from "vuex";
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);

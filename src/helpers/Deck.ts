@@ -5,12 +5,17 @@ import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
 import { Deck as DeckType, GmDeckData } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
+import { useStore } from 'vuex';
 
 export class Deck {
 
   static getFromId(id: string) {
     const localDeck = decks.find(d => d.dmDeckId === id) as DeckType|undefined
-    return localDeck
+    if (localDeck) return localDeck
+    const store = useStore()
+    const userDeck = store.state.decks.data.find(d => d.name === id) as DeckType|undefined
+    if (userDeck) return userDeck
+    return null
   }
 
   /**
@@ -48,7 +53,7 @@ export class Deck {
           ...c,
           imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
           backImageUrl: c.backImageUrl || '/images/card-back.jpg',
-          mainCardId: c.mainCardId,
+          mainCardId: c.mainCardId || '',
         });
       }
     })
