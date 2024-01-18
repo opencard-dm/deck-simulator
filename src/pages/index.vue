@@ -37,26 +37,7 @@
           </td>
         </tr>
       </table>
-      <div>
-        <OField
-          class="deckForm_searchField"
-          style="margin-top: 10px; max"
-          :message="sheetApi.loading ? 
-            'Google Sheetの情報を取得中です' : ''"
-        >
-          <OInput
-            v-model="sheetApi.url"
-            placeholder="Google SheetのデプロイしたURLを貼り付ける"
-            type="text"
-            icon="search"
-            :expanded="true"
-            :disabled="sheetApi.loading"
-            @keypress.prevent="DeckForm.onKeyPress()"
-            @input="getDecks()"
-          >
-          </OInput>
-        </OField>
-      </div>
+      <FolderDrop></FolderDrop>
       <table class="roomTable" style="margin-top: 20px">
         <thead>
           <th><div>デッキ名</div></th>
@@ -154,6 +135,7 @@
 <script setup lang="ts">
 import { getCloudRunCookie } from "@/helpers/Util";
 import { makeRandomString } from "@/helpers/makeRandomString";
+import FolderDrop from "@/components/FolderDrop.vue";
 import axios from "axios";
 import { Features } from "@/features";
 
@@ -169,37 +151,6 @@ const store = useStore()
 const userDecks = computed(() => {
   return store.state.decks.data
 })
-
-function useSheetApi() {
-  const store = useStore()
-  const url = ref('')
-  const loading = ref(false)
-  const decks = reactive([])
-  async function getDecks() {
-    if (!url.value) return
-    if (loading.value) return
-    loading.value = true
-    try {
-      const response = await axios.get(url.value)
-      if (!response.data[0].name) throw Error()
-      console.debug(response)
-      store.commit("decks/setData", response.data)
-      decks.push(...response.data as never[])
-    } catch (error) {
-      url.value = ''
-      console.error(error)
-    }
-    loading.value = false
-  }
-  return {
-    sheetApi: reactive({
-      url,
-      loading,
-      decks,
-    }),
-    getDecks,
-  }
-}
 
 function useDeckForm() {
   const deckUrl = ref('')
@@ -242,10 +193,6 @@ function useDeckForm() {
   }
 }
 
-const {
-  sheetApi,
-  getDecks,
-} = useSheetApi()
 const DeckForm = useDeckForm()
 
 import defaultDecks from '../decks.json'
