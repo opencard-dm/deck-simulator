@@ -76,7 +76,7 @@ function fromDroppedDataToDecks(dropped: DroppedDeck) {
       cards: deck.cards.map(c => {
         return {
           imageUrl: dropped.images[c.path],
-          time: c.times,
+          times: c.times,
         }
       }),
       chojigenCards: [],
