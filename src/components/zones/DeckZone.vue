@@ -58,7 +58,7 @@
           }"
         >
           <img
-            src="/images/card-back.jpg"
+            src="https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg"
             alt=""
           />
         </div>

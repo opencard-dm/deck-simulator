@@ -52,7 +52,7 @@ export class Deck {
         mainCards.push({
           ...c,
           imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-          backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+          backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
           mainCardId: c.mainCardId || '',
         });
       }
@@ -72,7 +72,7 @@ export class Deck {
           chojigenCards.push({
             ...c,
             imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+            backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
             mainCardId: c.mainCardId,
             isChojigen: true,
           });
@@ -97,7 +97,7 @@ export class Deck {
           deck.chojigenCards.push({
             ...c,
             imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+            backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
             mainCardId: c.mainCardId,
             isGr: true,
           });
