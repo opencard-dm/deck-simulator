@@ -1,7 +1,6 @@
 {
-  "name": "deck-simulator",
+  "name": "dmdeck-simulator",
   "version": "1.8.0",
-  "private": true,
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development ts-node -T srv/index.ts",
@@ -66,6 +65,9 @@
     "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0"
   },
+  "files": [
+    "dist"
+  ],
   "eslintConfig": {
     "root": true,
     "env": {
