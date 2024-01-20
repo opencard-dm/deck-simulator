@@ -28,21 +28,12 @@ async function fetchDeck(deckId: string) {
   let deckApi
   const localDeck = Deck.getFromId(deckId)
   if (localDeck) {
-    useStore().commit('addCardDetails', localDeck.cardDetails)
+    if (localDeck.cardDetails) {
+      useStore().commit('addCardDetails', localDeck.cardDetails)
+    }
     return await Deck.prepareDeckForGame(localDeck, true, true);
   }
-  try {
-    deckApi = await axios.get('/api/scrape', {
-      params: {
-        deckId,
-      },
-    });
-  } catch (error) {
-    console.error('デッキデータの取得に失敗しました', error)
-    return;
-  }
-  const deck = await Deck.prepareDeckForGame(deckApi.data, true);
-  return deck
+  throw Error('デッキの取得に失敗しました')
 }
 
 export default defineComponent({

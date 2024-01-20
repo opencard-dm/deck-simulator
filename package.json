@@ -1,6 +1,6 @@
 {
   "name": "dmdeck-simulator",
-  "version": "1.8.0",
+  "version": "1.8.4",
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development ts-node -T srv/index.ts",
@@ -32,7 +32,8 @@
     "uuid": "^9.0.1",
     "vite-express": "^0.12.0",
     "vite-raw-plugin": "^1.0.2",
-    "vite-tsconfig-paths": "^4.2.2"
+    "vite-tsconfig-paths": "^4.2.2",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",

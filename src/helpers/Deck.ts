@@ -13,8 +13,13 @@ export class Deck {
     const localDeck = decks.find(d => d.dmDeckId === id) as DeckType|undefined
     if (localDeck) return localDeck
     const store = useStore()
-    const userDeck = store.state.decks.data.find(d => d.name === id) as DeckType|undefined
-    if (userDeck) return userDeck
+    if (id.includes('-')) {
+      const [decksSourceIndex, ...deckNameElems] = id.split('-')
+      const deckName = deckNameElems.join('-')
+      const userDeck = store.state.decks.data[decksSourceIndex].decks
+        .find(d => d.name === deckName) as DeckType|undefined
+      if (userDeck) return userDeck
+    }
     return null
   }
 

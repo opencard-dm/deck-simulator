@@ -3136,6 +3136,7 @@ __metadata:
     vue3-markdown-it: "npm:^1.0.10"
     vuex: "npm:^4.1.0"
     vuex-persistedstate: "npm:^4.1.0"
+    xlsx: "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   languageName: unknown
   linkType: soft
 
@@ -7457,6 +7458,15 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: f759ea19e42f6d94727b3d8590693f2d92521a78ec2de5c6064c3356f50d4815d427b7ddb10bf39596cc67d3b18232a1b2dfbc3b6361d4772bdfec69d4c130f4
+  languageName: node
+  linkType: hard
+
+"xlsx@https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz":
+  version: 0.20.1
+  resolution: "xlsx@https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
+  bin:
+    xlsx: ./bin/xlsx.njs
+  checksum: b4687c75736e97d5b6c46ab2f33c704ea242ad3c5c18f9cb6a14032b42660347e5ba10e1a1893e0916f00a579089f3144f0ef5a33863acaf7bf3f387842b92e1
   languageName: node
   linkType: hard
 
