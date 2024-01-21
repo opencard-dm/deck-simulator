@@ -11,14 +11,15 @@ export async function fetchDeck(url: string): Promise<DecksSource> {
             header: 1
         }).filter((row: any, i) => {
             if (i === 0) return false
-            if (!row[0]) return false
+            if (!row[1] || row[1] == 0) return false
+            if (!row[2]) return false
             return true
         })
         const deck: SourceDeck = {
             name: sheetName,
             source: url,
             cards: rows.map(row => ({
-                imageUrl: row[0],
+                imageUrl: row[2],
                 times: row[1],
             })),
             chojigenCards: [],

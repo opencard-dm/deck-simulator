@@ -18,7 +18,8 @@ export class Deck {
       const deckName = deckNameElems.join('-')
       const userDeck = store.state.decks.data[decksSourceIndex].decks
         .find(d => d.name === deckName) as DeckType|undefined
-      if (userDeck) return userDeck
+      // fix: デッキのカードが増殖するバグの応急処置
+      if (userDeck) return JSON.parse(JSON.stringify(userDeck))  
     }
     return null
   }

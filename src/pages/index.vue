@@ -6,17 +6,54 @@
           対戦ツールはこちら(試作品)
         </RouterLink>
       </div>
-      <h1>一人回し支援ツール</h1>
-      <GoogleSheetInput></GoogleSheetInput>
+      <div style="font-size: 12px;">DECK SIMULATORはファンコンテンツ・ポリシーに沿った非公式のファンコンテンツです。ウィザーズ社の認可/許諾は得ていません。題材の一部に、ウィザーズ・オブ・ザ・コースト社の財産を含んでいます。©Wizards of the Coast LLC</div>
+      <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。関係各所からサービス停止の要望があった場合には速やかに対処いたします。</div>
+      <h2 class="h2" style="margin-top: 1rem;">一人回し支援ツール</h2>
+      <div style="margin-top: 1rem;">本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。</div>
+      <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。現行での使用が不安な場合は説明動画ができあがるのをお待ちください。</div>
+      <a
+        class="link"
+        href="https://docs.google.com/spreadsheets/d/1mqN0WQxLc5ksaUTnkZ_j23ODwUViUJIo1oJx-RjwkFA/edit?usp=sharing"
+        target="_blank"
+        rel="noopener"
+      >
+        <span>テンプレートファイル (Google スプレッドシート)</span>
+        <o-icon
+          pack="fas"
+          style="margin-left: 4px;"
+          icon="arrow-up-right-from-square"
+          size="small"
+        ></o-icon>
+      </a>
+      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(PC)</div>
+      <div>1. 上記のリンク先のGoogleスプレッドシートのコピーを空のフォルダ内に作成する</div>
+      <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
+      <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
+      <div>4. <a
+        class="link"
+        href="https://dm.takaratomy.co.jp/card/"
+        target="_blank"
+        rel="noopener"
+      >公式のカード検索</a>を新しいウィンドウで開き、手順2のGoogleドライブのフォルダとの両方が見られる状態にする</div>
+      <div>5. 公式のカード画像をGoogleドライブのフォルダにドラッグアンドドロップして、カード画像を追加する</div>
+      <div>6. スプレッドシートのシートの1行目にある「画像IDを追加」ボタンをクリックする</div>
+      <div>7. 手順4、5を繰り返し、枚数を調整することでデッキを作成する</div>
+      <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
+      <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
+      <GoogleSheetInput style="margin-top: 0.5rem;"/>
       <table class="roomTable" style="margin-top: 20px">
         <thead>
           <th><div>デッキ名</div></th>
+          <th><div>カード枚数</div></th>
           <th><div></div></th>
         </thead>
         <template v-for="(decksSource, sourceIndex) in userDecks">
           <tr v-for="deck in decksSource.decks" :key="decksSource.url + deck.name">
             <td>
               <div style="text-align: left;">{{ deck.name }}</div>
+            </td>
+            <td>
+              <div style="text-align: left;">{{ cardsNumInDeck(deck) }}</div>
             </td>
             <td style="text-align: center;">
               <router-link
@@ -49,6 +86,33 @@ const router = useRouter()
 
 function deckRecipeLink(deckId: string) {
   return `https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=${deckId}`
+}
+
+function cardsNumInDeck(deck: SourceDeck) {
+  let num = 0
+  for (const card of deck.cards) {
+    num += card.times
+  }
+  let chojigenCardsNum = 0
+  for (const card of deck.chojigenCards) {
+    chojigenCardsNum += card.times
+  }
+  let grCardsNum = 0
+  for (const card of deck.grCards) {
+    grCardsNum += card.times
+  }
+  let expression = num.toString()
+  const specialCardsExpressions = []
+  if (chojigenCardsNum > 0) {
+    specialCardsExpressions.push(`超次元:${chojigenCardsNum}`)
+  }
+  if (grCardsNum > 0) {
+    specialCardsExpressions.push(`GR: ${grCardsNum}`)
+  }
+  if (specialCardsExpressions.length > 0) {
+    expression += '(' + specialCardsExpressions.join(', ') + ')'
+  }
+  return expression
 }
 
 const store = useStore()
@@ -101,6 +165,7 @@ const DeckForm = useDeckForm()
 
 import defaultDecks from '../decks.json'
 import { useStore } from "vuex";
+import { SourceDeck } from "@/entities/Deck";
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
@@ -119,6 +184,10 @@ async function createRoom() {
 </script>
 
 <style lang="scss" scoped>
+.h2 {
+  font-size: 18px;
+  font-weight: 500;
+}
 .link {
   color: #0969da;
   font-size: 14px;
