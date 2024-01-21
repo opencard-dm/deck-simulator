@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import index from '../pages/index.vue'
 import room from '../pages/room.vue'
 import single from '../pages/single.vue'
@@ -23,7 +23,7 @@ if (import.meta.env.NODE_ENV === 'development') {
 }
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 })
 
