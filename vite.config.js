@@ -1,10 +1,11 @@
 // vite.config.js
+import 'dotenv/config'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { defineConfig } from 'vite'
 import markdownRawPlugin from 'vite-raw-plugin'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import 'dotenv/config'
+import { VitePluginRadar } from 'vite-plugin-radar'
 
 export default defineConfig(({ mode }) => {
     return {
@@ -14,6 +15,11 @@ export default defineConfig(({ mode }) => {
                 fileRegex: /\.md$/
             }),
             tsconfigPaths(),
+            VitePluginRadar({
+                analytics: {
+                    id: 'G-MC3V0FB8RH',
+                }
+            })
         ],
         resolve: {
             alias: {

@@ -3126,6 +3126,7 @@ __metadata:
     uuid: "npm:^9.0.1"
     vite: "npm:^5.0.10"
     vite-express: "npm:^0.12.0"
+    vite-plugin-radar: "npm:^0.9.2"
     vite-plugin-singlefile: "npm:^1.0.0"
     vite-raw-plugin: "npm:^1.0.2"
     vite-tsconfig-paths: "npm:^4.2.2"
@@ -7051,6 +7052,15 @@ __metadata:
   bin:
     vite-node: vite-node.mjs
   checksum: 7e975f0fa3fc243d96a4056cac36309b726a7317dcb6ca612a788aa2bb3f95a172ef7f5d410054ae7a57f4b6e2bc3613fb898b7e8e9dac121acecca46fe1085c
+  languageName: node
+  linkType: hard
+
+"vite-plugin-radar@npm:^0.9.2":
+  version: 0.9.2
+  resolution: "vite-plugin-radar@npm:0.9.2"
+  peerDependencies:
+    vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+  checksum: 3973fac30c96cf1ba1439ab0836fd9176d7a4101329f430ffcddfec65ecda4b805c69e7025ba0beaf5f90121130ed04d6a7b677b241365830762640ad12cd85c
   languageName: node
   linkType: hard
 
