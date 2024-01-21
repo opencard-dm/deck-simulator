@@ -7,39 +7,10 @@
         </RouterLink>
       </div>
       <div style="font-size: 12px;">DECK SIMULATORはファンコンテンツ・ポリシーに沿った非公式のファンコンテンツです。ウィザーズ社の認可/許諾は得ていません。題材の一部に、ウィザーズ・オブ・ザ・コースト社の財産を含んでいます。©Wizards of the Coast LLC</div>
-      <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。関係各所からサービス停止の要望があった場合には速やかに対処いたします。</div>
+      <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。著作者様からサービス停止の要望があった場合には速やかに対処いたします。</div>
       <h2 class="h2" style="margin-top: 1rem;">一人回し支援ツール</h2>
       <div style="margin-top: 1rem;">本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。</div>
       <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。現行での使用が不安な場合は説明動画ができあがるのをお待ちください。</div>
-      <a
-        class="link"
-        href="https://docs.google.com/spreadsheets/d/1mqN0WQxLc5ksaUTnkZ_j23ODwUViUJIo1oJx-RjwkFA/edit?usp=sharing"
-        target="_blank"
-        rel="noopener"
-      >
-        <span>テンプレートファイル (Google スプレッドシート)</span>
-        <o-icon
-          pack="fas"
-          style="margin-left: 4px;"
-          icon="arrow-up-right-from-square"
-          size="small"
-        ></o-icon>
-      </a>
-      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(PC)</div>
-      <div>1. 上記のリンク先のGoogleスプレッドシートのコピーを空のフォルダ内に作成する</div>
-      <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
-      <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
-      <div>4. <a
-        class="link"
-        href="https://dm.takaratomy.co.jp/card/"
-        target="_blank"
-        rel="noopener"
-      >公式のカード検索</a>を新しいウィンドウで開き、手順2のGoogleドライブのフォルダとの両方が見られる状態にする</div>
-      <div>5. 公式のカード画像をGoogleドライブのフォルダにドラッグアンドドロップして、カード画像を追加する</div>
-      <div>6. スプレッドシートのシートの1行目にある「画像IDを追加」ボタンをクリックする</div>
-      <div>7. 手順4、5を繰り返し、枚数を調整することでデッキを作成する</div>
-      <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
-      <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
       <GoogleSheetInput style="margin-top: 0.5rem;"/>
       <table class="roomTable" style="margin-top: 20px">
         <thead>
@@ -68,6 +39,42 @@
           </tr>
         </template>
       </table>
+      <div style="margin-top: 1rem;">
+        <a
+          class="link"
+          href="https://docs.google.com/spreadsheets/d/1mqN0WQxLc5ksaUTnkZ_j23ODwUViUJIo1oJx-RjwkFA/edit?usp=sharing"
+          target="_blank"
+          rel="noopener"
+        >
+          <span>テンプレートファイル (Google スプレッドシート)</span>
+          <o-icon
+            pack="fas"
+            style="margin-left: 4px;"
+            icon="arrow-up-right-from-square"
+            size="small"
+          ></o-icon>
+        </a>
+      </div>
+      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(PC)</div>
+      <div>1. 上記のリンク先のGoogleスプレッドシートのコピーを空のフォルダ内に作成する</div>
+      <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
+      <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
+      <div>4. <a
+        class="link"
+        href="https://dm.takaratomy.co.jp/card/"
+        target="_blank"
+        rel="noopener"
+      >公式のカード検索</a>を新しいウィンドウで開き、手順2のGoogleドライブのフォルダとの両方が見られる状態にする</div>
+      <div>5. 公式のカード画像をGoogleドライブのフォルダにドラッグアンドドロップして、カード画像を追加する</div>
+      <div>6. スプレッドシートのシートの1行目にある「画像IDを追加」ボタンをクリックする</div>
+      <div>7. 手順4、5を繰り返し、枚数を調整することでデッキを作成する</div>
+      <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
+      <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
+      <GoogleSheetInput style="margin-top: 0.5rem;"/>
+      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(スマホ)</div>
+      <div>スマートフォンでのデッキ作成作業はおすすめしません。PCでの作業で作成したスプレッドシートのURLを利用してください。</div>
+      <div>1. PCで上記の「デッキを動かすまでの手順(PC)」を完了する</div>
+      <div>2. スマートフォンでスプレッドシートのリンクを取得し、上記の入力欄に貼り付ける</div>
     </div>
   </div>
 </template>
