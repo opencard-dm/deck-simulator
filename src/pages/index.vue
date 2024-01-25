@@ -6,106 +6,76 @@
           対戦ツールはこちら(試作品)
         </RouterLink>
       </div>
-      <div>
-        このサイトではDECK MAKERで作成したデッキを動かすことができます。
-      </div>
-      <div>試しに次のデッキを動かしてみてください。</div>
+      <div style="font-size: 12px;">DECK SIMULATORはファンコンテンツ・ポリシーに沿った非公式のファンコンテンツです。ウィザーズ社の認可/許諾は得ていません。題材の一部に、ウィザーズ・オブ・ザ・コースト社の財産を含んでいます。©Wizards of the Coast LLC</div>
+      <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。著作者様からサービス停止の要望があった場合には速やかに対処いたします。</div>
+      <h2 class="h2" style="margin-top: 1rem;">一人回し支援ツール</h2>
+      <div style="margin-top: 1rem;">本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。</div>
+      <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。現行での使用が不安な場合は説明動画ができあがるのをお待ちください。</div>
+      <GoogleSheetInput style="margin-top: 0.5rem;"/>
       <table class="roomTable" style="margin-top: 20px">
         <thead>
           <th><div>デッキ名</div></th>
-          <th><div>デッキレシピ</div></th>
+          <th><div>カード枚数</div></th>
           <th><div></div></th>
         </thead>
-        <tr v-for="deck in defaultDecks" :key="deck.dmDeckId">
-          <td>
-            <div style="text-align: left;">{{ deck.name }}</div>
-          </td>
-          <td style="text-align: center;">
-            <a :href="deckRecipeLink(deck.dmDeckId)" target="deckRecipe">
-              <o-icon pack="fas" icon="arrow-up-right-from-square"></o-icon>
-            </a>
-          </td>
-          <td style="text-align: center;">
-            <router-link
-              :to="{
-                path: '/single',
-                query: { deck_id: deck.dmDeckId },
-              }"
-            >
-              <o-button variant="info" size="small">動かしてみる</o-button>
-            </router-link>
-          </td>
-        </tr>
+        <template v-for="(decksSource, sourceIndex) in userDecks">
+          <tr v-for="deck in decksSource.decks" :key="decksSource.url + deck.name">
+            <td>
+              <div style="text-align: left;">{{ deck.name }}</div>
+            </td>
+            <td>
+              <div style="text-align: left;">{{ cardsNumInDeck(deck) }}</div>
+            </td>
+            <td style="text-align: center;">
+              <router-link
+                :to="{
+                  path: '/single',
+                  query: { deck_id: sourceIndex + '-' + deck.name },
+                }"
+              >
+                <o-button variant="info" size="small">動かす</o-button>
+              </router-link>
+            </td>
+          </tr>
+        </template>
       </table>
-      <template v-if="Features.using_my_deck">
-        <div style="font-weight: bolder; margin-top: 3rem;">ガチまとめに公開されているデッキを使いたい場合</div>
-        <div>
-          <span
-            >次の入力欄にガチまとめの公開済みデッキのURLを貼り付けることで、好きなデッキを動かすことができます。
-          </span>
-          <!-- <a
-            class="deckForm_searchField_help"
-            href="https://note.com/tcgsimulator/n/n3f94a7d126f3#a7ea3459-6fe4-46d1-bc53-3bb7da71b792"
-            target="_blank"
-            rel="noopener"
-          >
-            <o-icon pack="far" icon="question-circle"></o-icon>
-          </a> -->
-        </div>
-        <OField
-          class="deckForm_searchField"
-          style="margin-top: 10px; max"
-          :variant="DeckForm.deckUrlError.value ? 'danger' : ''"
-          :message="DeckForm.scraping.value ? 'デッキ取得中です' : DeckForm.deckUrlError.value"
+      <div style="margin-top: 1rem;">
+        <a
+          class="link"
+          href="https://docs.google.com/spreadsheets/d/1mqN0WQxLc5ksaUTnkZ_j23ODwUViUJIo1oJx-RjwkFA/edit?usp=sharing"
+          target="_blank"
+          rel="noopener"
         >
-          <OInput
-            v-model="DeckForm.deckUrl.value"
-            placeholder="デッキメーカーのURLを貼り付ける"
-            type="text"
-            icon="search"
-            :expanded="true"
-            :disabled="DeckForm.scraping.value"
-            @keypress.prevent="DeckForm.onKeyPress()"
-            @input="DeckForm.onDeckUrlChange()"
-          >
-          </OInput>
-        </OField>
-        <div style="margin-top: 10px;">例）https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=xxx</div>
-        <img src="/images/gachimatome-deck-detail.png" width="100%" alt="">
-        <div style="font-weight: bolder; margin-top: 3rem;">自分で作成したデッキを使いたい場合 ※動画あり</div>
-        <div>1. デッキメーカーでデッキを作成する</div>
-        <div>
-          <a class="link" target="_blank" rel="noopener" style="margin-left: 1rem;" href="https://deck-maker.com/dm/decks">https://deck-maker.com/dm/decks</a>
-        </div>
-        <div>2. 作成したデッキを公開する</div>
-        <div>3. マイデッキ一覧で作成したデッキを選択し、「デッキを共有」、「note埋め込み用URLコピー」の順でデッキのURLをコピーする</div>
-        <div>4. 下の入力欄にコピーしたURLをペーストする</div>
-        <OField
-          class="deckForm_searchField"
-          style="margin-top: 10px; max"
-          :variant="DeckForm.deckUrlError.value ? 'danger' : ''"
-          :message="DeckForm.scraping.value ? 'デッキ取得中です' : DeckForm.deckUrlError.value"
-        >
-          <OInput
-            v-model="DeckForm.deckUrl.value"
-            placeholder="デッキメーカーのURLを貼り付ける"
-            type="text"
-            icon="search"
-            :expanded="true"
-            :disabled="DeckForm.scraping.value"
-            @keypress.prevent="DeckForm.onKeyPress()"
-            @input="DeckForm.onDeckUrlChange()"
-          >
-          </OInput>
-        </OField>
-        <iframe width="360" height="640" 
-          src="https://www.youtube.com/embed/XNTerDbltMU?loop=1&rel=0" 
-          title="DECK SIMULATORで自分のデッキを使う方法" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen
-        ></iframe>
-      </template>
+          <span>テンプレートファイル (Google スプレッドシート)</span>
+          <o-icon
+            pack="fas"
+            style="margin-left: 4px;"
+            icon="arrow-up-right-from-square"
+            size="small"
+          ></o-icon>
+        </a>
+      </div>
+      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(PC)</div>
+      <div>1. 上記のリンク先のGoogleスプレッドシートのコピーを空のフォルダ内に作成する</div>
+      <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
+      <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
+      <div>4. <a
+        class="link"
+        href="https://dm.takaratomy.co.jp/card/"
+        target="_blank"
+        rel="noopener"
+      >公式のカード検索</a>を新しいウィンドウで開き、手順2のGoogleドライブのフォルダとの両方が見られる状態にする</div>
+      <div>5. 公式のカード画像をGoogleドライブのフォルダにドラッグアンドドロップして、カード画像を追加する</div>
+      <div>6. スプレッドシートのシートの1行目にある「画像IDを追加」ボタンをクリックする</div>
+      <div>※ボタンを押すと、Google App Scriptが実行されるようになっており、認証が必要です。認証のモーダルが出るまで、2、3回ほどボタンを押してください。</div>
+      <div>7. 手順4、5を繰り返し、枚数を調整することでデッキを作成する</div>
+      <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
+      <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
+      <GoogleSheetInput style="margin-top: 0.5rem;"/>
+      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(スマホ)</div>
+      <div>スマートフォンでのデッキ作成作業はおすすめしません。PCでの作業で作成したスプレッドシートのURLを利用してください。</div>
+      <div>1. PCで上記の「デッキを動かすまでの手順(PC)」を完了する</div>
+      <div>2. スマートフォンでスプレッドシートのリンクを取得し、上記の入力欄に貼り付ける</div>
     </div>
   </div>
 </template>
@@ -113,16 +83,50 @@
 <script setup lang="ts">
 import { getCloudRunCookie } from "@/helpers/Util";
 import { makeRandomString } from "@/helpers/makeRandomString";
+import FolderDrop from "@/components/FolderDrop.vue";
 import axios from "axios";
 import { Features } from "@/features";
+import GoogleSheetInput from "@/components/deck-inputs/GoogleSheetInput.vue";
 
-import { ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
 function deckRecipeLink(deckId: string) {
   return `https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=${deckId}`
 }
+
+function cardsNumInDeck(deck: SourceDeck) {
+  let num = 0
+  for (const card of deck.cards) {
+    num += card.times
+  }
+  let chojigenCardsNum = 0
+  for (const card of deck.chojigenCards) {
+    chojigenCardsNum += card.times
+  }
+  let grCardsNum = 0
+  for (const card of deck.grCards) {
+    grCardsNum += card.times
+  }
+  let expression = num.toString()
+  const specialCardsExpressions = []
+  if (chojigenCardsNum > 0) {
+    specialCardsExpressions.push(`超次元:${chojigenCardsNum}`)
+  }
+  if (grCardsNum > 0) {
+    specialCardsExpressions.push(`GR: ${grCardsNum}`)
+  }
+  if (specialCardsExpressions.length > 0) {
+    expression += '(' + specialCardsExpressions.join(', ') + ')'
+  }
+  return expression
+}
+
+const store = useStore()
+const userDecks = computed(() => {
+  return store.state.decks.data
+})
 
 function useDeckForm() {
   const deckUrl = ref('')
@@ -168,6 +172,8 @@ function useDeckForm() {
 const DeckForm = useDeckForm()
 
 import defaultDecks from '../decks.json'
+import { useStore } from "vuex";
+import { SourceDeck } from "@/entities/Deck";
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
@@ -186,6 +192,10 @@ async function createRoom() {
 </script>
 
 <style lang="scss" scoped>
+.h2 {
+  font-size: 18px;
+  font-weight: 500;
+}
 .link {
   color: #0969da;
   font-size: 14px;

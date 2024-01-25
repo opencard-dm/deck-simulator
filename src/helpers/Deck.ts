@@ -5,12 +5,23 @@ import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
 import { Deck as DeckType, GmDeckData } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
+import { useStore } from 'vuex';
 
 export class Deck {
 
   static getFromId(id: string) {
     const localDeck = decks.find(d => d.dmDeckId === id) as DeckType|undefined
-    return localDeck
+    if (localDeck) return localDeck
+    const store = useStore()
+    if (id.includes('-')) {
+      const [decksSourceIndex, ...deckNameElems] = id.split('-')
+      const deckName = deckNameElems.join('-')
+      const userDeck = store.state.decks.data[decksSourceIndex].decks
+        .find(d => d.name === deckName) as DeckType|undefined
+      // fix: デッキのカードが増殖するバグの応急処置
+      if (userDeck) return JSON.parse(JSON.stringify(userDeck))  
+    }
+    return null
   }
 
   /**
@@ -42,13 +53,13 @@ export class Deck {
     let count = startId;
     deck.cards.forEach(c => {
       // デッキメーカーから取り込んだデータにはtimeがないことによる対応。
-      const times = c.time || 1
+      const times = c.times || 1
       for (let i = 0; i < times; i++) {
         mainCards.push({
           ...c,
           imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-          backImageUrl: c.backImageUrl || '/images/card-back.jpg',
-          mainCardId: c.mainCardId,
+          backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
+          mainCardId: c.mainCardId || '',
         });
       }
     })
@@ -62,12 +73,12 @@ export class Deck {
     // 超次元ゾーン
     if (deck.chojigenCards && deck.chojigenCards.length > 0) {
       deck.chojigenCards.forEach(c => {
-        const times = c.time || 1
+        const times = c.times || 1
         for (let i = 0; i < times; i++) {
           chojigenCards.push({
             ...c,
             imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+            backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
             mainCardId: c.mainCardId,
             isChojigen: true,
           });
@@ -87,12 +98,12 @@ export class Deck {
     // grゾーン
     if (deck.grCards && deck.grCards.length > 0) {
       deck.grCards.forEach(c => {
-        const times = c.time || 1
+        const times = c.times || 1
         for (let i = 0; i < times; i++) {
           deck.chojigenCards.push({
             ...c,
             imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
-            backImageUrl: c.backImageUrl || '/images/card-back.jpg',
+            backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
             mainCardId: c.mainCardId,
             isGr: true,
           });
@@ -128,19 +139,18 @@ export class Deck {
     const imageHost = useConfig().IMAGE_HOST
 
     deck.cards.forEach(c => {
-      // c.time = c.time || 1;
       c.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`;
     })
     // timeのないデータだった場合、集計する。
-    if (!deck.cards[0].time && deck.cards[0].time !== 0) {
+    if (!deck.cards[0].times && deck.cards[0].times !== 0) {
       deck.cards = deck.cards.reduce((result, current) => {
         const element = result.find((p) => p.imageUrl === current.imageUrl);
         if (element) {
-          element.time++;
+          element.times++;
         } else {
           result.push({
             ...current,
-            time: 1,
+            times: 1,
           });
         }
         return result;
@@ -148,7 +158,7 @@ export class Deck {
     }
     // 並べ替える
     deck.cards.sort((a, b) => {
-      return b.time - a.time;
+      return b.times - a.times;
     })
     return deck;
   }
@@ -167,11 +177,11 @@ export class Deck {
     return cards.reduce((result, current) => {
       const element = result.find((p) => p.imageUrl === current.imageUrl);
       if (element) {
-        element.time++;
+        element.times++;
       } else {
         result.push({
           ...current,
-          time: 1,
+          times: 1,
         });
       }
       return result;

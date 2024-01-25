@@ -9,11 +9,11 @@ const groupByCardId = (cards) => {
   return cards.reduce((result, current) => {
     const element = result.find((p) => p.imageUrl === current.imageUrl);
     if (element) {
-      element.time++;
+      element.times++;
     } else {
       result.push({
         ...current,
-        time: 1,
+        times: 1,
       });
     }
     return result;

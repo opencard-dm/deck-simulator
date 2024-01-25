@@ -37,6 +37,26 @@ export interface Deck {
     cardDetails?: {[key: string]: CardDetail}
 }
 
+export interface DecksSource {
+    url: string
+    decks: SourceDeck[]
+}
+
+export interface SourceDeck {
+    name: string
+    source: string
+    cards: SourceCard[]
+    chojigenCards: SourceCard[]
+    grCards: SourceCard[]
+    cardDetails?: {[key: string]: CardDetail}
+}
+
+export interface SourceCard {
+    imageUrl: string
+    backImageUrl?: string
+    times: number
+}
+
 export type GmCard = {
     large_image_url: string,
 }

@@ -1,5 +1,6 @@
 import { player, zone } from '@/entities';
 import { Card } from '@/entities/Card';
+import { DecksSource } from '@/entities/Deck';
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import { mutations } from './mutations'
@@ -33,7 +34,7 @@ export interface state {
 export const store = createStore({
   plugins: [createPersistedState({
     // スクレイピングで取得したデッキデータをブラウザのLocal Storageに保存する。
-    paths: ['decks', 'setting'],
+    paths: ['setting', 'decks'],
   })],
   modules: {
     decks: {
@@ -42,8 +43,19 @@ export const store = createStore({
         data: [],
       },
       mutations: {
-        setData(state, data) {
-          state.data = data
+        setData(state, data: any[]|DecksSource) {
+          if (Array.isArray(data)) {
+            state.data = data
+            return
+          }
+          const index = state.data.findIndex((d: DecksSource) => {
+            return d.url === data.url
+          })
+          if (index === -1) {
+            state.data.push(data)
+          } else {
+            state.data[index] = data
+          }
         }, // commit('decks/setData')
       },
     },

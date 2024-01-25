@@ -71,7 +71,7 @@
           @click.stop="clickPlaceholderCard()" 
         >
           <div style="opacity: 0.2;">
-            <img src="/images/card-back.jpg" :width="cardWidth" />
+            <img src="https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg" :width="cardWidth" />
           </div>
           <div
             class="card_bottomButton" 

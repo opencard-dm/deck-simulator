@@ -1,11 +1,11 @@
 {
-  "name": "deck-simulator",
-  "version": "1.7.0",
-  "private": true,
+  "name": "dmdeck-simulator",
+  "version": "1.8.4",
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development ts-node -T srv/index.ts",
     "build": "vite build",
+    "build-single": "NODE_ENV=development vite --config vite.single.config.js build --mode development",
     "lint": "vite lint",
     "start": "NODE_ENV=production ts-node -T srv/index.ts",
     "ts-node": "NODE_ENV=production ts-node",
@@ -32,7 +32,8 @@
     "uuid": "^9.0.1",
     "vite-express": "^0.12.0",
     "vite-raw-plugin": "^1.0.2",
-    "vite-tsconfig-paths": "^4.2.2"
+    "vite-tsconfig-paths": "^4.2.2",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",
@@ -56,6 +57,8 @@
     "supertest": "^6.3.3",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
+    "vite-plugin-radar": "^0.9.2",
+    "vite-plugin-singlefile": "^1.0.0",
     "vitest": "^1.1.0",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
@@ -64,6 +67,9 @@
     "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0"
   },
+  "files": [
+    "dist"
+  ],
   "eslintConfig": {
     "root": true,
     "env": {

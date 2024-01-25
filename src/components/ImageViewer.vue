@@ -20,7 +20,7 @@
       </div>
       <div
         class="imageDisplay_cardText"
-        v-if="cardIsVisible && cardDetail.card_text"
+        v-if="cardIsVisible && cardDetail && cardDetail.card_text"
       >
         {{ cardText }}
       </div>
