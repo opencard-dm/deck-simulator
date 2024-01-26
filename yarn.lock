@@ -1934,6 +1934,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:>=8.0.0 <15":
+  version: 14.18.63
+  resolution: "@types/node@npm:14.18.63"
+  checksum: 82a7775898c2ea6db0b610a463512206fb2c7adc1af482c7eb44b99d94375fff51c74f67ae75a63c5532971159f30c866a4d308000624ef02fd9a7175e277019
+  languageName: node
+  linkType: hard
+
 "@types/qs@npm:*":
   version: 6.9.11
   resolution: "@types/qs@npm:6.9.11"
@@ -2291,6 +2298,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"abortcontroller-polyfill@npm:^1.4.0":
+  version: 1.7.5
+  resolution: "abortcontroller-polyfill@npm:1.7.5"
+  checksum: aac398f7fc076235fe731adaffd2c319fe6c1527af8ca561890242d5396351350e0705726478778dc90326a69a4c044890c156fe867cba7f3ffeb670f8665a51
+  languageName: node
+  linkType: hard
+
 "accepts@npm:~1.3.4, accepts@npm:~1.3.8":
   version: 1.3.8
   resolution: "accepts@npm:1.3.8"
@@ -2351,6 +2365,19 @@ __metadata:
     clean-stack: "npm:^2.0.0"
     indent-string: "npm:^4.0.0"
   checksum: 1101a33f21baa27a2fa8e04b698271e64616b886795fd43c31068c07533c7b3facfcaf4e9e0cab3624bd88f729a592f1c901a1a229c9e490eafce411a8644b79
+  languageName: node
+  linkType: hard
+
+"airtable@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "airtable@npm:0.12.2"
+  dependencies:
+    "@types/node": "npm:>=8.0.0 <15"
+    abort-controller: "npm:^3.0.0"
+    abortcontroller-polyfill: "npm:^1.4.0"
+    lodash: "npm:^4.17.21"
+    node-fetch: "npm:^2.6.7"
+  checksum: 75f5de50021430b0660c8e4ba6b98f79caf83df0d3e391a4ce0298ad6815624447f9a7c80dc267f9cca38b390d79f702c30bd7a47d48e3cce2a9e980c5acbe64
   languageName: node
   linkType: hard
 
@@ -3103,6 +3130,7 @@ __metadata:
     "@vitejs/plugin-vue": "npm:^4.5.2"
     "@vue/test-utils": "npm:^2.4.3"
     "@vueuse/components": "npm:^10.7.0"
+    airtable: "npm:^0.12.2"
     axios: "npm:0.21.1"
     core-js: "npm:^3.34.0"
     cors: "npm:^2.8.5"
@@ -5511,7 +5539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.9":
+"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7, node-fetch@npm:^2.6.9":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
