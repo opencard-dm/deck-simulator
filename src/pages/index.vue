@@ -10,7 +10,7 @@
       <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。著作者様からサービス停止の要望があった場合には速やかに対処いたします。</div>
       <h2 class="h2" style="margin-top: 1rem;">一人回し支援ツール</h2>
       <div style="margin-top: 1rem;">本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。</div>
-      <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。現行での使用が不安な場合は説明動画ができあがるのをお待ちください。</div>
+      <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。</div>
       <GoogleSheetInput style="margin-top: 0.5rem;"/>
       <table class="roomTable" style="margin-top: 20px">
         <thead>
@@ -42,11 +42,11 @@
       <div style="margin-top: 1rem;">
         <a
           class="link"
-          href="https://docs.google.com/spreadsheets/d/1mqN0WQxLc5ksaUTnkZ_j23ODwUViUJIo1oJx-RjwkFA/edit?usp=sharing"
+          href="https://docs.google.com/spreadsheets/d/1mqN0WQxLc5ksaUTnkZ_j23ODwUViUJIo1oJx-RjwkFA/copy?usp=sharing"
           target="_blank"
           rel="noopener"
         >
-          <span>テンプレートファイル (Google スプレッドシート)</span>
+          <span>テンプレートファイルをコピー (Google スプレッドシート)</span>
           <o-icon
             pack="fas"
             style="margin-left: 4px;"
@@ -56,7 +56,8 @@
         </a>
       </div>
       <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(PC)</div>
-      <div>1. 上記のリンク先のGoogleスプレッドシートのコピーを空のフォルダ内に作成する</div>
+      <div style="margin-bottom: 1rem;">ioradというサービスを使ったインタラクティブな説明が下部にあります。</div>
+      <div>1. 上記のリンクでGoogleスプレッドシートのコピーを作成し、空のフォルダ内に移動する</div>
       <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
       <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
       <div>4. <a
@@ -72,6 +73,8 @@
       <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
       <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
       <GoogleSheetInput style="margin-top: 0.5rem;"/>
+      <GoogleSpreadsheetCopy/>
+      <GoogleSpreadsheetDeck style="margin-top: 3rem;"/>
       <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(スマホ)</div>
       <div>スマートフォンでのデッキ作成作業はおすすめしません。PCでの作業で作成したスプレッドシートのURLを利用してください。</div>
       <div>1. PCで上記の「デッキを動かすまでの手順(PC)」を完了する</div>
@@ -83,6 +86,8 @@
 <script setup lang="ts">
 import { getCloudRunCookie } from "@/helpers/Util";
 import { makeRandomString } from "@/helpers/makeRandomString";
+import GoogleSpreadsheetCopy from '@/components/explanations/GoogleSpreadsheetCopy.vue'
+import GoogleSpreadsheetDeck from '@/components/explanations/GoogleSpreadsheetDeck.vue'
 import FolderDrop from "@/components/FolderDrop.vue";
 import axios from "axios";
 import { Features } from "@/features";
