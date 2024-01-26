@@ -53,6 +53,23 @@ async function fetchCardByName(name: string, cardDetails: CardDetails) {
         cost: record.get('cost') as number,
         power: record.get('power') as string,
         card_text: record.get('text') as string,
-        civilizations: record.get('civilizations') as string[],
+        civilizations: Array.from(record.get('civilizations') as any).map((c) => {
+            switch (c) {
+                case '光':
+                    return 'light';
+                case '水':
+                    return 'water';
+                case '闇':
+                    return 'dark';
+                case '火':
+                    return 'fire';
+                case '自然':
+                    return 'nature';
+                case 'ゼロ':
+                    return 'zero';
+                default:
+                    c;
+            }
+        }) as string[],
     }
 }
