@@ -18,18 +18,12 @@
         />
         <img v-else :src="hoveredCard.imageUrl" />
       </div>
-      <div
-        class="imageDisplay_cardText"
-        v-if="cardIsVisible && cardDetail && cardDetail.card_text"
-      >
-        {{ cardText }}
-      </div>
     </div>
     <!-- スマホでカードをプッシュしたときに表示される画像 -->
-    <div v-if="imageUrl" class="phoneImageDisplay" @contextmenu.prevent>
-      <img v-if="Features.using_image" :src="imageUrl" @click="closePopup()">
+    <div v-if="imageUrl || (hoveredCard && cardIsVisible)" class="phoneImageDisplay" @contextmenu.prevent>
+      <img v-if="Features.using_image && imageUrl" :src="imageUrl" @click="closePopup()">
       <TextCard
-        v-else
+        v-else-if="isPhone() || !hoveredCard.imageUrl"
         :card="hoveredCard"
         :selected="false"
         :large="true"

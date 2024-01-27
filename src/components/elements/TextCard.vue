@@ -155,6 +155,7 @@ function getCardDetail(cardId: string) {
     background-color: #444;
   }
   &.large {
+    padding-bottom: 2rem;
     .card_top {
       display: inline-block;
       line-height: unset;

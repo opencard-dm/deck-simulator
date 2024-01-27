@@ -58,6 +58,7 @@ export class Deck {
       for (let i = 0; i < times; i++) {
         const card: Card = {
           ...c,
+          imageUrl: '',
           backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
           mainCardId: c.mainCardId || '',
         }
