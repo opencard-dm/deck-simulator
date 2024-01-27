@@ -118,7 +118,12 @@ export default {
     },
     cardDetail() {
       if (!this.hoveredCard) return {}
-      return getCardDetail(this.hoveredCard.mainCardId)
+      if (this.hoveredCard.mainCardId) {
+        return getCardDetail(this.hoveredCard.mainCardId)
+      }
+      if (this.hoveredCard.cd) {
+        return getCardDetail(this.hoveredCard.cd)
+      }
     },
     cardIsVisible() {
       if (this.hoveredCard) {

@@ -6,11 +6,12 @@ import axios from 'axios';
 import { Deck as DeckType, GmDeckData, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
 import { useStore } from 'vuex';
+import { Card } from '@/entities/Card';
 
 export class Deck {
 
   static getFromId(id: string) {
-    const localDeck = decks.find(d => d.dmDeckId === id) as DeckType|undefined
+    const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
     if (localDeck) return localDeck
     const store = useStore()
     if (id.includes('-')) {
@@ -55,12 +56,18 @@ export class Deck {
       // デッキメーカーから取り込んだデータにはtimeがないことによる対応。
       const times = c.times || 1
       for (let i = 0; i < times; i++) {
-        mainCards.push({
+        const card: Card = {
           ...c,
-          imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
           backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
           mainCardId: c.mainCardId || '',
-        });
+        }
+        if (!card.cd) {
+          card.cd = card.name
+        }
+        if (c.imageUrl || c.imageId) {
+          card.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`
+        }
+        mainCards.push(card);
       }
     })
     deck.cards = Deck.shuffle(mainCards).map(c => {
