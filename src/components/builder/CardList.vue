@@ -22,7 +22,12 @@
           <div class="card">
             <!-- insted of prevent default -->
             <div draggable="true">
-              <img :src="element.imageUrl" draggable="false" />
+              <TextCard
+                :card="element"
+                :width="cardWidth"
+                :selected="false"
+                :deck="deck"
+              ></TextCard>
             </div>
 
             <div class="cardTool">
@@ -54,11 +59,13 @@
 import { onMounted, getCurrentInstance, computed } from 'vue';
 import { useStore } from 'vuex'
 import draggable from 'vuedraggable'
-import { SourceCard } from '@/entities/Deck'
+import { SourceCard, SourceDeck } from '@/entities/Deck'
+import TextCard from '../elements/TextCard.vue'
 
 const props = defineProps<{
   cards: SourceCard
   side: string
+  deck: SourceDeck
 }>()
 
 const store = useStore()
@@ -80,6 +87,7 @@ const deckCards = computed({
     this.$emit("update:cards", newVal);
   },
 })
+const cardWidth = computed(() => 100)
 
 let instance: ReturnType<typeof getCurrentInstance> = null
 onMounted(() => {

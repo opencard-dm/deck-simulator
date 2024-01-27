@@ -3,7 +3,7 @@ const START_ID_B = 101;
 
 import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
-import { Deck as DeckType, GmDeckData } from '@/entities/Deck';
+import { Deck as DeckType, GmDeckData, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
 import { useStore } from 'vuex';
 
@@ -134,12 +134,19 @@ export class Deck {
     return deck
   }
 
-  static formatData(deckD) {
+  static formatData(deckD: SourceDeck) {
     const deck = Object.assign({}, deckD);
     const imageHost = useConfig().IMAGE_HOST
 
     deck.cards.forEach(c => {
-      c.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`;
+      if (c.imageUrl || c.imageId) {
+        c.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`;
+      }
+      if (!c.cd) {
+        if (c.name) {
+          c.cd = c.name
+        }
+      }
     })
     // timeのないデータだった場合、集計する。
     if (!deck.cards[0].times && deck.cards[0].times !== 0) {

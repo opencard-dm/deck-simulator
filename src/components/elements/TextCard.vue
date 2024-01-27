@@ -1,5 +1,5 @@
 <template>
-  <img v-if="Features.using_image" draggable="false" :src="card?.imageUrl" :style="{
+  <img v-if="Features.using_image && card?.imageUrl" draggable="false" :src="card?.imageUrl" :style="{
     width: `${width}px`
   }">
   <div v-else class="cardElem" 
@@ -18,12 +18,13 @@
       <span class="card_name">{{ cardDetail?.name }}</span>
     </div>
     <div class="card_text" v-if="large">{{ cardDetail?.card_text }}</div>
+    <div class="card_power" v-if="cardDetail?.power">{{ cardDetail?.power }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Card } from '@/entities/Card';
-import { CardDetail } from '@/entities/Deck';
+import { CardDetail, SourceDeck } from '@/entities/Deck';
 import { Features } from '@/features';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
@@ -34,6 +35,7 @@ const props = withDefaults(defineProps<{
   selected: boolean | null
   canBeTarget?: boolean | null
   large?: boolean
+  deck?: SourceDeck
 }>(), {
   canBeTarget: false,
   large: false,
@@ -42,30 +44,33 @@ const props = withDefaults(defineProps<{
 const height = computed(() => props.width * 908 / 650)
 const cardDetail = computed<CardDetail|null>(() => {
   if (!props.card) return null
-  return getCardDetail(props.card.mainCardId.toString())
+  if (props.card.cd) {
+    return getCardDetail(props.card.cd)
+  }
 })
 
 const color = computed(() => {
   if (!cardDetail.value) {
     return 'white'
   }
+  const civilizations = cardDetail.value.civilizations || []
   const colors = []
-  if (cardDetail.value.is_light) {
+  if (cardDetail.value.is_light || civilizations.includes('light')) {
     colors.push('yellow')
   }
-  if (cardDetail.value.is_water) {
+  if (cardDetail.value.is_water || civilizations.includes('water')) {
     colors.push('lightblue')
   }
-  if (cardDetail.value.is_dark) {
+  if (cardDetail.value.is_dark || civilizations.includes('dark')) {
     colors.push('gray')
   }
-  if (cardDetail.value.is_fire) {
+  if (cardDetail.value.is_fire || civilizations.includes('fire')) {
     colors.push('lightcoral')
   }
-  if (cardDetail.value.is_nature) {
+  if (cardDetail.value.is_nature || civilizations.includes('nature')) {
     colors.push('lightgreen')
   }
-  if (cardDetail.value.is_zero) {
+  if (cardDetail.value.is_zero || civilizations.includes('zero')) {
     colors.push('white')
   }
   if (colors.length === 1) {
@@ -81,6 +86,14 @@ const color = computed(() => {
 })
 
 function getCardDetail(cardId: string) {
+  if (props.deck && props.deck.cardDetails) {
+    try {
+      return props.deck?.cardDetails[cardId]
+    } catch (error) {
+      console.error('card not found:', cardId)
+      return {}
+    }
+  }
   try {
     return useStore().state.cardDetails[cardId]
   } catch (error) {
@@ -128,6 +141,18 @@ function getCardDetail(cardId: string) {
     word-break: break-all;
     font-size: 10px;
     color: black;
+  }
+  .card_power {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding: 0px 4px;
+    font-size: 14px;
+    font-weight: 600;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    color: white;
+    background-color: #444;
   }
   &.large {
     .card_top {

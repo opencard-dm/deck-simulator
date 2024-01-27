@@ -30,7 +30,8 @@
         <div class="deck-wrapper left">
           <div id="deck1">
             <CardList
-              :cards="left['deckData']['cards']"
+              :cards="left.deckData.cards"
+              :deck="left.deckData"
               :side="'left'"
               @update:cards="left.deckData.cards = $event"
             ></CardList>
@@ -40,7 +41,8 @@
         <div class="deck-wrapper right">
           <div id="deck2">
             <CardList
-              :cards="right['deckData']['cards']"
+              :cards="right.deckData.cards"
+              :deck="right.deckData"
               :side="'right'"
               @update:cards="right.deckData.cards = $event"
             ></CardList>
@@ -72,6 +74,7 @@ import CardList from "./CardList.vue";
 </script>
 <script lang="ts">
 import { Deck } from "@/helpers/Deck";
+import systemDecks from '@/decks.json'
 
 export default {
   data() {
@@ -123,6 +126,7 @@ export default {
     this.$store.state.decks.data.forEach(source => {
       decks.push(...source.decks)
     })
+    decks.push(...systemDecks)
     this.deckList.custom = decks;
     if (decks[0]) {
       this.left.deckData = Deck.formatData(decks[0]);
