@@ -60,18 +60,18 @@ router.get('/api/cards', async (req, res) => {
   return res.json({})
 })
 
-router.get('/api/scrape', async (req, res) => {
-  const deckData = await getDeckData(req.query.deckId)
-  if (!deckData) {
-    return res.sendStatus(404);
-    // throw new Error('failed_fetch_data');
-  }
-  //
-  // 取得したデータを処理する。
-  const deck = Deck.convertGmFormat(deckData)
-  // レスポンス
-  res.json(deck)
-})
+// router.get('/api/scrape', async (req, res) => {
+//   const deckData = await getDeckData(req.query.deckId)
+//   if (!deckData) {
+//     return res.sendStatus(404);
+//     // throw new Error('failed_fetch_data');
+//   }
+//   //
+//   // 取得したデータを処理する。
+//   const deck = Deck.convertGmFormat(deckData)
+//   // レスポンス
+//   res.json(deck)
+// })
 
 export {
   router as apiRouter,
