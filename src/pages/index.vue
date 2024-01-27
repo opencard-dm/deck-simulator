@@ -5,13 +5,17 @@
         <RouterLink v-if="Features.battle" class="link" to="/battle">
           対戦ツールはこちら(試作品)
         </RouterLink>
+        <!-- <RouterLink class="link" to="/decks/edit">
+          デッキ編集
+        </RouterLink> -->
       </div>
       <div style="font-size: 12px;">DECK SIMULATORはファンコンテンツ・ポリシーに沿った非公式のファンコンテンツです。ウィザーズ社の認可/許諾は得ていません。題材の一部に、ウィザーズ・オブ・ザ・コースト社の財産を含んでいます。©Wizards of the Coast LLC</div>
       <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。著作者様からサービス停止の要望があった場合には速やかに対処いたします。</div>
       <h2 class="h2" style="margin-top: 1rem;">一人回し支援ツール</h2>
       <div style="margin-top: 1rem;">本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。</div>
       <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。</div>
-      <GoogleSheetInput style="margin-top: 0.5rem;"/>
+      <SampleDecks></SampleDecks>
+      <GoogleSheetInput style="margin-top: 2rem;"/>
       <table class="roomTable" style="margin-top: 20px">
         <thead>
           <th><div>デッキ名</div></th>
@@ -86,6 +90,7 @@
 <script setup lang="ts">
 import { getCloudRunCookie } from "@/helpers/Util";
 import { makeRandomString } from "@/helpers/makeRandomString";
+import SampleDecks from './index/SampleDecks.vue'
 import GoogleSpreadsheetCopy from '@/components/explanations/GoogleSpreadsheetCopy.vue'
 import GoogleSpreadsheetDeck from '@/components/explanations/GoogleSpreadsheetDeck.vue'
 import FolderDrop from "@/components/FolderDrop.vue";
