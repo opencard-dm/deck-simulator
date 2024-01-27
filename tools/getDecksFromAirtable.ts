@@ -16,7 +16,7 @@ var base = new Airtable({
 }).base('appNBBdv4EODRJJJI');
 
 const deckFiles = [
-    'tools/json/202401_赤青マジック.json',
+    'tools/json/202401_黒緑アビス.json',
 ]
 
 for (const file of deckFiles) {
