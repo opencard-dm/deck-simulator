@@ -20,10 +20,10 @@
         <thead>
           <th><div>デッキ名</div></th>
           <th><div>カード枚数</div></th>
-          <th><div></div></th>
+          <th colspan="3"><div></div></th>
         </thead>
         <template v-for="(decksSource, sourceIndex) in userDecks">
-          <tr v-for="deck in decksSource.decks" :key="decksSource.url + deck.name">
+          <tr v-for="(deck, deckIndex) in decksSource.decks" :key="decksSource.url + deck.name">
             <td>
               <div style="text-align: left;">{{ deck.name }}</div>
             </td>
@@ -39,6 +39,25 @@
               >
                 <o-button variant="info" size="small">動かす</o-button>
               </router-link>
+            </td>
+            <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
+              <o-button variant="info" size="small" @click="updateDeckFromSource(decksSource.url)">更新</o-button>
+            </td>
+            <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
+              <a
+                class="link"
+                :href="decksSource.url.replace('/export', '/edit')"
+                target="sheet"
+                rel="noopener"
+              >
+                <span>シートを開く</span>
+                <o-icon
+                  pack="fas"
+                  style="margin-left: 4px;"
+                  icon="arrow-up-right-from-square"
+                  size="small"
+                ></o-icon>
+              </a>
             </td>
           </tr>
         </template>
@@ -184,6 +203,7 @@ const DeckForm = useDeckForm()
 import defaultDecks from '../decks.json'
 import { useStore } from "vuex";
 import { SourceDeck } from "@/entities/Deck";
+import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
@@ -198,6 +218,11 @@ async function createRoom() {
     path: "room",
     query: { roomId, player: "a" },
   });
+}
+async function updateDeckFromSource(url: string) {
+  const decksSource = await fetchDeck(url)
+  console.log(decksSource)
+  store.commit('decks/setData', decksSource)
 }
 </script>
 
