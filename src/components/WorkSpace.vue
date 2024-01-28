@@ -163,7 +163,7 @@
                 <o-button
                   v-if="card.faceDown && !card.showInWorkSpace && isOwner"
                   @click.stop="card.showInWorkSpace = true"
-                  :size="isPhone() ? 'small' : ''"
+                  :size="'small'"
                   >見る</o-button
                 >
                 <!-- 見られる状態になったカードを場に出すボタン -->
@@ -171,8 +171,15 @@
                   v-if="card.showInWorkSpace"
                   variant="danger"
                   @click.stop="moveCard(card, 'battleCards')"
-                  :size="isPhone() ? 'small' : ''"
+                  :size="'small'"
                   >出す</o-button
+                >
+                <o-button
+                  v-if="card.showInWorkSpace && workSpace.zone === 'yamafudaCards'"
+                  variant="info"
+                  @click.stop="moveCard(card, 'yamafudaCards')"
+                  :size="'small'"
+                  >下へ</o-button
                 >
               </template>
 
