@@ -15,9 +15,18 @@
     }">
     <div class="card_top">
       <span class="card_cost">{{ cardDetail?.cost }}</span>
-      <span class="card_name">{{ cardDetail?.name }}</span>
+      <span class="card_name">{{ cardDetail?.name.split('/')[0].trim() }}</span>
+      <template >
+      </template>
     </div>
-    <div class="card_text" v-if="cardDetail && large">{{ cardText }}</div>
+    <div class="card_text" v-if="cardDetail && large">{{ getReadableText(cardDetail?.card_text) }}</div>
+    <template v-if="cardDetail?.combined_card">
+      <div class="card_top">
+        <span class="card_cost">{{ cardDetail?.combined_card.cost }}</span>
+        <span class="card_name">{{ cardDetail?.combined_card.name }}</span>
+      </div>
+      <div class="card_text" v-if="large && cardDetail?.combined_card">{{ getReadableText(cardDetail?.combined_card.card_text) }}</div>
+    </template>
     <div class="card_power" v-if="cardDetail?.power">{{ cardDetail?.power }}</div>
   </div>
 </template>
@@ -48,24 +57,28 @@ const cardDetail = computed<CardDetail|null>(() => {
     return getCardDetail(props.card.cd)
   }
 })
-const cardText = computed(() => {
-  if (cardDetail.value) {
-    const text = cardDetail.value.card_text
-    const splitted = text.split('\n')
-    // console.log(splitted)
-    return splitted.map(t => {
-      if (t.startsWith('　')) return t
-      return '■' + t
-    }).join('\n')
-  }
-  return ''
-})
+
+function getReadableText(text: string) {
+  const splitted = text.split('\n')
+  // console.log(splitted)
+  return splitted.map(t => {
+    if (t.startsWith('　')) return t
+    return '■' + t
+  }).join('\n')
+}
 
 const color = computed(() => {
   if (!cardDetail.value) {
     return 'white'
   }
   const civilizations = cardDetail.value.civilizations || []
+  if (cardDetail.value.combined_card) {
+    cardDetail.value.combined_card.civilizations.forEach(c => {
+      if (!civilizations.includes(c)) {
+        civilizations.push(c)
+      }
+    })
+  }
   const colors = []
   if (cardDetail.value.is_light || civilizations.includes('light')) {
     colors.push('yellow')

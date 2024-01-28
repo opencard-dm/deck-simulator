@@ -4,6 +4,7 @@
 import 'dotenv/config'
 import { CardDetail, SourceDeck } from '@/entities/Deck';
 import Airtable from 'airtable'
+import { Record, FieldSet } from 'airtable'
 import { readFileSync,  writeFileSync } from 'fs'
 import decks from '../src/decks.json' assert { type: "json" }
 
@@ -16,6 +17,8 @@ var base = new Airtable({
 }).base('appNBBdv4EODRJJJI');
 
 const deckFiles = [
+    // 'tools/json/202401_赤青マジック.json',
+    // 'tools/json/202401_アナカラージャオウガ.json',
     'tools/json/202401_黒緑アビス.json',
 ]
 
@@ -46,7 +49,15 @@ async function fetchCardByName(name: string, cardDetails: CardDetails) {
         console.error(`カード"${name}"が見つかりませんでした`)
     }
     const record = records[0]
-    cardDetails[name] = {
+    cardDetails[name] = getCardDetailFromRecord(record)
+    if (record.get('combined_card')) {
+        const combinedCard = await base('cards').find(record.get('combined_card') as string)
+        cardDetails[name].combined_card = getCardDetailFromRecord(combinedCard)
+    }
+}
+
+function getCardDetailFromRecord(record: Record<FieldSet>): CardDetail {
+    return {
         // カード名をIDにする
         id: record.get('name') as string,
         name: record.get('name') as string,

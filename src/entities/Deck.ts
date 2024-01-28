@@ -28,6 +28,7 @@ export interface CardDetail {
       sort: number
     }[]
     card_text: string
+    combined_card?: CardDetail
 }
 
 export interface Deck {
