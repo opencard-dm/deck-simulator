@@ -18,12 +18,21 @@
         />
         <img v-else :src="hoveredCard.imageUrl" />
       </div>
+      <div v-if="cardIsVisible && cardDetail && cardDetail.card_text">
+        <TextCard
+          :card="hoveredCard"
+          :selected="false"
+          :large="true"
+          @click="closePopup()"
+        ></TextCard>
+      </div>
+
     </div>
     <!-- スマホでカードをプッシュしたときに表示される画像 -->
     <div v-if="imageUrl || (hoveredCard && cardIsVisible)" class="phoneImageDisplay" @contextmenu.prevent>
       <img v-if="Features.using_image && imageUrl" :src="imageUrl" @click="closePopup()">
       <TextCard
-        v-else-if="isPhone() || !hoveredCard.imageUrl"
+        v-else-if="isPhone()"
         :card="hoveredCard"
         :selected="false"
         :large="true"
@@ -92,7 +101,7 @@ export default {
   data() {
     return {
       display: {
-        left: true,
+        left: false,
         hidden: true,
         blur: false,
         imageUrl: "",
@@ -170,13 +179,6 @@ export default {
         this.display.imageUrl = imageSrc;
       } else {
         this.display.imageUrl = "";
-      }
-      let mX = event.pageX;
-      // 右の余白が足りない時だけ左側に表示する。
-      if (mX < window.innerWidth - this.style.width + 20) {
-        this.display.left = false;
-      } else {
-        this.display.left = true;
       }
     },
     closePopup() {

@@ -17,7 +17,7 @@
       <span class="card_cost">{{ cardDetail?.cost }}</span>
       <span class="card_name">{{ cardDetail?.name }}</span>
     </div>
-    <div class="card_text" v-if="large">{{ cardDetail?.card_text }}</div>
+    <div class="card_text" v-if="cardDetail && large">{{ cardText }}</div>
     <div class="card_power" v-if="cardDetail?.power">{{ cardDetail?.power }}</div>
   </div>
 </template>
@@ -47,6 +47,18 @@ const cardDetail = computed<CardDetail|null>(() => {
   if (props.card.cd) {
     return getCardDetail(props.card.cd)
   }
+})
+const cardText = computed(() => {
+  if (cardDetail.value) {
+    const text = cardDetail.value.card_text
+    const splitted = text.split('\n')
+    // console.log(splitted)
+    return splitted.map(t => {
+      if (t.startsWith('　')) return t
+      return '■' + t
+    }).join('\n')
+  }
+  return ''
 })
 
 const color = computed(() => {
@@ -139,6 +151,7 @@ function getCardDetail(cardId: string) {
   }
   .card_text {
     word-break: break-all;
+    white-space: pre-wrap;
     font-size: 10px;
     color: black;
   }
