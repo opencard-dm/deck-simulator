@@ -396,6 +396,7 @@ export default {
         return;
       }
       if (event.target.closest("#js_gameBoard")) {
+        this.$store.commit('setHoveredCard', null)
         this.closeWorkSpace();
       }
     },
