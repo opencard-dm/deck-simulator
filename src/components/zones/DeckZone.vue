@@ -5,8 +5,8 @@
   >
     <div>
       <div class="deck_zone" 
-        @mouseenter="setHoveredCard(cards[0])"
-        @mouseleave="setHoveredCard(null)"
+        @mouseenter="isPhone() ? null : setHoveredCard(cards[0])"
+        @mouseleave="isPhone() ? null : setHoveredCard(null)"
         :class="side"
       >
         <div

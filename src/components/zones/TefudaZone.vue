@@ -6,8 +6,8 @@
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         v-for="(card, index) in cards"
         :key="index"
-        @mouseenter="!hideTefuda ? setHoveredCard(card) : null"
-        @mouseleave="!hideTefuda ? setHoveredCard(null) : null"
+        @mouseenter="!hideTefuda && !isPhone() ? setHoveredCard(card) : null"
+        @mouseleave="!hideTefuda && !isPhone() ? setHoveredCard(null) : null"
       >
         <div
           class="card"
@@ -160,11 +160,12 @@ function clickCard(card: Card) {
   // すでに選択済みのカードであれば、選択解除
   if (selectMode.value && selectMode.value.card.id === card.id) {
     setSelectMode(null);
+    store.commit('setHoveredCard', null)
     return;
   }
   // カードのプレビューが開いていた場合、表示するカードを切り替える
-  if (!card.faceDown && store.state.displayImageUrl) {
-    store.commit('setDisplayImageUrl', card.imageUrl)
+  if (!card.faceDown && store.state.hoveredCard) {
+    store.commit('setHoveredCard', card)
   }
   // 選択する
   setSelectMode({

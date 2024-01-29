@@ -28,8 +28,8 @@
         class="card_wrapper"
         v-for="card in visibleCards"
         :key="card.id"
-        @mouseenter="setHoveredCard(card)"
-        @mouseleave="setHoveredCard(null)"
+        @mouseenter="isPhone() ? null : setHoveredCard(card)"
+        @mouseleave="isPhone() ? null : setHoveredCard(null)"
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
       >
         <MarkTool

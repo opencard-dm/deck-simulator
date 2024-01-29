@@ -71,8 +71,8 @@
           <div
             v-for="card in orderedCards"
             :key="card.id"
-            @mouseenter="setHoveredCard(card)"
-            @mouseleave="setHoveredCard(null)"
+            @mouseenter="isPhone() ? null : setHoveredCard(card)"
+            @mouseleave="isPhone() ? null : setHoveredCard(null)"
           >
             <Dropdown class="dropdown" :triggers="dropdownTriggers">
               <template #trigger>

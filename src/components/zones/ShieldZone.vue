@@ -9,8 +9,8 @@
         'is-selected': cardIsSelected(card),
       }"
       @click.stop="clickShield(card)"
-      @mouseenter="setHoveredCard(card)"
-      @mouseleave="setHoveredCard(null)"
+      @mouseenter="isPhone() ? null : setHoveredCard(card)"
+      @mouseleave="isPhone() ? null : setHoveredCard(null)"
     >
       <MarkTool
         :reverse="side === 'upper'"
@@ -63,6 +63,7 @@ import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
+import { isPhone } from "@/helpers/Util";
 
 const props = withDefaults(defineProps<{
   player: player

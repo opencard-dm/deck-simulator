@@ -29,10 +29,8 @@
 
     </div>
     <!-- スマホでカードをプッシュしたときに表示される画像 -->
-    <div v-if="imageUrl || (hoveredCard && cardIsVisible)" class="phoneImageDisplay" @contextmenu.prevent>
-      <img v-if="Features.using_image && imageUrl" :src="imageUrl" @click="closePopup()">
+    <div v-if="isPhone() && hoveredCard" class="phoneImageDisplay" @contextmenu.prevent>
       <TextCard
-        v-else-if="isPhone()"
         :card="hoveredCard"
         :selected="false"
         :large="true"
