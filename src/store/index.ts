@@ -43,7 +43,7 @@ export const store = createStore({
         data: [],
       },
       mutations: {
-        setData(state, data: any[]|DecksSource) {
+        setData(state, data: DecksSource[]|DecksSource) {
           if (Array.isArray(data)) {
             state.data = data
             return
