@@ -195,7 +195,7 @@ onMounted(() => {
   if (!players[currentPlayer.value].isReady) {
     deckSelectorActive.value = true
   }
-  isMounted.value = true;
+    isMounted.value = true;
 });
 
 const {
@@ -209,6 +209,7 @@ const {
 
 function onResetGame() {
   resetGame();
+  tabId.value = 1
   deckSelectorActive.value = true
 }
 

@@ -26,6 +26,7 @@ export class GameLogger {
       this.unsubscribes.push(listenHistoriesChange(this.cardActions.roomId, (histories) => {
         if (!Array.isArray(histories)) return
         if (histories.length === 0) return
+        console.debug(`receive ${histories.length} histories`)
         const newHistories = histories.slice(this.historyIndex + 1)
         newHistories.forEach((history) => {
           this.receiveHistory(JSON.parse(history))

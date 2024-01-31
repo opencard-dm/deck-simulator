@@ -117,7 +117,7 @@ export function useRoomSetup(props: RoomProps) {
     });
   }
 
-  function resetGame() {
+  async function resetGame() {
     // TODO: propsを書き換えない
     props.players.a = initialData(roomId).players.a;
     props.players.b = initialData(roomId).players.b;
@@ -126,7 +126,7 @@ export function useRoomSetup(props: RoomProps) {
       // behavior: "smooth",
     });
     if (RoomConfig.useFirebase) {
-      axios.delete(`/api/rooms/${props.roomId}`)
+      await axios.delete(`/api/rooms/${props.roomId}`)
       props.gameLogger.unsubscribes.forEach(u => u())
       props.gameLogger.listenChanges()
       props.gameLogger.histories = []
