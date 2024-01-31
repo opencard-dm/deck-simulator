@@ -168,6 +168,9 @@ export class GameLogger {
       case this.groupCard.name:
         this.cardActions.groupCardWithoutHistory(history.args as groupCardParams)
         break
+      case this.undoGroupCard.name:
+        this.cardActions.undoGroupCard(history.args as groupCardParams)
+        break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
         break
