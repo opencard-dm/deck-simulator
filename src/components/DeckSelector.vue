@@ -193,6 +193,7 @@ async function setupDeck(deckData: DeckType) {
 function updateUrl(deckId: string) {
   const currentQuery = {...route.query}
   currentQuery[`deck_${props.player}`] = deckId
+  if (route.path === '/room') return 
   router.replace({
     path: route.path,
     query: currentQuery,
