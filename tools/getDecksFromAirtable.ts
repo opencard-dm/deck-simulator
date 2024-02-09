@@ -19,7 +19,9 @@ var base = new Airtable({
 const deckFiles = [
     // 'tools/json/202401_赤青マジック.json',
     // 'tools/json/202401_アナカラージャオウガ.json',
-    'tools/json/202401_黒緑アビス.json',
+    // 'tools/json/202401_黒緑アビス.json',
+    'tools/json/202402_フィオナアカシック.json',
+    // 'tools/json/202402_青黒魔道具.json',
 ]
 
 for (const file of deckFiles) {
