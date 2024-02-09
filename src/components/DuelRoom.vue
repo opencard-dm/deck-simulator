@@ -36,16 +36,26 @@
               height: playerZoneHeight,
             }"
           >
-            <div v-if="!isPhone() && !players[upperPlayer].isReady"
-              style="float: right;">
-              <o-button
-                variant="grey-dark"
-                size="small"
-                @click="() => {
-                  currentPlayer = upperPlayer;
-                  deckSelectorActive = true;
-                }"
-              >相手のデッキを選択する</o-button>
+            <div class="gameBoard_topButtons">
+              <div
+                style="">
+                <o-button
+                  variant="grey-dark"
+                  size="small"
+                  @click="startTurn(currentPlayer)"
+                >ターン開始</o-button>
+              </div>
+              <div v-if="!isPhone() && !players[upperPlayer].isReady"
+                style="float: right;">
+                <o-button
+                  variant="grey-dark"
+                  size="small"
+                  @click="() => {
+                    currentPlayer = upperPlayer;
+                    deckSelectorActive = true;
+                  }"
+                >相手のデッキを選択する</o-button>
+              </div>
             </div>
             <PlaySheet
               v-if="!isPhone() && players[upperPlayer].isReady"
@@ -207,6 +217,33 @@ const {
   resetGame,
 } = useRoomSetup(props);
 
+function startTurn(player: player) {
+  onChangeCardsState({ 
+    from: 'battleCards',
+    cards: players[player].cards.battleCards,
+    player,
+    cardState: {
+      tapped: false,
+    }
+  })
+  onChangeCardsState({ 
+    from: 'manaCards',
+    cards: players[player].cards.manaCards,
+    player,
+    cardState: {
+      tapped: false,
+    }
+  })
+  if (players[player].cards.yamafudaCards.length > 0) {
+    onMoveCards(
+      'yamafudaCards',
+      'tefudaCards',
+      [players[player].cards.yamafudaCards[0]],
+      player
+    )
+  }
+}
+
 function onResetGame() {
   resetGame();
   tabId.value = 1
@@ -241,3 +278,10 @@ function setMessage() {
   //
 }
 </script>
+
+<style lang="scss">
+.gameBoard_topButtons {
+  display: flex;
+  justify-content: space-between;
+}
+</style>
