@@ -98,5 +98,8 @@
     "node": "18.x",
     "yarn": "4.x"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.0.2",
+  "volta": {
+    "node": "18.16.0"
+  }
 }
