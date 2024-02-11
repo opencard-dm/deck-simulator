@@ -13,7 +13,7 @@
       <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。著作者様からサービス停止の要望があった場合には速やかに対処いたします。</div>
       <h2 class="h2" style="margin-top: 1rem;">一人回し支援ツール</h2>
       <div style="margin-top: 1rem;">本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。</div>
-      <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。</div>
+      <div style="margin-top: 1rem;">下記の画像無しのサンプルデッキは本サービスの使用感を確かめるためのものとなっております。</div>
       <SampleDecks></SampleDecks>
       <GoogleSheetInput style="margin-top: 2rem;"/>
       <table class="roomTable" style="margin-top: 20px">
