@@ -6,6 +6,8 @@ import { RoomConfig } from "./room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
 import { GameHistory, cardActionMethodParams } from "@/entities/History"
 import { v4 as uuidv4 } from 'uuid'
+import { TurnActions, startTurnParams } from "./TurnActions"
+import { Turn } from "@/entities/Turn"
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
@@ -14,12 +16,22 @@ export class GameLogger {
   public historyIndex: number = -1
   private doneIds: string[] = []
   public unsubscribes: any[] = []
+  public turn: Turn
+  public turnActions: TurnActions
   // vue component
 
   constructor(
     private cardActions: CardActions,
     private who: player = 'a'
-  ) {}
+  ) {
+    this.turn = {
+      current: 0,
+      total: 0,
+      turnPlayer: 'a'
+    }
+    this.turnActions = new TurnActions()
+    this.turnActions.setGameLogger(this)
+  }
 
   listenChanges() {
     if (RoomConfig.useFirebase) {
@@ -72,6 +84,11 @@ export class GameLogger {
     this.appendHistory(this.changeCardsState.name, argsCopy)
   }
 
+  startTurn(args: startTurnParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as startTurnParams
+    this.appendHistory(this.startTurn.name, argsCopy)
+  }
+
   setHistories(histories: GameHistory[]) {
     this.histories = histories
     this.historyIndex = histories.length - 1
@@ -97,6 +114,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.undoCardsState(history.args as changeCardsStateParams)
+        break
+      case this.startTurn.name:
+        this.turnActions.undoStartTurn(history.args as startTurnParams)
         break
       default:
         break;
@@ -126,6 +146,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.startTurn.name:
+        this.turnActions.startTurnWithoutHistory(history.args as startTurnParams)
         break
       default:
         break;
@@ -174,6 +197,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.startTurn.name:
+        this.turnActions.startTurnWithoutHistory(history.args as startTurnParams)
         break
       default:
         break;

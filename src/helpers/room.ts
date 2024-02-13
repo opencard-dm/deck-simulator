@@ -91,6 +91,42 @@ function useRoomListners({
     }
   }
 
+  function onStartTurn({ player }: { player: player }) {
+    const nextTurn = gameLogger.turn.current + 1
+    gameLogger.turnActions.startTurn({
+      player,
+      turn: nextTurn
+    })
+    if (players[player].cards.battleCards.filter(c => c.tapped).length > 0) {
+      onChangeCardsState({ 
+        from: 'battleCards',
+        cards: players[player].cards.battleCards,
+        player,
+        cardState: {
+          tapped: false,
+        }
+      })
+    }
+    if (players[player].cards.manaCards.filter(c => c.tapped).length > 0) {
+      onChangeCardsState({
+        from: 'manaCards',
+        cards: players[player].cards.manaCards,
+        player,
+        cardState: {
+          tapped: false,
+        }
+      })
+    }
+    if (nextTurn >= 2 && players[player].cards.yamafudaCards.length > 0) {
+      onMoveCards(
+        'yamafudaCards',
+        'tefudaCards',
+        [players[player].cards.yamafudaCards[0]],
+        player
+      )
+    }
+  }
+
   function onSelectDeck(player: player, deck: Deck) {
     players[player].isReady = true;
     cardActions.selectDeck(player, deck)
@@ -101,6 +137,7 @@ function useRoomListners({
     onGroupCard,
     onChangeCardsState,
     onSelectDeck,
+    onStartTurn,
   }
 }
 

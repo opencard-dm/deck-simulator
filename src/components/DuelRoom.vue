@@ -42,8 +42,13 @@
                 <o-button
                   variant="grey-dark"
                   size="small"
-                  @click="startTurn(currentPlayer)"
-                >ターン開始</o-button>
+                  @click="onStartTurn({ player: currentPlayer })"
+                >{{ gameLogger.turn.current + 1 }}ターン目を開始</o-button>
+                <o-button
+                  style="margin-left: 8px;"
+                  variant="grey-dark"
+                  size="small"
+                >{{ gameLogger.turn.current }} / {{ gameLogger.turn.total }}</o-button>
               </div>
               <div v-if="!isPhone() && !players[upperPlayer].isReady"
                 style="float: right;">
@@ -213,36 +218,10 @@ const {
   onGroupCard,
   onChangeCardsState,
   onSelectDeck,
+  onStartTurn,
   players,
   resetGame,
 } = useRoomSetup(props);
-
-function startTurn(player: player) {
-  onChangeCardsState({ 
-    from: 'battleCards',
-    cards: players[player].cards.battleCards,
-    player,
-    cardState: {
-      tapped: false,
-    }
-  })
-  onChangeCardsState({ 
-    from: 'manaCards',
-    cards: players[player].cards.manaCards,
-    player,
-    cardState: {
-      tapped: false,
-    }
-  })
-  if (players[player].cards.yamafudaCards.length > 0) {
-    onMoveCards(
-      'yamafudaCards',
-      'tefudaCards',
-      [players[player].cards.yamafudaCards[0]],
-      player
-    )
-  }
-}
 
 function onResetGame() {
   resetGame();
