@@ -52,7 +52,7 @@
           >
             <img
               v-if="card.faceDown === true"
-              :src="card.backImageUrl"
+              :src="cardDetail(card).backImageUrl"
               :width="cardWidth"
               draggable="false"
             />
@@ -173,6 +173,7 @@ const {
   setSelectMode,
   hasSelectedCard,
   moveSelectedCard,
+  cardDetail,
 } = useZone(props, emit)
 
 const {

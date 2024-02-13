@@ -21,7 +21,7 @@
         <div class="shield-card card">
           <span class="shield-id">{{ card.shieldId }}</span>
           <!-- 裏向きのカードの場合表示されない。 -->
-          <img v-if="card.faceDown" :src="card.backImageUrl" />
+          <img v-if="card.faceDown" :src="cardDetail(card).backImageUrl" />
           <TextCard
             v-else
             :card="card"
@@ -84,6 +84,7 @@ const {
   selectMode,
   setSelectMode,
   moveSelectedCard,
+  cardDetail,
 } = useZone(props, emit)
 
 const {

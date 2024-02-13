@@ -3,7 +3,7 @@ export interface Card {
     /** unique id for each card in game */
     id: number
     /** unique key for card */
-    cd?: string
+    cd: string
     // mainCardId: number
     /** location in zone */
     index?: number

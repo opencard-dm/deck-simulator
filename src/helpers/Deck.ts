@@ -56,16 +56,20 @@ export class Deck {
       // デッキメーカーから取り込んだデータにはtimeがないことによる対応。
       const times = c.times || 1
       delete c.times
-      delete c.mainCardId
       for (let i = 0; i < times; i++) {
         const card: Card = {
           ...c,
           imageUrl: '',
           backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
-          mainCardId: c.mainCardId || '',
         }
         if (!card.cd) {
           card.cd = card.name
+        } else {
+          // v1.9.0以降はcdがairtableのid
+          delete card.mainCardId
+          delete card.name
+          delete card.imageUrl
+          delete card.backImageUrl
         }
         if (c.imageUrl || c.imageId) {
           card.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`

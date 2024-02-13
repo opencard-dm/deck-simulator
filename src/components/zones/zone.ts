@@ -4,6 +4,7 @@ import { cardState, groupableZone, player, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { computed } from "vue";
 import { changeCardsStateParams } from "@/helpers/CardActions";
+import { CardDetail } from "@/entities/Deck";
 
 export interface zoneProps {
     player: player
@@ -107,6 +108,19 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
     function emitState() {
       emit('emit-room-state', props.player)
     }
+    function cardDetail(card: Card) {
+      let detail = {} as CardDetail
+      try {
+        detail = useStore().state.cardDetails[card.cd]
+      } catch (error) {
+        console.error('card not found:', card.cd)
+      }
+      detail = {} as CardDetail
+      if (!detail.backImageUrl) {
+        detail.backImageUrl = 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg'
+      }
+      return detail
+    }
     return {
         emit,
         // state
@@ -131,6 +145,7 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
         moveSelectedCard,
         shuffleCards,
         emitState,
+        cardDetail,
     }
 }
 

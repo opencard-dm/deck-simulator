@@ -30,7 +30,7 @@
               :class="{ 'is-selected': cardIsSelected(card) }"
               @click.stop="clickCard(card)"
             >
-              <img v-if="card.faceDown" :src="card.backImageUrl" />
+              <img v-if="card.faceDown" :src="cardDetail(card).backImageUrl" />
               <TextCard
                 v-else
                 :card="card"
@@ -61,7 +61,7 @@
               :class="{ 'is-selected': cardIsSelected(card) }"
               @click.stop="clickCard(card)"
             >
-              <img v-if="card.faceDown" :src="card.backImageUrl" />
+              <img v-if="card.faceDown" :src="cardDetail(card).backImageUrl" />
               <TextCard
                 v-else
                 :card="card"
@@ -113,6 +113,7 @@ const {
   hasSelectedCard,
   moveSelectedCard,
   emitState,
+  cardDetail,
 } = useZone(props, emit)
 
 const normalCards = computed(() => {

@@ -14,7 +14,7 @@
       >
         <img
           v-if="hoveredCard.faceDown && !hoveredCard.showInWorkSpace"
-          :src="hoveredCard.backImageUrl"
+          :src="cardDetail(hoveredCard).backImageUrl"
         />
         <img v-else :src="hoveredCard.imageUrl" />
       </div>
@@ -82,10 +82,18 @@ const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
 });
+const emit = defineEmits<zoneEmit>()
+const {
+  cardDetail
+} = useZone({
+  player: 'a',
+  cards: []
+}, emit)
 </script>
 
 <script lang="ts">
 import { mapMutations, mapState } from "vuex/dist/vuex.cjs";
+import { useZone, zoneEmit } from './zones/zone';
 function getCardDetail(cardId: string) {
   try {
     return useStore().state.cardDetails[cardId]
@@ -133,7 +141,7 @@ export default {
         }
         if (
           this.hoveredCard.faceDown &&
-          !this.hoveredCard.backImageUrl.includes("/card-back.jpg")
+          !cardDetail(this.hoveredCard).backImageUrl.includes("/card-back.jpg")
         ) {
           return true;
         }

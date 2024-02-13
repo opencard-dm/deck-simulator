@@ -3,6 +3,7 @@ import { Card } from "./Card";
 export interface CardDetail {
     id: string
     main_card_id?: number
+    backImageUrl: string
     name: string
     name_ruby?: string
     image_paths?: string[]

@@ -92,7 +92,7 @@
                       <!-- ワークスペース内だけでみられる状態がある -->
                       <img
                         v-if="card.faceDown === true && !card.showInWorkSpace"
-                        :src="card.backImageUrl"
+                        :src="cardDetail(card).backImageUrl"
                         :width="cardWidth"
                       />
                       <CardPopup v-else :url="card.imageUrl" :card="card">
@@ -251,8 +251,17 @@
 <script setup lang="ts">
 import CardPopup from './elements/CardPopup.vue'
 import TextCard from "./elements/TextCard.vue";
+import { useZone, zoneEmit } from './zones/zone';
 const cardWidth = isPhone() ? 70 : 100
 const cardHeight = cardWidth * 908 / 650
+
+const emit = defineEmits<zoneEmit>()
+const {
+  cardDetail
+} = useZone({
+  player: 'a',
+  cards: []
+}, emit)
 </script>
 
 <script lang="ts">

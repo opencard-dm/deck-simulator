@@ -27,7 +27,7 @@
           <div v-else @click.stop="clickCard(card)">
             <img 
               v-if="card.faceDown" 
-              :src="card.backImageUrl"
+              :src="cardDetail(card).backImageUrl"
               :style="{width: `${cardWidth}px`}"
             />
             <CardPopup v-else :url="card.imageUrl" :card="card">
@@ -151,6 +151,7 @@ const {
   workSpace,
   openWorkSpace,
   closeWorkSpace,
+  cardDetail,
 } = useZone(props, emit)
 
 function clickCard(card: Card) {

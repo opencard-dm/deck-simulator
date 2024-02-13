@@ -36,7 +36,7 @@
           >
             <img
               v-if="cards[0].faceDown"
-              :src="cards[0].backImageUrl"
+              :src="cardDetail(cards[0]).backImageUrl"
               alt=""
             />
             <TextCard
@@ -150,6 +150,7 @@ const {
   hasSelectedCard,
   setHoveredCard,
   moveSelectedCard,
+  cardDetail,
 } = useZone(props, emit)
 
 const drawOne = () => {
