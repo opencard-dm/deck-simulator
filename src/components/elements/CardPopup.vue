@@ -1,6 +1,6 @@
 <template>
   <OnLongPress
-    @trigger="openPopup(url)"
+    @trigger="openPopup()"
     @contextmenu.prevent
     :prevent="true"
   >
@@ -15,15 +15,13 @@ import { useStore } from 'vuex';
 import { Card } from '@/entities/Card';
 
 const props = withDefaults(defineProps<{
-  url: string,
-  card?: Card
+  card: Card
 }>(), {
   // card: null
 })
 const store = useStore()
-const openPopup = (url: string) => {
+const openPopup = () => {
   if (isPhone()) {
-    store.commit('setDisplayImageUrl', url)
     store.commit('setHoveredCard', props.card)
   }
 }

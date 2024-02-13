@@ -34,9 +34,6 @@ function useRoomListners({
   
   function onMoveCards(from: zone, to: zone, cards: Card[], player: player, prepend = false) {
     if (!cards || cards.length === 0) return;
-    if (store.state.displayImageUrl) {
-      store.commit('setDisplayImageUrl', '');
-    }
     cardActions.moveCards({ from, to, cards: cards, player, prepend })
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {

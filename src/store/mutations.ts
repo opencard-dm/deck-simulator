@@ -4,16 +4,10 @@ import { Card } from '@/entities/Card';
 import { state } from "."
 
 export const mutations = {
-    setDisplayImageUrl(state: state, url: string) {
-        state.displayImageUrl = url
-    },
     setSelectMode(state: state, data) {
         // セレクトモード変化時には選択中のカードを消す。
         state.selectedCard = null
         state.selectMode = data
-        if (data === null) {
-            state.displayImageUrl = ''
-        }
     },
     setSelectedCard(state: state, card: Card) {
         state.selectedCard = card

@@ -7,7 +7,6 @@ import { mutations } from './mutations'
 import { CardDetail } from '@/entities/Deck';
 
 export interface state {
-  displayImageUrl: string
   selectMode: {
     player: player
     zone: zone
@@ -86,7 +85,6 @@ export const store = createStore({
   },
   state() {
     const initState: state = {
-      displayImageUrl: '',
       selectMode: null, // カードを重ねるときに使用。
       selectedCard: null, // セレクトモードではないが、カードを選択するとき使用する。
       hoveredCard: null,

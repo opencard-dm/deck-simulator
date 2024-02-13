@@ -1,7 +1,6 @@
 <template>
   <div id="canvas"
-    v-if="isMounted"
-    v-on="!isPhone() ? {mousemove: traceMouseMove} : {}">
+    v-if="isMounted">
     <div
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
@@ -14,7 +13,7 @@
       >
         <img
           v-if="hoveredCard.faceDown && !hoveredCard.showInWorkSpace"
-          :src="cardDetail(hoveredCard).backImageUrl"
+          :src="cardDetail.backImageUrl"
         />
         <img v-else :src="hoveredCard.imageUrl" />
       </div>
@@ -74,7 +73,6 @@
 import { CardDetail } from '@/entities/Deck';
 import { isPhone } from '@/helpers/Util';
 import { onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
 import { Features } from '@/features';
 import TextCard from './elements/TextCard.vue';
 
@@ -82,26 +80,10 @@ const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
 });
-const emit = defineEmits<zoneEmit>()
-const {
-  cardDetail
-} = useZone({
-  player: 'a',
-  cards: []
-}, emit)
 </script>
 
 <script lang="ts">
 import { mapMutations, mapState } from "vuex/dist/vuex.cjs";
-import { useZone, zoneEmit } from './zones/zone';
-function getCardDetail(cardId: string) {
-  try {
-    return useStore().state.cardDetails[cardId]
-  } catch (error) {
-    console.error('card not found:', cardId)
-    return {}
-  }
-}
 
 export default {
   data() {
@@ -122,16 +104,13 @@ export default {
   },
   computed: {
     ...mapState(["hoveredCard"]),
-    imageUrl() {
-      return this.$store.state.displayImageUrl
-    },
     cardDetail() {
       if (!this.hoveredCard) return {}
       if (this.hoveredCard.mainCardId) {
-        return getCardDetail(this.hoveredCard.mainCardId)
+        return this.getCardDetail(this.hoveredCard.mainCardId)
       }
       if (this.hoveredCard.cd) {
-        return getCardDetail(this.hoveredCard.cd)
+        return this.getCardDetail(this.hoveredCard.cd)
       }
     },
     cardIsVisible() {
@@ -141,7 +120,8 @@ export default {
         }
         if (
           this.hoveredCard.faceDown &&
-          !cardDetail(this.hoveredCard).backImageUrl.includes("/card-back.jpg")
+          this.cardDetail &&
+          !this.cardDetail.backImageUrl.includes("/card-back.jpg")
         ) {
           return true;
         }
@@ -171,26 +151,21 @@ export default {
   },
   methods: {
     ...mapMutations(["setHoveredCard"]),
-    traceMouseMove(event) {
-      if (this.display.hidden) {
-        return;
+    closePopup() {
+      this.$store.commit('setHoveredCard', null)
+    },
+    getCardDetail(cardId: string) {
+      let cardDetail = {} as CardDetail
+      try {
+        cardDetail = this.$store.state.cardDetails[cardId]
+      } catch (error) {
+        console.error('card not found:', cardId)
+        cardDetail = {} as CardDetail
       }
-      const imageSrc = event.target.src;
-      if (!imageSrc) {
-        this.display.imageUrl = "";
-        return;
-      }
-      // ホストが異なる画像だけ拡大することで、カード画像だけが拡大できるようにする。
-      if (!imageSrc.includes("card-back")) {
-        this.display.imageUrl = imageSrc;
-      } else {
-        this.display.imageUrl = "";
+      if (!cardDetail.backImageUrl) {
+        cardDetail.backImageUrl = 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg'
       }
     },
-    closePopup() {
-      this.$store.commit('setDisplayImageUrl', '')
-      this.$store.commit('setHoveredCard', null)
-    }
   },
   mounted() {
     if (window.innerWidth > 800) {
