@@ -15,7 +15,7 @@
           v-if="hoveredCard.faceDown && !hoveredCard.showInWorkSpace"
           :src="cardDetail.backImageUrl"
         />
-        <img v-else :src="hoveredCard.imageUrl" />
+        <img v-else :src="cardDetail.imageUrl" />
       </div>
       <div v-if="cardIsVisible && cardDetail && cardDetail.card_text">
         <TextCard
@@ -106,9 +106,6 @@ export default {
     ...mapState(["hoveredCard"]),
     cardDetail() {
       if (!this.hoveredCard) return {}
-      if (this.hoveredCard.mainCardId) {
-        return this.getCardDetail(this.hoveredCard.mainCardId)
-      }
       if (this.hoveredCard.cd) {
         return this.getCardDetail(this.hoveredCard.cd)
       }
@@ -165,6 +162,7 @@ export default {
       if (!cardDetail.backImageUrl) {
         cardDetail.backImageUrl = 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg'
       }
+      return cardDetail
     },
   },
   mounted() {
