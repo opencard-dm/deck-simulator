@@ -133,3 +133,24 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
         emitState,
     }
 }
+
+export function readableZone(zone: zone) {
+  switch (zone) {
+    case "tefudaCards":
+      return '手札'
+    case "shieldCards":
+      return 'シールドゾーン'
+    case "battleCards":
+      return 'バトルゾーン'
+    case "chojigenCards":
+      return '超次元ゾーン'
+    case "yamafudaCards":
+      return '山札'
+    case "manaCards":
+      return 'マナゾーン'
+    case "bochiCards":
+      return '墓地'
+    default:
+      return '';
+  }
+}

@@ -8,6 +8,9 @@ import { GameHistory, cardActionMethodParams } from "@/entities/History"
 import { v4 as uuidv4 } from 'uuid'
 import { TurnActions, startTurnParams } from "./TurnActions"
 import { Turn } from "@/entities/Turn"
+import { state } from "@/store"
+import { readableZone } from "@/components/zones/zone"
+import { Card } from "@/entities/Card"
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
@@ -205,4 +208,61 @@ export class GameLogger {
         break;
     }
   }
+  
+  readableHistory(history: GameHistory, cardDetails: state["cardDetails"]) {
+    if (history.method === this.moveCards.name) {
+      const { from, to, cards, player, prepend, index } = history.args as moveCardsParams
+      if (from === to) {
+        return readableZone(from) + 'の'
+          + getCardNames(cards, cardDetails).join('') + 'を動かしました'
+      }
+      return readableZone(from) + 'から' + readableZone(to) + 'へ'
+        + getCardNames(cards, cardDetails).join('') + 'を移動しました'
+    }
+    if (history.method === this.groupCard.name) {
+      const { from, to, fromCard, toCard, player } = history.args as groupCardParams
+      if (to === 'shieldCards') {
+        return getCardNames([fromCard], cardDetails).join('')
+          + 'をシールドに重ねました'
+      }
+      return getCardNames([fromCard], cardDetails).join('') + 'を'
+        + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
+    }
+    // if (history.method === this.undoGroupCard.name) {
+    //   const { from, to, fromCard, toCard, player } = history.args as groupCardParams
+    //   if (to === 'shieldCards') {
+    //     return getCardNames([fromCard], cardDetails).join('')
+    //       + 'をシールドに重ねました'
+    //   }
+    //   return getCardNames([fromCard], cardDetails).join('') + 'を'
+    //     + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
+    // }
+    if (history.method === this.changeCardsState.name) {
+      const { from, cards, player, cardState } = history.args as changeCardsStateParams
+      if (cardState?.tapped !== undefined) {
+        return readableZone(from) + 'の' + getCardNames(cards, cardDetails).join('')
+          + 'を' + (cardState.tapped ? 'タップ' : 'アンタップ')
+          + 'しました'
+      }
+      if (cardState?.faceDown !== undefined) {
+        return readableZone(from) + 'の' + getCardNames(cards, cardDetails).join('')
+          + 'を裏返しました'
+      }
+      return ''
+    }
+    if (history.method === this.startTurn.name) {
+      const { turn, player } = history.args as startTurnParams
+      return String(turn) + 'ターン目を開始しました'
+    }
+    return ''
+  }
+}
+
+function getCardNames(cards: readonly Card[], cardDetails: state["cardDetails"]) {
+  return cards.map(c => {
+    if (c.faceDown) {
+      return 'カード'
+    }
+    return '《' + cardDetails[c.cd as string].name + '》'
+  })
 }

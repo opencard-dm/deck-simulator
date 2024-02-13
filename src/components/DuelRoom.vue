@@ -48,6 +48,7 @@
                   style="margin-left: 8px;"
                   variant="grey-dark"
                   size="small"
+                  @click="logsViewer = true"
                 >{{ gameLogger.turn.current }} / {{ gameLogger.turn.total }}</o-button>
               </div>
               <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
@@ -129,6 +130,13 @@
         </ImageViewer>
       </template>
     </PlayerTabs>
+    <o-modal
+      rootClass="gameLoggerModal"
+      v-model:active="logsViewer"
+      contentClass="gameLoggerModal__content"
+    >
+      <LogsViewer :game-logger="gameLogger"></LogsViewer>
+    </o-modal>
   </div>
 </template>
 
@@ -142,6 +150,7 @@ import ImageViewer from './ImageViewer.vue';
 import DeckSelector from './DeckSelector.vue';
 import PlaySheet from './PlaySheet.vue';
 import PlayerTabs from './PlayerTabs.vue';
+import LogsViewer from './LogsViewer.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
@@ -203,6 +212,8 @@ const deckSelectorActiveWatch = computed<boolean>({
     deckSelectorActive.value = value
   }
 })
+
+const logsViewer = ref(false)
 
 const playerZoneHeight = isPhone() ? `${Layout.playerZoneHeight(70)}px` : '';
 const isMounted = ref(false);
