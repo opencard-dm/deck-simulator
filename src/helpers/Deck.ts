@@ -55,6 +55,8 @@ export class Deck {
     deck.cards.forEach(c => {
       // デッキメーカーから取り込んだデータにはtimeがないことによる対応。
       const times = c.times || 1
+      delete c.times
+      delete c.mainCardId
       for (let i = 0; i < times; i++) {
         const card: Card = {
           ...c,

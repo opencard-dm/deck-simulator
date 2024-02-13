@@ -4,7 +4,7 @@ export interface Card {
     id: number
     /** unique key for card */
     cd?: string
-    mainCardId: number
+    // mainCardId: number
     /** location in zone */
     index?: number
     tapped: boolean
