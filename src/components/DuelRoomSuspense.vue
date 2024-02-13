@@ -40,7 +40,6 @@ async function fetchDeck(deckId: string, store: any) {
           cardIds: cardIds.join(',')
         }
       })
-      console.debug(cards)
       store.commit('addCardDetails', cards)
     }
     return await Deck.prepareDeckForGame(localDeck, true, true);
