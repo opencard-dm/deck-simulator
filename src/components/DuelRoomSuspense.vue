@@ -7,7 +7,7 @@
     :players="players"
     :roomId="roomId"
     :single="single"
-    :deck="null"
+    :sourceDeck="sourceDeck"
   ></DuelRoom>
 </template>
 
@@ -16,13 +16,14 @@ import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import axios from 'axios';
 import DuelRoom from './DuelRoom.vue';
 import { RoomConfig, initialData } from '@/helpers/room';
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import { CardActions } from '@/helpers/CardActions';
 import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
 import { Deck } from '@/helpers/Deck';
 import { getCloudRunCookie } from '@/helpers/Util';
 import { useStore } from 'vuex';
+import { SourceDeck } from '@/entities/Deck';
 
 async function fetchDeck(deckId: string) {
   let deckApi
@@ -50,6 +51,7 @@ export default defineComponent({
     // クエリストリングのplayerが未設定の場合はaにする
     const lowerPlayer = route.query.player === "b" ? "b" : "a" as player
     const upperPlayer = lowerPlayer === "a" ? "b" : "a" as player
+    const sourceDeck = ref<SourceDeck|null>()
 
     // data
     const players = reactive(initialData(roomId).players)
@@ -69,6 +71,7 @@ export default defineComponent({
         players.b = parsed.players.b
         useStore().commit('addCardDetails', parsed.cardDetails)
         gameLogger.setHistories(parsed.histories)
+        sourceDeck.value = parsed.sourceDeck
         console.debug('get room data from session storage. key=' + `room-${roomId}`)
         return {
           upperPlayer,
@@ -80,6 +83,12 @@ export default defineComponent({
         }
       }
       if (deckId) {
+        const localDeck = Deck.getFromId(deckId)
+        if (!localDeck) {
+          console.error('デッキの取得に失敗しました', deckId)
+          return
+        }
+        sourceDeck.value = localDeck
         cardActions.selectDeck('a', await fetchDeck(deckId) as any)
         players.a.isReady = true
       }
@@ -109,6 +118,7 @@ export default defineComponent({
       gameLogger,
       roomId,
       players,
+      sourceDeck,
     }
   }
 })

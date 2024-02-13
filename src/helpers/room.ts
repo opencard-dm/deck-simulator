@@ -60,6 +60,7 @@ function useRoomListners({
     if (props.single || props.lowerPlayer === 'a') {
       sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
         cardDetails: store.state.cardDetails,
+        sourceDeck: props.sourceDeck,
         players,
         histories: gameLogger.histories,
       }));
@@ -84,6 +85,7 @@ function useRoomListners({
     if (props.single || props.lowerPlayer === 'a') {
       sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
         cardDetails: store.state.cardDetails,
+        sourceDeck: props.sourceDeck,
         players,
         histories: gameLogger.histories,
       }));

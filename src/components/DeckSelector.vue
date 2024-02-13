@@ -177,7 +177,8 @@ function onClickSelectButton() {
   errors.scrapeUrl = ''
   scrape()
 }
-async function setupDeck(deckData: DeckType) {
+async function setupDeck(deckData: SourceDeck) {
+  const sourceDeck = JSON.parse(JSON.stringify(deckData))
   const deck: DeckType = await Deck.prepareDeckForGame(
     deckData,
     props.player === "a"
@@ -185,6 +186,7 @@ async function setupDeck(deckData: DeckType) {
   console.log("selected deck", deck);
   emit("selected", {
     deck,
+    sourceDeck,
   });
   if (props.partnerIsReady) {
     emit("update:active", false);
@@ -227,7 +229,7 @@ async function scrape() {
   updateUrl(deckId.value)
   scrapeUrl.value = "";
   scraping.value = false;
-  setupDeck(deck as DeckType)
+  setupDeck(deck as SourceDeck)
 }
 function onKeyPress() {
   errors.scrapeUrl = "ペーストのみ可能です";

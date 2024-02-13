@@ -10,7 +10,7 @@ import { Card } from '@/entities/Card';
 
 export class Deck {
 
-  static getFromId(id: string) {
+  static getFromId(id: string): SourceDeck {
     const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
     if (localDeck) return localDeck
     const store = useStore()
@@ -46,7 +46,7 @@ export class Deck {
    * @param {Boolean} playerA
    * @returns
    */
-  static async prepareDeckForGame(deck, playerA = false, withoutApi = false): Promise<DeckType> {
+  static async prepareDeckForGame(deck: SourceDeck, playerA = false, withoutApi = false): Promise<DeckType> {
     const mainCards = [];
     const chojigenCards = [];
     const startId = playerA ? START_ID_A : START_ID_B;

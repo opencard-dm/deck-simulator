@@ -3,6 +3,7 @@
     <CHeader :single="single"
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
+      :deck="sourceDeck"
       @switch-tab="switchTab()"
       @reset-game="onResetGame()"
     ></CHeader>
@@ -158,7 +159,7 @@ import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { useStore } from 'vuex';
 import { RoomProps } from '.';
-import { Deck as DeckType } from '@/entities/Deck';
+import { Deck as DeckType, SourceDeck } from '@/entities/Deck';
 import axios from 'axios';
 
 const store = useStore()
@@ -258,8 +259,9 @@ function shuffleCards(from: zone, cards: Card[], player: player) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
-function onDeckSelected({ deck }: {
-  deck: DeckType
+function onDeckSelected({ deck, sourceDeck }: {
+  deck: DeckType,
+  sourceDeck: SourceDeck,
 }) {
   onSelectDeck(currentPlayer.value, deck)
 }

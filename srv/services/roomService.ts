@@ -1,6 +1,7 @@
 
 import { GameHistory } from '@/entities/History'
 import { FireStore } from '../server/firestore'
+import { SourceDeck } from '@/entities/Deck'
 
 export async function createRoom(roomId: string, cookie: string) {
   const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
@@ -19,9 +20,10 @@ export async function deleteRoom(roomId: string) {
   }, { merge: true })
 }
 
-export async function createLog(name: string, histories: GameHistory[]) {
+export async function createLog(name: string, deck: SourceDeck, histories: GameHistory[]) {
   const doc = await FireStore.db.collection('logs').add({
     name,
+    deck,
     histories,
   })
   return doc

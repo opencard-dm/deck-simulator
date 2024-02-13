@@ -61,7 +61,7 @@
       <nav class="nav-links">
         <div class="nav-item">
           <o-button size="small" variant="grey-dark" @click="saveHistories()"
-            :disabled="saveHistoriesSent"
+            :disabled="!deck || saveHistoriesSent"
             >ログを保存する</o-button
           >
         </div>
@@ -107,11 +107,13 @@ import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
+import { SourceDeck } from '@/entities/Deck';
 
 const props = defineProps<{
   single: boolean,
   gameLogger: GameLogger,
   currentPlayer: player,
+  deck: SourceDeck|null
 }>()
 
 const emit = defineEmits([
@@ -161,9 +163,12 @@ const saveHistoriesSent = ref(false)
 function saveHistories() {
   if (saveHistoriesSent.value) return
   saveHistoriesSent.value = true
+  const deck = JSON.parse(JSON.stringify(props.deck))
+  delete deck.cardDetails
   axios.post('/api/logs', {
     name: route.query.deck_id || 'デッキ',
     histories: props.gameLogger.histories,
+    deck: props.deck
   }).then(() => {
 
   })

@@ -46,10 +46,14 @@ router.delete('/api/rooms/:roomId', async function (req, res) {
 router.post('/api/logs', async function (req, res) {
   if (!req.body.histories
     || !req.body.name
+    || !req.body.deck
   ) {
     return res.json({}).status(422)
   }
-  const log = await createLog(req.body.name, req.body.histories)
+  const log = await createLog(
+    req.body.name,
+    req.body.deck,
+    req.body.histories)
   res.json(log)
 })
 
