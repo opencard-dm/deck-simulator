@@ -13,9 +13,9 @@
             {{ deck.name }}
           </option>
         </template>
-        <!-- <option v-for="(deck, index) in deckList" :key="index" :value="index">
+        <option v-for="(deck, sampleIndex) in deckList" :value="sampleIndex" :key="sampleIndex">
           {{ deck.name }}
-        </option> -->
+        </option>
       </select>
       <o-button
         @click.stop="onClickSelectButton"
@@ -207,7 +207,9 @@ async function scrape() {
   }
   let deck = null
   // TODO: Deck.getFromId()と共通化
-  if (deckId.value.includes('-')) {
+  if (Number.isInteger(deckId.value)) {
+    deck = JSON.parse(JSON.stringify(deckList[deckId.value as any]))
+  } else if (deckId.value.includes('-')) {
     const [decksSourceIndex, ...deckNameElems] = deckId.value.split('-')
     const deckName = deckNameElems.join('-')
     const userDeck = store.state.decks.data[decksSourceIndex].decks

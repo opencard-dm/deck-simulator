@@ -50,7 +50,7 @@
                   size="small"
                 >{{ gameLogger.turn.current }} / {{ gameLogger.turn.total }}</o-button>
               </div>
-              <div v-if="!isPhone() && !players[upperPlayer].isReady"
+              <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
                 style="float: right;">
                 <o-button
                   variant="grey-dark"
@@ -60,7 +60,7 @@
                     deckSelectorActive = true;
                   }"
                 >相手のデッキを選択する</o-button>
-              </div>
+              </div> -->
             </div>
             <PlaySheet
               v-if="!isPhone() && players[upperPlayer].isReady"
