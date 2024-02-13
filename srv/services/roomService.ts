@@ -1,4 +1,5 @@
 
+import { GameHistory } from '@/entities/History'
 import { FireStore } from '../server/firestore'
 
 export async function createRoom(roomId: string, cookie: string) {
@@ -16,4 +17,12 @@ export async function deleteRoom(roomId: string) {
     histories: [],
     ttl: FireStore.Timestamp.fromMillis(Date.now() + (1 * 60 * 60 * 1000)),
   }, { merge: true })
+}
+
+export async function createLog(name: string, histories: GameHistory[]) {
+  const doc = await FireStore.db.collection('logs').add({
+    name,
+    histories,
+  })
+  return doc
 }

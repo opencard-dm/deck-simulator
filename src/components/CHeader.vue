@@ -58,6 +58,14 @@
           <a @click="openResetGameModal()">ゲームをリセットする</a>
         </div>
       </nav>
+      <nav class="nav-links">
+        <div class="nav-item">
+          <o-button size="small" variant="grey-dark" @click="saveHistories()"
+            :disabled="saveHistoriesSent"
+            >ログを保存する</o-button
+          >
+        </div>
+      </nav>
       <nav class="nav-links" v-if="!single">
         <div class="nav-item">
           <div>
@@ -97,6 +105,8 @@ import { onMounted, ref } from 'vue';
 import { isPhone } from '@/helpers/Util';
 import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
+import axios from 'axios';
+import { useRoute } from 'vue-router';
 
 const props = defineProps<{
   single: boolean,
@@ -144,6 +154,19 @@ function redo() {
     return
   }
   props.gameLogger.redo()
+}
+
+const route = useRoute()
+const saveHistoriesSent = ref(false)
+function saveHistories() {
+  if (saveHistoriesSent.value) return
+  saveHistoriesSent.value = true
+  axios.post('/api/logs', {
+    name: route.query.deck_id || 'デッキ',
+    histories: props.gameLogger.histories,
+  }).then(() => {
+
+  })
 }
 
 </script>

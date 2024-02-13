@@ -5,7 +5,7 @@ import { RoomData } from './roomData.js'
 import { FireStore } from './firestore.js'
 import { Deck } from '../../src/helpers/Deck'
 import { getDeckData } from '../gm-deck-maker/index.js'
-import { createRoom, deleteRoom } from '../services/roomService'
+import { createLog, createRoom, deleteRoom } from '../services/roomService'
 import axios from 'axios'
 
 const router = Router()
@@ -41,6 +41,16 @@ router.delete('/api/rooms/:roomId', async function (req, res) {
   const roomId = req.params.roomId
   await deleteRoom(roomId)
   res.json({})
+})
+
+router.post('/api/logs', async function (req, res) {
+  if (!req.body.histories
+    || !req.body.name
+  ) {
+    return res.json({}).status(422)
+  }
+  const log = await createLog(req.body.name, req.body.histories)
+  res.json(log)
 })
 
 router.get('/api/decks', async function (req, res) {
