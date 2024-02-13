@@ -11,22 +11,11 @@ export interface CardDetail {
         name: string
         sort: number
     }[]
-    // 文明の順番に注意
-    is_light?: boolean
-    is_water?: boolean
-    is_dark?: boolean
-    is_fire?: boolean
-    is_nature?: boolean
-    is_zero?: boolean
-    power: string
+    power: string | null
     power_int?: number
     cost: number
     civilizations: string[]
-    races?: {
-      race_id: number
-      name: "ビーストフォーク"
-      sort: number
-    }[]
+    races?: string[]
     card_text: string
     combined_card?: CardDetail
 }

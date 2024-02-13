@@ -80,22 +80,22 @@ const color = computed(() => {
     })
   }
   const colors = []
-  if (cardDetail.value.is_light || civilizations.includes('light')) {
+  if (civilizations.includes('light')) {
     colors.push('yellow')
   }
-  if (cardDetail.value.is_water || civilizations.includes('water')) {
+  if (civilizations.includes('water')) {
     colors.push('lightblue')
   }
-  if (cardDetail.value.is_dark || civilizations.includes('dark')) {
+  if (civilizations.includes('dark')) {
     colors.push('gray')
   }
-  if (cardDetail.value.is_fire || civilizations.includes('fire')) {
+  if (civilizations.includes('fire')) {
     colors.push('lightcoral')
   }
-  if (cardDetail.value.is_nature || civilizations.includes('nature')) {
+  if (civilizations.includes('nature')) {
     colors.push('lightgreen')
   }
-  if (cardDetail.value.is_zero || civilizations.includes('zero')) {
+  if (civilizations.includes('zero')) {
     colors.push('white')
   }
   if (colors.length === 1) {
