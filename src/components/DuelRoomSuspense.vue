@@ -25,12 +25,23 @@ import { getCloudRunCookie } from '@/helpers/Util';
 import { useStore } from 'vuex';
 import { SourceDeck } from '@/entities/Deck';
 
-async function fetchDeck(deckId: string) {
-  let deckApi
+async function fetchDeck(deckId: string, store: any) {
   const localDeck = Deck.getFromId(deckId)
   if (localDeck) {
     if (localDeck.cardDetails) {
-      useStore().commit('addCardDetails', localDeck.cardDetails)
+      store.commit('addCardDetails', localDeck.cardDetails)
+    } else {
+      const cardIds: string[] = []
+      localDeck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+      localDeck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+      localDeck.grCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+      const { data: cards } = await axios.get('/api/cards', {
+        params: {
+          cardIds: cardIds.join(',')
+        }
+      })
+      console.debug(cards)
+      store.commit('addCardDetails', cards)
     }
     return await Deck.prepareDeckForGame(localDeck, true, true);
   }
@@ -46,6 +57,7 @@ export default defineComponent({
   async setup(props) {
     const route = useRoute()  
     const router = useRouter()
+    const store = useStore()
     const roomId = props.roomId as string
     const deckId = route.query.deck_id as string
     // クエリストリングのplayerが未設定の場合はaにする
@@ -89,7 +101,7 @@ export default defineComponent({
           return
         }
         sourceDeck.value = localDeck
-        cardActions.selectDeck('a', await fetchDeck(deckId) as any)
+        cardActions.selectDeck('a', await fetchDeck(deckId, store) as any)
         players.a.isReady = true
       }
     }
@@ -100,13 +112,12 @@ export default defineComponent({
         }
       });
       if (Array.isArray(room.histories) && room.histories.length === 0) {
-        // console.log(await fetchDeck(deckId) as any)
         if (typeof route.query.deck_a === 'string' && route.query.deck_a) {
-          cardActions.selectDeck('a', await fetchDeck(route.query.deck_a) as any)
+          cardActions.selectDeck('a', await fetchDeck(route.query.deck_a, store) as any)
           players.a.isReady = true
         }
         if (typeof route.query.deck_b === 'string' && route.query.deck_b) {
-          cardActions.selectDeck('b', await fetchDeck(route.query.deck_b) as any)
+          cardActions.selectDeck('b', await fetchDeck(route.query.deck_b, store) as any)
           players.b.isReady = true
         }
       }

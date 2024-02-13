@@ -58,9 +58,9 @@ router.get('/api/cards', async function (req, res) {
   }
   const cardIds = String(req.query.cardIds).split(',').map(s => s.trim())
   const cardDocs = await getCardsByIds(cardIds)
-  const cards = []
+  const cards = {}
   cardDocs.forEach(doc => {
-    cards.push(doc.data())
+    cards[doc.id] = doc.data()
   })
   return res.json(cards)
 })
@@ -83,31 +83,6 @@ router.get('/api/decks', async function (req, res) {
   return res.json(deckList)
   // return res.json(sampleDeckList)
 })
-
-router.get('/api/cards', async (req, res) => {
-  const apiRes = await axios.get(`https://d23r8jlqp3e2gc.cloudfront.net/api/v1/dm/cards?main-card-ids=${req.query.cardIds}`)
-  if (apiRes.data) {
-    const map = {}
-    apiRes.data.forEach(c => {
-      map[c.main_card_id] = c
-    })
-    return res.json(map)
-  }
-  return res.json({})
-})
-
-// router.get('/api/scrape', async (req, res) => {
-//   const deckData = await getDeckData(req.query.deckId)
-//   if (!deckData) {
-//     return res.sendStatus(404);
-//     // throw new Error('failed_fetch_data');
-//   }
-//   //
-//   // 取得したデータを処理する。
-//   const deck = Deck.convertGmFormat(deckData)
-//   // レスポンス
-//   res.json(deck)
-// })
 
 export {
   router as apiRouter,
