@@ -2,12 +2,11 @@ import { SocketUtil } from "./socket"
 import { player } from "@/entities"
 import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "./CardActions"
 import { reactive } from 'vue'
-import { RoomConfig } from "./room"
+import { RoomConfig, initialData } from "./room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
 import { GameHistory, cardActionMethodParams } from "@/entities/History"
 import { v4 as uuidv4 } from 'uuid'
 import { TurnActions, startTurnParams } from "./TurnActions"
-import { Turn } from "@/entities/Turn"
 import { state } from "@/store"
 import { readableZone } from "@/components/zones/zone"
 import { Card } from "@/entities/Card"
@@ -19,19 +18,15 @@ export class GameLogger {
   public historyIndex: number = -1
   private doneIds: string[] = []
   public unsubscribes: any[] = []
-  public turn: Turn
   public turnActions: TurnActions
+  public players: ReturnType<typeof initialData>['players']
   // vue component
 
   constructor(
     private cardActions: CardActions,
     private who: player = 'a'
   ) {
-    this.turn = {
-      current: 0,
-      total: 0,
-      turnPlayer: 'a'
-    }
+    this.players = cardActions.players
     this.turnActions = new TurnActions()
     this.turnActions.setGameLogger(this)
   }

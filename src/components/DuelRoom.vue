@@ -44,13 +44,15 @@
                   variant="grey-dark"
                   size="small"
                   @click="onStartTurn({ player: currentPlayer })"
-                >{{ gameLogger.turn.current + 1 }}ターン目を開始</o-button>
+                >{{ players[currentPlayer].turn.current + 1 }}ターン目を開始</o-button>
                 <o-button
                   style="margin-left: 8px;"
                   variant="grey-dark"
                   size="small"
                   @click="logsViewer = true"
-                >{{ gameLogger.turn.current }} / {{ gameLogger.turn.total }}</o-button>
+                >
+                  <span>{{ currentPlayer === firstPlayer ? '先' : '後' }}</span>
+                {{ players[currentPlayer].turn.current }} / {{ totalTurns }}</o-button>
               </div>
               <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
                 style="float: right;">
@@ -74,7 +76,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
-              :game-logger="gameLogger"
+              :started="totalTurns > 0"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -89,7 +91,7 @@
               :isReady="players[lowerPlayer].isReady"
               :hasChojigen="players[lowerPlayer].hasChojigen"
               :single="single"
-              :game-logger="gameLogger"
+              :started="totalTurns > 0"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -125,7 +127,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
-              :game-logger="gameLogger"
+              :started="totalTurns > 0"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -239,12 +241,21 @@ const {
   resetGame,
 } = useRoomSetup(props);
 
+// Turns
+const firstPlayer = ref<player>('a')
+const totalTurns = computed(() => {
+  return players['a'].turn.total + players['b'].turn.total
+})
 function onStartGame(player: player, first: boolean) {
+  // 先攻後攻を選べるのはlowerPlayerだけとして、
+  // 送られてきたplayerを使わない
   if (first) {
-    onStartTurn({ player })
+    firstPlayer.value = props.lowerPlayer
+    onStartTurn({ player: props.lowerPlayer })
   } else {
+    firstPlayer.value = props.upperPlayer
     onStartTurn({ player: props.upperPlayer })
-    onStartTurn({ player })
+    onStartTurn({ player: props.lowerPlayer })
   }
 }
 

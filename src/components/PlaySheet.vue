@@ -2,7 +2,7 @@
   <template v-if="side === 'lower'">
     <BattleZone
       :style="{
-        opacity: gameLogger.turn.total === 0 ? 0 : 'unset'
+        opacity: !started ? 0 : 'unset'
       }"
       :side="side"
       :player="player"
@@ -13,7 +13,7 @@
       @change-cards-state="changeCardsState"
     ></BattleZone>
     <!-- NOTE: HTMLの重なり順の関係で下に配置している -->
-    <div v-if="gameLogger.turn.total === 0" class="startButtons">
+    <div v-if="!started" class="startButtons">
       <o-button variant="danger" 
         @click="emit('start-game', player, true)"
         :disabled="false"
@@ -138,7 +138,6 @@ import { zoneEmit } from './zones/zone';
 import type { player, side } from '@/entities';
 import { Card } from '@/entities/Card';
 import { ref } from 'vue';
-import { GameLogger } from '@/helpers/GameLogger';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
@@ -158,7 +157,7 @@ const props = defineProps<{
   isReady: boolean,
   hasChojigen: boolean,
   single: boolean,
-  gameLogger: GameLogger,
+  started: boolean,
 }>();
 
 type playSheetEmit = zoneEmit & {

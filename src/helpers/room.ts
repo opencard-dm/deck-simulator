@@ -91,11 +91,12 @@ function useRoomListners({
   }
 
   function onStartTurn({ player }: { player: player }) {
-    const nextTurn = gameLogger.turn.current + 1
+    const nextTurn = players[player].turn.current + 1
     gameLogger.turnActions.startTurn({
       player,
       turn: nextTurn
     })
+    const totalTurns = players['a'].turn.total + players['b'].turn.total
     if (players[player].cards.battleCards.filter(c => c.tapped).length > 0) {
       onChangeCardsState({ 
         from: 'battleCards',
@@ -116,7 +117,7 @@ function useRoomListners({
         }
       })
     }
-    if (nextTurn >= 2 && players[player].cards.yamafudaCards.length > 0) {
+    if (totalTurns >= 2 && players[player].cards.yamafudaCards.length > 0) {
       onMoveCards(
         'yamafudaCards',
         'tefudaCards',
@@ -204,6 +205,10 @@ export function initialData(roomId: string) {
         roomId: roomId,
         isReady: false,
         hasChojigen: false,
+        turn: {
+          current: 0,
+          total: 0,
+        }
       },
       b: {
         cards: {
@@ -219,6 +224,10 @@ export function initialData(roomId: string) {
         roomId: roomId,
         isReady: false,
         hasChojigen: false,
+        turn: {
+          current: 0,
+          total: 0,
+        }
       },
     },
   };

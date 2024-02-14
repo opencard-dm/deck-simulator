@@ -26,14 +26,14 @@ export class TurnActions {
 
   startTurnWithoutHistory({ turn, player }: startTurnParams) {
     if (this.gameLogger) {
-      this.gameLogger.turn.current = turn
-      this.gameLogger.turn.total = turn
+      this.gameLogger.players[player].turn.current = turn
+      this.gameLogger.players[player].turn.total = turn
     }
   }
   
   undoStartTurn({ turn, player }: startTurnParams) {
     if (this.gameLogger) {
-      this.gameLogger.turn.current = turn - 1
+      this.gameLogger.players[player].turn.current = turn - 1
     }
   }
 }
