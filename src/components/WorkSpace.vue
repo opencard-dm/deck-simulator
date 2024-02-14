@@ -528,13 +528,16 @@ export default {
     justify-content: center;
   }
   .card-info {
-    background-color: black;
+    background-color: white;
+    padding: 0px 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
     position: absolute;
     bottom: 0;
-    left: 0;
-    font-size: 12px;
+    right: 4px;
+    font-size: 10px;
     font-weight: bold;
-    color: beige;
+    color: black;
     z-index: 1;
   }
   .o-drop__menu {
