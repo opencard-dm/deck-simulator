@@ -14,13 +14,35 @@ export class Deck {
     const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
     if (localDeck) return localDeck
     const store = useStore()
+    // ユーザがGoogleスプレッドシートで作ったデッキの場合
     if (id.includes('-')) {
       const [decksSourceIndex, ...deckNameElems] = id.split('-')
       const deckName = deckNameElems.join('-')
       const userDeck = store.state.decks.data[decksSourceIndex].decks
-        .find(d => d.name === deckName) as DeckType|undefined
+        .find(d => d.name === deckName) as SourceDeck|undefined
       // fix: デッキのカードが増殖するバグの応急処置
-      if (userDeck) return JSON.parse(JSON.stringify(userDeck))  
+      if (userDeck) {
+        const copiedDeck: SourceDeck = JSON.parse(JSON.stringify(userDeck))
+        const cardDetails: {[key:string]: any} = {}
+        let cardDetailCount = 0
+        copiedDeck.cards.forEach(c => {
+          cardDetailCount += 1
+          c.cd = String(cardDetailCount)
+          cardDetails[c.cd] = c
+        })
+        copiedDeck.chojigenCards.forEach(c => {
+          cardDetailCount += 1
+          c.cd = String(cardDetailCount)
+          cardDetails[c.cd] = c
+        })
+        copiedDeck.grCards.forEach(c => {
+          cardDetailCount += 1
+          c.cd = String(cardDetailCount)
+          cardDetails[c.cd] = c
+        })
+        copiedDeck.cardDetails = cardDetails
+        return copiedDeck  
+      }
     }
     return null
   }

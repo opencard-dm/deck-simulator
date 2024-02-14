@@ -30,7 +30,8 @@ async function fetchDeck(deckId: string, store: any) {
   if (localDeck) {
     if (localDeck.cardDetails) {
       store.commit('addCardDetails', localDeck.cardDetails)
-    } else {
+    }
+    if (localDeck.source === 'airtable') {
       const cardIds: string[] = []
       localDeck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
       localDeck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
