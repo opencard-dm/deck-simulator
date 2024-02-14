@@ -16,9 +16,10 @@
     <div class="card_top">
       <span class="card_cost">{{ cardDetail?.cost }}</span>
       <span class="card_name">{{ cardDetail?.name.split('/')[0].trim() }}</span>
-      <template >
-      </template>
     </div>
+    <div class="card_reces" :style="{
+      width: `${width / 0.6 - 2}px`
+    }">{{ cardDetail?.races?.join(' / ') }}</div>
     <div class="card_text" v-if="cardDetail && large">{{ getReadableText(cardDetail?.card_text) }}</div>
     <template v-if="cardDetail?.combined_card">
       <div class="card_top">
@@ -161,6 +162,11 @@ function getCardDetail(cardId: string) {
     font-size: 12px;
     font-weight: 500;
     color: black;
+  }
+  .card_reces {
+    font-size: 10px;
+    transform: scale(0.6);
+    transform-origin: left top;
   }
   .card_text {
     word-break: break-all;
