@@ -20,6 +20,7 @@ export class GameLogger {
   public unsubscribes: any[] = []
   public turnActions: TurnActions
   public players: ReturnType<typeof initialData>['players']
+  public firstPlayer: player
   // vue component
 
   constructor(
@@ -29,6 +30,7 @@ export class GameLogger {
     this.players = cardActions.players
     this.turnActions = new TurnActions()
     this.turnActions.setGameLogger(this)
+    this.firstPlayer = 'a'
   }
 
   listenChanges() {

@@ -58,12 +58,12 @@
           <a @click="openResetGameModal()">ゲームをリセットする</a>
         </div>
       </nav>
-      <nav class="nav-links">
+      <nav class="nav-links" v-if="canSaveLog">
         <div class="nav-item">
-          <o-button size="small" variant="grey-dark" @click="saveHistories()"
-            :disabled="!deck || saveHistoriesSent"
-            >ログを保存する</o-button
-          >
+          <SaveLogForm 
+            :deck="deck"
+            :gameLogger="gameLogger"
+          />
         </div>
       </nav>
       <nav class="nav-links" v-if="!single">
@@ -101,12 +101,13 @@
 
 <script setup lang="ts">
 import { Layout } from '@/helpers/layout'
-import { onMounted, ref } from 'vue';
+import SaveLogForm from '@/components/SaveLogForm.vue'
+import { computed, onMounted, ref } from 'vue';
 import { isPhone } from '@/helpers/Util';
 import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { SourceDeck } from '@/entities/Deck';
 
 const props = defineProps<{
@@ -122,6 +123,10 @@ const emit = defineEmits([
 ])
 
 const headerHeight = `${Layout.headerHeight()}px`
+
+// TODO: ログ保存機能は非公開
+const canSaveLog = computed(() => import.meta.env.DEV 
+  && props.deck && props.deck.source === 'airtable')
 
 const isMounted = ref(false);
 onMounted(() => {
@@ -156,22 +161,6 @@ function redo() {
     return
   }
   props.gameLogger.redo()
-}
-
-const route = useRoute()
-const saveHistoriesSent = ref(false)
-function saveHistories() {
-  if (saveHistoriesSent.value) return
-  saveHistoriesSent.value = true
-  const deck = JSON.parse(JSON.stringify(props.deck))
-  delete deck.cardDetails
-  axios.post('/api/logs', {
-    name: route.query.deck_id || 'デッキ',
-    histories: props.gameLogger.histories,
-    deck: props.deck
-  }).then(() => {
-
-  })
 }
 
 </script>

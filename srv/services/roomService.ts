@@ -26,6 +26,7 @@ export async function createLog(name: string, deck: SourceDeck, histories: GameH
     name,
     deck,
     histories,
+    createdAt: (new Date()).toISOString()
   })
   return doc
 }

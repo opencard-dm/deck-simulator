@@ -47,11 +47,18 @@ fetchLog(logId).then(async log => {
     }
   })
   store.commit('addCardDetails', cards)
-  // gameLogger.setHistories(log.histories)
-  // TODO: 1ターン目の開始まででストップする
-  log.histories.forEach(history => {
-    gameLogger.receiveHistory(history)
-  })
+  const firstTurnId = log.histories.find(h =>
+    h.method === gameLogger.startTurn.name && h.args.player === 'a'
+  )?.id
+  if (firstTurnId) {
+    for (const history of log.histories) {
+      gameLogger.receiveHistory(history)
+      if (history.id === firstTurnId) {
+        break
+      }
+    }
+  }
+  gameLogger.histories = log.histories
 })
 
 async function fetchLog(logId: string): Promise<{

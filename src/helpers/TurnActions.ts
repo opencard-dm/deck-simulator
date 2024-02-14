@@ -26,6 +26,13 @@ export class TurnActions {
 
   startTurnWithoutHistory({ turn, player }: startTurnParams) {
     if (this.gameLogger) {
+      if (turn === 1) {
+        const totalTurns = this.gameLogger.players['a'].turn.total
+          + this.gameLogger.players['b'].turn.total
+        if (totalTurns === 0) {
+          this.gameLogger.firstPlayer = player
+        }
+      }
       this.gameLogger.players[player].turn.current = turn
       this.gameLogger.players[player].turn.total = turn
     }

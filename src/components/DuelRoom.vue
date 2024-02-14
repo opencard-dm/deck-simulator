@@ -43,6 +43,7 @@
                 <o-button
                   variant="grey-dark"
                   size="small"
+                  :disabled="totalTurns === 0"
                   @click="onStartTurn({ player: currentPlayer })"
                 >{{ players[currentPlayer].turn.current + 1 }}ターン目を開始</o-button>
                 <o-button
@@ -51,7 +52,7 @@
                   size="small"
                   @click="logsViewer = true"
                 >
-                  <span>{{ currentPlayer === firstPlayer ? '先' : '後' }}</span>
+                  <span>{{ currentPlayer === gameLogger.firstPlayer ? '先' : '後' }}</span>
                 {{ players[currentPlayer].turn.current }} / {{ totalTurns }}</o-button>
               </div>
               <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
@@ -242,7 +243,6 @@ const {
 } = useRoomSetup(props);
 
 // Turns
-const firstPlayer = ref<player>('a')
 const totalTurns = computed(() => {
   return players['a'].turn.total + players['b'].turn.total
 })
@@ -250,10 +250,8 @@ function onStartGame(player: player, first: boolean) {
   // 先攻後攻を選べるのはlowerPlayerだけとして、
   // 送られてきたplayerを使わない
   if (first) {
-    firstPlayer.value = props.lowerPlayer
     onStartTurn({ player: props.lowerPlayer })
   } else {
-    firstPlayer.value = props.upperPlayer
     onStartTurn({ player: props.upperPlayer })
     onStartTurn({ player: props.lowerPlayer })
   }

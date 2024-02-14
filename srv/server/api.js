@@ -76,7 +76,7 @@ router.post('/api/logs', async function (req, res) {
     req.body.name,
     req.body.deck,
     req.body.histories)
-  res.json(log)
+  res.json({ id: log.id })
 })
 
 router.get('/api/decks', async function (req, res) {
