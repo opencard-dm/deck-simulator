@@ -28,8 +28,8 @@
         class="card_wrapper"
         v-for="card in visibleCards"
         :key="card.id"
-        @mouseenter="setHoveredCard(card)"
-        @mouseleave="setHoveredCard(null)"
+        @mouseenter="isPhone() ? null : setHoveredCard(card)"
+        @mouseleave="isPhone() ? null : setHoveredCard(null)"
         :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
       >
         <MarkTool
@@ -52,18 +52,25 @@
           >
             <img
               v-if="card.faceDown === true"
-              :src="card.backImageUrl"
+              :src="cardDetail(card).backImageUrl"
               :width="cardWidth"
               draggable="false"
             />
             <CardPopup v-else :card="card" :url="card.imageUrl">
               <TextCard
+                class="textCard"
                 :card="card"
                 :width="cardWidth"
                 :selected="cardIsSelected(card)"
                 :canBeTarget="selectTargetMode()"
               ></TextCard>
             </CardPopup>
+            <div
+              v-if="card.groupId"
+              class="cards-num"
+            >
+              {{ getGroup(card)?.cards.length }}
+            </div>
           </div>
         </MarkTool>
         <div v-if="cardIsSelected(card)" class="card_bottomButton">
@@ -173,6 +180,7 @@ const {
   setSelectMode,
   hasSelectedCard,
   moveSelectedCard,
+  cardDetail,
 } = useZone(props, emit)
 
 const {
@@ -307,6 +315,13 @@ $card-width: 100px;
       box-shadow: 2px 3px black;
       border-radius: 3px;
     }
+    &.is-group .textCard {
+      border: lightgray 1px solid;
+      border-top-width: 0;
+      border-left-width: 0;
+      box-shadow: 2px 3px black;
+      border-radius: 3px;
+    }
     &.is-selectMode {
       img {
         border: 3px solid orange;
@@ -318,6 +333,13 @@ $card-width: 100px;
         border: 3px solid #b60000;
         border-radius: 5px;
       }
+    }
+    .cards-num {
+      color: #fff;
+      position: absolute;
+      bottom: 3px;
+      right: 5px;
+      font-size: 12px;
     }
   }
   .card_wrapper {

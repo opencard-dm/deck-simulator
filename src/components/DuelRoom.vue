@@ -3,6 +3,7 @@
     <CHeader :single="single"
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
+      :deck="sourceDeck"
       @switch-tab="switchTab()"
       @reset-game="onResetGame()"
     ></CHeader>
@@ -36,16 +37,35 @@
               height: playerZoneHeight,
             }"
           >
-            <div v-if="!isPhone() && !players[upperPlayer].isReady"
-              style="float: right;">
-              <o-button
-                variant="grey-dark"
-                size="small"
-                @click="() => {
-                  currentPlayer = upperPlayer;
-                  deckSelectorActive = true;
-                }"
-              >相手のデッキを選択する</o-button>
+            <div class="gameBoard_topButtons">
+              <div
+                style="">
+                <o-button
+                  variant="grey-dark"
+                  size="small"
+                  :disabled="totalTurns === 0"
+                  @click="onStartTurn({ player: currentPlayer })"
+                >{{ players[currentPlayer].turn.current + 1 }}ターン目を開始</o-button>
+                <o-button
+                  style="margin-left: 8px;"
+                  variant="grey-dark"
+                  size="small"
+                  @click="logsViewer = true"
+                >
+                  <span>{{ currentPlayer === gameLogger.firstPlayer ? '先' : '後' }}</span>
+                {{ players[currentPlayer].turn.current }} / {{ totalTurns }}</o-button>
+              </div>
+              <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
+                style="float: right;">
+                <o-button
+                  variant="grey-dark"
+                  size="small"
+                  @click="() => {
+                    currentPlayer = upperPlayer;
+                    deckSelectorActive = true;
+                  }"
+                >相手のデッキを選択する</o-button>
+              </div> -->
             </div>
             <PlaySheet
               v-if="!isPhone() && players[upperPlayer].isReady"
@@ -57,6 +77,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
+              :started="totalTurns > 0"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -71,10 +92,12 @@
               :isReady="players[lowerPlayer].isReady"
               :hasChojigen="players[lowerPlayer].hasChojigen"
               :single="single"
+              :started="totalTurns > 0"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
               @change-cards-state="onChangeCardsState"
+              @start-game="onStartGame"
             ></PlaySheet>
           </div>
         </ImageViewer>
@@ -105,6 +128,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
+              :started="totalTurns > 0"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -114,6 +138,13 @@
         </ImageViewer>
       </template>
     </PlayerTabs>
+    <o-modal
+      rootClass="gameLoggerModal"
+      v-model:active="logsViewer"
+      contentClass="gameLoggerModal__content"
+    >
+      <LogsViewer :game-logger="gameLogger"></LogsViewer>
+    </o-modal>
   </div>
 </template>
 
@@ -127,6 +158,7 @@ import ImageViewer from './ImageViewer.vue';
 import DeckSelector from './DeckSelector.vue';
 import PlaySheet from './PlaySheet.vue';
 import PlayerTabs from './PlayerTabs.vue';
+import LogsViewer from './LogsViewer.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
@@ -134,7 +166,7 @@ import { player, playerCards, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { useStore } from 'vuex';
 import { RoomProps } from '.';
-import { Deck as DeckType } from '@/entities/Deck';
+import { Deck as DeckType, SourceDeck } from '@/entities/Deck';
 import axios from 'axios';
 
 const store = useStore()
@@ -189,13 +221,15 @@ const deckSelectorActiveWatch = computed<boolean>({
   }
 })
 
+const logsViewer = ref(false)
+
 const playerZoneHeight = isPhone() ? `${Layout.playerZoneHeight(70)}px` : '';
 const isMounted = ref(false);
 onMounted(() => {
   if (!players[currentPlayer.value].isReady) {
     deckSelectorActive.value = true
   }
-  isMounted.value = true;
+    isMounted.value = true;
 });
 
 const {
@@ -203,12 +237,29 @@ const {
   onGroupCard,
   onChangeCardsState,
   onSelectDeck,
+  onStartTurn,
   players,
   resetGame,
 } = useRoomSetup(props);
 
+// Turns
+const totalTurns = computed(() => {
+  return players['a'].turn.total + players['b'].turn.total
+})
+function onStartGame(player: player, first: boolean) {
+  // 先攻後攻を選べるのはlowerPlayerだけとして、
+  // 送られてきたplayerを使わない
+  if (first) {
+    onStartTurn({ player: props.lowerPlayer })
+  } else {
+    onStartTurn({ player: props.upperPlayer })
+    onStartTurn({ player: props.lowerPlayer })
+  }
+}
+
 function onResetGame() {
   resetGame();
+  tabId.value = 1
   deckSelectorActive.value = true
 }
 
@@ -230,8 +281,9 @@ function shuffleCards(from: zone, cards: Card[], player: player) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
-function onDeckSelected({ deck }: {
-  deck: DeckType
+function onDeckSelected({ deck, sourceDeck }: {
+  deck: DeckType,
+  sourceDeck: SourceDeck,
 }) {
   onSelectDeck(currentPlayer.value, deck)
 }
@@ -240,3 +292,10 @@ function setMessage() {
   //
 }
 </script>
+
+<style lang="scss">
+.gameBoard_topButtons {
+  display: flex;
+  justify-content: space-between;
+}
+</style>

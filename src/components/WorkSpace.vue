@@ -71,8 +71,8 @@
           <div
             v-for="card in orderedCards"
             :key="card.id"
-            @mouseenter="setHoveredCard(card)"
-            @mouseleave="setHoveredCard(null)"
+            @mouseenter="isPhone() ? null : setHoveredCard(card)"
+            @mouseleave="isPhone() ? null : setHoveredCard(null)"
           >
             <Dropdown class="dropdown" :triggers="dropdownTriggers">
               <template #trigger>
@@ -92,7 +92,7 @@
                       <!-- ワークスペース内だけでみられる状態がある -->
                       <img
                         v-if="card.faceDown === true && !card.showInWorkSpace"
-                        :src="card.backImageUrl"
+                        :src="cardDetail(card).backImageUrl"
                         :width="cardWidth"
                       />
                       <CardPopup v-else :url="card.imageUrl" :card="card">
@@ -163,7 +163,7 @@
                 <o-button
                   v-if="card.faceDown && !card.showInWorkSpace && isOwner"
                   @click.stop="card.showInWorkSpace = true"
-                  :size="isPhone() ? 'small' : ''"
+                  :size="'small'"
                   >見る</o-button
                 >
                 <!-- 見られる状態になったカードを場に出すボタン -->
@@ -171,8 +171,15 @@
                   v-if="card.showInWorkSpace"
                   variant="danger"
                   @click.stop="moveCard(card, 'battleCards')"
-                  :size="isPhone() ? 'small' : ''"
+                  :size="'small'"
                   >出す</o-button
+                >
+                <o-button
+                  v-if="card.showInWorkSpace && workSpace.zone === 'yamafudaCards'"
+                  variant="info"
+                  @click.stop="moveCard(card, 'yamafudaCards')"
+                  :size="'small'"
+                  >下へ</o-button
                 >
               </template>
 
@@ -244,8 +251,17 @@
 <script setup lang="ts">
 import CardPopup from './elements/CardPopup.vue'
 import TextCard from "./elements/TextCard.vue";
+import { useZone, zoneEmit } from './zones/zone';
 const cardWidth = isPhone() ? 70 : 100
 const cardHeight = cardWidth * 908 / 650
+
+const emit = defineEmits<zoneEmit>()
+const {
+  cardDetail
+} = useZone({
+  player: 'a',
+  cards: []
+}, emit)
 </script>
 
 <script lang="ts">
@@ -389,6 +405,7 @@ export default {
         return;
       }
       if (event.target.closest("#js_gameBoard")) {
+        this.$store.commit('setHoveredCard', null)
         this.closeWorkSpace();
       }
     },
@@ -511,13 +528,16 @@ export default {
     justify-content: center;
   }
   .card-info {
-    background-color: black;
+    background-color: white;
+    padding: 0px 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
     position: absolute;
     bottom: 0;
-    left: 0;
-    font-size: 12px;
+    right: 4px;
+    font-size: 10px;
     font-weight: bold;
-    color: beige;
+    color: black;
     z-index: 1;
   }
   .o-drop__menu {

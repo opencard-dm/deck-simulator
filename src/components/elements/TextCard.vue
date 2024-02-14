@@ -1,5 +1,5 @@
 <template>
-  <img v-if="Features.using_image" draggable="false" :src="card?.imageUrl" :style="{
+  <img v-if="Features.using_image && card?.imageUrl" draggable="false" :src="card?.imageUrl" :style="{
     width: `${width}px`
   }">
   <div v-else class="cardElem" 
@@ -15,15 +15,26 @@
     }">
     <div class="card_top">
       <span class="card_cost">{{ cardDetail?.cost }}</span>
-      <span class="card_name">{{ cardDetail?.name }}</span>
+      <span class="card_name">{{ cardDetail?.name.split('/')[0].trim() }}</span>
     </div>
-    <div class="card_text" v-if="large">{{ cardDetail?.card_text }}</div>
+    <div class="card_reces" :style="{
+      width: large ? 'unset' : `${width / 0.6 - 2}px`
+    }">{{ cardDetail?.races?.join(' / ') }}</div>
+    <div class="card_text" v-if="cardDetail && large">{{ getReadableText(cardDetail?.card_text) }}</div>
+    <template v-if="cardDetail?.combined_card">
+      <div class="card_top">
+        <span class="card_cost">{{ cardDetail?.combined_card.cost }}</span>
+        <span class="card_name">{{ cardDetail?.combined_card.name }}</span>
+      </div>
+      <div class="card_text" v-if="large && cardDetail?.combined_card">{{ getReadableText(cardDetail?.combined_card.card_text) }}</div>
+    </template>
+    <div class="card_power" v-if="cardDetail?.power">{{ cardDetail?.power }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Card } from '@/entities/Card';
-import { CardDetail } from '@/entities/Deck';
+import { CardDetail, SourceDeck } from '@/entities/Deck';
 import { Features } from '@/features';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
@@ -34,6 +45,7 @@ const props = withDefaults(defineProps<{
   selected: boolean | null
   canBeTarget?: boolean | null
   large?: boolean
+  deck?: SourceDeck
 }>(), {
   canBeTarget: false,
   large: false,
@@ -42,30 +54,49 @@ const props = withDefaults(defineProps<{
 const height = computed(() => props.width * 908 / 650)
 const cardDetail = computed<CardDetail|null>(() => {
   if (!props.card) return null
-  return getCardDetail(props.card.mainCardId.toString())
+  if (props.card.cd) {
+    return getCardDetail(props.card.cd)
+  }
 })
+
+function getReadableText(text: string) {
+  const splitted = text.split('\n')
+  // console.log(splitted)
+  return splitted.map(t => {
+    if (t.startsWith('　')) return t
+    return '■' + t
+  }).join('\n')
+}
 
 const color = computed(() => {
   if (!cardDetail.value) {
     return 'white'
   }
+  const civilizations = cardDetail.value.civilizations || []
+  if (cardDetail.value.combined_card) {
+    cardDetail.value.combined_card.civilizations.forEach(c => {
+      if (!civilizations.includes(c)) {
+        civilizations.push(c)
+      }
+    })
+  }
   const colors = []
-  if (cardDetail.value.is_light) {
+  if (civilizations.includes('light')) {
     colors.push('yellow')
   }
-  if (cardDetail.value.is_water) {
+  if (civilizations.includes('water')) {
     colors.push('lightblue')
   }
-  if (cardDetail.value.is_dark) {
+  if (civilizations.includes('dark')) {
     colors.push('gray')
   }
-  if (cardDetail.value.is_fire) {
+  if (civilizations.includes('fire')) {
     colors.push('lightcoral')
   }
-  if (cardDetail.value.is_nature) {
+  if (civilizations.includes('nature')) {
     colors.push('lightgreen')
   }
-  if (cardDetail.value.is_zero) {
+  if (civilizations.includes('zero')) {
     colors.push('white')
   }
   if (colors.length === 1) {
@@ -81,6 +112,14 @@ const color = computed(() => {
 })
 
 function getCardDetail(cardId: string) {
+  if (props.deck && props.deck.cardDetails) {
+    try {
+      return props.deck?.cardDetails[cardId]
+    } catch (error) {
+      console.error('card not found:', cardId)
+      return {}
+    }
+  }
   try {
     return useStore().state.cardDetails[cardId]
   } catch (error) {
@@ -124,12 +163,31 @@ function getCardDetail(cardId: string) {
     font-weight: 500;
     color: black;
   }
+  .card_reces {
+    font-size: 10px;
+    transform: scale(0.6);
+    transform-origin: left top;
+  }
   .card_text {
     word-break: break-all;
+    white-space: pre-wrap;
     font-size: 10px;
     color: black;
   }
+  .card_power {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding: 0px 4px;
+    font-size: 14px;
+    font-weight: 600;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    color: white;
+    background-color: #444;
+  }
   &.large {
+    padding-bottom: 2rem;
     .card_top {
       display: inline-block;
       line-height: unset;
@@ -141,6 +199,10 @@ function getCardDetail(cardId: string) {
       word-break: break-all;
       font-size: 16px;
       color: black;
+    }
+    .card_reces {
+      font-size: 14px;
+      transform: unset;
     }
   }
 }

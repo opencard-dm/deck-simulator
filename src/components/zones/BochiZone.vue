@@ -11,8 +11,8 @@
       :card="(lastCard() as Card)"
       :width="50"
       :selected="false"
-      @mouseenter="setHoveredCard(lastCard())"
-      @mouseleave="setHoveredCard(null)"
+      @mouseenter="isPhone() ? null : setHoveredCard(lastCard())"
+      @mouseleave="isPhone() ? null : setHoveredCard(null)"
     ></TextCard>
   </div>
 </template>
@@ -22,6 +22,7 @@ import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import TextCard from "../elements/TextCard.vue";
+import { isPhone } from "@/helpers/Util"
 
 const props = withDefaults(defineProps<{
   player: player

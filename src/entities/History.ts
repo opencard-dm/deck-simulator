@@ -1,7 +1,8 @@
 import { moveCardsParams, changeCardsStateParams, groupCardParams } from "@/helpers/CardActions"
 import { player } from "."
+import { startTurnParams } from "@/helpers/TurnActions"
 
-export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams
+export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | startTurnParams
 
 export interface GameHistory {
     id: string

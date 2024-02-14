@@ -5,21 +5,25 @@
         <RouterLink v-if="Features.battle" class="link" to="/battle">
           対戦ツールはこちら(試作品)
         </RouterLink>
+        <!-- <RouterLink class="link" to="/decks/edit">
+          デッキ編集
+        </RouterLink> -->
       </div>
       <div style="font-size: 12px;">DECK SIMULATORはファンコンテンツ・ポリシーに沿った非公式のファンコンテンツです。ウィザーズ社の認可/許諾は得ていません。題材の一部に、ウィザーズ・オブ・ザ・コースト社の財産を含んでいます。©Wizards of the Coast LLC</div>
       <div style="font-size: 12px; margin-top: 1rem;">本サービスは非公式、非営利目的であり公式の権益を損なう意図はありません。著作者様からサービス停止の要望があった場合には速やかに対処いたします。</div>
       <h2 class="h2" style="margin-top: 1rem;">一人回し支援ツール</h2>
       <div style="margin-top: 1rem;">本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。</div>
-      <div style="margin-top: 1rem;">使用するための手順は下記となりますが、大変複雑になっております。また、Googleドライブの特定のフォルダの共有が必要になることから、操作を誤るとセキュリティ面のリスクもあります。著作権対応のためこのような複雑な手順となっていることをご容赦ください。</div>
-      <GoogleSheetInput style="margin-top: 0.5rem;"/>
+      <div style="margin-top: 1rem;">下記の画像無しのサンプルデッキは本サービスの使用感を確かめるためのものとなっております。</div>
+      <SampleDecks></SampleDecks>
+      <GoogleSheetInput style="margin-top: 2rem;"/>
       <table class="roomTable" style="margin-top: 20px">
         <thead>
           <th><div>デッキ名</div></th>
           <th><div>カード枚数</div></th>
-          <th><div></div></th>
+          <th colspan="3"><div></div></th>
         </thead>
         <template v-for="(decksSource, sourceIndex) in userDecks">
-          <tr v-for="deck in decksSource.decks" :key="decksSource.url + deck.name">
+          <tr v-for="(deck, deckIndex) in decksSource.decks" :key="decksSource.url + deck.name">
             <td>
               <div style="text-align: left;">{{ deck.name }}</div>
             </td>
@@ -35,6 +39,25 @@
               >
                 <o-button variant="info" size="small">動かす</o-button>
               </router-link>
+            </td>
+            <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
+              <o-button variant="info" size="small" @click="updateDeckFromSource(decksSource.url)">更新</o-button>
+            </td>
+            <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
+              <a
+                class="link"
+                :href="decksSource.url.replace('/export', '/edit')"
+                target="sheet"
+                rel="noopener"
+              >
+                <span>シートを開く</span>
+                <o-icon
+                  pack="fas"
+                  style="margin-left: 4px;"
+                  icon="arrow-up-right-from-square"
+                  size="small"
+                ></o-icon>
+              </a>
             </td>
           </tr>
         </template>
@@ -86,6 +109,7 @@
 <script setup lang="ts">
 import { getCloudRunCookie } from "@/helpers/Util";
 import { makeRandomString } from "@/helpers/makeRandomString";
+import SampleDecks from './index/SampleDecks.vue'
 import GoogleSpreadsheetCopy from '@/components/explanations/GoogleSpreadsheetCopy.vue'
 import GoogleSpreadsheetDeck from '@/components/explanations/GoogleSpreadsheetDeck.vue'
 import FolderDrop from "@/components/FolderDrop.vue";
@@ -179,6 +203,7 @@ const DeckForm = useDeckForm()
 import defaultDecks from '../decks.json'
 import { useStore } from "vuex";
 import { SourceDeck } from "@/entities/Deck";
+import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
@@ -193,6 +218,11 @@ async function createRoom() {
     path: "room",
     query: { roomId, player: "a" },
   });
+}
+async function updateDeckFromSource(url: string) {
+  const decksSource = await fetchDeck(url)
+  console.log(decksSource)
+  store.commit('decks/setData', decksSource)
 }
 </script>
 

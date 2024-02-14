@@ -1,7 +1,6 @@
 <template>
   <div id="canvas"
-    v-if="isMounted"
-    v-on="!isPhone() ? {mousemove: traceMouseMove} : {}">
+    v-if="isMounted">
     <div
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
@@ -14,22 +13,23 @@
       >
         <img
           v-if="hoveredCard.faceDown && !hoveredCard.showInWorkSpace"
-          :src="hoveredCard.backImageUrl"
+          :src="cardDetail.backImageUrl"
         />
-        <img v-else :src="hoveredCard.imageUrl" />
+        <img v-else :src="cardDetail.imageUrl" />
       </div>
-      <div
-        class="imageDisplay_cardText"
-        v-if="cardIsVisible && cardDetail && cardDetail.card_text"
-      >
-        {{ cardText }}
+      <div v-if="cardIsVisible && cardDetail && cardDetail.card_text">
+        <TextCard
+          :card="hoveredCard"
+          :selected="false"
+          :large="true"
+          @click="closePopup()"
+        ></TextCard>
       </div>
+
     </div>
     <!-- スマホでカードをプッシュしたときに表示される画像 -->
-    <div v-if="imageUrl" class="phoneImageDisplay" @contextmenu.prevent>
-      <img v-if="Features.using_image" :src="imageUrl" @click="closePopup()">
+    <div v-if="isPhone() && hoveredCard" class="phoneImageDisplay" @contextmenu.prevent>
       <TextCard
-        v-else
         :card="hoveredCard"
         :selected="false"
         :large="true"
@@ -73,7 +73,6 @@
 import { CardDetail } from '@/entities/Deck';
 import { isPhone } from '@/helpers/Util';
 import { onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
 import { Features } from '@/features';
 import TextCard from './elements/TextCard.vue';
 
@@ -85,20 +84,12 @@ onMounted(() => {
 
 <script lang="ts">
 import { mapMutations, mapState } from "vuex/dist/vuex.cjs";
-function getCardDetail(cardId: string) {
-  try {
-    return useStore().state.cardDetails[cardId]
-  } catch (error) {
-    console.error('card not found:', cardId)
-    return {}
-  }
-}
 
 export default {
   data() {
     return {
       display: {
-        left: true,
+        left: false,
         hidden: true,
         blur: false,
         imageUrl: "",
@@ -113,12 +104,11 @@ export default {
   },
   computed: {
     ...mapState(["hoveredCard"]),
-    imageUrl() {
-      return this.$store.state.displayImageUrl
-    },
     cardDetail() {
       if (!this.hoveredCard) return {}
-      return getCardDetail(this.hoveredCard.mainCardId)
+      if (this.hoveredCard.cd) {
+        return this.getCardDetail(this.hoveredCard.cd)
+      }
     },
     cardIsVisible() {
       if (this.hoveredCard) {
@@ -127,7 +117,8 @@ export default {
         }
         if (
           this.hoveredCard.faceDown &&
-          !this.hoveredCard.backImageUrl.includes("/card-back.jpg")
+          this.cardDetail &&
+          !this.cardDetail.backImageUrl.includes("/card-back.jpg")
         ) {
           return true;
         }
@@ -157,33 +148,22 @@ export default {
   },
   methods: {
     ...mapMutations(["setHoveredCard"]),
-    traceMouseMove(event) {
-      if (this.display.hidden) {
-        return;
-      }
-      const imageSrc = event.target.src;
-      if (!imageSrc) {
-        this.display.imageUrl = "";
-        return;
-      }
-      // ホストが異なる画像だけ拡大することで、カード画像だけが拡大できるようにする。
-      if (!imageSrc.includes("card-back")) {
-        this.display.imageUrl = imageSrc;
-      } else {
-        this.display.imageUrl = "";
-      }
-      let mX = event.pageX;
-      // 右の余白が足りない時だけ左側に表示する。
-      if (mX < window.innerWidth - this.style.width + 20) {
-        this.display.left = false;
-      } else {
-        this.display.left = true;
-      }
-    },
     closePopup() {
-      this.$store.commit('setDisplayImageUrl', '')
       this.$store.commit('setHoveredCard', null)
-    }
+    },
+    getCardDetail(cardId: string) {
+      let cardDetail = {} as CardDetail
+      try {
+        cardDetail = this.$store.state.cardDetails[cardId]
+      } catch (error) {
+        console.error('card not found:', cardId)
+        cardDetail = {} as CardDetail
+      }
+      if (!cardDetail.backImageUrl) {
+        cardDetail.backImageUrl = 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg'
+      }
+      return cardDetail
+    },
   },
   mounted() {
     if (window.innerWidth > 800) {

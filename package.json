@@ -1,6 +1,6 @@
 {
   "name": "dmdeck-simulator",
-  "version": "1.8.4",
+  "version": "1.9.0",
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development ts-node -T srv/index.ts",
@@ -33,6 +33,7 @@
     "vite-express": "^0.12.0",
     "vite-raw-plugin": "^1.0.2",
     "vite-tsconfig-paths": "^4.2.2",
+    "vuedraggable": "^4.1.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   },
   "devDependencies": {
@@ -49,6 +50,7 @@
     "@types/uuid": "^9",
     "@vitejs/plugin-vue": "^4.5.2",
     "@vue/test-utils": "^2.4.3",
+    "airtable": "^0.12.2",
     "eslint": "^8.55.0",
     "eslint-plugin-vue": "^9.19.2",
     "ip": "^1.1.8",
@@ -96,5 +98,8 @@
     "node": "18.x",
     "yarn": "4.x"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.0.2",
+  "volta": {
+    "node": "18.16.0"
+  }
 }

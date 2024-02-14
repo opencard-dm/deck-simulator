@@ -3,23 +3,46 @@ const START_ID_B = 101;
 
 import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
-import { Deck as DeckType, GmDeckData } from '@/entities/Deck';
+import { Deck as DeckType, GmDeckData, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
 import { useStore } from 'vuex';
+import { Card } from '@/entities/Card';
 
 export class Deck {
 
-  static getFromId(id: string) {
-    const localDeck = decks.find(d => d.dmDeckId === id) as DeckType|undefined
+  static getFromId(id: string): SourceDeck {
+    const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
     if (localDeck) return localDeck
     const store = useStore()
+    // ユーザがGoogleスプレッドシートで作ったデッキの場合
     if (id.includes('-')) {
       const [decksSourceIndex, ...deckNameElems] = id.split('-')
       const deckName = deckNameElems.join('-')
       const userDeck = store.state.decks.data[decksSourceIndex].decks
-        .find(d => d.name === deckName) as DeckType|undefined
+        .find(d => d.name === deckName) as SourceDeck|undefined
       // fix: デッキのカードが増殖するバグの応急処置
-      if (userDeck) return JSON.parse(JSON.stringify(userDeck))  
+      if (userDeck) {
+        const copiedDeck: SourceDeck = JSON.parse(JSON.stringify(userDeck))
+        const cardDetails: {[key:string]: any} = {}
+        let cardDetailCount = 0
+        copiedDeck.cards.forEach(c => {
+          cardDetailCount += 1
+          c.cd = String(cardDetailCount)
+          cardDetails[c.cd] = c
+        })
+        copiedDeck.chojigenCards.forEach(c => {
+          cardDetailCount += 1
+          c.cd = String(cardDetailCount)
+          cardDetails[c.cd] = c
+        })
+        copiedDeck.grCards.forEach(c => {
+          cardDetailCount += 1
+          c.cd = String(cardDetailCount)
+          cardDetails[c.cd] = c
+        })
+        copiedDeck.cardDetails = cardDetails
+        return copiedDeck  
+      }
     }
     return null
   }
@@ -45,7 +68,7 @@ export class Deck {
    * @param {Boolean} playerA
    * @returns
    */
-  static async prepareDeckForGame(deck, playerA = false, withoutApi = false): Promise<DeckType> {
+  static async prepareDeckForGame(deck: SourceDeck, playerA = false, withoutApi = false): Promise<DeckType> {
     const mainCards = [];
     const chojigenCards = [];
     const startId = playerA ? START_ID_A : START_ID_B;
@@ -54,13 +77,26 @@ export class Deck {
     deck.cards.forEach(c => {
       // デッキメーカーから取り込んだデータにはtimeがないことによる対応。
       const times = c.times || 1
+      delete c.times
       for (let i = 0; i < times; i++) {
-        mainCards.push({
+        const card: Card = {
           ...c,
-          imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
+          imageUrl: '',
           backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
-          mainCardId: c.mainCardId || '',
-        });
+        }
+        if (!card.cd) {
+          card.cd = card.name
+        } else {
+          // v1.9.0以降はcdがairtableのid
+          delete card.mainCardId
+          delete card.name
+          delete card.imageUrl
+          delete card.backImageUrl
+        }
+        if (c.imageUrl || c.imageId) {
+          card.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`
+        }
+        mainCards.push(card);
       }
     })
     deck.cards = Deck.shuffle(mainCards).map(c => {
@@ -134,12 +170,19 @@ export class Deck {
     return deck
   }
 
-  static formatData(deckD) {
+  static formatData(deckD: SourceDeck) {
     const deck = Object.assign({}, deckD);
     const imageHost = useConfig().IMAGE_HOST
 
     deck.cards.forEach(c => {
-      c.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`;
+      if (c.imageUrl || c.imageId) {
+        c.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`;
+      }
+      if (!c.cd) {
+        if (c.name) {
+          c.cd = c.name
+        }
+      }
     })
     // timeのないデータだった場合、集計する。
     if (!deck.cards[0].times && deck.cards[0].times !== 0) {

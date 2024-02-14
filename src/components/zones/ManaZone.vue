@@ -22,15 +22,15 @@
             class="card_wrapper"
             v-for="(card, index) in tappedCards"
             :key="index"
-            @mouseenter="setHoveredCard(card)"
-            @mouseleave="setHoveredCard(null)"
+            @mouseenter="isPhone() ? null : setHoveredCard(card)"
+            @mouseleave="isPhone() ? null : setHoveredCard(null)"
           >
             <div
               class="card"
               :class="{ 'is-selected': cardIsSelected(card) }"
               @click.stop="clickCard(card)"
             >
-              <img v-if="card.faceDown" :src="card.backImageUrl" />
+              <img v-if="card.faceDown" :src="cardDetail(card).backImageUrl" />
               <TextCard
                 v-else
                 :card="card"
@@ -53,15 +53,15 @@
             class="card_wrapper"
             v-for="(card, index) in normalCards"
             :key="index"
-            @mouseenter="setHoveredCard(card)"
-            @mouseleave="setHoveredCard(null)"
+            @mouseenter="isPhone() ? null : setHoveredCard(card)"
+            @mouseleave="isPhone() ? null : setHoveredCard(null)"
           >
             <div
               class="card"
               :class="{ 'is-selected': cardIsSelected(card) }"
               @click.stop="clickCard(card)"
             >
-              <img v-if="card.faceDown" :src="card.backImageUrl" />
+              <img v-if="card.faceDown" :src="cardDetail(card).backImageUrl" />
               <TextCard
                 v-else
                 :card="card"
@@ -91,6 +91,7 @@ import type { player, side, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import TextCard from "../elements/TextCard.vue";
+import { isPhone } from '@/helpers/Util';
 
 const props = withDefaults(defineProps<{
   player: player
@@ -112,6 +113,7 @@ const {
   hasSelectedCard,
   moveSelectedCard,
   emitState,
+  cardDetail,
 } = useZone(props, emit)
 
 const normalCards = computed(() => {

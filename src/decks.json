@@ -1,1 +1,538 @@
-[]
+[
+  {
+    "name": "赤青マジック",
+    "cards": [
+      {
+        "name": "AQvibrato",
+        "times": 4,
+        "cd": "recBti78ph7hJUSSt"
+      },
+      {
+        "name": "歌舞音愛 ヒメカット / ♪蛙の子 遭えるの何処？好きと謂ひて",
+        "times": 4,
+        "cd": "recHbtajnNzjJUIGh"
+      },
+      {
+        "name": "瞬閃と疾駆と双撃の決断",
+        "times": 4,
+        "cd": "recB5AmKawRnAN12v"
+      },
+      {
+        "name": "氷柱と炎弧の決断",
+        "times": 4,
+        "cd": "rec4IgMWWPPyiT136"
+      },
+      {
+        "name": "芸魔隠狐 カラクリバーシ",
+        "times": 4,
+        "cd": "recUpBAPzPmzuVsLi"
+      },
+      {
+        "name": "芸魔王将 カクメイジン",
+        "times": 4,
+        "cd": "recoqcwa1xYOtj5Vz"
+      },
+      {
+        "name": "イシカワ・ハンドシーカー / ♪聞くだけで 才能バレる このチューン",
+        "times": 2,
+        "cd": "recx5DwxAORQEiX2T"
+      },
+      {
+        "name": "同期の妖精 / ド浮きの動悸",
+        "times": 2,
+        "cd": "reczxUBRDrwYI9jfV"
+      },
+      {
+        "name": "ボン・キゴマイム / ♪やせ蛙 ラッキーナンバー ここにあり",
+        "times": 2,
+        "cd": "rech5BG2mLDtiR9vm"
+      },
+      {
+        "name": "Napo獅子-Vi無粋 / ♪オレの歌 聞けよ聞かなきゃ 殴り合い",
+        "times": 2,
+        "cd": "recHjqOL3laHqTZIF"
+      },
+      {
+        "name": "灼熱の演奏 テスタ・ロッサ",
+        "times": 3,
+        "cd": "recVfrlilS1hENacJ"
+      },
+      {
+        "name": "単騎連射 マグナム",
+        "times": 1,
+        "cd": "recoFfQZdZ1zsKfM6"
+      },
+      {
+        "name": "♪なぜ離れ どこへ行くのか 君は今",
+        "times": 1,
+        "cd": "reciCjqttq6ajBjOT"
+      },
+      {
+        "name": "強瀾怒闘 キューブリック",
+        "times": 1,
+        "cd": "recDhngxERep2JwDg"
+      },
+      {
+        "name": "機術士ディール / 「本日のラッキーナンバー！」",
+        "times": 1,
+        "cd": "recbjpNrbVcKi1nKj"
+      },
+      {
+        "name": "飛翔龍 5000VT",
+        "times": 1,
+        "cd": "recVF11isbQ0rIu9y"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
+  },
+  {
+    "name": "フィオナアカシック_超CS優勝",
+    "cards": [
+      {
+        "name": "八頭竜 ACE-Yamata / 神秘の宝剣",
+        "times": 4,
+        "cd": "rec50dLMKuiEcE9l1"
+      },
+      {
+        "name": "巨大設計図",
+        "times": 4,
+        "cd": "recwmPDuJ5a2bnPGZ"
+      },
+      {
+        "name": "レレディ・バ・グーバ / ツインパクト・マップ",
+        "times": 4,
+        "cd": "rec0aPTjandlX1Fgq"
+      },
+      {
+        "name": "魔刻の斬将オルゼキア / 訪れる魔の時刻",
+        "times": 3,
+        "cd": "recpxgCmH2pPVU1Yl"
+      },
+      {
+        "name": "ラルド・ワースピーダ / H.D.2.",
+        "times": 1,
+        "cd": "rect2MEoWoQy6urSR"
+      },
+      {
+        "name": "黒豆だんしゃく / 白米男しゃく",
+        "times": 4,
+        "cd": "recEpsXLwMg2MusyR"
+      },
+      {
+        "name": "天命龍装 ホーリーエンド / ナウ・オア・ネバー",
+        "times": 4,
+        "cd": "recX1KfdI6v4JD4UX"
+      },
+      {
+        "name": "森夢龍 フィオナ・フォレスト",
+        "times": 4,
+        "cd": "rec5jD4YtK1yoViHI"
+      },
+      {
+        "name": "完全水中要塞 アカシック3",
+        "times": 3,
+        "cd": "recUsKlyfj4Oh8d0u"
+      },
+      {
+        "name": "ドアノッカ＝ノアドッカ / 「…開けるか？」",
+        "times": 3,
+        "cd": "recqoL3hqi0148Wi1"
+      },
+      {
+        "name": "卍月 ガ・リュザーク 卍 / 「すべて見えているぞ！」",
+        "times": 2,
+        "cd": "recp2TYVi0x2MEIFr"
+      },
+      {
+        "name": "超七極 Gio / 巨大設計図",
+        "times": 1,
+        "cd": "recBmiulzWMGk6qDa"
+      },
+      {
+        "name": "ブルー・インパルス / 「真実を見極めよ、ジョニー！」",
+        "times": 2,
+        "cd": "recSy8ACstMH4PAem"
+      },
+      {
+        "name": "デビル・ドレーン",
+        "times": 1,
+        "cd": "recX660oqSF4Sc4oy"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
+  },
+  {
+    "name": "アナカラージャオウガ",
+    "cards": [
+      {
+        "name": "天体妖精エスメル / 「お茶はいかがですか？」",
+        "times": 4,
+        "cd": "rechITn8iwwNCUeR4"
+      },
+      {
+        "name": "幻緑の双月 / 母なる星域",
+        "times": 4,
+        "cd": "recy0xVhvQWvxJCkb"
+      },
+      {
+        "name": "天災 デドダム",
+        "times": 4,
+        "cd": "recjvei8hpjSmY6ou"
+      },
+      {
+        "name": "キユリのASMラジオ",
+        "times": 4,
+        "cd": "recNdx5bABKjyFKIV"
+      },
+      {
+        "name": "アーテル・ゴルギーニ",
+        "times": 4,
+        "cd": "recrtVDTp05PJeyVk"
+      },
+      {
+        "name": "CRYMAX ジャオウガ",
+        "times": 4,
+        "cd": "recrUWNv07fOnqlsc"
+      },
+      {
+        "name": "ボン・キゴマイム / ♪やせ蛙 ラッキーナンバー ここにあり",
+        "times": 3,
+        "cd": "rech5BG2mLDtiR9vm"
+      },
+      {
+        "name": "キャディ・ビートル",
+        "times": 3,
+        "cd": "rec4QRTBNwYKc4y7Z"
+      },
+      {
+        "name": "異端流し オニカマス",
+        "times": 3,
+        "cd": "recmCQRfM5Os322Yr"
+      },
+      {
+        "name": "Disメイデン",
+        "times": 2,
+        "cd": "recfn20dY2AXBiJYJ"
+      },
+      {
+        "name": "Disジルコン",
+        "times": 2,
+        "cd": "recaq43RaHXLQ6SyD"
+      },
+      {
+        "name": "飛翔龍 5000VT",
+        "times": 2,
+        "cd": "recVF11isbQ0rIu9y"
+      },
+      {
+        "name": "同期の妖精 / ド浮きの動悸",
+        "times": 1,
+        "cd": "reczxUBRDrwYI9jfV"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
+  },
+  {
+    "name": "黒緑アビス",
+    "cards": [
+      {
+        "name": "フェアリー・ギフト",
+        "times": 1,
+        "cd": "rec1QyWltOqTvnVSz"
+      },
+      {
+        "name": "フェアリー・Re:ライフ",
+        "times": 4,
+        "cd": "reczcrVRxl2sRI5vI"
+      },
+      {
+        "name": "天体妖精エスメル / 「お茶はいかがですか？」",
+        "times": 1,
+        "cd": "rechITn8iwwNCUeR4"
+      },
+      {
+        "name": "深淵の壊炉 マーダン=ロウ",
+        "times": 4,
+        "cd": "recxhmLytRalszyaq"
+      },
+      {
+        "name": "秩序の意志",
+        "times": 2,
+        "cd": "recFGasMpoOf5odR0"
+      },
+      {
+        "name": "フットレス＝トレース / 「力が欲しいか？」",
+        "times": 4,
+        "cd": "recnobyRQEUGwevg3"
+      },
+      {
+        "name": "邪幽 ジャガイスト",
+        "times": 4,
+        "cd": "recc1A40uAE2F5xyK"
+      },
+      {
+        "name": "謀遠 テレスコ=テレス",
+        "times": 4,
+        "cd": "reciOnlhYHnBvSd11"
+      },
+      {
+        "name": "ヨービリン=リリン / 「……誰を呼びたい？」",
+        "times": 3,
+        "cd": "recoa48tj6xgNPwk6"
+      },
+      {
+        "name": "ア:エヌ:マクア",
+        "times": 4,
+        "cd": "recMcrUzZ70ECSzIV"
+      },
+      {
+        "name": "ドミー=ゾー / 「倒したいか？」",
+        "times": 4,
+        "cd": "recTIlIN5UBgfMjFL"
+      },
+      {
+        "name": "フォック＝ザ＝ダーティ",
+        "times": 1,
+        "cd": "recBQtDXfrhmrk899"
+      },
+      {
+        "name": "アビスベル＝覇＝ロード",
+        "times": 4,
+        "cd": "rec3RU09oZRVzzaOj"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
+  },
+  {
+    "name": "青黒魔道具",
+    "cards": [
+      {
+        "name": "堕呪 ゴンパドゥ",
+        "times": 4,
+        "cd": "rec9FYM3dHexQCJPk"
+      },
+      {
+        "name": "堕呪 バレッドゥ",
+        "times": 4,
+        "cd": "rec2ESFno7JpM765b"
+      },
+      {
+        "name": "堕呪 ボックドゥ",
+        "times": 4,
+        "cd": "rec7YWuoAAZK1zV62"
+      },
+      {
+        "name": "堕魔 ドゥポイズ",
+        "times": 4,
+        "cd": "recgpTJwC2lAMhfxz"
+      },
+      {
+        "name": "凶鬼98号 ガシャゴン / 堕呪 ブラッドゥ",
+        "times": 4,
+        "cd": "recRJMZpOsxXwLlYo"
+      },
+      {
+        "name": "堕呪 エアヴォ",
+        "times": 4,
+        "cd": "recaUCdIp4ytrjsLN"
+      },
+      {
+        "name": "堕∞魔 ヴォゲンム",
+        "times": 4,
+        "cd": "recWhsTxxFpPtlYse"
+      },
+      {
+        "name": "秩序の意志",
+        "times": 2,
+        "cd": "recFGasMpoOf5odR0"
+      },
+      {
+        "name": "神の試練",
+        "times": 1,
+        "cd": "rec3FacjEQFSgry6Y"
+      },
+      {
+        "name": "アーテル・ゴルギーニ",
+        "times": 1,
+        "cd": "recrtVDTp05PJeyVk"
+      },
+      {
+        "name": "「無月」の頂 ＄スザーク＄",
+        "times": 4,
+        "cd": "recuAr0NywhvQUBlC"
+      },
+      {
+        "name": "ガル・ラガンザーク",
+        "times": 1,
+        "cd": "recp9csepW0Ht93Sz"
+      },
+      {
+        "name": "卍月 ガ・リュザーク 卍 / 「すべて見えているぞ！」",
+        "times": 1,
+        "cd": "recp2TYVi0x2MEIFr"
+      },
+      {
+        "name": "ボン・キゴマイム / ♪やせ蛙 ラッキーナンバー ここにあり",
+        "times": 1,
+        "cd": "rech5BG2mLDtiR9vm"
+      },
+      {
+        "name": "光牙忍ハヤブサマル",
+        "times": 1,
+        "cd": "recXFrPFN0vkqSfmK"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
+  },
+  {
+    "name": "赤緑アポロ",
+    "cards": [
+      {
+        "name": "ヘルコプ太の心絵",
+        "times": 4,
+        "cd": "recl9xvPgz03Y0HCs"
+      },
+      {
+        "name": "ストリエ雷鬼の巻",
+        "times": 4,
+        "cd": "receYo0LdMBFU30cR"
+      },
+      {
+        "name": "冒険妖精ポレコ",
+        "times": 4,
+        "cd": "recpnNsIjsbIh7hF1"
+      },
+      {
+        "name": "オンソク童子 ＜ターボ.鬼＞",
+        "times": 4,
+        "cd": "recFs1sCeos5NxJE4"
+      },
+      {
+        "name": "進化設計図",
+        "times": 4,
+        "cd": "recVefz076Nf8No3C"
+      },
+      {
+        "name": "エボリューション・エッグ",
+        "times": 4,
+        "cd": "recyv0w0E00zwxtzf"
+      },
+      {
+        "name": "ジャスミンの地版",
+        "times": 2,
+        "cd": "recw21lAN7IS9lFCT"
+      },
+      {
+        "name": "カチコミ入道 <バトライ.鬼>",
+        "times": 4,
+        "cd": "recIkmBOC75IutGsA"
+      },
+      {
+        "name": "覇帝なき侵略 レッドゾーン",
+        "times": 2,
+        "cd": "recazN4kXrwga9DsX"
+      },
+      {
+        "name": "轟く侵略 レッドゾーン",
+        "times": 2,
+        "cd": "recY4MouW6ieEi7d7"
+      },
+      {
+        "name": "超神羅星アポロヌス・ドラゲリオン",
+        "times": 4,
+        "cd": "reci9FKRIWDIprBIS"
+      },
+      {
+        "name": "禁断の轟速 ブラックゾーン",
+        "times": 2,
+        "cd": "recK4SezwqGAjRUjy"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
+  },
+  {
+    "name": "青黒コンプレックス_超CSⅥ福岡4位",
+    "cards": [
+      {
+        "name": "DARK MATERIAL COMPLEX",
+        "times": 4,
+        "cd": "recAO8DBXb8rqjie4"
+      },
+      {
+        "name": "異端流し オニカマス",
+        "times": 3,
+        "cd": "recmCQRfM5Os322Yr"
+      },
+      {
+        "name": "終止の時計 ザ・ミュート",
+        "times": 4,
+        "cd": "rec6OBgysrxmVAFHG"
+      },
+      {
+        "name": "終末の時計 ザ・クロック",
+        "times": 2,
+        "cd": "recotOyApd4c7WIzd"
+      },
+      {
+        "name": "奇天烈 シャッフ",
+        "times": 3,
+        "cd": "rechRV2n1GrDGBJPM"
+      },
+      {
+        "name": "アーテル・ゴルギーニ",
+        "times": 4,
+        "cd": "recrtVDTp05PJeyVk"
+      },
+      {
+        "name": "忍蛇の聖沌 c0br4",
+        "times": 4,
+        "cd": "recCEF1tjMXp6UEfC"
+      },
+      {
+        "name": "飛翔龍 5000VT",
+        "times": 2,
+        "cd": "recVF11isbQ0rIu9y"
+      },
+      {
+        "name": "闇参謀グラン・ギニョール",
+        "times": 2,
+        "cd": "recdIUI9hDhJ568Ww"
+      },
+      {
+        "name": "同期の妖精 / ド浮きの動悸",
+        "times": 4,
+        "cd": "reczxUBRDrwYI9jfV"
+      },
+      {
+        "name": "学校男 / ゾンビ・カーニバル",
+        "times": 2,
+        "cd": "rec9sqGZZjw3uLmw0"
+      },
+      {
+        "name": "電脳の女王 アリス / 不埒な再侵入",
+        "times": 4,
+        "cd": "rec0SGB1nmiTppnmP"
+      },
+      {
+        "name": "ボン・キゴマイム / ♪やせ蛙 ラッキーナンバー ここにあり",
+        "times": 2,
+        "cd": "rech5BG2mLDtiR9vm"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
+  }
+]

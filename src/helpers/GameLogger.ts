@@ -2,10 +2,14 @@ import { SocketUtil } from "./socket"
 import { player } from "@/entities"
 import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "./CardActions"
 import { reactive } from 'vue'
-import { RoomConfig } from "./room"
+import { RoomConfig, initialData } from "./room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
 import { GameHistory, cardActionMethodParams } from "@/entities/History"
 import { v4 as uuidv4 } from 'uuid'
+import { TurnActions, startTurnParams } from "./TurnActions"
+import { state } from "@/store"
+import { readableZone } from "@/components/zones/zone"
+import { Card } from "@/entities/Card"
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
@@ -14,18 +18,27 @@ export class GameLogger {
   public historyIndex: number = -1
   private doneIds: string[] = []
   public unsubscribes: any[] = []
+  public turnActions: TurnActions
+  public players: ReturnType<typeof initialData>['players']
+  public firstPlayer: player
   // vue component
 
   constructor(
     private cardActions: CardActions,
     private who: player = 'a'
-  ) {}
+  ) {
+    this.players = cardActions.players
+    this.turnActions = new TurnActions()
+    this.turnActions.setGameLogger(this)
+    this.firstPlayer = 'a'
+  }
 
   listenChanges() {
     if (RoomConfig.useFirebase) {
       this.unsubscribes.push(listenHistoriesChange(this.cardActions.roomId, (histories) => {
         if (!Array.isArray(histories)) return
         if (histories.length === 0) return
+        console.debug(`receive ${histories.length} histories`)
         const newHistories = histories.slice(this.historyIndex + 1)
         newHistories.forEach((history) => {
           this.receiveHistory(JSON.parse(history))
@@ -71,6 +84,11 @@ export class GameLogger {
     this.appendHistory(this.changeCardsState.name, argsCopy)
   }
 
+  startTurn(args: startTurnParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as startTurnParams
+    this.appendHistory(this.startTurn.name, argsCopy)
+  }
+
   setHistories(histories: GameHistory[]) {
     this.histories = histories
     this.historyIndex = histories.length - 1
@@ -96,6 +114,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.undoCardsState(history.args as changeCardsStateParams)
+        break
+      case this.startTurn.name:
+        this.turnActions.undoStartTurn(history.args as startTurnParams)
         break
       default:
         break;
@@ -125,6 +146,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.startTurn.name:
+        this.turnActions.startTurnWithoutHistory(history.args as startTurnParams)
         break
       default:
         break;
@@ -168,11 +192,74 @@ export class GameLogger {
       case this.groupCard.name:
         this.cardActions.groupCardWithoutHistory(history.args as groupCardParams)
         break
+      case this.undoGroupCard.name:
+        this.cardActions.undoGroupCard(history.args as groupCardParams)
+        break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.startTurn.name:
+        this.turnActions.startTurnWithoutHistory(history.args as startTurnParams)
         break
       default:
         break;
     }
   }
+  
+  readableHistory(history: GameHistory, cardDetails: state["cardDetails"]) {
+    if (history.method === this.moveCards.name) {
+      const { from, to, cards, player, prepend, index } = history.args as moveCardsParams
+      if (from === to) {
+        return readableZone(from) + 'の'
+          + getCardNames(cards, cardDetails).join('') + 'を動かしました'
+      }
+      return readableZone(from) + 'から' + readableZone(to) + 'へ'
+        + getCardNames(cards, cardDetails).join('') + 'を移動しました'
+    }
+    if (history.method === this.groupCard.name) {
+      const { from, to, fromCard, toCard, player } = history.args as groupCardParams
+      if (to === 'shieldCards') {
+        return getCardNames([fromCard], cardDetails).join('')
+          + 'をシールドに重ねました'
+      }
+      return getCardNames([fromCard], cardDetails).join('') + 'を'
+        + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
+    }
+    // if (history.method === this.undoGroupCard.name) {
+    //   const { from, to, fromCard, toCard, player } = history.args as groupCardParams
+    //   if (to === 'shieldCards') {
+    //     return getCardNames([fromCard], cardDetails).join('')
+    //       + 'をシールドに重ねました'
+    //   }
+    //   return getCardNames([fromCard], cardDetails).join('') + 'を'
+    //     + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
+    // }
+    if (history.method === this.changeCardsState.name) {
+      const { from, cards, player, cardState } = history.args as changeCardsStateParams
+      if (cardState?.tapped !== undefined) {
+        return readableZone(from) + 'の' + getCardNames(cards, cardDetails).join('')
+          + 'を' + (cardState.tapped ? 'タップ' : 'アンタップ')
+          + 'しました'
+      }
+      if (cardState?.faceDown !== undefined) {
+        return readableZone(from) + 'の' + getCardNames(cards, cardDetails).join('')
+          + 'を裏返しました'
+      }
+      return ''
+    }
+    if (history.method === this.startTurn.name) {
+      const { turn, player } = history.args as startTurnParams
+      return String(turn) + 'ターン目を開始しました'
+    }
+    return ''
+  }
+}
+
+function getCardNames(cards: readonly Card[], cardDetails: state["cardDetails"]) {
+  return cards.map(c => {
+    if (c.faceDown) {
+      return 'カード'
+    }
+    return '《' + cardDetails[c.cd as string].name + '》'
+  })
 }

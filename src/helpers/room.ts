@@ -34,9 +34,6 @@ function useRoomListners({
   
   function onMoveCards(from: zone, to: zone, cards: Card[], player: player, prepend = false) {
     if (!cards || cards.length === 0) return;
-    if (store.state.displayImageUrl) {
-      store.commit('setDisplayImageUrl', '');
-    }
     cardActions.moveCards({ from, to, cards: cards, player, prepend })
     // 少し待てば、レンダリングが完了しているため、うまくいった。
     if (to === 'tefudaCards') {
@@ -60,6 +57,7 @@ function useRoomListners({
     if (props.single || props.lowerPlayer === 'a') {
       sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
         cardDetails: store.state.cardDetails,
+        sourceDeck: props.sourceDeck,
         players,
         histories: gameLogger.histories,
       }));
@@ -84,10 +82,48 @@ function useRoomListners({
     if (props.single || props.lowerPlayer === 'a') {
       sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
         cardDetails: store.state.cardDetails,
+        sourceDeck: props.sourceDeck,
         players,
         histories: gameLogger.histories,
       }));
       return;
+    }
+  }
+
+  function onStartTurn({ player }: { player: player }) {
+    const nextTurn = players[player].turn.current + 1
+    gameLogger.turnActions.startTurn({
+      player,
+      turn: nextTurn
+    })
+    const totalTurns = players['a'].turn.total + players['b'].turn.total
+    if (players[player].cards.battleCards.filter(c => c.tapped).length > 0) {
+      onChangeCardsState({ 
+        from: 'battleCards',
+        cards: players[player].cards.battleCards,
+        player,
+        cardState: {
+          tapped: false,
+        }
+      })
+    }
+    if (players[player].cards.manaCards.filter(c => c.tapped).length > 0) {
+      onChangeCardsState({
+        from: 'manaCards',
+        cards: players[player].cards.manaCards,
+        player,
+        cardState: {
+          tapped: false,
+        }
+      })
+    }
+    if (totalTurns >= 2 && players[player].cards.yamafudaCards.length > 0) {
+      onMoveCards(
+        'yamafudaCards',
+        'tefudaCards',
+        [players[player].cards.yamafudaCards[0]],
+        player
+      )
     }
   }
 
@@ -101,6 +137,7 @@ function useRoomListners({
     onGroupCard,
     onChangeCardsState,
     onSelectDeck,
+    onStartTurn,
   }
 }
 
@@ -117,7 +154,7 @@ export function useRoomSetup(props: RoomProps) {
     });
   }
 
-  function resetGame() {
+  async function resetGame() {
     // TODO: propsを書き換えない
     props.players.a = initialData(roomId).players.a;
     props.players.b = initialData(roomId).players.b;
@@ -126,7 +163,7 @@ export function useRoomSetup(props: RoomProps) {
       // behavior: "smooth",
     });
     if (RoomConfig.useFirebase) {
-      axios.delete(`/api/rooms/${props.roomId}`)
+      await axios.delete(`/api/rooms/${props.roomId}`)
       props.gameLogger.unsubscribes.forEach(u => u())
       props.gameLogger.listenChanges()
       props.gameLogger.histories = []
@@ -168,6 +205,10 @@ export function initialData(roomId: string) {
         roomId: roomId,
         isReady: false,
         hasChojigen: false,
+        turn: {
+          current: 0,
+          total: 0,
+        }
       },
       b: {
         cards: {
@@ -183,6 +224,10 @@ export function initialData(roomId: string) {
         roomId: roomId,
         isReady: false,
         hasChojigen: false,
+        turn: {
+          current: 0,
+          total: 0,
+        }
       },
     },
   };

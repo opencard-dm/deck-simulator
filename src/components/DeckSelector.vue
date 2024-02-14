@@ -8,7 +8,12 @@
     <div id="deck-form" v-if="!isReady">
       <p class="deckForm_p">デッキを選択してください</p>
       <select name="deck" v-model="deckId">
-        <option v-for="(deck, index) in allDecks" :key="index" :value="index">
+        <template v-for="(decksSource, sourceIndex) in userDecks" :key="sourceIndex">
+          <option v-for="deck in decksSource.decks" :value="sourceIndex + '-' + deck.name">
+            {{ deck.name }}
+          </option>
+        </template>
+        <option v-for="(deck, sampleIndex) in deckList" :value="sampleIndex" :key="sampleIndex">
           {{ deck.name }}
         </option>
       </select>
@@ -90,7 +95,7 @@
 
 <script setup lang="ts">
 import type { player } from "@/entities";
-import type { Deck as DeckType } from "@/entities/Deck";
+import type { Deck as DeckType, DecksSource, SourceDeck } from "@/entities/Deck";
 import { CardActions } from "@/helpers/CardActions";
 import { Deck } from "@/helpers/Deck";
 import { isPhone } from "@/helpers/Util";
@@ -114,7 +119,7 @@ const props = defineProps<{
 const emit = defineEmits(['move-cards', 'selected', 'update:active'])
 
 // data
-const deckId = ref(0)
+const deckId = ref('')
 const scrapeUrl = ref("")
 const scraping = ref(false)
 const errors = reactive({
@@ -146,8 +151,8 @@ const tabUrl = computed(() => {
     `/room?roomId=${roomId}&player=${player == "a" ? "b" : "a"}`
   );
 })
-const allDecks = computed(() => {
-  return [...store.state.decks.data, ...deckList];
+const userDecks = computed(() => {
+  return store.state.decks.data as DecksSource[]
 })
 const inviteLink = computed(() => {
   return (
@@ -170,10 +175,10 @@ onMounted(() => {
 
 function onClickSelectButton() {
   errors.scrapeUrl = ''
-  scrapeUrl.value = 'https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=' + allDecks.value[deckId.value].dmDeckId
   scrape()
 }
-async function setupDeck(deckData: DeckType) {
+async function setupDeck(deckData: SourceDeck) {
+  const sourceDeck = JSON.parse(JSON.stringify(deckData))
   const deck: DeckType = await Deck.prepareDeckForGame(
     deckData,
     props.player === "a"
@@ -181,6 +186,7 @@ async function setupDeck(deckData: DeckType) {
   console.log("selected deck", deck);
   emit("selected", {
     deck,
+    sourceDeck,
   });
   if (props.partnerIsReady) {
     emit("update:active", false);
@@ -189,39 +195,41 @@ async function setupDeck(deckData: DeckType) {
 function updateUrl(deckId: string) {
   const currentQuery = {...route.query}
   currentQuery[`deck_${props.player}`] = deckId
+  if (route.path === '/room') return 
   router.replace({
     path: route.path,
     query: currentQuery,
   })
 }
 async function scrape() {
-  if (!scrapeUrl.value || scraping.value || errors.scrapeUrl) return;
+  if (scraping.value || errors.scrapeUrl) return;
   scraping.value = true;
-  const deckId = scrapeUrl.value.split('tcgrevo_deck_maker_deck_id=')[1]
-  if (!deckId) {
+  if (!deckId.value) {
     console.error('deckId is required')
   }
-  let deck = Deck.getFromId(deckId)
-  if (!deck) {
-    try {
-      const res = await axios
-        .get('/api/scrape', {
-          params: {
-            deckId,
-          }
-        })
-      console.log("fetched deck", res);
-      deck = res.data
-    } catch (error) {
-      scraping.value = false;
-      errors.scrapeUrl = "デッキデータの取得に失敗しました";
-      console.log(error);
+  let deck = null
+  // TODO: Deck.getFromId()と共通化
+  if (Number.isInteger(deckId.value)) {
+    deck = JSON.parse(JSON.stringify(deckList[deckId.value as any]))
+  } else if (deckId.value.includes('-')) {
+    const [decksSourceIndex, ...deckNameElems] = deckId.value.split('-')
+    const deckName = deckNameElems.join('-')
+    const userDeck = store.state.decks.data[decksSourceIndex].decks
+      .find(d => d.name === deckName) as DeckType|undefined
+    // fix: デッキのカードが増殖するバグの応急処置
+    if (userDeck) {
+      deck = JSON.parse(JSON.stringify(userDeck))
     }
   }
-  updateUrl(deckId)
+  if (!deck) {
+    console.error('次のIDのデッキは見つかりませんでした', deckId.value)
+  } else {
+    console.debug('deck', deck)
+  }
+  updateUrl(deckId.value)
   scrapeUrl.value = "";
   scraping.value = false;
-  setupDeck(deck as DeckType)
+  setupDeck(deck as SourceDeck)
 }
 function onKeyPress() {
   errors.scrapeUrl = "ペーストのみ可能です";

@@ -9,8 +9,8 @@
         'is-selected': cardIsSelected(card),
       }"
       @click.stop="clickShield(card)"
-      @mouseenter="setHoveredCard(card)"
-      @mouseleave="setHoveredCard(null)"
+      @mouseenter="isPhone() ? null : setHoveredCard(card)"
+      @mouseleave="isPhone() ? null : setHoveredCard(null)"
     >
       <MarkTool
         :reverse="side === 'upper'"
@@ -21,7 +21,7 @@
         <div class="shield-card card">
           <span class="shield-id">{{ card.shieldId }}</span>
           <!-- 裏向きのカードの場合表示されない。 -->
-          <img v-if="card.faceDown" :src="card.backImageUrl" />
+          <img v-if="card.faceDown" :src="cardDetail(card).backImageUrl" />
           <TextCard
             v-else
             :card="card"
@@ -63,6 +63,7 @@ import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
+import { isPhone } from "@/helpers/Util";
 
 const props = withDefaults(defineProps<{
   player: player
@@ -83,6 +84,7 @@ const {
   selectMode,
   setSelectMode,
   moveSelectedCard,
+  cardDetail,
 } = useZone(props, emit)
 
 const {

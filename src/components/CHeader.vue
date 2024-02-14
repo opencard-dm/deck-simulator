@@ -58,6 +58,14 @@
           <a @click="openResetGameModal()">ゲームをリセットする</a>
         </div>
       </nav>
+      <nav class="nav-links" v-if="canSaveLog">
+        <div class="nav-item">
+          <SaveLogForm 
+            :deck="deck"
+            :gameLogger="gameLogger"
+          />
+        </div>
+      </nav>
       <nav class="nav-links" v-if="!single">
         <div class="nav-item">
           <div>
@@ -93,15 +101,20 @@
 
 <script setup lang="ts">
 import { Layout } from '@/helpers/layout'
-import { onMounted, ref } from 'vue';
+import SaveLogForm from '@/components/SaveLogForm.vue'
+import { computed, onMounted, ref } from 'vue';
 import { isPhone } from '@/helpers/Util';
 import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
+import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router';
+import { SourceDeck } from '@/entities/Deck';
 
 const props = defineProps<{
   single: boolean,
   gameLogger: GameLogger,
   currentPlayer: player,
+  deck: SourceDeck|null
 }>()
 
 const emit = defineEmits([
@@ -110,6 +123,10 @@ const emit = defineEmits([
 ])
 
 const headerHeight = `${Layout.headerHeight()}px`
+
+// TODO: ログ保存機能は非公開
+const canSaveLog = computed(() => import.meta.env.DEV 
+  && props.deck && props.deck.source === 'airtable')
 
 const isMounted = ref(false);
 onMounted(() => {
