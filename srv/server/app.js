@@ -27,6 +27,9 @@ function createApp(app) {
     app.get('/room', function (req, res) {
       res.sendFile(filepath + '/index.html');
     });
+    app.get('/logs/:logId', function (req, res) {
+      res.sendFile(filepath + '/index.html');
+    });
     app.get('/battle', function (req, res) {
       res.sendFile(filepath + '/index.html');
     });
