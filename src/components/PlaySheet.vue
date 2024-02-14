@@ -1,6 +1,9 @@
 <template>
   <template v-if="side === 'lower'">
     <BattleZone
+      :style="{
+        opacity: gameLogger.turn.total === 0 ? 0 : 'unset'
+      }"
       :side="side"
       :player="player"
       :cards="cards.battleCards"
@@ -9,6 +12,19 @@
       @emit-room-state="emitRoomState"
       @change-cards-state="changeCardsState"
     ></BattleZone>
+    <!-- NOTE: HTMLの重なり順の関係で下に配置している -->
+    <div v-if="gameLogger.turn.total === 0" class="startButtons">
+      <o-button variant="danger" 
+        @click="emit('start-game', player, true)"
+        :disabled="false"
+        >先攻で開始</o-button
+      >
+      <o-button variant="info" 
+        @click="emit('start-game', player, false)"
+        :disabled="false"
+        >後攻で開始</o-button
+      >
+    </div>
   </template>
   <template v-if="side === 'upper'">
     <TefudaZone
@@ -122,6 +138,7 @@ import { zoneEmit } from './zones/zone';
 import type { player, side } from '@/entities';
 import { Card } from '@/entities/Card';
 import { ref } from 'vue';
+import { GameLogger } from '@/helpers/GameLogger';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
@@ -141,9 +158,14 @@ const props = defineProps<{
   isReady: boolean,
   hasChojigen: boolean,
   single: boolean,
+  gameLogger: GameLogger,
 }>();
 
-const emit = defineEmits<zoneEmit>();
+type playSheetEmit = zoneEmit & {
+  'start-game': [player: player, first: boolean]
+}
+
+const emit = defineEmits<playSheetEmit>();
 
 function moveCards(...args: any[]) {
   // @ts-ignore
@@ -161,3 +183,17 @@ function emitRoomState() {
   emit('emit-room-state', props.player);
 }
 </script>
+
+<style lang="scss" scoped>
+.startButtons {
+  display: flex;
+  position: absolute;
+  left: 150px;
+  top: 100px;
+  column-gap: 30px;
+  @media screen and (max-width: 800px) {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+</style>

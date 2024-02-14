@@ -74,6 +74,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
+              :game-logger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -88,10 +89,12 @@
               :isReady="players[lowerPlayer].isReady"
               :hasChojigen="players[lowerPlayer].hasChojigen"
               :single="single"
+              :game-logger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
               @change-cards-state="onChangeCardsState"
+              @start-game="onStartGame"
             ></PlaySheet>
           </div>
         </ImageViewer>
@@ -122,6 +125,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
+              :game-logger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -234,6 +238,15 @@ const {
   players,
   resetGame,
 } = useRoomSetup(props);
+
+function onStartGame(player: player, first: boolean) {
+  if (first) {
+    onStartTurn({ player })
+  } else {
+    onStartTurn({ player: props.upperPlayer })
+    onStartTurn({ player })
+  }
+}
 
 function onResetGame() {
   resetGame();
