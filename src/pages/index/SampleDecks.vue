@@ -3,7 +3,7 @@
     <thead>
       <th><div style="font-weight: bold">サンプルデッキ(画像無し)</div></th>
       <th><div></div></th>
-      <th><div></div></th>
+      <th v-if="Features.view_logs"><div></div></th>
     </thead>
     <tbody>
       <tr v-for="deck in decks" :key="deck.name">
@@ -20,7 +20,7 @@
             <o-button variant="info" size="small">動かす</o-button>
           </router-link>
         </td>
-        <td>
+        <td v-if="Features.view_logs">
           <div v-for="log in getLogs(deck.name)">
             <router-link
               :to="{
@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import jsonDecks from '@/decks.json'
 import { SourceDeck } from '@/entities/Deck'
+import { Features } from '@/features';
 
 const decks: SourceDeck[] = jsonDecks as any
 
