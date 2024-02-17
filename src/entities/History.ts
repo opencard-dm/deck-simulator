@@ -9,7 +9,7 @@ export interface GameHistory {
     canundo: true
     who: player
     player: player
-    method: string
+    method: 'moveCards' | 'changeCardsState' | 'groupCard' | 'undoGroupCard' | 'startTurn'
     args: cardActionMethodParams
     message: string
 }

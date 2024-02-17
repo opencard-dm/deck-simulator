@@ -57,6 +57,9 @@ export class GameLogger {
   }
 
   get currentHistory() {
+    if (this.historyIndex === -1) {
+      return null
+    }
     return this.histories[this.historyIndex]
   }
 
@@ -66,27 +69,27 @@ export class GameLogger {
 
   moveCards(args: moveCardsParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as moveCardsParams
-    this.appendHistory(this.moveCards.name, argsCopy)
+    this.appendHistory('moveCards', argsCopy)
   }
 
   groupCard(args: groupCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
-    this.appendHistory(this.groupCard.name, argsCopy)
+    this.appendHistory('groupCard', argsCopy)
   }
 
   undoGroupCard(args: groupCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
-    this.appendHistory(this.undoGroupCard.name, argsCopy)
+    this.appendHistory('undoGroupCard', argsCopy)
   }
 
   changeCardsState(args: changeCardsStateParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as changeCardsStateParams
-    this.appendHistory(this.changeCardsState.name, argsCopy)
+    this.appendHistory('changeCardsState', argsCopy)
   }
 
   startTurn(args: startTurnParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as startTurnParams
-    this.appendHistory(this.startTurn.name, argsCopy)
+    this.appendHistory('startTurn', argsCopy)
   }
 
   setHistories(histories: GameHistory[]) {
@@ -155,7 +158,7 @@ export class GameLogger {
     }
   }
 
-  appendHistory(method: string, args: cardActionMethodParams, message='') {
+  appendHistory(method: GameHistory['method'], args: cardActionMethodParams, message='') {
     const history: GameHistory = {
       id: uuidv4(),
       canundo: true,
@@ -173,6 +176,12 @@ export class GameLogger {
     if (RoomConfig.useFirebase) {
       pushHistory(this.cardActions.roomId, history)
     } else {
+      // 連続するマナタップは一つの履歴にまとめる
+      if (this.currentHistory && HistoryComparator.isManaStateChange(this.currentHistory, history)) {
+        const currentChangeCardsStateArgs = this.currentHistory.args as changeCardsStateParams
+        currentChangeCardsStateArgs.cards.push(...(args as any).cards)
+        return
+      }
       this.histories.push(history)
       this.historyIndex = this.histories.length - 1
     }
@@ -262,4 +271,22 @@ function getCardNames(cards: readonly Card[], cardDetails: state["cardDetails"])
     }
     return '《' + cardDetails[c.cd as string].name + '》'
   })
+}
+
+class HistoryComparator {
+  static isManaStateChange(currentHistory: GameHistory, nextHistory: GameHistory) {
+    if (currentHistory.method === nextHistory.method
+      && nextHistory.method === 'changeCardsState'
+    ) {
+      const currentHistoryArgs = currentHistory.args as changeCardsStateParams
+      const nextHistoryArgs = nextHistory.args as changeCardsStateParams
+      if (currentHistoryArgs.from === 'manaCards'
+        && nextHistoryArgs.from === 'manaCards'
+        && JSON.stringify(currentHistoryArgs.cardState) === JSON.stringify(nextHistoryArgs.cardState)
+      ) {
+        return true
+      }
+    }
+    return false
+  }
 }

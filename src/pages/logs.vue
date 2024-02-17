@@ -48,7 +48,7 @@ fetchLog(logId).then(async log => {
   })
   store.commit('addCardDetails', cards)
   const firstTurnId = log.histories.find(h =>
-    h.method === gameLogger.startTurn.name && h.args.player === 'a'
+    h.method === 'startTurn' && h.args.player === 'a'
   )?.id
   if (firstTurnId) {
     for (const history of log.histories) {
