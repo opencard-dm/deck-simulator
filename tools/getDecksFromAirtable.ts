@@ -14,13 +14,14 @@ var base = new Airtable({
 }).base('appNBBdv4EODRJJJI');
 
 const deckFiles = [
-    'tools/json/202401_赤青マジック.json',
-    'tools/json/202402_フィオナアカシック.json',
-    'tools/json/202401_アナカラージャオウガ.json',
-    'tools/json/202401_黒緑アビス.json',
-    'tools/json/202402_青黒魔道具.json',
-    'tools/json/202402_赤緑アポロ.json',
-    'tools/json/202402_青黒コンプレックス_超CSⅥ福岡4位.json',
+    // 'tools/json/202401_赤青マジック.json',
+    // 'tools/json/202402_フィオナアカシック.json',
+    // 'tools/json/202401_アナカラージャオウガ.json',
+    // 'tools/json/202401_黒緑アビス.json',
+    // 'tools/json/202402_青黒魔道具.json',
+    // 'tools/json/202402_赤緑アポロ.json',
+    // 'tools/json/202402_青黒コンプレックス_超CSⅥ福岡4位.json',
+    'tools/json/202402_サガループリペア.json',
 ]
 
 for (const file of deckFiles) {

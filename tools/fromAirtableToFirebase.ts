@@ -18,7 +18,8 @@ const base = new Airtable({
 base('cards').select({
     // Selecting the first 3 records in List:
     maxRecords: 1000,
-    view: "カード一覧"
+    view: "カード一覧",
+    filterByFormula: 'IS_AFTER({updated_at}, "2024-02-18")',
 }).eachPage(function page(records, fetchNextPage) {
     records.forEach(async function(record) {
         // TODO: コストがないカードに対応
