@@ -1455,19 +1455,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oruga-ui/oruga-next@npm:0.8.0":
-  version: 0.8.0
-  resolution: "@oruga-ui/oruga-next@npm:0.8.0"
+"@oruga-ui/oruga-next@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "@oruga-ui/oruga-next@npm:0.8.3"
   peerDependencies:
     vue: ^3.0.0
-  checksum: dad4f630dd909b4a82f2c7f29ece0bb184fec1013e680efcd63ffab68b807a8dba81e799de1d20fa85896ffe2616cd13c0f6ebfe93889651e7fd8576a5006ebb
+  checksum: 45f47b12f1804309332592a99a1c43fc7a2f8568df4c97dbdd1d05c7a9f454aac394dc5ed07a7d9284e3533ab64242a6ae2d4b2a71883f821dad5659d482c575
   languageName: node
   linkType: hard
 
-"@oruga-ui/theme-oruga@npm:^0.2.0":
-  version: 0.2.1
-  resolution: "@oruga-ui/theme-oruga@npm:0.2.1"
-  checksum: f481dcd8a551ad2606b5ec34b4318208b0d980ed62f6efd9b7913a9549729770caf0b46f2ecac970352e5eacfc0a9ca6b8c5fbca6451f7a2082797c7a263d03e
+"@oruga-ui/theme-oruga@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "@oruga-ui/theme-oruga@npm:0.2.2"
+  checksum: 16ba2590509a3598c1b92baab7aeb328724d0f729f2dccb87153cebde5bc0647b65ff073287ef88e32ba86413b1358f23ddc08a435a918c856c8385b3e69cfde
   languageName: node
   linkType: hard
 
@@ -3119,8 +3119,8 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:^6.5.1"
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.1"
     "@fortawesome/vue-fontawesome": "npm:latest-3"
-    "@oruga-ui/oruga-next": "npm:0.8.0"
-    "@oruga-ui/theme-oruga": "npm:^0.2.0"
+    "@oruga-ui/oruga-next": "npm:^0.8.3"
+    "@oruga-ui/theme-oruga": "npm:^0.2.2"
     "@socket.io/admin-ui": "npm:^0.5.1"
     "@socket.io/redis-adapter": "npm:^8.2.1"
     "@types/babel__core": "npm:^7"
