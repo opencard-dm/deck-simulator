@@ -284,6 +284,8 @@ export class CardActions {
     if (toCardRef.groupId && !fromCardRef.groupId) {
       fromCardRef.groupId = toCardRef.groupId
       Util.arrayInsertBefore(this.players[player]['cards'][to], toCardRef, fromCardRef);
+      // 状態を引き継ぐ
+      fromCardRef.tapped = toCardRef.tapped
       return
     }
     // 両方単独カードの場合
@@ -292,6 +294,8 @@ export class CardActions {
       console.debug(`created group '${groupId}'`)
       fromCardRef.groupId = groupId
       toCardRef.groupId = groupId
+      // 状態を引き継ぐ
+      fromCardRef.tapped = toCardRef.tapped
       Util.arrayInsertBefore(toCards, toCardRef, fromCardRef);
       return;
     }

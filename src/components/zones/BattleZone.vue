@@ -120,6 +120,15 @@
             >タップ</o-button>
           </template>
         </div>
+        <div v-else class="card_bottomButton">
+          <!-- 革命チェンジ、Jチェンジ -->
+          <o-button
+            v-if="card.groupId && isLastGroupedCard(card)"
+            variant="danger"
+            @click.stop="changeCards(card)"
+            >チェンジ</o-button
+          >
+        </div>
       </div>
       
       <div
@@ -153,6 +162,8 @@ import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
+import { GameLogger, HistoryComparator } from "@/helpers/GameLogger";
+import { groupCardParams } from "@/helpers/CardActions";
 
 const cardWidth = isPhone() ? 80 : 100
 const cardHeight = cardWidth * 908 / 650
@@ -162,6 +173,7 @@ const props = withDefaults(defineProps<{
   cards: Card[]
   side: side
   zone?: groupableZone
+  gameLogger: GameLogger
 }>(), {
   zone: 'battleCards',
 })
@@ -221,6 +233,20 @@ function clickCard(card: Card) {
       return;
     }
   }
+}
+function isLastGroupedCard(card: Card) {
+  if (!props.gameLogger.currentHistory) return false
+  return HistoryComparator.isLastGroupedCard(card, props.gameLogger.currentHistory)
+}
+function changeCards(card: Card) {
+  const group = getGroup(card)
+  if (!group || group.cards.length <= 1) return
+  emit('move-cards',
+    props.zone,
+    (props.gameLogger.currentHistory?.args as groupCardParams).from,
+    group.cards.slice(1),
+    props.player
+  )
 }
 </script>
 

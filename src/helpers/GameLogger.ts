@@ -234,15 +234,19 @@ export class GameLogger {
       return getCardNames([fromCard], cardDetails).join('') + 'を'
         + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
     }
-    // if (history.method === this.undoGroupCard.name) {
-    //   const { from, to, fromCard, toCard, player } = history.args as groupCardParams
-    //   if (to === 'shieldCards') {
-    //     return getCardNames([fromCard], cardDetails).join('')
-    //       + 'をシールドに重ねました'
-    //   }
-    //   return getCardNames([fromCard], cardDetails).join('') + 'を'
-    //     + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
-    // }
+    if (history.method === this.undoGroupCard.name) {
+      const { from, to, fromCard, toCard, player } = history.args as groupCardParams
+      if (from === to) {
+        return readableZone(from) + 'の'
+          + getCardNames([fromCard], cardDetails).join('') + 'を動かしました'
+      }
+      if (to === 'battleCards' && from === 'tefudaCards') {
+        // 革命チェンジ
+        return getCardNames([fromCard], cardDetails).join('') + 'を手札に戻しました'
+      }
+      return readableZone(to) + 'から' + readableZone(from) + 'へ'
+        + getCardNames([fromCard], cardDetails).join('') + 'を移動しました'
+    }
     if (history.method === this.changeCardsState.name) {
       const { from, cards, player, cardState } = history.args as changeCardsStateParams
       if (cardState?.tapped !== undefined) {
@@ -273,7 +277,7 @@ function getCardNames(cards: readonly Card[], cardDetails: state["cardDetails"])
   })
 }
 
-class HistoryComparator {
+export class HistoryComparator {
   static isManaStateChange(currentHistory: GameHistory, nextHistory: GameHistory) {
     if (currentHistory.method === nextHistory.method
       && nextHistory.method === 'changeCardsState'
@@ -283,6 +287,23 @@ class HistoryComparator {
       if (currentHistoryArgs.from === 'manaCards'
         && nextHistoryArgs.from === 'manaCards'
         && JSON.stringify(currentHistoryArgs.cardState) === JSON.stringify(nextHistoryArgs.cardState)
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * 革命チェンジやJチェンジのボタンを表示するタイミングの判定に使う
+   */
+  static isLastGroupedCard(card: Card, currentHistory: GameHistory) {
+    if (!card.groupId) return false
+    if (currentHistory.method === 'groupCard') {
+      const currentHistoryArgs = currentHistory.args as groupCardParams
+      if (currentHistoryArgs.to === 'battleCards'
+        && ['tefudaCards', 'manaCards'].includes(currentHistoryArgs.from)
+        && card.id === currentHistoryArgs.fromCard.id
       ) {
         return true
       }
