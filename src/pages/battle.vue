@@ -34,8 +34,6 @@ import axios from "axios";
 import battlemd from "../assets/markdown/battle.md";
 import { useDecksStore } from "@/stores/decks";
 
-const decksStore = useDecksStore()
-
 export default {
   data() {
     return {
@@ -46,6 +44,7 @@ export default {
   },
   computed: {
     decks() {
+      const decksStore = useDecksStore()
       return decksStore.data;
     },
     readAbout() {
