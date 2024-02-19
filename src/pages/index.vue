@@ -152,9 +152,9 @@ function cardsNumInDeck(deck: SourceDeck) {
   return expression
 }
 
-const store = useStore()
+const decksStore = useDecksStore()
 const userDecks = computed(() => {
-  return store.state.decks.data
+  return decksStore.data
 })
 
 function useDeckForm() {
@@ -201,9 +201,9 @@ function useDeckForm() {
 const DeckForm = useDeckForm()
 
 import defaultDecks from '../decks.json'
-import { useStore } from "vuex";
 import { SourceDeck } from "@/entities/Deck";
 import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
+import { useDecksStore } from "@/stores/decks";
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
@@ -222,7 +222,7 @@ async function createRoom() {
 async function updateDeckFromSource(url: string) {
   const decksSource = await fetchDeck(url)
   console.log(decksSource)
-  store.commit('decks/setData', decksSource)
+  decksStore.addDecksSource(decksSource)
 }
 </script>
 

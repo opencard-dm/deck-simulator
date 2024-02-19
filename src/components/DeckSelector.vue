@@ -102,13 +102,13 @@ import { isPhone } from "@/helpers/Util";
 import axios from "axios";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import deckList from '../decks.json'
 import { Features } from "@/features";
+import { useDecksStore } from "@/stores/decks";
 
 const route = useRoute()
 const router = useRouter()
-const store = useStore()
+const decksStore = useDecksStore()
 const props = defineProps<{
   player: player
   isReady: boolean
@@ -152,7 +152,7 @@ const tabUrl = computed(() => {
   );
 })
 const userDecks = computed(() => {
-  return store.state.decks.data as DecksSource[]
+  return decksStore.data
 })
 const inviteLink = computed(() => {
   return (
@@ -214,7 +214,7 @@ async function scrape() {
   } else if (deckId.value.includes('-')) {
     const [decksSourceIndex, ...deckNameElems] = deckId.value.split('-')
     const deckName = deckNameElems.join('-')
-    const userDeck = store.state.decks.data[decksSourceIndex].decks
+    const userDeck = decksStore.data[parseInt(decksSourceIndex)].decks
       .find(d => d.name === deckName) as DeckType|undefined
     // fix: デッキのカードが増殖するバグの応急処置
     if (userDeck) {

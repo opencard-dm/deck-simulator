@@ -32,6 +32,9 @@
 import { makeRandomString } from "@/helpers/makeRandomString";
 import axios from "axios";
 import battlemd from "../assets/markdown/battle.md";
+import { useDecksStore } from "@/stores/decks";
+
+const decksStore = useDecksStore()
 
 export default {
   data() {
@@ -43,10 +46,10 @@ export default {
   },
   computed: {
     decks() {
-      return this.$store.state.decks.data;
+      return decksStore.data;
     },
     readAbout() {
-      return this.$store.state.setting.readAbout;
+      return false
     },
   },
   methods: {

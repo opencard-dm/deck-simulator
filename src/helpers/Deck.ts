@@ -5,20 +5,20 @@ import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
 import { Deck as DeckType, GmDeckData, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
-import { useStore } from 'vuex';
 import { Card } from '@/entities/Card';
+import { useDecksStore } from '@/stores/decks';
 
 export class Deck {
 
   static getFromId(id: string): SourceDeck {
     const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
     if (localDeck) return localDeck
-    const store = useStore()
+    const decksStore = useDecksStore()
     // ユーザがGoogleスプレッドシートで作ったデッキの場合
     if (id.includes('-')) {
       const [decksSourceIndex, ...deckNameElems] = id.split('-')
       const deckName = deckNameElems.join('-')
-      const userDeck = store.state.decks.data[decksSourceIndex].decks
+      const userDeck = decksStore.data[parseInt(decksSourceIndex)].decks
         .find(d => d.name === deckName) as SourceDeck|undefined
       // fix: デッキのカードが増殖するバグの応急処置
       if (userDeck) {
