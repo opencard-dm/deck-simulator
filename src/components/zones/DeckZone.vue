@@ -185,6 +185,7 @@ const deckViews = computed(() => {
   return deckViews;
 })
 function openDeck() {
+  setSelectMode(null)
   openWorkSpace({
     zone: props.zone,
     cards: props.cards,
