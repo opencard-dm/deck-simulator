@@ -67,9 +67,7 @@
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "vue-tsc": "^1.8.25",
-    "vue3-markdown-it": "^1.0.10",
-    "vuex": "^4.1.0",
-    "vuex-persistedstate": "^4.1.0"
+    "vue3-markdown-it": "^1.0.10"
   },
   "files": [
     "dist"

@@ -2149,7 +2149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^6.0.0-beta.11, @vue/devtools-api@npm:^6.5.0":
+"@vue/devtools-api@npm:^6.5.0":
   version: 6.5.1
   resolution: "@vue/devtools-api@npm:6.5.1"
   checksum: e94443ce376ebecd279bfddaff6d2756cf1725e9f6f94cc41ffba48bf0e2ee17f29f194b8b81eef1c4d3743608e3079b5aab940fcf10de7df7cc9dbad6d2942d
@@ -3046,13 +3046,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2":
-  version: 4.3.1
-  resolution: "deepmerge@npm:4.3.1"
-  checksum: 058d9e1b0ff1a154468bf3837aea436abcfea1ba1d165ddaaf48ca93765fdd01a30d33c36173da8fbbed951dd0a267602bc782fe288b0fc4b7e1e7091afc4529
-  languageName: node
-  linkType: hard
-
 "define-data-property@npm:^1.1.1":
   version: 1.1.1
   resolution: "define-data-property@npm:1.1.1"
@@ -3166,8 +3159,6 @@ __metadata:
     vue-tsc: "npm:^1.8.25"
     vue3-markdown-it: "npm:^1.0.10"
     vuedraggable: "npm:^4.1.0"
-    vuex: "npm:^4.1.0"
-    vuex-persistedstate: "npm:^4.1.0"
     xlsx: "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
   languageName: unknown
   linkType: soft
@@ -6423,13 +6414,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shvl@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "shvl@npm:2.0.3"
-  checksum: 07d93a9dd92f966b1e506d479d841243d7296902673f8641927c8624fec700742298063d06d2f1b6cf52b546f015a3c4bb5900a910fc0181c02b73bf4791223d
-  languageName: node
-  linkType: hard
-
 "side-channel@npm:^1.0.4":
   version: 1.0.4
   resolution: "side-channel@npm:1.0.4"
@@ -7395,29 +7379,6 @@ __metadata:
   peerDependencies:
     vue: ^3.0.1
   checksum: 87d4faba83ea27c0c262fcdbe7bc9791560079096a5a9d1dc191ebfe0a00f8324d33ebc15272c4067ddc32b1681534d17acafbe73d18c4cb2a8d99f19d86e74b
-  languageName: node
-  linkType: hard
-
-"vuex-persistedstate@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "vuex-persistedstate@npm:4.1.0"
-  dependencies:
-    deepmerge: "npm:^4.2.2"
-    shvl: "npm:^2.0.3"
-  peerDependencies:
-    vuex: ^3.0 || ^4.0.0-rc
-  checksum: 61e7699e9766d43e0b45735c8c71f2ee9712af1be7de126dbbb79b539e667042fb8a23966dc46a31bdf94854eded9bf5391c5ba0046188a15543d67dbdf60dc7
-  languageName: node
-  linkType: hard
-
-"vuex@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "vuex@npm:4.1.0"
-  dependencies:
-    "@vue/devtools-api": "npm:^6.0.0-beta.11"
-  peerDependencies:
-    vue: ^3.2.0
-  checksum: 1c0ac292f0d1793f23d7ed04eb69198f0dca0e581471eb58cdc208b1572f1dd48cb71443327f2caa5552c33136a39b92455fd78fdccbc770484d33c6d02378b9
   languageName: node
   linkType: hard
 
