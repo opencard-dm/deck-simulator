@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Deck as DeckType, GmDeckData, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
 import { Card } from '@/entities/Card';
-import { useDecksStore } from '@/stores/decks';
+import { useDecksStore } from '../stores/decks';
 
 export class Deck {
 

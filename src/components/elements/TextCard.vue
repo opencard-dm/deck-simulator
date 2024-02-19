@@ -36,7 +36,7 @@
 import { Card } from '@/entities/Card';
 import { CardDetail, SourceDeck } from '@/entities/Deck';
 import { Features } from '@/features';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 import { computed } from 'vue';
 
 const roomStore = useRoomStore()

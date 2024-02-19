@@ -24,6 +24,7 @@
         <ImageViewer>
           <WorkSpace
             :lowerPlayer="lowerPlayer"
+            :single="single"
             @move-cards="onMoveCards"
             @shuffle-cards="shuffleCards"
             @emit-room-state="emitRoomState"
@@ -108,6 +109,7 @@
         <ImageViewer>
           <WorkSpace
             :lowerPlayer="upperPlayer"
+            :single="single"
             @move-cards="onMoveCards"
             @shuffle-cards="shuffleCards"
             @emit-room-state="emitRoomState"
@@ -169,7 +171,7 @@ import { player, zone } from '@/entities';
 import { Card } from '@/entities/Card';
 import { RoomProps } from '.';
 import { Deck as DeckType, SourceDeck } from '@/entities/Deck';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 
 const store = useRoomStore()
 

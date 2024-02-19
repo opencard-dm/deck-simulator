@@ -256,7 +256,7 @@ import mixin from "../helpers/mixin";
 import { MarkTool } from "./index";
 import { isPhone } from '@/helpers/Util';
 import { computed, watch, onMounted, onUnmounted } from 'vue';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 import { side, zone, player } from '@/entities';
 import { Card } from '@/entities/Card';
 

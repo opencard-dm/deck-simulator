@@ -117,7 +117,7 @@ function getCardDetail(cardId: string) {
 </script>
 
 <script lang="ts">
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 </script>
 
 <style lang="scss" scoped>

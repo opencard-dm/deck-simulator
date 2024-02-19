@@ -23,7 +23,7 @@ import { player } from '@/entities';
 import { Deck } from '@/helpers/Deck';
 import { getCloudRunCookie } from '@/helpers/Util';
 import { SourceDeck } from '@/entities/Deck';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 
 async function fetchDeck(deckId: string, store: ReturnType<typeof useRoomStore>) {
   const localDeck = Deck.getFromId(deckId)

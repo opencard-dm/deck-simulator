@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { onMounted, getCurrentInstance, computed } from 'vue';
-import { useStore } from 'vuex'
 import draggable from 'vuedraggable'
 import { SourceCard, SourceDeck } from '@/entities/Deck'
 import TextCard from '../elements/TextCard.vue'
@@ -68,7 +67,7 @@ const props = defineProps<{
   deck: SourceDeck
 }>()
 
-const store = useStore()
+// const store = useStore()
 
 const deckCards = computed({
   get() {

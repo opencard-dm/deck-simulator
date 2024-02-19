@@ -12,7 +12,7 @@
 import { OnLongPress } from '@vueuse/components'
 import { isPhone } from '@/helpers/Util'
 import { Card } from '@/entities/Card';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 
 const props = withDefaults(defineProps<{
   card: Card

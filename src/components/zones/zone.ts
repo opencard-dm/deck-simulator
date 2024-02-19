@@ -1,4 +1,4 @@
-import { useRoomStore } from "@/stores/index";
+import { useRoomStore } from "@/stores/room";
 import { cardState, groupableZone, player, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { computed } from "vue";

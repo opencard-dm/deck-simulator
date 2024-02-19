@@ -21,7 +21,7 @@ import { CardActions } from '@/helpers/CardActions';
 import { GameLogger } from '@/helpers/GameLogger';
 import { SourceDeck } from '@/entities/Deck';
 import { GameHistory } from '@/entities/History';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 
 const route = useRoute()
 const logId = route.params.log_id as string

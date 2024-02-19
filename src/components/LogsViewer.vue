@@ -23,7 +23,7 @@
 import { computed } from 'vue';
 import { state } from '@/store'
 import { GameLogger } from '@/helpers/GameLogger';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 
 const roomStore = useRoomStore()
 const cardDetails = computed<state["cardDetails"]>(() => roomStore.cardDetails)

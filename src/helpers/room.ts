@@ -1,5 +1,3 @@
-import { useStore } from 'vuex';
-
 import { SocketUtil } from '../helpers/socket';
 import { useRoute } from 'vue-router';
 import { CardActions, changeCardsStateParams, groupCardParams } from './CardActions';
@@ -9,7 +7,7 @@ import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
 import { Deck } from '@/entities/Deck';
 import axios from 'axios';
-import { useRoomStore } from '@/stores';
+import { useRoomStore } from '@/stores/room';
 
 export class RoomConfig {
   static useFirebase = false
