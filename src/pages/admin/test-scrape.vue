@@ -11,8 +11,9 @@
 
 <script>
 import axios from 'axios';
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   data() {
     return {
       scraping: false,
@@ -72,7 +73,7 @@ export default {
       });
     });
   },
-};
+})
 </script>
 
 <style lang="scss">
