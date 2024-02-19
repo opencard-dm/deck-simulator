@@ -78,7 +78,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
-              :started="totalTurns > 0"
+              :started="started"
               :gameLogger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
@@ -94,7 +94,7 @@
               :isReady="players[lowerPlayer].isReady"
               :hasChojigen="players[lowerPlayer].hasChojigen"
               :single="single"
-              :started="totalTurns > 0"
+              :started="started"
               :gameLogger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
@@ -132,7 +132,7 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
-              :started="totalTurns > 0"
+              :started="started"
               :gameLogger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
@@ -250,6 +250,7 @@ const {
 const totalTurns = computed(() => {
   return players['a'].turn.total + players['b'].turn.total
 })
+const started = computed(() => totalTurns.value > 0)
 function onStartGame(player: player, first: boolean) {
   // 先攻後攻を選べるのはlowerPlayerだけとして、
   // 送られてきたplayerを使わない
