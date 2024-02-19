@@ -22,14 +22,14 @@ import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
 import { Deck } from '@/helpers/Deck';
 import { getCloudRunCookie } from '@/helpers/Util';
-import { useStore } from 'vuex';
 import { SourceDeck } from '@/entities/Deck';
+import { useRoomStore } from '@/stores';
 
-async function fetchDeck(deckId: string, store: any) {
+async function fetchDeck(deckId: string, store: ReturnType<typeof useRoomStore>) {
   const localDeck = Deck.getFromId(deckId)
   if (localDeck) {
     if (localDeck.cardDetails) {
-      store.commit('addCardDetails', localDeck.cardDetails)
+      store.addCardDetails(localDeck.cardDetails)
     }
     if (localDeck.source === 'airtable') {
       const cardIds: string[] = []
@@ -41,7 +41,7 @@ async function fetchDeck(deckId: string, store: any) {
           cardIds: cardIds.join(',')
         }
       })
-      store.commit('addCardDetails', cards)
+      store.addCardDetails(cards)
     }
     return await Deck.prepareDeckForGame(localDeck, true, true);
   }
@@ -57,7 +57,7 @@ export default defineComponent({
   async setup(props) {
     const route = useRoute()  
     const router = useRouter()
-    const store = useStore()
+    const roomStore = useRoomStore()
     const roomId = props.roomId as string
     const deckId = route.query.deck_id as string
     // クエリストリングのplayerが未設定の場合はaにする
@@ -81,7 +81,7 @@ export default defineComponent({
         const parsed = JSON.parse(sessionRoom)
         players.a = parsed.players.a
         players.b = parsed.players.b
-        useStore().commit('addCardDetails', parsed.cardDetails)
+        roomStore.addCardDetails(parsed.cardDetails)
         gameLogger.setHistories(parsed.histories)
         sourceDeck.value = parsed.sourceDeck
         console.debug('get room data from session storage. key=' + `room-${roomId}`)
@@ -101,7 +101,7 @@ export default defineComponent({
           return
         }
         sourceDeck.value = localDeck
-        cardActions.selectDeck('a', await fetchDeck(deckId, store) as any)
+        cardActions.selectDeck('a', await fetchDeck(deckId, roomStore) as any)
         players.a.isReady = true
       }
     }
@@ -113,11 +113,11 @@ export default defineComponent({
       });
       if (Array.isArray(room.histories) && room.histories.length === 0) {
         if (typeof route.query.deck_a === 'string' && route.query.deck_a) {
-          cardActions.selectDeck('a', await fetchDeck(route.query.deck_a, store) as any)
+          cardActions.selectDeck('a', await fetchDeck(route.query.deck_a, roomStore) as any)
           players.a.isReady = true
         }
         if (typeof route.query.deck_b === 'string' && route.query.deck_b) {
-          cardActions.selectDeck('b', await fetchDeck(route.query.deck_b, store) as any)
+          cardActions.selectDeck('b', await fetchDeck(route.query.deck_b, roomStore) as any)
           players.b.isReady = true
         }
       }

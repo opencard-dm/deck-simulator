@@ -19,9 +19,9 @@ import { RoomConfig, initialData } from '@/helpers/room';
 import { reactive, ref } from 'vue';
 import { CardActions } from '@/helpers/CardActions';
 import { GameLogger } from '@/helpers/GameLogger';
-import { useStore } from 'vuex';
 import { SourceDeck } from '@/entities/Deck';
 import { GameHistory } from '@/entities/History';
+import { useRoomStore } from '@/stores';
 
 const route = useRoute()
 const logId = route.params.log_id as string
@@ -32,7 +32,7 @@ players.a.isReady = true
 const cardActions = new CardActions(roomId, players)
 const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
 const sourceDeck = ref<SourceDeck|null>(null)
-const store = useStore()
+const roomStore = useRoomStore()
 
 fetchLog(logId).then(async log => {
   const deck = log.deck
@@ -46,7 +46,7 @@ fetchLog(logId).then(async log => {
       cardIds: cardIds.join(',')
     }
   })
-  store.commit('addCardDetails', cards)
+  roomStore.addCardDetails(cards)
   const firstTurnId = log.histories.find(h =>
     h.method === 'startTurn' && h.args.player === 'a'
   )?.id

@@ -103,7 +103,6 @@ export const store = createStore({
     }
     return initState
   },
-  mutations: mutations,
 })
 
 export default store

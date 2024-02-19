@@ -11,18 +11,18 @@
 <script setup lang="ts">
 import { OnLongPress } from '@vueuse/components'
 import { isPhone } from '@/helpers/Util'
-import { useStore } from 'vuex';
 import { Card } from '@/entities/Card';
+import { useRoomStore } from '@/stores';
 
 const props = withDefaults(defineProps<{
   card: Card
 }>(), {
   // card: null
 })
-const store = useStore()
+const roomStore = useRoomStore()
 const openPopup = () => {
   if (isPhone()) {
-    store.commit('setHoveredCard', props.card)
+    roomStore.setHoveredCard(props.card)
   }
 }
 </script>

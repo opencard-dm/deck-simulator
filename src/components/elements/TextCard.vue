@@ -36,8 +36,10 @@
 import { Card } from '@/entities/Card';
 import { CardDetail, SourceDeck } from '@/entities/Deck';
 import { Features } from '@/features';
+import { useRoomStore } from '@/stores';
 import { computed } from 'vue';
-import { useStore } from 'vuex';
+
+const roomStore = useRoomStore()
 
 const props = withDefaults(defineProps<{
   width?: number
@@ -57,6 +59,7 @@ const cardDetail = computed<CardDetail|null>(() => {
   if (props.card.cd) {
     return getCardDetail(props.card.cd)
   }
+  return null
 })
 
 function getReadableText(text: string) {
@@ -117,14 +120,14 @@ function getCardDetail(cardId: string) {
       return props.deck?.cardDetails[cardId]
     } catch (error) {
       console.error('card not found:', cardId)
-      return {}
+      return null
     }
   }
   try {
-    return useStore().state.cardDetails[cardId]
+    return roomStore.cardDetails[cardId]
   } catch (error) {
     console.error('card not found:', cardId)
-    return {}
+    return null
   }
 }
 </script>

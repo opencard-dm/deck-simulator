@@ -21,12 +21,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStore } from 'vuex';
 import { state } from '@/store'
 import { GameLogger } from '@/helpers/GameLogger';
+import { useRoomStore } from '@/stores';
 
-const store = useStore()
-const cardDetails = computed<state["cardDetails"]>(() => store.state.cardDetails)
+const roomStore = useRoomStore()
+const cardDetails = computed<state["cardDetails"]>(() => roomStore.cardDetails)
 
 const props = defineProps<{
   gameLogger: GameLogger

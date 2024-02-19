@@ -9,6 +9,7 @@ import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
 import { Deck } from '@/entities/Deck';
 import axios from 'axios';
+import { useRoomStore } from '@/stores';
 
 export class RoomConfig {
   static useFirebase = false
@@ -29,7 +30,7 @@ function useRoomListners({
 }
 ) {
   const route = useRoute();
-  const store = useStore();
+  const roomStore = useRoomStore();
   const side = (player: player) => player === props.upperPlayer ? 'upper' : 'lower'
   
   function onMoveCards(from: zone, to: zone, cards: Card[], player: player, prepend = false) {
@@ -56,7 +57,7 @@ function useRoomListners({
     }
     if (props.single || props.lowerPlayer === 'a') {
       sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
-        cardDetails: store.state.cardDetails,
+        cardDetails: roomStore.cardDetails,
         sourceDeck: props.sourceDeck,
         players,
         histories: gameLogger.histories,
@@ -81,7 +82,7 @@ function useRoomListners({
     cardActions.changeCardsState({ from, cards, player, cardState })
     if (props.single || props.lowerPlayer === 'a') {
       sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
-        cardDetails: store.state.cardDetails,
+        cardDetails: roomStore.cardDetails,
         sourceDeck: props.sourceDeck,
         players,
         histories: gameLogger.histories,

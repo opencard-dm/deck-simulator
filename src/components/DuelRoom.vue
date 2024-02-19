@@ -33,7 +33,7 @@
             id="js_gameBoard"
             class="gameBoard"
             :style="{
-              opacity: store.state.workSpace.active ? 0.3 : 1,
+              opacity: store.workSpace.active ? 0.3 : 1,
               height: playerZoneHeight,
             }"
           >
@@ -117,7 +117,7 @@
             id="js_gameBoard"
             class="gameBoard"
             :style="{
-              opacity: store.state.workSpace.active ? 0.3 : 1,
+              opacity: store.workSpace.active ? 0.3 : 1,
               height: single ? playerZoneHeight : `${Layout.upperPlayerZoneHeight()}px`,
             }"
           >
@@ -153,8 +153,8 @@
 
 <script setup lang="ts">
 import { Layout } from '@/helpers/layout';
-import { getCloudRunCookie, isPhone } from '@/helpers/Util';
-import { computed, onMounted, ref, watch } from 'vue';
+import { isPhone } from '@/helpers/Util';
+import { computed, onMounted, ref } from 'vue';
 import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
@@ -165,14 +165,13 @@ import LogsViewer from './LogsViewer.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
-import { player, playerCards, zone } from '@/entities';
+import { player, zone } from '@/entities';
 import { Card } from '@/entities/Card';
-import { useStore } from 'vuex';
 import { RoomProps } from '.';
 import { Deck as DeckType, SourceDeck } from '@/entities/Deck';
-import axios from 'axios';
+import { useRoomStore } from '@/stores';
 
-const store = useStore()
+const store = useRoomStore()
 
 const props = defineProps<RoomProps>()
 
