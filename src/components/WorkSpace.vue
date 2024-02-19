@@ -252,175 +252,190 @@
 import CardPopup from './elements/CardPopup.vue'
 import TextCard from "./elements/TextCard.vue";
 import { useZone, zoneEmit } from './zones/zone';
-const cardWidth = isPhone() ? 70 : 100
-const cardHeight = cardWidth * 908 / 650
-
-const emit = defineEmits<zoneEmit>()
-const {
-  cardDetail
-} = useZone({
-  player: 'a',
-  cards: []
-}, emit)
-</script>
-
-<script lang="ts">
 import mixin from "../helpers/mixin";
 import { MarkTool } from "./index";
 import { isPhone } from '@/helpers/Util';
+import { computed, watch, onMounted, onUnmounted } from 'vue';
+import { useRoomStore } from '@/stores';
+import { side, zone, player } from '@/entities';
+import { Card } from '@/entities/Card';
 
-export default {
-  components: { MarkTool },
-  mixins: [mixin.zone],
-  props: ["lowerPlayer"],
-  computed: {
-    dropdownTriggers() {
-      if (window.innerWidth >= 800 && !this.hasSelectedCard()) {
-        return ["click", "hover"];
-      }
-      return ["click"];
-    },
-    player() {
-      return this.$store.state.workSpace.player;
-    },
-    orderedCards() {
-      if (this.workSpace.zone === "manaCards") {
-        const tappedCards = this.workSpace.cards.filter((c) => c.tapped);
-        const untappedCards = this.workSpace.cards.filter((c) => !c.tapped);
-        return [...untappedCards, ...tappedCards];
-      }
-      return this.workSpace.cards;
-    },
-    zoneName() {
-      const map = {
-        manaCards: "マナゾーン",
-        battleCards: "フィールド",
-        bochiCards: "墓地",
-        shieldCards: "シールドゾーン",
-        tefudaCards: "手札",
-        yamafudaCards: "山札",
-        chojigenCards: "超次元ゾーン",
-      };
-      if (this.workSpace.single && this.workSpace.zone === "shieldCards") {
-        return "シールド";
-      }
-      if (this.workSpace.zone === "yamafudaCards") {
-        return `山札 (${this.workSpace.cards.length}枚)`;
-      }
-      if (Object.keys(map).includes(this.workSpace.zone)) {
-        return map[this.workSpace.zone];
-      }
-      return "";
-    },
-    isOwner() {
-      return this.player === this.lowerPlayer;
-    },
-  },
-  watch: {
-    // ワークスペースが開いている間は背景を薄くする。
-    // ホバーで画像拡大はできるようにする。
-    workSpace(newVal, oldVal) {
-      if (!newVal.active) {
-        // 閉じたとき
-        oldVal.cards.forEach((c) => {
-          c.showInWorkSpace = false;
-        });
-        // セレクトモードをオフにする。
-        this.setSelectMode(null);
-        // 状態を送信
-        this.emitState();
-      }
-    },
-  },
-  methods: {
-    openCard(card) {
-      card.faceDown = !card.faceDown;
-      this.$forceUpdate();
-    },
-    openAllCards() {
-      // 山札とシールドでしか使わない想定
-      this.workSpace.cards.forEach((c) => {
-        c.showInWorkSpace = true;
-      });
-    },
-    untapAllCards() {
-      this.workSpace.cards.forEach((c) => {
-        c.tapped = false;
-      });
-      this.closeWorkSpace();
-    },
-    tapAllCards() {
-      this.workSpace.cards.forEach((c) => {
-        c.tapped = true;
-      });
-      this.closeWorkSpace();
-    },
-    faceDownAllCards(faceDown = true) {
-      // 超次元ゾーンで使用
-      this.workSpace.cards.forEach((c) => {
-        c.faceDown = faceDown;
-      });
-    },
-    // 操作したプレイヤーだけが見ることができる。
-    // カードを裏返すのとは違う。
-    showAllInWorkSpace() {
-      this.workSpace.cards.forEach((c) => {
-        c.showInWorkSpace = true;
-      });
-    },
-    moveCard(card, to, prepend = false) {
-      // ワークスペースから移動したカードを消す。
-      this.openWorkSpace({
-        ...this.workSpace,
-        cards: this.workSpace.cards.filter((c) => c.id !== card.id),
-      });
-      const from = this.workSpace.zone;
-      // 見られる状態であれば、表向きにする
-      if (card.showInWorkSpace) card.faceDown = false;
-      // 見られる状態を解除
-      card.showInWorkSpace = false;
-      this.$emit(
-        "move-cards",
-        from,
-        to,
-        [card],
-        this.workSpace.player,
-        prepend
-      );
-      // カードが0枚になったらワークスペースを閉じる。
-      if (this.workSpace.cards.length === 0) {
-        this.closeWorkSpace();
-      }
-    },
-    shuffleCards(from, cards) {
-      this.$emit("shuffle-cards", from, cards, this.player);
-      this.closeWorkSpace();
-    },
-    clickedOutside(event) {
-      // 本来はワークスペースを開く要素全てを除く必要がある。
-      if (
-        event.target.closest(".workSpace") ||
-        event.target.closest(".o-drop__menu")
-      ) {
-        return;
-      }
-      if (event.target.closest("#js_gameBoard")) {
-        this.$store.commit('setHoveredCard', null)
-        this.closeWorkSpace();
-      }
-    },
-  },
-  mounted() {
-    if (typeof window !== "undefined") {
-      document.addEventListener("click", this.clickedOutside);
-    }
-  },
-  beforeUnmount() {
-    if (typeof window !== "undefined") {
-      document.removeEventListener("click", this.clickedOutside);
-    }
-  },
-};
+const cardWidth = isPhone() ? 70 : 100
+const cardHeight = cardWidth * 908 / 650
+
+const props = withDefaults(defineProps<{
+  player?: player
+  cards?: Card[]
+  side?: side
+  single: boolean
+  lowerPlayer: player
+}>(), {
+  side: 'lower',
+  // Typeエラーを防ぐためで使わない
+  player: 'a',
+  cards: () => [],
+})
+
+const roomStore = useRoomStore()
+
+const emit = defineEmits<zoneEmit>()
+
+const {
+  openWorkSpace,
+  closeWorkSpace,
+  setHoveredCard,
+  cardIsSelected,
+  setMarkColor,
+  selectTargetMode,
+  selectMode,
+  setCardState,
+  toggleTap,
+  setSelectMode,
+  hasSelectedCard,
+  moveSelectedCard,
+  shuffleCards,
+  cardDetail,
+  workSpace,
+} = useZone(props, emit)
+
+// computed
+const dropdownTriggers = computed(() => {
+  if (window.innerWidth >= 800 && !hasSelectedCard()) {
+    return ["click", "hover"];
+  }
+  return ["click"];
+})
+const player = computed(() => roomStore.workSpace.player)
+const orderedCards = computed(() => {
+  if (workSpace.value.zone === "manaCards") {
+    const tappedCards = workSpace.value.cards.filter((c) => c.tapped);
+    const untappedCards = workSpace.value.cards.filter((c) => !c.tapped);
+    return [...untappedCards, ...tappedCards];
+  }
+  return workSpace.value.cards;
+})
+const zoneName = computed(() => {
+  const map = {
+    manaCards: "マナゾーン",
+    battleCards: "フィールド",
+    bochiCards: "墓地",
+    shieldCards: "シールドゾーン",
+    tefudaCards: "手札",
+    yamafudaCards: "山札",
+    chojigenCards: "超次元ゾーン",
+  };
+  if (workSpace.value.single && workSpace.value.zone === "shieldCards") {
+    return "シールド";
+  }
+  if (workSpace.value.zone === "yamafudaCards") {
+    return `山札 (${workSpace.value.cards.length}枚)`;
+  }
+  if (Object.keys(map).includes(workSpace.value.zone) && workSpace.value.zone !== '') {
+    return map[workSpace.value.zone];
+  }
+  return "";
+})
+const isOwner = computed(() => workSpace.value.player === props.lowerPlayer)
+
+// watch
+watch(workSpace, (newVal, oldVal) => {
+  // ワークスペースが開いている間は背景を薄くする。
+  // ホバーで画像拡大はできるようにする。
+  if (!newVal.active) {
+    // 閉じたとき
+    oldVal.cards.forEach((c) => {
+      c.showInWorkSpace = false;
+    });
+    // セレクトモードをオフにする。
+    setSelectMode(null);
+  }
+})
+
+// methods
+function openCard(card: Card) {
+  card.faceDown = !card.faceDown;
+  // this.$forceUpdate();
+}
+function openAllCards() {
+  // 山札とシールドでしか使わない想定
+  workSpace.value.cards.forEach((c) => {
+    c.showInWorkSpace = true;
+  });
+}
+function untapAllCards() {
+  workSpace.value.cards.forEach((c) => {
+    c.tapped = false;
+  });
+  closeWorkSpace();
+}
+function tapAllCards() {
+  workSpace.value.cards.forEach((c) => {
+    c.tapped = true;
+  });
+  closeWorkSpace();
+}
+function faceDownAllCards(faceDown = true) {
+  // 超次元ゾーンで使用
+  workSpace.value.cards.forEach((c) => {
+    c.faceDown = faceDown;
+  });
+}
+// 操作したプレイヤーだけが見ることができる。
+// カードを裏返すのとは違う。
+function showAllInWorkSpace() {
+  workSpace.value.cards.forEach((c) => {
+    c.showInWorkSpace = true;
+  });
+}
+function moveCard(card: Card, to: zone, prepend = false) {
+  // ワークスペースから移動したカードを消す。
+  openWorkSpace({
+    ...workSpace.value,
+    cards: workSpace.value.cards.filter((c) => c.id !== card.id),
+  });
+  const from = workSpace.value.zone;
+  // 見られる状態であれば、表向きにする
+  if (card.showInWorkSpace) card.faceDown = false;
+  // 見られる状態を解除
+  card.showInWorkSpace = false;
+  emit(
+    "move-cards",
+    from,
+    to,
+    [card],
+    workSpace.value.player,
+    prepend
+  );
+  // カードが0枚になったらワークスペースを閉じる。
+  if (workSpace.value.cards.length === 0) {
+    closeWorkSpace()
+  }
+}
+function clickedOutside(event: Event) {
+  // 本来はワークスペースを開く要素全てを除く必要がある。
+  if (
+    event.target?.closest(".workSpace") ||
+    event.target?.closest(".o-drop__menu")
+  ) {
+    return;
+  }
+  if (event.target?.closest("#js_gameBoard")) {
+    setHoveredCard(null)
+    closeWorkSpace()
+  }
+}
+
+// event handlers
+onMounted(() => {
+  if (typeof window !== "undefined") {
+    document.addEventListener("click", clickedOutside);
+  }
+})
+onUnmounted(() => {
+  if (typeof window !== "undefined") {
+    document.removeEventListener("click", clickedOutside);
+  }
+})
 </script>
 
 <style lang="scss">
