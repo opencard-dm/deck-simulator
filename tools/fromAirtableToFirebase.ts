@@ -23,7 +23,7 @@ base('cards').select({
 }).eachPage(function page(records, fetchNextPage) {
     records.forEach(async function(record) {
         // TODO: コストがないカードに対応
-        if (!record.get('cost')) {
+        if (!Number.isInteger(record.get('cost'))) {
             console.warn('skipped', record.fields)
             return true
         }
