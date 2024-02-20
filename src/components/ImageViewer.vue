@@ -12,10 +12,9 @@
         :style="{ width: `${style.width}px` }"
       >
         <img
-          v-if="hoveredCard?.faceDown && !hoveredCard.showInWorkSpace"
-          :src="cardDetail?.backImageUrl"
+          v-if="!hoveredCard?.faceDown || !hoveredCard.showInWorkSpace"
+          :src="cardDetail?.imageUrl"
         />
-        <img v-else :src="cardDetail?.imageUrl" />
       </div>
       <div v-if="cardIsVisible && cardDetail && cardDetail.card_text">
         <TextCard
@@ -79,9 +78,11 @@ const cardIsVisible = computed(() => {
     if (!roomStore.hoveredCard.faceDown || roomStore.hoveredCard.showInWorkSpace) {
       return true;
     }
+    // 両面あるカードの場合
     if (
       roomStore.hoveredCard.faceDown &&
       cardDetail.value &&
+      cardDetail.value.backImageUrl &&
       !cardDetail.value.backImageUrl.includes("/card-back.jpg")
     ) {
       return true;
@@ -108,9 +109,6 @@ function getCardDetail(cardId: string) {
   } catch (error) {
     console.error('card not found:', cardId)
     cardDetail = {} as CardDetail
-  }
-  if (!cardDetail.backImageUrl) {
-    cardDetail.backImageUrl = 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg'
   }
   return cardDetail
 }
