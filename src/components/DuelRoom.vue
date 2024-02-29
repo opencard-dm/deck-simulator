@@ -40,6 +40,7 @@
           >
             <div class="gameBoard_topButtons">
               <div
+                class="turnButtons"
                 style="">
                 <o-button
                   variant="grey-dark"
@@ -48,13 +49,17 @@
                   @click="onStartTurn({ player: currentPlayer })"
                 >{{ players[currentPlayer].turn.current + 1 }}ターン目を開始</o-button>
                 <o-button
+                  class="turnButtons_currentTurn"
+                  :class="{
+                    startTurn: gameLogger.currentHistory?.method === 'startTurn'
+                  }"
                   style="margin-left: 8px;"
                   variant="grey-dark"
                   size="small"
                   @click="logsViewer = true"
                 >
                   <span>{{ currentPlayer === gameLogger.firstPlayer ? '先' : '後' }}</span>
-                {{ players[currentPlayer].turn.current }} / {{ totalTurns }}</o-button>
+                {{ players[currentPlayer].turn.current }} / {{ players[currentPlayer].turn.total }}</o-button>
               </div>
               <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
                 style="float: right;">
@@ -302,5 +307,12 @@ function setMessage() {
 .gameBoard_topButtons {
   display: flex;
   justify-content: space-between;
+}
+.turnButtons_currentTurn {
+  background-color: #4a4a4a;
+  transition: all 0.5s ease;
+}
+.turnButtons_currentTurn.startTurn {
+  background-color: #b60000 !important;
 }
 </style>

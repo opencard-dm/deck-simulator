@@ -22,6 +22,7 @@ import { GameLogger } from '@/helpers/GameLogger';
 import { SourceDeck } from '@/entities/Deck';
 import { GameHistory } from '@/entities/History';
 import { useRoomStore } from '@/stores/room';
+import { startTurnParams } from '@/helpers/TurnActions';
 
 const route = useRoute()
 const logId = route.params.log_id as string
@@ -55,6 +56,12 @@ fetchLog(logId).then(async log => {
       gameLogger.receiveHistory(history)
       if (history.id === firstTurnId) {
         break
+      }
+    }
+    // 合計のターン数をセット
+    for (const history of log.histories) {
+      if (history.method === 'startTurn') {
+        players[history.args.player].turn.total = (history.args as startTurnParams).turn
       }
     }
   }

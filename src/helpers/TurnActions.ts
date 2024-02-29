@@ -21,6 +21,11 @@ export class TurnActions {
     this.gameLogger?.startTurn({ turn, player })
     if (!RoomConfig.useFirebase) {
       this.startTurnWithoutHistory({ turn, player })
+      // ターンの総数は履歴にかかわるため、startTurnWithoutHistoryの
+      // ほうではなく、こちらでセットする
+      if (this.gameLogger) {
+        this.gameLogger.players[player].turn.total = turn
+      }
     }
   }
 
@@ -34,7 +39,6 @@ export class TurnActions {
         }
       }
       this.gameLogger.players[player].turn.current = turn
-      this.gameLogger.players[player].turn.total = turn
     }
   }
   
