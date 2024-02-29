@@ -67,6 +67,10 @@ export class GameLogger {
     return this.histories[this.historyIndex + 1]
   }
 
+  get totalTurns() {
+    return this.players.a.turn.total + this.players.b.turn.total
+  }
+
   moveCards(args: moveCardsParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as moveCardsParams
     this.appendHistory('moveCards', argsCopy)
@@ -98,6 +102,12 @@ export class GameLogger {
   }
 
   canundo() {
+    if (
+      this.players.a.turn.current === 0
+      && this.players.b.turn.current === 0
+    ) {
+      return false
+    }
     return this.historyIndex !== -1
   }
 
