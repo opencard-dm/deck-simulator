@@ -14,7 +14,8 @@
       background: color,
     }">
     <div class="card_top">
-      <span class="card_cost">{{ cardDetail?.cost }}</span>
+      <span class="card_cost">{{ cardDetail?.name === '∞龍 ゲンムエンペラー' ? '∞'
+        : cardDetail?.cost }}</span>
       <span class="card_name">{{ cardDetail?.name.split('/')[0].trim() }}</span>
     </div>
     <div class="card_reces" :style="{
