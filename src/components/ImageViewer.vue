@@ -12,7 +12,7 @@
         :style="{ width: `${style.width}px` }"
       >
         <img
-          v-if="!hoveredCard?.faceDown || !hoveredCard.showInWorkSpace"
+          v-if="!hoveredCard?.faceDown || hoveredCard.showInWorkSpace"
           :src="cardDetail?.imageUrl"
         />
       </div>
