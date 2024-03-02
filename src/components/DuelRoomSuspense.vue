@@ -20,33 +20,10 @@ import { defineComponent, reactive, ref } from 'vue';
 import { CardActions } from '@/helpers/CardActions';
 import { GameLogger } from '@/helpers/GameLogger';
 import { player } from '@/entities';
-import { Deck } from '@/helpers/Deck';
+import { Deck, fetchDeck } from '@/helpers/Deck';
 import { getCloudRunCookie } from '@/helpers/Util';
 import { SourceDeck } from '@/entities/Deck';
 import { useRoomStore } from '@/stores/room';
-
-async function fetchDeck(deckId: string, store: ReturnType<typeof useRoomStore>) {
-  const localDeck = Deck.getFromId(deckId)
-  if (localDeck) {
-    if (localDeck.cardDetails) {
-      store.addCardDetails(localDeck.cardDetails)
-    }
-    if (localDeck.source === 'airtable') {
-      const cardIds: string[] = []
-      localDeck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-      localDeck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-      localDeck.grCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-      const { data: cards } = await axios.get('/api/cards', {
-        params: {
-          cardIds: cardIds.join(',')
-        }
-      })
-      store.addCardDetails(cards)
-    }
-    return await Deck.prepareDeckForGame(localDeck, true, true);
-  }
-  throw Error('デッキの取得に失敗しました')
-}
 
 export default defineComponent({
   components: {DuelRoom},
@@ -101,8 +78,12 @@ export default defineComponent({
           return
         }
         sourceDeck.value = localDeck
-        cardActions.selectDeck('a', await fetchDeck(deckId, roomStore) as any)
+        cardActions.selectDeck('a', await Deck.prepareDeckForGame(await fetchDeck(deckId, roomStore), true, true) as any)
         players.a.isReady = true
+      }
+      if (typeof route.query.deck_b === 'string' && route.query.deck_b) {
+        cardActions.selectDeck('b', await Deck.prepareDeckForGame(await fetchDeck(route.query.deck_b, roomStore), false, true) as any)
+        players.b.isReady = true
       }
     }
     if (RoomConfig.useFirebase) {
@@ -113,11 +94,11 @@ export default defineComponent({
       });
       if (Array.isArray(room.histories) && room.histories.length === 0) {
         if (typeof route.query.deck_a === 'string' && route.query.deck_a) {
-          cardActions.selectDeck('a', await fetchDeck(route.query.deck_a, roomStore) as any)
+          cardActions.selectDeck('a', await Deck.prepareDeckForGame(await fetchDeck(deckId, roomStore), true, true) as any)
           players.a.isReady = true
         }
         if (typeof route.query.deck_b === 'string' && route.query.deck_b) {
-          cardActions.selectDeck('b', await fetchDeck(route.query.deck_b, roomStore) as any)
+          cardActions.selectDeck('b', await Deck.prepareDeckForGame(await fetchDeck(deckId, roomStore), false, true) as any)
           players.b.isReady = true
         }
       }
