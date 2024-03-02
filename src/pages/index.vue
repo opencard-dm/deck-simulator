@@ -117,7 +117,7 @@ import axios from "axios";
 import { Features } from "@/features";
 import GoogleSheetInput from "@/components/deck-inputs/GoogleSheetInput.vue";
 
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
@@ -201,7 +201,7 @@ function useDeckForm() {
 const DeckForm = useDeckForm()
 
 import defaultDecks from '../decks.json'
-import { SourceDeck } from "@/entities/Deck";
+import { DecksSource, SourceDeck } from "@/entities/Deck";
 import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
 import { useDecksStore } from "@/stores/decks";
 
@@ -224,6 +224,20 @@ async function updateDeckFromSource(url: string) {
   console.log(decksSource)
   decksStore.addDecksSource(decksSource)
 }
+
+onMounted(() => {
+  // TODO: 2024/04/01ごろに削除する
+  if (localStorage) {
+    const vuex = localStorage.getItem('vuex')
+    if (vuex !== null) {
+      const deckSources = JSON.parse(vuex).decks.data
+      deckSources.forEach((d: DecksSource) => {
+        decksStore.addDecksSource(d)
+      })
+      localStorage.removeItem('vuex')
+    }
+  }
+})
 </script>
 
 <style lang="scss" scoped>
