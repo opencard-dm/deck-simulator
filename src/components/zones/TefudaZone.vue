@@ -78,7 +78,7 @@
             style="top: 50%; transform: translateY(-50%);"
           >
             <o-button
-              v-if="selectMode && selectMode.zone !== zone"
+              v-if="selectMode && selectMode.player === player && selectMode.zone !== zone"
               class="tefudaZoneButton"
               :size="isPhone() ? 'small' : ''"
               variant="info"
