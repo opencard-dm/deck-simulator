@@ -39,39 +39,13 @@
             }"
           >
             <div class="gameBoard_topButtons">
-              <div
-                class="turnButtons"
-                style="">
-                <o-button
-                  variant="grey-dark"
-                  size="small"
-                  :disabled="totalTurns === 0"
-                  @click="onStartTurn({ player: currentPlayer })"
-                >{{ players[currentPlayer].turn.current + 1 }}ターン目を開始</o-button>
-                <o-button
-                  class="turnButtons_currentTurn"
-                  :class="{
-                    startTurn: gameLogger.currentHistory?.method === 'startTurn'
-                  }"
-                  style="margin-left: 8px;"
-                  variant="grey-dark"
-                  size="small"
-                  @click="logsViewer = true"
-                >
-                  <span>{{ currentPlayer === gameLogger.firstPlayer ? '先' : '後' }}</span>
-                {{ players[currentPlayer].turn.current }} / {{ players[currentPlayer].turn.total }}</o-button>
-              </div>
-              <div v-if="!isPhone() && !players[upperPlayer].isReady"
-                style="float: right;">
-                <o-button
-                  variant="grey-dark"
-                  size="small"
-                  @click="() => {
-                    currentPlayer = upperPlayer;
-                    deckSelectorActive = true;
-                  }"
-                >相手のデッキを選択する</o-button>
-              </div>
+              <TurnButtons
+                :players="players"
+                :gameLogger="gameLogger"
+                :player="lowerPlayer"
+                @start-turn="onStartTurn({ player: lowerPlayer })"
+                @open-logs="logsViewer = true"
+              ></TurnButtons>
             </div>
             <PlaySheet
               :side="'lower'"
@@ -112,7 +86,21 @@
               height: single ? playerZoneHeight : `${Layout.upperPlayerZoneHeight()}px`,
             }"
           >
+            <div class="gameBoard_topButtons">
+              <TurnButtons
+                :players="players"
+                :gameLogger="gameLogger"
+                :player="upperPlayer"
+                @start-turn="onStartTurn({ player: upperPlayer })"
+                @open-logs="logsViewer = true"
+                @select-deck="() => {
+                  currentPlayer = upperPlayer
+                  deckSelectorActive = true
+                }"
+              ></TurnButtons>
+            </div>
             <PlaySheet
+              v-if="players[upperPlayer].isReady"
               :side="single && isPhone() ? 'lower' : 'upper'"
               :player="upperPlayer"
               :cards="players[upperPlayer].cards"
@@ -149,6 +137,7 @@ import { computed, onMounted, ref } from 'vue';
 import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
+import TurnButtons from './TurnButtons.vue';
 import DeckSelector from './DeckSelector.vue';
 import PlaySheet from './PlaySheet.vue';
 import PlayerTabs from './PlayerTabs.vue';
@@ -286,17 +275,3 @@ function setMessage() {
   //
 }
 </script>
-
-<style lang="scss">
-.gameBoard_topButtons {
-  display: flex;
-  justify-content: space-between;
-}
-.turnButtons_currentTurn {
-  background-color: #4a4a4a;
-  transition: all 0.5s ease;
-}
-.turnButtons_currentTurn.startTurn {
-  background-color: #b60000 !important;
-}
-</style>
