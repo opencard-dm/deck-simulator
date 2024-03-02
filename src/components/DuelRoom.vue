@@ -43,6 +43,7 @@
                 :players="players"
                 :gameLogger="gameLogger"
                 :player="lowerPlayer"
+                :upperPlayer="upperPlayer"
                 @start-turn="onStartTurn({ player: lowerPlayer })"
                 @open-logs="logsViewer = true"
               ></TurnButtons>
@@ -91,6 +92,7 @@
                 :players="players"
                 :gameLogger="gameLogger"
                 :player="upperPlayer"
+                :upperPlayer="upperPlayer"
                 @start-turn="onStartTurn({ player: upperPlayer })"
                 @open-logs="logsViewer = true"
                 @select-deck="() => {

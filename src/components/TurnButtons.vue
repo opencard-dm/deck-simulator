@@ -3,6 +3,9 @@
     <div
       v-if="players[player].isReady"
       class="turnButtons"
+      :class="{
+        right: isPhone() && player === upperPlayer
+      }"
       style="">
       <o-button
         variant="grey-dark"
@@ -42,6 +45,7 @@ import { initialData } from '@/helpers/room';
 
 const props = defineProps<{
   player: playerType
+  upperPlayer: playerType
   players: ReturnType<typeof initialData>['players']
   gameLogger: GameLogger
 }>()
@@ -58,6 +62,9 @@ const emit = defineEmits<{
 .gameBoard_topButtons {
   display: flex;
   justify-content: space-between;
+}
+.turnButtons.right {
+  margin-left: auto;
 }
 .turnButtons_currentTurn {
   background-color: #4a4a4a;
