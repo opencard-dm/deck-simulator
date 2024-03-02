@@ -2,5 +2,5 @@ export class Features {
   static using_my_deck = false
   static using_image = true
   static battle = import.meta.env.VITE_BATTLE === 'true'
-  static view_logs = import.meta.env.DEV
+  static view_logs = true
 }
