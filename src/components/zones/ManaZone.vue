@@ -217,7 +217,7 @@ $card-margin: -35px;
     position: relative;
     display: flex;
     @media screen and (max-width: 800px) {
-        display: none;
+      margin-right: 5px;
     }
     &.upper {
       transform: rotate(180deg);
