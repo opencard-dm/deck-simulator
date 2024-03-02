@@ -14,7 +14,7 @@
   // background-color: green;
   border-radius: 50%;
   height: 50px;
-  width: 70px;
+  width: 50px;
   flex-shrink: 0;
   color: beige;
   text-align: center;
@@ -22,8 +22,5 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  @media screen and (max-width: 800px) {
-    width: 50px;
-  }
 }
 </style>

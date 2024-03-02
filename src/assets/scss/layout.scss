@@ -19,15 +19,9 @@ body {
     background: rgba(0, 0, 0, 0.8);
   }
 }
-.main {
-  margin-left: 10px;
-  @media screen and (max-width: 800px) {
-      margin-left: 0px;
-  }
-}
 
-#canvas {
-  width: 800px;
+.canvas {
+  width: 520px;
   min-height: 100vh;
   // height: 600px;
   background-color: rgb(241, 241, 241);

@@ -61,7 +61,7 @@
                   <span>{{ currentPlayer === gameLogger.firstPlayer ? '先' : '後' }}</span>
                 {{ players[currentPlayer].turn.current }} / {{ players[currentPlayer].turn.total }}</o-button>
               </div>
-              <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
+              <div v-if="!isPhone() && !players[upperPlayer].isReady"
                 style="float: right;">
                 <o-button
                   variant="grey-dark"
@@ -71,25 +71,8 @@
                     deckSelectorActive = true;
                   }"
                 >相手のデッキを選択する</o-button>
-              </div> -->
+              </div>
             </div>
-            <PlaySheet
-              v-if="!isPhone() && players[upperPlayer].isReady"
-              :side="'upper'"
-              :player="upperPlayer"
-              :cards="players[upperPlayer].cards"
-              :name="players[upperPlayer].name"
-              :roomId="players[upperPlayer].roomId"
-              :isReady="players[upperPlayer].isReady"
-              :hasChojigen="players[upperPlayer].hasChojigen"
-              :single="single"
-              :started="started"
-              :gameLogger="gameLogger"
-              @move-cards="onMoveCards"
-              @group-card="onGroupCard"
-              @emit-room-state="emitRoomState"
-              @change-cards-state="onChangeCardsState"
-            ></PlaySheet>
             <PlaySheet
               :side="'lower'"
               :player="lowerPlayer"
@@ -110,9 +93,10 @@
           </div>
         </ImageViewer>
       </template>
-      <template v-if="isPhone()" #upper-player>
-        <ImageViewer>
+      <template v-if="true" #upper-player>
+        <ImageViewer :hide="!isPhone()">
           <WorkSpace
+            v-if="isPhone()"
             :lowerPlayer="upperPlayer"
             :single="single"
             @move-cards="onMoveCards"
@@ -129,7 +113,7 @@
             }"
           >
             <PlaySheet
-              :side="single ? 'lower' : 'upper'"
+              :side="single && isPhone() ? 'lower' : 'upper'"
               :player="upperPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"

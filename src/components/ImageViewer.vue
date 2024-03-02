@@ -1,10 +1,12 @@
 <template>
-  <div id="canvas"
+  <div class="canvas"
+    @mousemove="isPhone() ? null : traceMouseMove($event)"
     v-if="isMounted">
     <div
+      v-if="!hide"
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
-      :style="[display.left ? { left: '5px' } : { left: '820px' }]"
+      :style="[display.left ? { left: '5px' } : { left: '520px' }]"
     >
       <div
         v-if="Features.using_image && cardIsVisible"
@@ -50,6 +52,12 @@ import TextCard from './elements/TextCard.vue';
 const isMounted = ref(false);
 const roomStore = useRoomStore()
 
+const props = withDefaults(defineProps<{
+  hide?: boolean,
+}>(), {
+  hide: false
+})
+
 // ref
 const display = reactive({
   left: false,
@@ -91,6 +99,13 @@ const cardIsVisible = computed(() => {
   return false;
 })
 
+function traceMouseMove(event: MouseEvent) {
+  if (event.screenX >= 520) {
+    display.left = true
+  } else {
+    display.left = false
+  }
+}
 onMounted(() => {
   if (window.innerWidth > 800) {
     display.hidden = false;
@@ -125,6 +140,7 @@ import { useRoomStore } from '@/stores/room';
   top: 2px;
   // left: 10px;
   z-index: 12; // ワークスペースより大きくする
+  max-width: 500px;
   &.blur {
     opacity: 0.6;
   }
