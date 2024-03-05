@@ -34,9 +34,9 @@
       </OInput>
       <!-- <input  name="browser"> -->
       <o-button variant="info" 
-        @click=""
+        @click="addCard"
         size="small"
-        :disabled="false"
+        :disabled="!cardExists"
         >追加</o-button
       >
       <datalist id="card_left">
@@ -68,6 +68,7 @@ import { SourceDeck } from "@/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
 import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";
+import axios from "axios";
 
 const props = defineProps<{
   deckList: {
@@ -79,7 +80,6 @@ const props = defineProps<{
 const roomStore = useRoomStore()
 
 // data
-const cardname = ref('')
 const deckData = reactive({
   deckIndex: 0,
   deckData: {
@@ -136,6 +136,28 @@ function deleteDeck(side) {
   this.$store.commit("decks/setData", decksCopy);
   this.message = "";
   location.reload();
+}
+
+// 
+// cardname
+const cardname = ref('')
+const cardExists = computed(() => cardname.value in cardnames)
+async function addCard() {
+  if (!(cardname.value in cardnames)) {
+    return
+  }
+  const cardId = cardnames[cardname.value]
+  const { data: cards } = await axios.get('/api/cards', {
+    params: {
+      cardIds: cardId
+    }
+  })
+  deckData.deckData.cards.unshift({
+    cd: cardId,
+    times: 0,
+  })
+  cardname.value = ''
+  roomStore.addCardDetails(cards)
 }
 </script>
 
