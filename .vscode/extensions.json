@@ -3,11 +3,7 @@
         "misterj.vue-volar-extention-pack",
         "vue.volar",
         "esbenp.prettier-vscode",
-        "zixuanchen.vitest-explorer",
+        "vitest.explorer",
         "esbenp.prettier-vscode"
-    ],
-    "unwantedRecommendations": [
-        // https://github.com/johnsoncodehk/volar/discussions/471
-        "vscode.typescript-language-features"
     ]
 }
