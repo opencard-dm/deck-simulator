@@ -1,90 +1,12 @@
 <template>
   <div id="app">
     <div class="app-wrapper" @mousemove="traceMouseMove">
-      <header>
-        <div class="select-bar left">
-          <DeckHeader
-            :deckData="left.deckData"
-            :deckList="deckList"
-            :deckIndex="left.deckIndex"
-            :side="'left'"
-            v-on:change-deck="changeDeck"
-            v-on:update-deck="updateDeck"
-            @deleteDeck="deleteDeck"
-          ></DeckHeader>
-        </div>
-        <div class="select-bar right">
-          <DeckHeader
-            :deckData="right.deckData"
-            :deckList="deckList"
-            :deckIndex="right.deckIndex"
-            :side="'right'"
-            v-on:change-deck="changeDeck"
-            v-on:update-deck="updateDeck"
-            @deleteDeck="deleteDeck"
-          ></DeckHeader>
-        </div>
-      </header>
-
       <div class="content">
         <div class="deck-wrapper left">
-          <div>
-            <OField
-              class="deckInput"
-              :style="{
-                paddingTop: '6px',
-                paddingLeft: '8px',
-              }"
-              :variant="error ? 'danger' : ''"
-              :message="loading ? 'カードが見つかりませんでした' : error"
-            >
-              <OInput
-                list="card_left"
-                v-model="cardname"
-                :style="{
-                  paddingRight: '0px',
-                  minWidth: '200px',
-                }"
-                size="small"
-                placeholder="カード名を入力"
-                :expanded="false"
-              >
-              </OInput>
-              <!-- <input  name="browser"> -->
-              <o-button variant="info" 
-                @click=""
-                size="small"
-                :disabled="false"
-                >追加</o-button
-              >
-              <datalist id="card_left">
-                <option 
-                  v-for="cardname in Object.keys(cardnames)"
-                  :key="cardname" 
-                  :value="cardname"
-                ></option>
-              </datalist>
-            </OField>
-          </div>
-          <div>
-            <CardList
-              :cards="left.deckData.cards"
-              :deck="left.deckData"
-              :side="'left'"
-              @update:cards="left.deckData.cards = $event"
-            ></CardList>
-          </div>
+          <DeckEditor :deckList="deckList"></DeckEditor>
         </div>
-
-        <div class="deck-wrapper right">
-          <div>
-            <CardList
-              :cards="right.deckData.cards"
-              :deck="right.deckData"
-              :side="'right'"
-              @update:cards="right.deckData.cards = $event"
-            ></CardList>
-          </div>
+        <div v-if="!isPhone()" class="deck-wrapper right">
+          <DeckEditor :deckList="deckList"></DeckEditor>
         </div>
       </div>
 
@@ -108,35 +30,19 @@
 </template>
 
 <script setup lang="ts">
-import DeckHeader from "./DeckHeader.vue";
-import CardList from "./CardList.vue";
-import { ModelSelect } from 'vue-search-select'
+import DeckEditor from "./DeckEditor.vue";
 import { Deck, fetchDeck } from "@/helpers/Deck";
 import systemDecks from '@/decks.json'
 import { ref, reactive, computed } from 'vue'
 import { useRoomStore } from "@/stores/room";
 import { SourceDeck } from "@/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
-import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";
 
 // data
 const deckList = reactive({
   readyMade: [] as SourceDeck[],
   custom: [] as SourceDeck[],
-})
-const cardname = ref('')
-const left = reactive({
-  deckIndex: 0,
-  deckData: {
-    cards: [],
-  },
-})
-const right = reactive({
-  deckIndex: 1,
-  deckData: {
-    cards: [],
-  },
 })
 const display = reactive({
   card: null,
@@ -173,36 +79,12 @@ const decksStore = useDecksStore();
   })
   decks.push(...systemDecks as any[])
   deckList.custom = decks;
-  if (decks[0]) {
-    left.deckData = Deck.formatData(decks[0]);
-    fetchDeck(decks[0].name, roomStore)
-  }
-  if (decks[1]) {
-    right.deckData = Deck.formatData(decks[1]);
-    fetchDeck(decks[1].name, roomStore)
-  }
+  fetchDeck(decks[0].name, roomStore)
+  fetchDeck(decks[1].name, roomStore)
   message.value = "";
 })();
 
 // methods
-function updateDeck(params, side) {
-  message.value = "変更を\n保存中です";
-  // 名前を変更
-  if (params.name) {
-    this[side].deckData.name = params.name;
-  }
-  // カードを追加
-  if (params.cardUrl) {
-    this[side].deckData.cards.push({
-      imageUrl: params.cardUrl,
-      time: 0,
-    });
-  }
-  const decksCopy = this.$store.state.decks.data;
-  decksCopy[this[side].deckIndex] = this[side].deckData;
-  this.$store.commit("decks/setData", decksCopy);
-  message.value = "";
-}
 function createDeck(params, side) {
   if (!params.name) return;
   const deck = {
@@ -213,29 +95,6 @@ function createDeck(params, side) {
   decksCopy.push(deck);
   this.$store.commit("decks/setData", decksCopy);
   this[side]["deckData"] = deck;
-}
-function changeDeck(deckType, index, side) {
-  if (deckType === "custom") {
-    this[side]["deckData"] = Deck.formatData(
-      this.deckList["custom"][index],
-      this.useConfig().IMAGE_HOST
-    );
-    this[side].deckIndex = index;
-  }
-}
-function deleteDeck(side) {
-  const decksCopy = this.$store.state.decks.data;
-  decksCopy.splice(this[side].deckIndex, 1);
-  this.$store.commit("decks/setData", decksCopy);
-  this.message = "";
-  location.reload();
-}
-function totalNum(cards) {
-  let result = 0;
-  for (let card of cards) {
-    result += card.time;
-  }
-  return result;
 }
 function onDragOver() {
   event.preventDefault();
@@ -350,37 +209,11 @@ function traceMouseMove(event) {
 body {
   min-width: 800px;
 }
-header {
-  display: flex;
-  align-items: stretch;
-  background-color: blue;
-  /* marginはみ出し対策 */
-  border-top: 1px blue solid;
-  width: 100%;
-  height: 60px;
-  color: white;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-
-  .select-bar {
-    width: calc((100% / 2));
-    padding: 10px 0 0 20px;
-    &.left {
-      border-right: 2px white solid;
-    }
-
-    .deck-select {
-      margin-top: 10px;
-    }
-  }
-}
 .content {
   display: flex;
   padding-top: 60px;
 }
 .deck-wrapper {
-  width: calc(100% / 2);
   background-color: lightgray;
   &.left {
     border-right: 2px white solid;
