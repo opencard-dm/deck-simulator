@@ -18,10 +18,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useStore } from 'vuex';
 import { fetchDeck } from './GoogleSheetInput';
+import { useDecksStore } from '@/stores/decks';
 
-const store = useStore()
+const decksStore = useDecksStore()
 
 const url = ref('')
 const error = ref('')
@@ -45,7 +45,7 @@ async function onUrlChange() {
       .split('/')[3]
     const downloadSheetUrl = `https://docs.google.com/spreadsheets/d/${fileId}/export?format=xlsx`
     const decksSource = await fetchDeck(downloadSheetUrl)
-    store.commit('decks/setData', decksSource)
+    decksStore.addDecksSource(decksSource)
     url.value = ''
     loading.value = false
   }

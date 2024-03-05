@@ -9,6 +9,7 @@ export interface Card {
     index?: number
     tapped: boolean
     faceDown: boolean
+    showInWorkSpace?: boolean
     markColor: string
     groupId: string | null
     shieldId: string

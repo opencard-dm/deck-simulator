@@ -16,10 +16,11 @@
 </template>
 
 <script setup lang="ts">
+import { useDecksStore } from '@/stores/decks';
 import { reactive } from 'vue';
-import { useStore } from 'vuex';
 
-const store = useStore()
+
+const decksStore = useDecksStore()
 const images = reactive<string[]>([])
 const IMAGE_TYPES = ['image/gif', 'image/jpeg', 'image/png']
 
@@ -45,7 +46,7 @@ function onLoadDeckFile(deck: DroppedDeck, file: File) {
     console.log(deck.loadingFiles)
   if (deck.loadingFiles === 0) {
     console.debug(`all files loaded for '${deck.name}'`)
-    store.commit('decks/setData', fromDroppedDataToDecks(deck))
+    decksStore.addDecksSource(fromDroppedDataToDecks(deck))
   }
   }
   if (file.name === 'decks.json') {

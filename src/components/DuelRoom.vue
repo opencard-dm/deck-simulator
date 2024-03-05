@@ -24,6 +24,7 @@
         <ImageViewer>
           <WorkSpace
             :lowerPlayer="lowerPlayer"
+            :single="single"
             @move-cards="onMoveCards"
             @shuffle-cards="shuffleCards"
             @emit-room-state="emitRoomState"
@@ -33,56 +34,20 @@
             id="js_gameBoard"
             class="gameBoard"
             :style="{
-              opacity: store.state.workSpace.active ? 0.3 : 1,
+              opacity: store.workSpace.active ? 0.3 : 1,
               height: playerZoneHeight,
             }"
           >
             <div class="gameBoard_topButtons">
-              <div
-                style="">
-                <o-button
-                  variant="grey-dark"
-                  size="small"
-                  :disabled="totalTurns === 0"
-                  @click="onStartTurn({ player: currentPlayer })"
-                >{{ players[currentPlayer].turn.current + 1 }}ターン目を開始</o-button>
-                <o-button
-                  style="margin-left: 8px;"
-                  variant="grey-dark"
-                  size="small"
-                  @click="logsViewer = true"
-                >
-                  <span>{{ currentPlayer === gameLogger.firstPlayer ? '先' : '後' }}</span>
-                {{ players[currentPlayer].turn.current }} / {{ totalTurns }}</o-button>
-              </div>
-              <!-- <div v-if="!isPhone() && !players[upperPlayer].isReady"
-                style="float: right;">
-                <o-button
-                  variant="grey-dark"
-                  size="small"
-                  @click="() => {
-                    currentPlayer = upperPlayer;
-                    deckSelectorActive = true;
-                  }"
-                >相手のデッキを選択する</o-button>
-              </div> -->
+              <TurnButtons
+                :players="players"
+                :gameLogger="gameLogger"
+                :player="lowerPlayer"
+                :upperPlayer="upperPlayer"
+                @start-turn="onStartTurn({ player: lowerPlayer })"
+                @open-logs="logsViewer = true"
+              ></TurnButtons>
             </div>
-            <PlaySheet
-              v-if="!isPhone() && players[upperPlayer].isReady"
-              :side="'upper'"
-              :player="upperPlayer"
-              :cards="players[upperPlayer].cards"
-              :name="players[upperPlayer].name"
-              :roomId="players[upperPlayer].roomId"
-              :isReady="players[upperPlayer].isReady"
-              :hasChojigen="players[upperPlayer].hasChojigen"
-              :single="single"
-              :started="totalTurns > 0"
-              @move-cards="onMoveCards"
-              @group-card="onGroupCard"
-              @emit-room-state="emitRoomState"
-              @change-cards-state="onChangeCardsState"
-            ></PlaySheet>
             <PlaySheet
               :side="'lower'"
               :player="lowerPlayer"
@@ -92,7 +57,8 @@
               :isReady="players[lowerPlayer].isReady"
               :hasChojigen="players[lowerPlayer].hasChojigen"
               :single="single"
-              :started="totalTurns > 0"
+              :started="started"
+              :gameLogger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -102,10 +68,12 @@
           </div>
         </ImageViewer>
       </template>
-      <template v-if="isPhone()" #upper-player>
-        <ImageViewer>
+      <template v-if="true" #upper-player>
+        <ImageViewer :hide="!isPhone()">
           <WorkSpace
+            v-if="isPhone()"
             :lowerPlayer="upperPlayer"
+            :single="single"
             @move-cards="onMoveCards"
             @shuffle-cards="shuffleCards"
             @emit-room-state="emitRoomState"
@@ -115,12 +83,27 @@
             id="js_gameBoard"
             class="gameBoard"
             :style="{
-              opacity: store.state.workSpace.active ? 0.3 : 1,
+              opacity: store.workSpace.active ? 0.3 : 1,
               height: single ? playerZoneHeight : `${Layout.upperPlayerZoneHeight()}px`,
             }"
           >
+            <div class="gameBoard_topButtons">
+              <TurnButtons
+                :players="players"
+                :gameLogger="gameLogger"
+                :player="upperPlayer"
+                :upperPlayer="upperPlayer"
+                @start-turn="onStartTurn({ player: upperPlayer })"
+                @open-logs="logsViewer = true"
+                @select-deck="() => {
+                  currentPlayer = upperPlayer
+                  deckSelectorActive = true
+                }"
+              ></TurnButtons>
+            </div>
             <PlaySheet
-              :side="single ? 'lower' : 'upper'"
+              v-if="players[upperPlayer].isReady"
+              :side="single && isPhone() ? 'lower' : 'upper'"
               :player="upperPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"
@@ -128,7 +111,8 @@
               :isReady="players[upperPlayer].isReady"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
-              :started="totalTurns > 0"
+              :started="started"
+              :gameLogger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
@@ -150,11 +134,12 @@
 
 <script setup lang="ts">
 import { Layout } from '@/helpers/layout';
-import { getCloudRunCookie, isPhone } from '@/helpers/Util';
-import { computed, onMounted, ref, watch } from 'vue';
+import { isPhone } from '@/helpers/Util';
+import { computed, onMounted, ref } from 'vue';
 import CHeader from './CHeader.vue';
 import WorkSpace from './WorkSpace.vue';
 import ImageViewer from './ImageViewer.vue';
+import TurnButtons from './TurnButtons.vue';
 import DeckSelector from './DeckSelector.vue';
 import PlaySheet from './PlaySheet.vue';
 import PlayerTabs from './PlayerTabs.vue';
@@ -162,14 +147,13 @@ import LogsViewer from './LogsViewer.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
-import { player, playerCards, zone } from '@/entities';
+import { player, zone } from '@/entities';
 import { Card } from '@/entities/Card';
-import { useStore } from 'vuex';
 import { RoomProps } from '.';
 import { Deck as DeckType, SourceDeck } from '@/entities/Deck';
-import axios from 'axios';
+import { useRoomStore } from '@/stores/room';
 
-const store = useStore()
+const store = useRoomStore()
 
 const props = defineProps<RoomProps>()
 
@@ -246,6 +230,7 @@ const {
 const totalTurns = computed(() => {
   return players['a'].turn.total + players['b'].turn.total
 })
+const started = computed(() => totalTurns.value > 0)
 function onStartGame(player: player, first: boolean) {
   // 先攻後攻を選べるのはlowerPlayerだけとして、
   // 送られてきたplayerを使わない
@@ -292,10 +277,3 @@ function setMessage() {
   //
 }
 </script>
-
-<style lang="scss">
-.gameBoard_topButtons {
-  display: flex;
-  justify-content: space-between;
-}
-</style>

@@ -30,7 +30,6 @@
         v-if="selected.deckType === 'custom'"
         >名前を変更</span
       >
-      <span class="click" @click.stop="openModal('', 'create')">カードを追加</span>
       <span class="click" @click.stop="modal.delete = true">デッキを削除</span>
     </div>
 
@@ -124,7 +123,7 @@ const totalNum = computed(() => {
 })
 
 const emit = defineEmits<{
-  "change-deck": []
+  "change-deck": [string, number]
   "create-deck": []
   "update-deck": []
   "delete-deck": []
@@ -134,7 +133,7 @@ function openModal(name, method) {
   modal[method] = true;
 }
 function changeDeck() {
-  emit("change-deck", selected.deckType, selected.index, props.side);
+  emit("change-deck", selected.deckType, selected.index);
   // parent[this.side].deckData = parent.deckList[index];
 }
 function updateDeck() {
@@ -165,7 +164,15 @@ function deleteDeck() {
 
 <style lang="scss" scoped>
 .deck-header {
+  background-color: #005c98;
+  /* marginはみ出し対策 */
+  border-top: 1px #005c98 solid;
+  width: 100%;
+  height: 60px;
+  color: white;
+  padding: 10px 0 0 20px;
   .small {
+    margin-top: 4px;
     font-size: 12px;
   }
   .click {

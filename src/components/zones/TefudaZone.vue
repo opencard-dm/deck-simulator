@@ -78,7 +78,7 @@
             style="top: 50%; transform: translateY(-50%);"
           >
             <o-button
-              v-if="selectMode && selectMode.zone !== zone"
+              v-if="selectMode && selectMode.player === player && selectMode.zone !== zone"
               class="tefudaZoneButton"
               :size="isPhone() ? 'small' : ''"
               variant="info"
@@ -115,14 +115,12 @@ import TextCard from '../elements/TextCard.vue'
 import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
 import { useZone, zoneEmit } from './zone';
-import { useStore } from 'vuex';
 import { computed } from 'vue';
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650
 const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
   `${Layout.tefudaHeight(cardWidth)}px` : ''
 
-const store = useStore()
 const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
@@ -152,6 +150,7 @@ const {
   openWorkSpace,
   closeWorkSpace,
   cardDetail,
+  hoveredCard
 } = useZone(props, emit)
 
 function clickCard(card: Card) {
@@ -161,12 +160,12 @@ function clickCard(card: Card) {
   // すでに選択済みのカードであれば、選択解除
   if (selectMode.value && selectMode.value.card.id === card.id) {
     setSelectMode(null);
-    store.commit('setHoveredCard', null)
+    setHoveredCard(null)
     return;
   }
   // カードのプレビューが開いていた場合、表示するカードを切り替える
-  if (!card.faceDown && store.state.hoveredCard) {
-    store.commit('setHoveredCard', card)
+  if (!card.faceDown && hoveredCard.value) {
+    setHoveredCard(card)
   }
   // 選択する
   setSelectMode({

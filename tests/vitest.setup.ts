@@ -10,10 +10,6 @@ const vueApp = createApp(App)
 import router from '@/router'
 vueApp.use(router)
 
-// vuex
-import store from '@/store'
-vueApp.use(store)
-
 //
 // useConfig
 import useConfig from '@/plugins/useConfig'

@@ -13,7 +13,7 @@
             {{ deck.name }}
           </option>
         </template>
-        <option v-for="(deck, sampleIndex) in deckList" :value="sampleIndex" :key="sampleIndex">
+        <option v-for="(deck, sampleIndex) in deckList" :value="deck.name" :key="sampleIndex">
           {{ deck.name }}
         </option>
       </select>
@@ -97,18 +97,19 @@
 import type { player } from "@/entities";
 import type { Deck as DeckType, DecksSource, SourceDeck } from "@/entities/Deck";
 import { CardActions } from "@/helpers/CardActions";
-import { Deck } from "@/helpers/Deck";
+import { Deck, fetchDeck } from "@/helpers/Deck";
 import { isPhone } from "@/helpers/Util";
 import axios from "axios";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import deckList from '../decks.json'
 import { Features } from "@/features";
+import { useDecksStore } from "@/stores/decks";
+import { useRoomStore } from "@/stores/room";
 
 const route = useRoute()
 const router = useRouter()
-const store = useStore()
+const decksStore = useDecksStore()
 const props = defineProps<{
   player: player
   isReady: boolean
@@ -152,7 +153,7 @@ const tabUrl = computed(() => {
   );
 })
 const userDecks = computed(() => {
-  return store.state.decks.data as DecksSource[]
+  return decksStore.data
 })
 const inviteLink = computed(() => {
   return (
@@ -178,7 +179,7 @@ function onClickSelectButton() {
   scrape()
 }
 async function setupDeck(deckData: SourceDeck) {
-  const sourceDeck = JSON.parse(JSON.stringify(deckData))
+const sourceDeck = JSON.parse(JSON.stringify(deckData))
   const deck: DeckType = await Deck.prepareDeckForGame(
     deckData,
     props.player === "a"
@@ -207,29 +208,18 @@ async function scrape() {
   if (!deckId.value) {
     console.error('deckId is required')
   }
-  let deck = null
   // TODO: Deck.getFromId()と共通化
-  if (Number.isInteger(deckId.value)) {
-    deck = JSON.parse(JSON.stringify(deckList[deckId.value as any]))
-  } else if (deckId.value.includes('-')) {
-    const [decksSourceIndex, ...deckNameElems] = deckId.value.split('-')
-    const deckName = deckNameElems.join('-')
-    const userDeck = store.state.decks.data[decksSourceIndex].decks
-      .find(d => d.name === deckName) as DeckType|undefined
-    // fix: デッキのカードが増殖するバグの応急処置
-    if (userDeck) {
-      deck = JSON.parse(JSON.stringify(userDeck))
-    }
-  }
-  if (!deck) {
+  const store = useRoomStore()
+  const sourceDeck = await fetchDeck(deckId.value, store)
+  if (!sourceDeck) {
     console.error('次のIDのデッキは見つかりませんでした', deckId.value)
   } else {
-    console.debug('deck', deck)
+    console.debug('deck', sourceDeck)
   }
   updateUrl(deckId.value)
   scrapeUrl.value = "";
   scraping.value = false;
-  setupDeck(deck as SourceDeck)
+  setupDeck(sourceDeck)
 }
 function onKeyPress() {
   errors.scrapeUrl = "ペーストのみ可能です";

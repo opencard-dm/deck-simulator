@@ -45,6 +45,11 @@
               :width="cardWidthNum"
               :selected="cardIsSelected(cards[0])"
             ></TextCard>
+            <div
+              class="cards-num"
+            >
+              {{ cards.length }}
+            </div>
           </OnLongPress>
         </div>
         <div
@@ -185,6 +190,7 @@ const deckViews = computed(() => {
   return deckViews;
 })
 function openDeck() {
+  setSelectMode(null)
   openWorkSpace({
     zone: props.zone,
     cards: props.cards,
@@ -266,6 +272,14 @@ $card-width: 50px;
       position: absolute;
       bottom: -70%;
     }
+  }
+  .cards-num {
+    z-index: 10;
+    color: #fff;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 10px;
   }
 }
 .deckZone_wrapper {

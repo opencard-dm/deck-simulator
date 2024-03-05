@@ -1,7 +1,9 @@
 <template>
   <div>
-    <div class="app-wrapper main" v-if="!isPhone()">
+    <div class="app-wrapper main app-wrapper_pc" v-if="!isPhone()">
       <slot name="lower-player"></slot>
+      <div class="verticalSeparator"></div>
+      <slot name="upper-player"></slot>
     </div>
     <template v-else>
       <div
@@ -74,5 +76,12 @@ const emit = defineEmits<{
       opacity: 1;
     }
   }
+}
+.app-wrapper_pc {
+  display: flex;
+}
+.verticalSeparator {
+  width: 2px;
+  background-color: lightgray;
 }
 </style>

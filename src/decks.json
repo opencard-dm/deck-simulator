@@ -534,5 +534,88 @@
     "chojigenCards": [],
     "grCards": [],
     "source": "airtable"
+  },
+  {
+    "name": "サガループリペア",
+    "cards": [
+      {
+        "name": "緊急再誕",
+        "times": 4,
+        "cd": "recAQ9UNcUZTkK4HI"
+      },
+      {
+        "name": "コダマダンス・チャージャー",
+        "times": 4,
+        "cd": "recrbUDrcdTVhxIw8"
+      },
+      {
+        "name": "蒼狼の大王 イザナギテラス",
+        "times": 4,
+        "cd": "reclvdq3VSW0Xj7hh"
+      },
+      {
+        "name": "氷牙レオポル・ディーネ公 / エマージェンシー・タイフーン",
+        "times": 4,
+        "cd": "rec9zwGGpp3UygVFa"
+      },
+      {
+        "name": "イグゾースト・Ⅱ・フォー",
+        "times": 4,
+        "cd": "recRE6dWBMqEor4Pi"
+      },
+      {
+        "name": "アーテル・ゴルギーニ",
+        "times": 4,
+        "cd": "recrtVDTp05PJeyVk"
+      },
+      {
+        "name": "忍蛇の聖沌 c0br4",
+        "times": 4,
+        "cd": "recCEF1tjMXp6UEfC"
+      },
+      {
+        "name": "サイバー・K・ウォズレック / ウォズレックの審問",
+        "times": 4,
+        "cd": "recFUJKd057aDemrE"
+      },
+      {
+        "name": "叡智の聖騎士 スクアーロ / エナジー・ライト",
+        "times": 2,
+        "cd": "recnGXLuiaqSdhoqj"
+      },
+      {
+        "name": "音素記号Bm エネルジコ / ♪水面から 天掴まんと するチャージャー",
+        "times": 1,
+        "cd": "recuhwUYRMmlfKzFf"
+      },
+      {
+        "name": "機術士ディール / 「本日のラッキーナンバー！」",
+        "times": 1,
+        "cd": "recbjpNrbVcKi1nKj"
+      },
+      {
+        "name": "絶望神サガ",
+        "times": 1,
+        "cd": "rechtxYSP2aE543TM"
+      },
+      {
+        "name": "蝕王の晩餐",
+        "times": 1,
+        "cd": "recZFGTjeig9gYbqH"
+      },
+      {
+        "name": "デビル・ドレーン",
+        "times": 1,
+        "cd": "recX660oqSF4Sc4oy"
+      },
+      {
+        "name": "フォース・アゲイン",
+        "times": 1,
+        "cd": "recOmuxMoqcZfWt8W"
+      }
+    ],
+    "chojigenCards": [],
+    "grCards": [],
+    "source": "airtable"
   }
 ]

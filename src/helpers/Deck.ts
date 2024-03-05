@@ -5,20 +5,21 @@ import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
 import { Deck as DeckType, GmDeckData, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
-import { useStore } from 'vuex';
 import { Card } from '@/entities/Card';
+import { useDecksStore } from '../stores/decks';
+import { useRoomStore } from '@/stores/room';
 
 export class Deck {
 
   static getFromId(id: string): SourceDeck {
     const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
     if (localDeck) return localDeck
-    const store = useStore()
+    const decksStore = useDecksStore()
     // ユーザがGoogleスプレッドシートで作ったデッキの場合
     if (id.includes('-')) {
       const [decksSourceIndex, ...deckNameElems] = id.split('-')
       const deckName = deckNameElems.join('-')
-      const userDeck = store.state.decks.data[decksSourceIndex].decks
+      const userDeck = decksStore.data[parseInt(decksSourceIndex)].decks
         .find(d => d.name === deckName) as SourceDeck|undefined
       // fix: デッキのカードが増殖するバグの応急処置
       if (userDeck) {
@@ -256,4 +257,27 @@ export class Deck {
     }
     return deck
   }
+}
+
+export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoomStore>) {
+  const localDeck = Deck.getFromId(deckId)
+  if (localDeck) {
+    if (localDeck.cardDetails) {
+      store.addCardDetails(localDeck.cardDetails)
+    }
+    if (localDeck.source === 'airtable') {
+      const cardIds: string[] = []
+      localDeck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+      localDeck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+      localDeck.grCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+      const { data: cards } = await axios.get('/api/cards', {
+        params: {
+          cardIds: cardIds.join(',')
+        }
+      })
+      store.addCardDetails(cards)
+    }
+    return localDeck;
+  }
+  throw Error('デッキの取得に失敗しました. deckId=' + deckId)
 }

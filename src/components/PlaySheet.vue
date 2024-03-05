@@ -7,6 +7,7 @@
       :side="side"
       :player="player"
       :cards="cards.battleCards"
+      :game-logger="gameLogger"
       @move-cards="moveCards"
       @group-card="groupCard"
       @emit-room-state="emitRoomState"
@@ -116,6 +117,7 @@
       :side="side"
       :player="player"
       :cards="cards.battleCards"
+      :game-logger="gameLogger"
       @move-cards="moveCards"
       @group-card="groupCard"
       @change-cards-state="changeCardsState"
@@ -138,6 +140,7 @@ import { zoneEmit } from './zones/zone';
 import type { player, side } from '@/entities';
 import { Card } from '@/entities/Card';
 import { ref } from 'vue';
+import { GameLogger } from '@/helpers/GameLogger';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
@@ -158,6 +161,7 @@ const props = defineProps<{
   hasChojigen: boolean,
   single: boolean,
   started: boolean,
+  gameLogger: GameLogger,
 }>();
 
 type playSheetEmit = zoneEmit & {

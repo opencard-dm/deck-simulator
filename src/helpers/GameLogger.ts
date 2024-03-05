@@ -57,6 +57,9 @@ export class GameLogger {
   }
 
   get currentHistory() {
+    if (this.historyIndex === -1) {
+      return null
+    }
     return this.histories[this.historyIndex]
   }
 
@@ -64,29 +67,33 @@ export class GameLogger {
     return this.histories[this.historyIndex + 1]
   }
 
+  get totalTurns() {
+    return this.players.a.turn.total + this.players.b.turn.total
+  }
+
   moveCards(args: moveCardsParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as moveCardsParams
-    this.appendHistory(this.moveCards.name, argsCopy)
+    this.appendHistory('moveCards', argsCopy)
   }
 
   groupCard(args: groupCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
-    this.appendHistory(this.groupCard.name, argsCopy)
+    this.appendHistory('groupCard', argsCopy)
   }
 
   undoGroupCard(args: groupCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
-    this.appendHistory(this.undoGroupCard.name, argsCopy)
+    this.appendHistory('undoGroupCard', argsCopy)
   }
 
   changeCardsState(args: changeCardsStateParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as changeCardsStateParams
-    this.appendHistory(this.changeCardsState.name, argsCopy)
+    this.appendHistory('changeCardsState', argsCopy)
   }
 
   startTurn(args: startTurnParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as startTurnParams
-    this.appendHistory(this.startTurn.name, argsCopy)
+    this.appendHistory('startTurn', argsCopy)
   }
 
   setHistories(histories: GameHistory[]) {
@@ -95,6 +102,12 @@ export class GameLogger {
   }
 
   canundo() {
+    if (
+      this.players.a.turn.current === 0
+      && this.players.b.turn.current === 0
+    ) {
+      return false
+    }
     return this.historyIndex !== -1
   }
 
@@ -155,7 +168,7 @@ export class GameLogger {
     }
   }
 
-  appendHistory(method: string, args: cardActionMethodParams, message='') {
+  appendHistory(method: GameHistory['method'], args: cardActionMethodParams, message='') {
     const history: GameHistory = {
       id: uuidv4(),
       canundo: true,
@@ -173,6 +186,12 @@ export class GameLogger {
     if (RoomConfig.useFirebase) {
       pushHistory(this.cardActions.roomId, history)
     } else {
+      // 連続するマナタップは一つの履歴にまとめる
+      if (this.currentHistory && HistoryComparator.isManaStateChange(this.currentHistory, history)) {
+        const currentChangeCardsStateArgs = this.currentHistory.args as changeCardsStateParams
+        currentChangeCardsStateArgs.cards.push(...(args as any).cards)
+        return
+      }
       this.histories.push(history)
       this.historyIndex = this.histories.length - 1
     }
@@ -225,15 +244,19 @@ export class GameLogger {
       return getCardNames([fromCard], cardDetails).join('') + 'を'
         + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
     }
-    // if (history.method === this.undoGroupCard.name) {
-    //   const { from, to, fromCard, toCard, player } = history.args as groupCardParams
-    //   if (to === 'shieldCards') {
-    //     return getCardNames([fromCard], cardDetails).join('')
-    //       + 'をシールドに重ねました'
-    //   }
-    //   return getCardNames([fromCard], cardDetails).join('') + 'を'
-    //     + getCardNames([toCard], cardDetails).join('') + 'に重ねました'
-    // }
+    if (history.method === this.undoGroupCard.name) {
+      const { from, to, fromCard, toCard, player } = history.args as groupCardParams
+      if (from === to) {
+        return readableZone(from) + 'の'
+          + getCardNames([fromCard], cardDetails).join('') + 'を動かしました'
+      }
+      if (to === 'battleCards' && from === 'tefudaCards') {
+        // 革命チェンジ
+        return getCardNames([fromCard], cardDetails).join('') + 'を手札に戻しました'
+      }
+      return readableZone(to) + 'から' + readableZone(from) + 'へ'
+        + getCardNames([fromCard], cardDetails).join('') + 'を移動しました'
+    }
     if (history.method === this.changeCardsState.name) {
       const { from, cards, player, cardState } = history.args as changeCardsStateParams
       if (cardState?.tapped !== undefined) {
@@ -262,4 +285,39 @@ function getCardNames(cards: readonly Card[], cardDetails: state["cardDetails"])
     }
     return '《' + cardDetails[c.cd as string].name + '》'
   })
+}
+
+export class HistoryComparator {
+  static isManaStateChange(currentHistory: GameHistory, nextHistory: GameHistory) {
+    if (currentHistory.method === nextHistory.method
+      && nextHistory.method === 'changeCardsState'
+    ) {
+      const currentHistoryArgs = currentHistory.args as changeCardsStateParams
+      const nextHistoryArgs = nextHistory.args as changeCardsStateParams
+      if (currentHistoryArgs.from === 'manaCards'
+        && nextHistoryArgs.from === 'manaCards'
+        && JSON.stringify(currentHistoryArgs.cardState) === JSON.stringify(nextHistoryArgs.cardState)
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * 革命チェンジやJチェンジのボタンを表示するタイミングの判定に使う
+   */
+  static isLastGroupedCard(card: Card, currentHistory: GameHistory) {
+    if (!card.groupId) return false
+    if (currentHistory.method === 'groupCard') {
+      const currentHistoryArgs = currentHistory.args as groupCardParams
+      if (currentHistoryArgs.to === 'battleCards'
+        && ['tefudaCards', 'manaCards'].includes(currentHistoryArgs.from)
+        && card.id === currentHistoryArgs.fromCard.id
+      ) {
+        return true
+      }
+    }
+    return false
+  }
 }

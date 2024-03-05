@@ -1,10 +1,12 @@
 <template>
-  <div id="canvas"
+  <div class="canvas"
+    @mousemove="isPhone() ? null : traceMouseMove($event)"
     v-if="isMounted">
     <div
+      v-if="!hide"
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
-      :style="[display.left ? { left: '5px' } : { left: '820px' }]"
+      :style="[display.left ? { left: '5px' } : { left: '520px' }]"
     >
       <div
         v-if="Features.using_image && cardIsVisible"
@@ -12,10 +14,9 @@
         :style="{ width: `${style.width}px` }"
       >
         <img
-          v-if="hoveredCard.faceDown && !hoveredCard.showInWorkSpace"
-          :src="cardDetail.backImageUrl"
+          v-if="!hoveredCard?.faceDown || hoveredCard.showInWorkSpace"
+          :src="cardDetail?.imageUrl"
         />
-        <img v-else :src="cardDetail.imageUrl" />
       </div>
       <div v-if="cardIsVisible && cardDetail && cardDetail.card_text">
         <TextCard
@@ -39,138 +40,97 @@
     <!-- slot -->
     <slot></slot>
   </div>
-  <!-- <div class="tool-footer" v-if="!isPhone()">
-    <div>
-      <label>
-        <input
-          type="checkbox"
-          :checked="!display.hidden"
-          @change="display.hidden = !$event.target.checked"
-        />ホバーで画像拡大
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          :checked="display.blur"
-          @change="display.blur = $event.target.checked"
-        />画像透過
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          :checked="explanation.show"
-          @change="explanation.show = $event.target.checked"
-        />説明表示
-      </label>
-    </div>
-    <div id="explanation" v-if="explanation.show">
-      <p></p>
-    </div>
-  </div> -->
 </template>
 
 <script setup lang="ts">
 import { CardDetail } from '@/entities/Deck';
 import { isPhone } from '@/helpers/Util';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { Features } from '@/features';
 import TextCard from './elements/TextCard.vue';
 
 const isMounted = ref(false);
+const roomStore = useRoomStore()
+
+const props = withDefaults(defineProps<{
+  hide?: boolean,
+}>(), {
+  hide: false
+})
+
+// ref
+const display = reactive({
+  left: false,
+  hidden: true,
+  blur: false,
+  imageUrl: "",
+})
+const explanation = reactive({
+  show: true,
+})
+const style = reactive({
+  width: 300,
+})
+
+// computed
+const hoveredCard = computed(() => roomStore.hoveredCard)
+const cardDetail = computed<CardDetail|null>(() => {
+  if (!roomStore.hoveredCard) return null
+  if (roomStore.hoveredCard.cd) {
+    return getCardDetail(roomStore.hoveredCard.cd)
+  }
+  return null
+})
+const cardIsVisible = computed(() => {
+  if (roomStore.hoveredCard) {
+    if (!roomStore.hoveredCard.faceDown || roomStore.hoveredCard.showInWorkSpace) {
+      return true;
+    }
+    // 両面あるカードの場合
+    if (
+      roomStore.hoveredCard.faceDown &&
+      cardDetail.value &&
+      cardDetail.value.backImageUrl &&
+      !cardDetail.value.backImageUrl.includes("/card-back.jpg")
+    ) {
+      return true;
+    }
+  }
+  return false;
+})
+
+function traceMouseMove(event: MouseEvent) {
+  if (event.screenX >= 520) {
+    display.left = true
+  } else {
+    display.left = false
+  }
+}
 onMounted(() => {
+  if (window.innerWidth > 800) {
+    display.hidden = false;
+  }
   isMounted.value = true;
 });
+
+function closePopup() {
+  roomStore.setHoveredCard(null)
+}
+
+function getCardDetail(cardId: string) {
+  let cardDetail = {} as CardDetail
+  try {
+    cardDetail = roomStore.cardDetails[cardId]
+  } catch (error) {
+    console.error('card not found:', cardId)
+    cardDetail = {} as CardDetail
+  }
+  return cardDetail
+}
 </script>
 
 <script lang="ts">
-import { mapMutations, mapState } from "vuex/dist/vuex.cjs";
-
-export default {
-  data() {
-    return {
-      display: {
-        left: false,
-        hidden: true,
-        blur: false,
-        imageUrl: "",
-      },
-      explanation: {
-        show: true,
-      },
-      style: {
-        width: 300,
-      },
-    };
-  },
-  computed: {
-    ...mapState(["hoveredCard"]),
-    cardDetail() {
-      if (!this.hoveredCard) return {}
-      if (this.hoveredCard.cd) {
-        return this.getCardDetail(this.hoveredCard.cd)
-      }
-    },
-    cardIsVisible() {
-      if (this.hoveredCard) {
-        if (!this.hoveredCard.faceDown || this.hoveredCard.showInWorkSpace) {
-          return true;
-        }
-        if (
-          this.hoveredCard.faceDown &&
-          this.cardDetail &&
-          !this.cardDetail.backImageUrl.includes("/card-back.jpg")
-        ) {
-          return true;
-        }
-      }
-      return false;
-    },
-    cardText() {
-      /** @type {String} */
-      const text = this.cardDetail.card_text;
-      if (this.hoveredCard && text) {
-        if (this.hoveredCard.faceDown) {
-          if (this.hoveredCard.backText) {
-            return this.hoveredCard.backText;
-          }
-          if (text.match(/─{3,}龍解後─{3,}/)) {
-            return text.split(/─{3,}龍解後─{3,}/)[1];
-          }
-        } else {
-          if (text.match(/─{3,}龍解後─{3,}/)) {
-            return text.split(/─{3,}龍解後─{3,}/)[0];
-          }
-        }
-        return text;
-      }
-      return "";
-    },
-  },
-  methods: {
-    ...mapMutations(["setHoveredCard"]),
-    closePopup() {
-      this.$store.commit('setHoveredCard', null)
-    },
-    getCardDetail(cardId: string) {
-      let cardDetail = {} as CardDetail
-      try {
-        cardDetail = this.$store.state.cardDetails[cardId]
-      } catch (error) {
-        console.error('card not found:', cardId)
-        cardDetail = {} as CardDetail
-      }
-      if (!cardDetail.backImageUrl) {
-        cardDetail.backImageUrl = 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg'
-      }
-      return cardDetail
-    },
-  },
-  mounted() {
-    if (window.innerWidth > 800) {
-      this.display.hidden = false;
-    }
-  },
-};
+import { useRoomStore } from '@/stores/room';
 </script>
 
 <style lang="scss" scoped>
@@ -180,6 +140,7 @@ export default {
   top: 2px;
   // left: 10px;
   z-index: 12; // ワークスペースより大きくする
+  max-width: 500px;
   &.blur {
     opacity: 0.6;
   }

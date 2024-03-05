@@ -10,9 +10,12 @@ const vueApp = createApp(App)
 import router from './router'
 vueApp.use(router)
 
-// vuex
-import store from './store'
-vueApp.use(store)
+// pinia
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+vueApp.use(pinia)
 
 //
 // useConfig

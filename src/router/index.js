@@ -7,7 +7,6 @@ import battle from '../pages/battle.vue'
 import decks_edit from '../pages/decks/edit.vue'
 import logs from '../pages/logs.vue'
 import adminTestScrapte from '../pages/admin/test-scrape.vue'
-import adminTestFirebase from '../pages/admin/test-firebase.vue'
 import { Features } from '@/features'
 
 const routes = [
@@ -23,7 +22,6 @@ if (Features.battle) {
 }
 if (import.meta.env.NODE_ENV === 'development') {
   routes.push({ path: '/admin/test-scrape', component: adminTestScrapte })
-  routes.push({ path: '/admin/test-firebase', component: adminTestFirebase })
 }
 
 const router = createRouter({

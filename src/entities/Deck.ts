@@ -1,21 +1,39 @@
 import { Card } from "./Card";
 
+type civilization = 'light'
+    | 'water'
+    | 'dark'
+    | 'fire'
+    | 'nature'
+    | 'zero'
+
+type cardType = 'ツインパクト'
+    | 'クリーチャー'
+    | '呪文'
+    | '進化クリーチャー'
+    | 'サイキック'
+    | 'ドラグハート'
+    | 'フィールド'
+    | '城'
+    | 'クロスギア'
+    | 'エグザイル・クリーチャー'
+    | 'GR'
+    | 'オレガ・オーラ'
+    | 'タマシード'
+
 export interface CardDetail {
     id: string
     main_card_id?: number
-    backImageUrl: string
+    imageUrl?: string
+    backImageUrl?: string
     name: string
     name_ruby?: string
     image_paths?: string[]
-    sub_types?: {
-        sub_type_id: number
-        name: string
-        sort: number
-    }[]
+    types?: cardType[]
     power: string | null
     power_int?: number
     cost: number
-    civilizations: string[]
+    civilizations: civilization[]
     races?: string[]
     card_text: string
     combined_card?: CardDetail

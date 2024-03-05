@@ -1,5 +1,4 @@
-import { useStore } from "vuex";
-import { store as Store } from '@/store/index'
+import { useRoomStore } from "@/stores/room";
 import { cardState, groupableZone, player, zone } from "@/entities";
 import { Card } from "@/entities/Card";
 import { computed } from "vue";
@@ -21,11 +20,11 @@ export type zoneEmit = {
 }
 
 export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zoneEmit>>) {
-    const store = useStore()
-    const workSpace = computed<typeof Store.state.workSpace>(() => store.state.workSpace)
-    const selectMode = computed<typeof Store.state.selectMode>(() => store.state.selectMode)
-    const selectedCard = computed<typeof Store.state.selectedCard>(() => store.state.selectedCard)
-    const hoveredCard = computed<typeof Store.state.hoveredCard>(() => store.state.hoveredCard)
+    const store = useRoomStore()
+    const workSpace = computed(() => store.workSpace)
+    const selectMode = computed(() => store.selectMode)
+    const selectedCard = computed(() => store.selectedCard)
+    const hoveredCard = computed(() => store.hoveredCard)
 
     const {
         openWorkSpace,
@@ -34,11 +33,11 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
         setSelectedCard,
         setHoveredCard,
     }: any = {
-        openWorkSpace: (...args: any[]) => store.commit('openWorkSpace', ...args),
-        closeWorkSpace: (...args: any[]) => store.commit('closeWorkSpace', ...args),
-        setSelectMode: (...args: any[]) => store.commit('setSelectMode', ...args),
-        setSelectedCard: (...args: any[]) => store.commit('setSelectedCard', ...args),
-        setHoveredCard: (...args: any[]) => store.commit('setHoveredCard', ...args),
+        openWorkSpace: (...args: Parameters<typeof store.openWorkSpace>) => store.openWorkSpace(...args),
+        closeWorkSpace: (...args: Parameters<typeof store.closeWorkSpace>) => store.closeWorkSpace(...args),
+        setSelectMode: (...args: Parameters<typeof store.setSelectMode>) => store.setSelectMode(...args),
+        setSelectedCard: (...args: Parameters<typeof store.setSelectedCard>) => store.setSelectedCard(...args),
+        setHoveredCard: (...args: Parameters<typeof store.setHoveredCard>) => store.setHoveredCard(...args),
     }
 
     function moveCard(from: zone, to: zone, card: Card, prepend = false) {
@@ -111,7 +110,7 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
     function cardDetail(card: Card) {
       let detail = {} as CardDetail
       try {
-        detail = useStore().state.cardDetails[card.cd]
+        detail = store.cardDetails[card.cd]
       } catch (error) {
         console.error('card not found:', card.cd)
       }
