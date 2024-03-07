@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="app-wrapper" @mousemove="traceMouseMove">
-      <div class="content">
+      <div class="content" v-if="!loading">
         <div class="deck-wrapper left">
           <DeckEditor :deckList="deckList"></DeckEditor>
         </div>
@@ -31,19 +31,21 @@
 
 <script setup lang="ts">
 import DeckEditor from "./DeckEditor.vue";
-import { Deck, fetchDeck } from "@/helpers/Deck";
+import { fetchCardDetails } from "@/helpers/Deck";
 import systemDecks from '@/decks.json'
 import { ref, reactive, computed } from 'vue'
 import { useRoomStore } from "@/stores/room";
 import { SourceDeck } from "@/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
 import { isPhone } from "@/helpers/Util";
+import { getUserDecks } from "./decks";
 
 // data
 const deckList = reactive({
   readyMade: [] as SourceDeck[],
   custom: [] as SourceDeck[],
 })
+const loading = ref(true)
 const display = reactive({
   card: null,
   left: true,
@@ -71,16 +73,23 @@ const roomStore = useRoomStore()
 const decksStore = useDecksStore();
 
 // on created
-(function () {
+(async function () {
   message.value = "データを\n取得中です";
   const decks: SourceDeck[] = [];
-  decksStore.data.forEach(source => {
-    decks.push(...source.decks)
-  })
+  // 現状、ローカルストレージのデッキはスプレッドシートのものだから、含めない
+  // decksStore.data.forEach(source => {
+  //   decks.push(...source.decks)
+  // })
+  const userDecks = await getUserDecks()
+  decks.push(...userDecks)
   decks.push(...systemDecks as any[])
-  deckList.custom = decks;
-  fetchDeck(decks[0].name, roomStore)
-  fetchDeck(decks[1].name, roomStore)
+  deckList.custom = userDecks
+  deckList.readyMade = systemDecks as any[]
+  console.log(userDecks)
+  loading.value = false
+
+  fetchCardDetails(decks[0], roomStore)
+  fetchCardDetails(decks[1], roomStore)
   message.value = "";
 })();
 

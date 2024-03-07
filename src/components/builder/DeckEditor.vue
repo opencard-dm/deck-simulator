@@ -8,6 +8,7 @@
       @change-deck="changeDeck"
       @update-deck="updateDeck"
       @deleteDeck="deleteDeck"
+      @copy-deck="copyDeck"
     ></DeckHeader>
   </div>
   <div>
@@ -69,6 +70,7 @@ import { useDecksStore } from "@/stores/decks";
 import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";
 import axios from "axios";
+import { addDeck } from "./decks";
 
 const props = defineProps<{
   deckList: {
@@ -78,6 +80,7 @@ const props = defineProps<{
 }>()
 
 const roomStore = useRoomStore()
+const decksStore = useDecksStore()
 
 // data
 const deckData = reactive({
@@ -136,6 +139,19 @@ function deleteDeck(side) {
   this.$store.commit("decks/setData", decksCopy);
   this.message = "";
   location.reload();
+}
+async function copyDeck() {
+  const deckDataCopy: SourceDeck = JSON.parse(JSON.stringify(deckData.deckData))
+  deckDataCopy.name += 'のコピー'
+  deckDataCopy.source = 'firebase'
+  await addDeck(deckDataCopy)
+  props.deckList.custom.push(deckDataCopy)
+  deckData.deckIndex = props.deckList.custom.length - 1
+  deckData.deckData = deckDataCopy
+  // decksCopy.splice(this[side].deckIndex, 1);
+  // this.$store.commit("decks/setData", decksCopy);
+  // this.message = "";
+  // location.reload();
 }
 
 // 

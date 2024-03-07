@@ -3,7 +3,7 @@ const START_ID_B = 101;
 
 import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
-import { Deck as DeckType, GmDeckData, SourceDeck } from '@/entities/Deck';
+import { Deck as DeckType, GmDeckData, SourceCard, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
 import { Card } from '@/entities/Card';
 import { useDecksStore } from '../stores/decks';
@@ -280,4 +280,20 @@ export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoom
     return localDeck;
   }
   throw Error('デッキの取得に失敗しました. deckId=' + deckId)
+}
+
+export async function fetchCardDetails(deck: SourceDeck, store: ReturnType<typeof useRoomStore>) {
+  const cards: SourceCard[] = []
+  deck.cards.forEach(c => {
+    cards.push(c)
+  })
+  deck.chojigenCards.forEach(c => {
+    cards.push(c)
+  })
+  deck.grCards.forEach(c => {
+    cards.push(c)
+  })
+  const cardIds = cards.map(c => c.cd)
+  const res = await axios.get(`/api/cards?cardIds=${cardIds.join(',')}`)
+  store.addCardDetails(res.data)
 }

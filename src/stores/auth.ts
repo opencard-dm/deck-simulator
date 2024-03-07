@@ -1,10 +1,10 @@
 
-import { getAuth, onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
 import { Firebase } from '@/helpers/firebase';
 import { defineStore } from 'pinia'
 
 interface State {
-  user: null|any
+  user: null|User
   loggedIn: boolean
 }
 

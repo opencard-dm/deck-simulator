@@ -31,6 +31,7 @@
         >名前を変更</span
       >
       <span class="click" @click.stop="modal.delete = true">デッキを削除</span>
+      <span class="click" @click.stop="emit('copy-deck')">コピー</span>
     </div>
 
     <Modal
@@ -127,6 +128,7 @@ const emit = defineEmits<{
   "create-deck": []
   "update-deck": []
   "delete-deck": []
+  "copy-deck": []
 }>()
 function openModal(name, method) {
   params.name = name;

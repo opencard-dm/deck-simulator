@@ -55,7 +55,7 @@ export interface DecksSource {
 
 export interface SourceDeck {
     name: string
-    source: string
+    source: 'firebase' | 'airtable' | 'googleSheet'
     cards: SourceCard[]
     chojigenCards: SourceCard[]
     grCards: SourceCard[]
