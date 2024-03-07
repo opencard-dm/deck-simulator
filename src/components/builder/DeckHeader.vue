@@ -20,12 +20,13 @@
     </div>
     <div class="small">
       <span>合計枚数{{ totalNum }}</span>
-      <span
+      <!-- 保存は自動で行われるため、非表示 -->
+      <!-- <span
         class="save-button click"
         @click.stop="emit('update-deck')"
         v-if="deckData.source === 'firebase'"
         >変更を保存</span
-      >
+      > -->
       <span
         class="click"
         @click.stop="openModal(deckData.name, 'update')"
@@ -66,7 +67,6 @@
       <template v-slot:content>
         <div>
           <p>デッキを削除してもよろしいですか？</p>
-          <p style="font-size: 12px; margin-top:10px;">※削除後には画面のリロードが行われるため、変更の保存はあらかじめお済ませください。</p>
         </div>
       </template>
       <template v-slot:footer>

@@ -3,10 +3,16 @@
     <div class="app-wrapper" @mousemove="isPhone() ? null : traceMouseMove($event)">
       <div class="content" v-if="!loading">
         <div class="deck-wrapper left">
-          <DeckEditor :deckList="deckList"></DeckEditor>
+          <DeckEditor
+            :deckList="deckList"
+            @delete-deck="onDeleteDeck"
+          ></DeckEditor>
         </div>
         <div v-if="!isPhone()" class="deck-wrapper right">
-          <DeckEditor :deckList="deckList"></DeckEditor>
+          <DeckEditor
+            :deckList="deckList"
+            @delete-deck="onDeleteDeck"
+          ></DeckEditor>
         </div>
       </div>
 
@@ -21,7 +27,6 @@
             :width="300"
             :large="true"
             :selected="false"
-            :deck="null"
           ></TextCard>
         </div>
       </div>
@@ -102,6 +107,12 @@ function traceMouseMove(event: MouseEvent) {
     display.left = false;
   } else {
     display.left = true;
+  }
+}
+function onDeleteDeck(deckId: string) {
+  const deckIndex = deckList.findIndex(d => d.id === deckId)
+  if (deckIndex !== -1) {
+    deckList.splice(deckIndex, 1)
   }
 }
 </script>

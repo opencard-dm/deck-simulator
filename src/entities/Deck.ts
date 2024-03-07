@@ -65,8 +65,8 @@ export interface SourceDeck {
 }
 
 export interface SourceCard {
-    imageUrl: string
-    name: string
+    imageUrl?: string
+    name?: string
     cd: string
     backImageUrl?: string
     times: number

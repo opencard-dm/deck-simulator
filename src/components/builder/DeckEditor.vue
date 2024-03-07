@@ -7,7 +7,7 @@
       :side="'left'"
       @change-deck="changeDeck"
       @update-deck="saveDeck"
-      @deleteDeck="deleteDeck"
+      @delete-deck="onDeleteDeck"
       @copy-deck="copyDeck"
     ></DeckHeader>
   </div>
@@ -17,6 +17,7 @@
       :deck="deckData.deckData"
       :side="'left'"
       @delete-card="onDeleteCard"
+      @save-deck="saveDeck"
       @update:cards="deckData.deckData.cards = $event"
     ></CardList>
   </div>
@@ -26,8 +27,6 @@
       :style="{
         paddingLeft: '8px',
       }"
-      :variant="error ? 'danger' : ''"
-      :message="loading ? 'カードが見つかりませんでした' : error"
     >
       <OInput
         list="card_left"
@@ -69,25 +68,33 @@ import { useDecksStore } from "@/stores/decks";
 import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";
 import axios from "axios";
-import { addDeck, updateDeck } from "./decks";
+import { addDeck, deleteDeck, updateDeck } from "./decks";
 
 const props = defineProps<{
   deckList: SourceDeck[]
 }>()
 
+const emit = defineEmits<{
+  'delete-deck': [string]
+}>()
+
 const roomStore = useRoomStore()
 const decksStore = useDecksStore()
 
-// data
-const deckData = reactive({
-  deckIndex: 0,
-  deckData: {
+const getEmptyDeck = (): SourceDeck => {
+  return {
     name: '',
     source: 'builtin',
     cards: [],
     chojigenCards: [],
     grCards: []
-  } as SourceDeck,
+  }
+}
+
+// data
+const deckData = reactive({
+  deckIndex: 0,
+  deckData: getEmptyDeck() as SourceDeck,
 })
 const message = ref('')
 
@@ -99,22 +106,7 @@ onMounted(() => {
 
 // methods
 async function saveDeck() {
-  message.value = "変更を\n保存中です";
   await updateDeck(deckData.deckData)
-  setTimeout(() => {
-    message.value = "";
-  }, 1000)
-}
-function createDeck(params, side) {
-  if (!params.name) return;
-  const deck = {
-    name: params.name,
-    cards: [],
-  };
-  const decksCopy = this.$store.state.decks.data;
-  decksCopy.push(deck);
-  this.$store.commit("decks/setData", decksCopy);
-  this[side]["deckData"] = deck;
 }
 function changeDeck(index: number) {
   const selectedDeck = props.deckList[index]
@@ -122,12 +114,13 @@ function changeDeck(index: number) {
   fetchCardDetails(selectedDeck, roomStore)
   deckData.deckIndex = index
 }
-function deleteDeck(side) {
-  const decksCopy = this.$store.state.decks.data;
-  decksCopy.splice(this[side].deckIndex, 1);
-  this.$store.commit("decks/setData", decksCopy);
-  this.message = "";
-  location.reload();
+async function onDeleteDeck() {
+  const id = deckData.deckData.id
+  if (id) {
+    emit('delete-deck', id)
+    await deleteDeck(deckData.deckData)
+    deckData.deckData = getEmptyDeck()
+  }
 }
 async function copyDeck() {
   const deckDataCopy: SourceDeck = JSON.parse(JSON.stringify(deckData.deckData))
@@ -137,15 +130,12 @@ async function copyDeck() {
   props.deckList.push(deckDataCopy)
   deckData.deckIndex = props.deckList.length - 1
   deckData.deckData = deckDataCopy
-  // decksCopy.splice(this[side].deckIndex, 1);
-  // this.$store.commit("decks/setData", decksCopy);
-  // this.message = "";
-  // location.reload();
 }
 function onDeleteCard(card: SourceCard) {
   deckData.deckData.cards = deckData.deckData.cards.filter(c => c.cd !== card.cd)
   deckData.deckData.chojigenCards = deckData.deckData.chojigenCards.filter(c => c.cd !== card.cd)
   deckData.deckData.grCards = deckData.deckData.grCards.filter(c => c.cd !== card.cd)
+  saveDeck()
 }
 
 // 
@@ -156,7 +146,7 @@ async function addCard() {
   if (!(cardname.value in cardnames)) {
     return
   }
-  const cardId = cardnames[cardname.value]
+  const cardId = (cardnames as any)[cardname.value]
   const { data: cards } = await axios.get('/api/cards', {
     params: {
       cardIds: cardId
@@ -168,6 +158,7 @@ async function addCard() {
   })
   cardname.value = ''
   roomStore.addCardDetails(cards)
+  saveDeck()
 }
 </script>
 

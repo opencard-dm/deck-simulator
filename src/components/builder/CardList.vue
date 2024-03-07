@@ -68,13 +68,14 @@ import { isPhone } from '@/helpers/Util';
 import { useRoomStore } from '@/stores/room';
 
 const props = defineProps<{
-  cards: SourceCard
+  cards: SourceCard[]
   side: string
   deck: SourceDeck
 }>()
 
 const emit = defineEmits<{
   'delete-card': [SourceCard]
+  'save-deck': []
 }>()
 // const store = useStore()
 
@@ -127,21 +128,17 @@ function checkMove(event) {
   }
   return true;
 }
-function addCardNum(card) {
+function addCardNum(card: SourceCard) {
   if (card.times <= 3) {
     card.times += 1;
   }
+  emit('save-deck')
 }
-function decrementCardNum(card) {
-  if (card.times === 0) {
-    if (window.confirm("削除してもよろしいですか?")) {
-      // this.$emit('delete-card', card, this.side);
-      this.deleteCard(card);
-    }
-  }
+function decrementCardNum(card: SourceCard) {
   if (card.times > 0) {
     card.times -= 1;
   }
+  emit('save-deck')
 }
 function deleteCard(card: SourceCard) {
   emit('delete-card', card)
