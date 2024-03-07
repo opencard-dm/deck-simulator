@@ -5,7 +5,8 @@
         name="deckId"
         id="select-deck"
         @change="($event) => {
-          emit('change-deck', $event.target.value)
+          const value = ($event.target as HTMLSelectElement).value
+          emit('change-deck', parseInt(value))
         }"
         :value="deckIndex"
       >
@@ -15,6 +16,7 @@
           :key="index"
         >
           {{ deck.name }}
+          {{ deck.source === 'builtin' ? '（サンプル）' : '' }}
         </option>
       </select>
     </div>
