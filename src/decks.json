@@ -85,7 +85,7 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   },
   {
     "name": "フィオナアカシック_超CS優勝",
@@ -163,7 +163,7 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   },
   {
     "name": "アナカラージャオウガ",
@@ -236,7 +236,7 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   },
   {
     "name": "黒緑アビス",
@@ -309,7 +309,7 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   },
   {
     "name": "青黒魔道具",
@@ -392,7 +392,7 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   },
   {
     "name": "赤緑アポロ",
@@ -460,7 +460,7 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   },
   {
     "name": "青黒コンプレックス_超CSⅥ福岡4位",
@@ -533,7 +533,7 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   },
   {
     "name": "サガループリペア",
@@ -616,6 +616,6 @@
     ],
     "chojigenCards": [],
     "grCards": [],
-    "source": "airtable"
+    "source": "builtin"
   }
 ]
