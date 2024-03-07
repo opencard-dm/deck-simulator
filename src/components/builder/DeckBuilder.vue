@@ -217,6 +217,8 @@ body {
 }
 .deck-wrapper {
   background-color: lightgray;
+  width: 100%;
+  min-height: calc(100vh - 60px);
   &.left {
     border-right: 2px white solid;
   }

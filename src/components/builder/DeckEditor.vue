@@ -11,11 +11,18 @@
       @copy-deck="copyDeck"
     ></DeckHeader>
   </div>
-  <div>
+  <div class="cardList_wrapper">
+    <CardList
+      :cards="deckData.deckData.cards"
+      :deck="deckData.deckData"
+      :side="'left'"
+      @update:cards="deckData.deckData.cards = $event"
+    ></CardList>
+  </div>
+  <div style="padding-bottom: 1rem;">
     <OField
       class="deckInput"
       :style="{
-        paddingTop: '6px',
         paddingLeft: '8px',
       }"
       :variant="error ? 'danger' : ''"
@@ -33,7 +40,6 @@
         :expanded="false"
       >
       </OInput>
-      <!-- <input  name="browser"> -->
       <o-button variant="info" 
         @click="addCard"
         size="small"
@@ -48,14 +54,6 @@
         ></option>
       </datalist>
     </OField>
-  </div>
-  <div>
-    <CardList
-      :cards="deckData.deckData.cards"
-      :deck="deckData.deckData"
-      :side="'left'"
-      @update:cards="deckData.deckData.cards = $event"
-    ></CardList>
   </div>
 </template>
 
@@ -179,6 +177,9 @@ async function addCard() {
   position: fixed;
   z-index: 1;
   top: 0;
+  width: 100%;
+}
+.cardList_wrapper {
   width: 100%;
 }
 </style>

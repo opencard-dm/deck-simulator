@@ -18,7 +18,9 @@
       @end="setDraggingCard(null)"
     >
       <template #item="{ element }">
-        <div class="card-wrapper">
+        <div class="card-wrapper" :style="{
+          width: `${cardWidth}px`
+        }">
           <div class="card">
             <!-- insted of prevent default -->
             <div draggable="true">
@@ -86,7 +88,7 @@ const deckCards = computed({
     this.$emit("update:cards", newVal);
   },
 })
-const cardWidth = computed(() => 100)
+const cardWidth = computed(() => 80)
 
 let instance: ReturnType<typeof getCurrentInstance> = null
 onMounted(() => {
@@ -159,7 +161,6 @@ function onDragstart(evt) {
   flex-wrap: wrap;
   padding: 10px;
   > * {
-    width: 100px;
     margin: 0 10px 15px 0px;
   }
 }
@@ -194,10 +195,11 @@ function onDragstart(evt) {
     align-items: center;
     height: 30px;
     width: 100%;
-    &_times {
-      margin-left: 5px;
+    .cardTool_times {
+      margin-left: 2px;
       margin-right: auto;
       font-weight: 500;
+      font-size: 14px;
     }
     &_buttonGroup {
       display: flex;
