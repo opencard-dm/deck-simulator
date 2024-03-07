@@ -54,8 +54,10 @@ export interface DecksSource {
 }
 
 export interface SourceDeck {
+    /** firestoreのid */
+    id?: string
     name: string
-    source: 'firebase' | 'airtable' | 'googleSheet'
+    source: 'firebase' | 'airtable' | 'googleSheet' | 'builtin'
     cards: SourceCard[]
     chojigenCards: SourceCard[]
     grCards: SourceCard[]

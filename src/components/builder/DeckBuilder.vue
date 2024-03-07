@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="app-wrapper" @mousemove="traceMouseMove">
+    <div class="app-wrapper" @mousemove="isPhone() ? null : traceMouseMove($event)">
       <div class="content" v-if="!loading">
         <div class="deck-wrapper left">
           <DeckEditor :deckList="deckList"></DeckEditor>
@@ -96,7 +96,6 @@ const center = computed(() => {
   return window.innerWidth / 2
 })
 function traceMouseMove(event: MouseEvent) {
-  if (isPhone()) return
   let mX = event.pageX;
   // let mY = event.pageY;
   if (mX < window.innerWidth / 2) {

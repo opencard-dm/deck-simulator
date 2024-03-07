@@ -4,8 +4,10 @@
       <select
         name="deckId"
         id="select-deck"
-        @change="emit('change-deck', selected.index)"
-        v-model="selected.index"
+        @change="($event) => {
+          emit('change-deck', $event.target.value)
+        }"
+        :value="deckIndex"
       >
         <option
           v-for="(deck, index) in deckList"
@@ -20,17 +22,21 @@
       <span>合計枚数{{ totalNum }}</span>
       <span
         class="save-button click"
-        @click.stop="updateDeck()"
-        v-if="selected.deckType === 'custom'"
+        @click.stop="emit('update-deck')"
+        v-if="deckData.source === 'firebase'"
         >変更を保存</span
       >
       <span
         class="click"
-        @click.stop="openModal(deckList[selected.index].name, 'update')"
-        v-if="selected.deckType === 'custom'"
+        @click.stop="openModal(deckData.name, 'update')"
+        v-if="deckData.source === 'firebase'"
         >名前を変更</span
       >
-      <span class="click" @click.stop="modal.delete = true">デッキを削除</span>
+      <span 
+        v-if="deckData.source === 'firebase'"
+        class="click"
+        @click.stop="modal.delete = true"
+      >デッキを削除</span>
       <span class="click" @click.stop="emit('copy-deck')">コピー</span>
     </div>
 
@@ -49,24 +55,6 @@
       </template>
       <template v-slot:footer>
         <button @click.stop="updateDeckName">変更</button>
-      </template>
-    </Modal>
-
-    <Modal
-      class="deck-header-modal"
-      v-if="modal.create"
-      @close-modal="modal.create = false"
-    >
-      <template v-slot:content>
-        <div>
-          <p>カード画像のURLを貼り付けてください</p>
-        </div>
-        <div>
-          <input v-model="params.cardUrl" />
-        </div>
-      </template>
-      <template v-slot:footer>
-        <button @click.stop="addCard">追加</button>
       </template>
     </Modal>
 
@@ -101,13 +89,8 @@ const props = defineProps<{
   deckIndex: number
 }>()
 
-const selected = reactive({
-  deckType: "custom",
-  index: props.deckIndex,
-})
 const params = reactive({
   name: "",
-  cardUrl: "",
 })
 const modal = reactive({
   create: false,
@@ -130,33 +113,18 @@ const emit = defineEmits<{
   "delete-deck": []
   "copy-deck": []
 }>()
-function openModal(name, method) {
+function openModal(name: string, method: 'create' | 'update' | 'delete') {
   params.name = name;
   modal[method] = true;
 }
-function updateDeck() {
-  emit("update-deck", params, props.side);
-}
 function updateDeckName() {
-  // parent.deckList[
-  //   this.selected.index
-  // ].name = this.params.name;
-  this.updateDeck();
-  this.modal.update = false;
-  this.params.name = "";
-}
-function createDeck() {
-  this.modal.create = false;
-  emit("create-deck", params, props.side, selected);
-  params.name = "";
-}
-function addCard() {
-  emit("update-deck", params, props.side);
-  params.cardUrl = ""
+  props.deckData.name = params.name
+  emit('update-deck')
+  modal.update = false
 }
 function deleteDeck() {
-  emit("delete-deck", props.side);
-  this.modal.delete = false;
+  emit("delete-deck");
+  modal.delete = false;
 }
 </script>
 

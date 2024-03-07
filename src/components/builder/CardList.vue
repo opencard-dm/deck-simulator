@@ -73,6 +73,9 @@ const props = defineProps<{
   deck: SourceDeck
 }>()
 
+const emit = defineEmits<{
+  'delete-card': [SourceCard]
+}>()
 // const store = useStore()
 
 const deckCards = computed({
@@ -140,14 +143,8 @@ function decrementCardNum(card) {
     card.times -= 1;
   }
 }
-function deleteCard(card) {
-  let filterd = [];
-  for (let c of this.cards) {
-    if (c.imageUrl !== card.imageUrl) {
-      filterd.push(c);
-    }
-  }
-  instance.parent[this.side]["deckData"]["cards"] = filterd;
+function deleteCard(card: SourceCard) {
+  emit('delete-card', card)
 }
 function onMove(evt) {
   // https://github.com/SortableJS/vue.draggable.next#move

@@ -6,7 +6,7 @@
       :deckIndex="deckData.deckIndex"
       :side="'left'"
       @change-deck="changeDeck"
-      @update-deck="updateDeck"
+      @update-deck="saveDeck"
       @deleteDeck="deleteDeck"
       @copy-deck="copyDeck"
     ></DeckHeader>
@@ -16,6 +16,7 @@
       :cards="deckData.deckData.cards"
       :deck="deckData.deckData"
       :side="'left'"
+      @delete-card="onDeleteCard"
       @update:cards="deckData.deckData.cards = $event"
     ></CardList>
   </div>
@@ -60,15 +61,15 @@
 <script setup lang="ts">
 import DeckHeader from "./DeckHeader.vue";
 import CardList from "./CardList.vue";
-import { Deck, fetchDeck } from "@/helpers/Deck";
+import { fetchCardDetails } from "@/helpers/Deck";
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoomStore } from "@/stores/room";
-import { SourceDeck } from "@/entities/Deck";
+import { SourceCard, SourceDeck } from "@/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
 import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";
 import axios from "axios";
-import { addDeck } from "./decks";
+import { addDeck, updateDeck } from "./decks";
 
 const props = defineProps<{
   deckList: SourceDeck[]
@@ -81,8 +82,12 @@ const decksStore = useDecksStore()
 const deckData = reactive({
   deckIndex: 0,
   deckData: {
+    name: '',
+    source: 'builtin',
     cards: [],
-  },
+    chojigenCards: [],
+    grCards: []
+  } as SourceDeck,
 })
 const message = ref('')
 
@@ -93,23 +98,12 @@ onMounted(() => {
 })
 
 // methods
-function updateDeck(params, side) {
+async function saveDeck() {
   message.value = "変更を\n保存中です";
-  // 名前を変更
-  if (params.name) {
-    this[side].deckData.name = params.name;
-  }
-  // カードを追加
-  if (params.cardUrl) {
-    this[side].deckData.cards.push({
-      imageUrl: params.cardUrl,
-      time: 0,
-    });
-  }
-  const decksCopy = this.$store.state.decks.data;
-  decksCopy[this[side].deckIndex] = this[side].deckData;
-  this.$store.commit("decks/setData", decksCopy);
-  message.value = "";
+  await updateDeck(deckData.deckData)
+  setTimeout(() => {
+    message.value = "";
+  }, 1000)
 }
 function createDeck(params, side) {
   if (!params.name) return;
@@ -124,8 +118,8 @@ function createDeck(params, side) {
 }
 function changeDeck(index: number) {
   const selectedDeck = props.deckList[index]
-  deckData.deckData = Deck.formatData(selectedDeck)
-  fetchDeck(selectedDeck.name, roomStore)
+  deckData.deckData = selectedDeck
+  fetchCardDetails(selectedDeck, roomStore)
   deckData.deckIndex = index
 }
 function deleteDeck(side) {
@@ -147,6 +141,11 @@ async function copyDeck() {
   // this.$store.commit("decks/setData", decksCopy);
   // this.message = "";
   // location.reload();
+}
+function onDeleteCard(card: SourceCard) {
+  deckData.deckData.cards = deckData.deckData.cards.filter(c => c.cd !== card.cd)
+  deckData.deckData.chojigenCards = deckData.deckData.chojigenCards.filter(c => c.cd !== card.cd)
+  deckData.deckData.grCards = deckData.deckData.grCards.filter(c => c.cd !== card.cd)
 }
 
 // 
