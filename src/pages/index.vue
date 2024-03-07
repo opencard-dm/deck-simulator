@@ -1,10 +1,22 @@
 <template>
   <div class="content_wrapper">
     <div id="app" style="padding: 20px; background-color: white">
-      <div style="text-align: end;">
+      <div style="text-align: end; margin-bottom: 8px;">
         <RouterLink v-if="Features.battle" class="link" to="/battle">
           対戦ツールはこちら(試作品)
         </RouterLink>
+        <o-button 
+          v-if="loggedIn" 
+          variant="warning" 
+          size="small"
+          @click="authStore.signOut()"
+        >ログアウト</o-button>
+        <o-button
+          v-else
+          variant="info"
+          size="small"
+          @click="authStore.signIn()"
+        >ログイン</o-button>
         <!-- <RouterLink class="link" to="/decks/edit">
           デッキ編集
         </RouterLink> -->
@@ -78,30 +90,34 @@
           ></o-icon>
         </a>
       </div>
-      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(PC)</div>
-      <div style="margin-bottom: 1rem;">ioradというサービスを使ったインタラクティブな説明が下部にあります。</div>
-      <div>1. 上記のリンクでGoogleスプレッドシートのコピーを作成し、空のフォルダ内に移動する</div>
-      <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
-      <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
-      <div>4. <a
-        class="link"
-        href="https://dm.takaratomy.co.jp/card/"
-        target="_blank"
-        rel="noopener"
-      >公式のカード検索</a>を新しいウィンドウで開き、手順2のGoogleドライブのフォルダとの両方が見られる状態にする</div>
-      <div>5. 公式のカード画像をGoogleドライブのフォルダにドラッグアンドドロップして、カード画像を追加する</div>
-      <div>6. スプレッドシートのシートの1行目にある「画像IDを追加」ボタンをクリックする</div>
-      <div>※ボタンを押すと、Google App Scriptが実行されるようになっており、認証が必要です。認証のモーダルが出るまで、2、3回ほどボタンを押してください。</div>
-      <div>7. 手順4、5を繰り返し、枚数を調整することでデッキを作成する</div>
-      <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
-      <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
-      <GoogleSheetInput style="margin-top: 0.5rem;"/>
-      <GoogleSpreadsheetCopy/>
-      <GoogleSpreadsheetDeck style="margin-top: 3rem;"/>
-      <div style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(スマホ)</div>
-      <div>スマートフォンでのデッキ作成作業はおすすめしません。PCでの作業で作成したスプレッドシートのURLを利用してください。</div>
-      <div>1. PCで上記の「デッキを動かすまでの手順(PC)」を完了する</div>
-      <div>2. スマートフォンでスプレッドシートのリンクを取得し、上記の入力欄に貼り付ける</div>
+      <details>
+        <summary style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(PC)</summary>
+        <div style="margin-bottom: 1rem;">ioradというサービスを使ったインタラクティブな説明が下部にあります。</div>
+        <div>1. 上記のリンクでGoogleスプレッドシートのコピーを作成し、空のフォルダ内に移動する</div>
+        <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
+        <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
+        <div>4. <a
+          class="link"
+          href="https://dm.takaratomy.co.jp/card/"
+          target="_blank"
+          rel="noopener"
+        >公式のカード検索</a>を新しいウィンドウで開き、手順2のGoogleドライブのフォルダとの両方が見られる状態にする</div>
+        <div>5. 公式のカード画像をGoogleドライブのフォルダにドラッグアンドドロップして、カード画像を追加する</div>
+        <div>6. スプレッドシートのシートの1行目にある「画像IDを追加」ボタンをクリックする</div>
+        <div>※ボタンを押すと、Google App Scriptが実行されるようになっており、認証が必要です。認証のモーダルが出るまで、2、3回ほどボタンを押してください。</div>
+        <div>7. 手順4、5を繰り返し、枚数を調整することでデッキを作成する</div>
+        <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
+        <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
+        <GoogleSheetInput style="margin-top: 0.5rem;"/>
+        <GoogleSpreadsheetCopy/>
+        <GoogleSpreadsheetDeck style="margin-top: 3rem;"/>
+      </details>
+      <details>
+        <summary style="font-weight: bolder; margin-top: 1rem;">デッキを動かすまでの手順(スマホ)</summary>
+        <div>スマートフォンでのデッキ作成作業はおすすめしません。PCでの作業で作成したスプレッドシートのURLを利用してください。</div>
+        <div>1. PCで上記の「デッキを動かすまでの手順(PC)」を完了する</div>
+        <div>2. スマートフォンでスプレッドシートのリンクを取得し、上記の入力欄に貼り付ける</div>
+      </details>
     </div>
   </div>
 </template>
@@ -204,6 +220,7 @@ import defaultDecks from '../decks.json'
 import { DecksSource, SourceDeck } from "@/entities/Deck";
 import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
 import { useDecksStore } from "@/stores/decks";
+import { useAuthStore } from "@/stores/auth";
 
 function randomRoomId() {
   return makeRandomString(4) + "-" + makeRandomString(3);
@@ -238,6 +255,11 @@ onMounted(() => {
     }
   }
 })
+
+// auth
+const authStore = useAuthStore()
+const loggedIn = computed(() => authStore.loggedIn)
+
 </script>
 
 <style lang="scss" scoped>
