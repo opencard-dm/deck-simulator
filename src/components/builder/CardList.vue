@@ -25,6 +25,8 @@
             <!-- insted of prevent default -->
             <div draggable="true">
               <TextCard
+                @mouseenter="isPhone() ? null : roomStore.setHoveredCard(element)"
+                @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
                 :card="element"
                 :width="cardWidth"
                 :selected="false"
@@ -62,6 +64,8 @@ import { onMounted, getCurrentInstance, computed } from 'vue';
 import draggable from 'vuedraggable'
 import { SourceCard, SourceDeck } from '@/entities/Deck'
 import TextCard from '../elements/TextCard.vue'
+import { isPhone } from '@/helpers/Util';
+import { useRoomStore } from '@/stores/room';
 
 const props = defineProps<{
   cards: SourceCard
@@ -153,6 +157,9 @@ function onMove(evt) {
 function onDragstart(evt) {
   this.setDraggingCard(evt.item.__draggable_context);
 }
+
+// hovered card
+const roomStore = useRoomStore()
 </script>
 
 <style lang="scss" scoped>

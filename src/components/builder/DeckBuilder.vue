@@ -12,13 +12,17 @@
 
       <div
         id="display"
-        :class="{ hidden: display.hidden, blur: display.blur }"
-        :style="[display.left ? { left: '5px' } : { right: '5px' }]"
-        v-if="display.imageUrl"
-        @dragover="onDragOver"
+        :style="[display.left ? { left: '5px' } : { left: `${center}px` }]"
+        v-if="hoveredCard"
       >
-        <div class="card-image">
-          <img :src="display.imageUrl" />
+        <div>
+          <TextCard
+            :card="hoveredCard"
+            :width="300"
+            :large="true"
+            :selected="false"
+            :deck="null"
+          ></TextCard>
         </div>
       </div>
       <div id="message-box" v-if="message">
@@ -31,12 +35,12 @@
 
 <script setup lang="ts">
 import DeckEditor from "./DeckEditor.vue";
+import TextCard from "@/components/elements/TextCard.vue";
 import { fetchCardDetails } from "@/helpers/Deck";
 import systemDecks from '@/decks.json'
 import { ref, reactive, computed } from 'vue'
 import { useRoomStore } from "@/stores/room";
 import { SourceDeck } from "@/entities/Deck";
-import { useDecksStore } from "@/stores/decks";
 import { isPhone } from "@/helpers/Util";
 import { getUserDecks } from "./decks";
 
@@ -66,8 +70,7 @@ const preview = reactive({
 })
 const message = ref('')
 
-const roomStore = useRoomStore()
-const decksStore = useDecksStore();
+const roomStore = useRoomStore();
 
 // on created
 (async function () {
@@ -86,35 +89,14 @@ const decksStore = useDecksStore();
   message.value = "";
 })();
 
-// methods
-function createDeck(params, side) {
-  if (!params.name) return;
-  const deck = {
-    name: params.name,
-    cards: [],
-  };
-  const decksCopy = this.$store.state.decks.data;
-  decksCopy.push(deck);
-  this.$store.commit("decks/setData", decksCopy);
-  this[side]["deckData"] = deck;
-}
-function onDragOver() {
-  event.preventDefault();
-  this.display.imageUrl = null;
-}
-function onDragStart() {
-  // event.preventDefault()
-}
-function traceMouseMove(event) {
-  if (display.hidden) {
-    return;
-  }
-  const imageSrc = event.target.src;
-  if (!imageSrc) {
-    display.imageUrl = "";
-    return;
-  }
-  display.imageUrl = imageSrc;
+// hovered card
+const hoveredCard = computed(() => roomStore.hoveredCard)
+const center = computed(() => {
+  if (!window) return 5
+  return window.innerWidth / 2
+})
+function traceMouseMove(event: MouseEvent) {
+  if (isPhone()) return
   let mX = event.pageX;
   // let mY = event.pageY;
   if (mX < window.innerWidth / 2) {
@@ -133,7 +115,7 @@ function traceMouseMove(event) {
 /* display */
 #display {
   position: fixed;
-  top: 10px;
+  top: 64px;
   /* left: 10px; */
   z-index: 2;
 }

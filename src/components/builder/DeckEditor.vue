@@ -163,7 +163,7 @@ async function addCard() {
       cardIds: cardId
     }
   })
-  deckData.deckData.cards.unshift({
+  deckData.deckData.cards.push({
     cd: cardId,
     times: 0,
   })
