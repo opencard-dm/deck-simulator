@@ -40,7 +40,7 @@
                 <span>{{ element.times }}</span>
               </div>
 
-              <div class="cardTool_buttonGroup">
+              <div v-if="deck.source === 'firebase'" class="cardTool_buttonGroup">
                 <div class="cardTool_plus" @click.stop="addCardNum(element)">
                   <!-- <o-icon pack="fas" icon="plus"> </o-icon> -->
                   <o-button variant="danger" icon-right="plus" size="small" />
@@ -51,7 +51,11 @@
               </div>
             </div>
 
-            <div class="delele-button hidden" @click.stop="deleteCard(element)">X</div>
+            <div 
+              v-if="deck.source === 'firebase'"
+              class="delele-button hidden"
+              @click.stop="deleteCard(element)"
+            >X</div>
           </div>
         </div>
       </template>

@@ -21,7 +21,7 @@
       @update:cards="deckData.deckData.cards = $event"
     ></CardList>
   </div>
-  <div style="padding-bottom: 1rem;">
+  <div v-if="deckData.deckData.source === 'firebase'" style="padding-bottom: 1rem;">
     <OField
       class="deckInput"
       :style="{
