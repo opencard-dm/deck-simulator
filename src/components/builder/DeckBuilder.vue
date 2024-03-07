@@ -41,10 +41,7 @@ import { isPhone } from "@/helpers/Util";
 import { getUserDecks } from "./decks";
 
 // data
-const deckList = reactive({
-  readyMade: [] as SourceDeck[],
-  custom: [] as SourceDeck[],
-})
+const deckList = reactive<SourceDeck[]>([])
 const loading = ref(true)
 const display = reactive({
   card: null,
@@ -75,21 +72,17 @@ const decksStore = useDecksStore();
 // on created
 (async function () {
   message.value = "データを\n取得中です";
-  const decks: SourceDeck[] = [];
   // 現状、ローカルストレージのデッキはスプレッドシートのものだから、含めない
   // decksStore.data.forEach(source => {
   //   decks.push(...source.decks)
   // })
   const userDecks = await getUserDecks()
-  decks.push(...userDecks)
-  decks.push(...systemDecks as any[])
-  deckList.custom = userDecks
-  deckList.readyMade = systemDecks as any[]
-  console.log(userDecks)
+  deckList.push(...userDecks)
+  deckList.push(...systemDecks as any[])
   loading.value = false
 
-  fetchCardDetails(decks[0], roomStore)
-  fetchCardDetails(decks[1], roomStore)
+  fetchCardDetails(deckList[0], roomStore)
+  fetchCardDetails(deckList[1], roomStore)
   message.value = "";
 })();
 

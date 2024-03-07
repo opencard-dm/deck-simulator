@@ -4,11 +4,11 @@
       <select
         name="deckId"
         id="select-deck"
-        @change="changeDeck"
+        @change="emit('change-deck', selected.index)"
         v-model="selected.index"
       >
         <option
-          v-for="(deck, index) in deckList[selected.deckType]"
+          v-for="(deck, index) in deckList"
           :value="index"
           :key="index"
         >
@@ -26,7 +26,7 @@
       >
       <span
         class="click"
-        @click.stop="openModal(deckList['custom'][selected.index].name, 'update')"
+        @click.stop="openModal(deckList[selected.index].name, 'update')"
         v-if="selected.deckType === 'custom'"
         >名前を変更</span
       >
@@ -124,7 +124,7 @@ const totalNum = computed(() => {
 })
 
 const emit = defineEmits<{
-  "change-deck": [string, number]
+  "change-deck": [number]
   "create-deck": []
   "update-deck": []
   "delete-deck": []
@@ -134,15 +134,11 @@ function openModal(name, method) {
   params.name = name;
   modal[method] = true;
 }
-function changeDeck() {
-  emit("change-deck", selected.deckType, selected.index);
-  // parent[this.side].deckData = parent.deckList[index];
-}
 function updateDeck() {
   emit("update-deck", params, props.side);
 }
 function updateDeckName() {
-  // parent.deckList[this.selected.deckType][
+  // parent.deckList[
   //   this.selected.index
   // ].name = this.params.name;
   this.updateDeck();

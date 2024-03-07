@@ -73,10 +73,7 @@ import axios from "axios";
 import { addDeck } from "./decks";
 
 const props = defineProps<{
-  deckList: {
-    readyMade: SourceDeck[],
-    custom: SourceDeck[],
-  }
+  deckList: SourceDeck[]
 }>()
 
 const roomStore = useRoomStore()
@@ -92,7 +89,9 @@ const deckData = reactive({
 const message = ref('')
 
 onMounted(() => {
-  deckData.deckData = props.deckList.custom[deckData.deckIndex]
+  if (props.deckList.length > 0) {
+    deckData.deckData = props.deckList[deckData.deckIndex]
+  }
 })
 
 // methods
@@ -125,13 +124,11 @@ function createDeck(params, side) {
   this.$store.commit("decks/setData", decksCopy);
   this[side]["deckData"] = deck;
 }
-function changeDeck(deckType, index) {
-  if (deckType === "custom") {
-    const selectedDeck = props.deckList[deckType][index]
-    deckData.deckData = Deck.formatData(selectedDeck)
-    fetchDeck(selectedDeck.name, roomStore)
-    deckData.deckIndex = index
-  }
+function changeDeck(index: number) {
+  const selectedDeck = props.deckList[index]
+  deckData.deckData = Deck.formatData(selectedDeck)
+  fetchDeck(selectedDeck.name, roomStore)
+  deckData.deckIndex = index
 }
 function deleteDeck(side) {
   const decksCopy = this.$store.state.decks.data;
@@ -145,8 +142,8 @@ async function copyDeck() {
   deckDataCopy.name += 'のコピー'
   deckDataCopy.source = 'firebase'
   await addDeck(deckDataCopy)
-  props.deckList.custom.push(deckDataCopy)
-  deckData.deckIndex = props.deckList.custom.length - 1
+  props.deckList.push(deckDataCopy)
+  deckData.deckIndex = props.deckList.length - 1
   deckData.deckData = deckDataCopy
   // decksCopy.splice(this[side].deckIndex, 1);
   // this.$store.commit("decks/setData", decksCopy);
