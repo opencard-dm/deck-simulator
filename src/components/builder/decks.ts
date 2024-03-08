@@ -1,7 +1,7 @@
 import { SourceDeck } from '@/entities/Deck';
 import { Firebase } from '@/helpers/firebase';
 import { useAuthStore } from '@/stores/auth';
-import { doc, setDoc, addDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, getDocs, deleteDoc, getDoc } from 'firebase/firestore';
 
 /**
  * 引数のdeckにidを付与する副作用あり
@@ -46,6 +46,20 @@ export async function getUserDecks(): Promise<SourceDeck[]> {
     sourceDecks.push(deck)
   })
   return sourceDecks
+}
+
+export async function getUserDeck(id: string): Promise<SourceDeck|null> {
+  const authStore = useAuthStore()
+  if (authStore.user === null) {
+    return null
+  }
+  const deckRef = doc(Firebase.db, `/users/${authStore.user.uid}/decks/${id}`);
+  const deckDoc = await getDoc(deckRef)
+  const sourceDecks: SourceDeck[] = []
+  if (!deckDoc.exists()) {
+    return null
+  }
+  return deckDoc.data() as SourceDeck
 }
 
 export async function createUserDoc() {

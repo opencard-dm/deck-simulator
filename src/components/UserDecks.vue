@@ -44,12 +44,51 @@
         </td>
       </tr>
     </template>
+    <template v-for="sourceDeck in firebaseDecks" :key="sourceDeck.id">
+      <tr>
+        <td>
+          <div style="text-align: left;">{{ sourceDeck.name }}</div>
+        </td>
+        <td>
+          <div style="text-align: left;">{{ cardsNumInDeck(sourceDeck) }}</div>
+        </td>
+        <td style="text-align: center;">
+          <router-link
+            :to="{
+              path: '/single',
+              query: { deck_id: 'firebase' + '-' + sourceDeck.id },
+            }"
+          >
+            <o-button variant="info" size="small">動かす</o-button>
+          </router-link>
+        </td>
+        <td colspan="2">
+          <router-link
+            :to="{
+              path: '/decks/edit',
+              query: { deck_id: sourceDeck.id },
+            }"
+          >
+            <o-button variant="info" size="small">編集</o-button>
+          </router-link>
+        </td>
+      </tr>
+    </template>
   </table>
 </template>
 
-
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, reactive, onMounted } from "vue";
+import { getUserDecks } from "./builder/decks";
+import { SourceDeck } from "@/entities/Deck";
+import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
+import { useDecksStore } from "@/stores/decks";
+
+const firebaseDecks = reactive<SourceDeck[]>([])
+
+onMounted(async () => {
+  firebaseDecks.push(...(await getUserDecks()))
+})
 
 function cardsNumInDeck(deck: SourceDeck) {
   let num = 0
@@ -82,11 +121,6 @@ const decksStore = useDecksStore()
 const userDecks = computed(() => {
   return decksStore.data
 })
-
-import { SourceDeck } from "@/entities/Deck";
-import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
-import { useDecksStore } from "@/stores/decks";
-import { useAuthStore } from "@/stores/auth";
 
 async function updateDeckFromSource(url: string) {
   const decksSource = await fetchDeck(url)

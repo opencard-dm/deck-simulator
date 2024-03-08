@@ -72,7 +72,7 @@ export default defineComponent({
         }
       }
       if (deckId) {
-        const localDeck = Deck.getFromId(deckId)
+        const localDeck = await Deck.getFromId(deckId)
         if (!localDeck) {
           console.error('デッキの取得に失敗しました', deckId)
           return

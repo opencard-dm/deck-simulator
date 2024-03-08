@@ -8,13 +8,19 @@ import decks from '../decks.json' assert { type: "json" }
 import { Card } from '@/entities/Card';
 import { useDecksStore } from '../stores/decks';
 import { useRoomStore } from '@/stores/room';
+import { getUserDeck } from '@/components/builder/decks.js';
 
 export class Deck {
 
-  static getFromId(id: string): SourceDeck {
+  static async getFromId(id: string): Promise<SourceDeck|null> {
     const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
     if (localDeck) return localDeck
     const decksStore = useDecksStore()
+    // firebaseのデッキの場合
+    if (id.startsWith('firebase-')) {
+      const firebaseId = id.split('-', 2)[1]
+      return await getUserDeck(firebaseId)
+    }
     // ユーザがGoogleスプレッドシートで作ったデッキの場合
     if (id.includes('-')) {
       const [decksSourceIndex, ...deckNameElems] = id.split('-')
@@ -260,7 +266,7 @@ export class Deck {
 }
 
 export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoomStore>) {
-  const localDeck = Deck.getFromId(deckId)
+  const localDeck = await Deck.getFromId(deckId)
   if (localDeck) {
     if (localDeck.cardDetails) {
       store.addCardDetails(localDeck.cardDetails)

@@ -72,6 +72,7 @@ import { addDeck, deleteDeck, updateDeck } from "./decks";
 
 const props = defineProps<{
   deckList: SourceDeck[]
+  isMain: boolean
 }>()
 
 const emit = defineEmits<{
@@ -99,6 +100,16 @@ const deckData = reactive({
 const message = ref('')
 
 onMounted(() => {
+  const deckId = new URLSearchParams(location.search).get('deck_id')
+  if (props.isMain && deckId) {
+    for (const [index, deck] of props.deckList.entries()) {
+      if (deck.id === deckId) {
+        deckData.deckData = deck
+        deckData.deckIndex = index
+        return
+      }
+    }
+  }
   if (props.deckList.length > 0) {
     deckData.deckData = props.deckList[deckData.deckIndex]
   }

@@ -5,12 +5,14 @@
         <div class="deck-wrapper left">
           <DeckEditor
             :deckList="deckList"
+            :isMain="true"
             @delete-deck="onDeleteDeck"
           ></DeckEditor>
         </div>
         <div v-if="!isPhone()" class="deck-wrapper right">
           <DeckEditor
             :deckList="deckList"
+            :isMain="false"
             @delete-deck="onDeleteDeck"
           ></DeckEditor>
         </div>
