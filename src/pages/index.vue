@@ -5,12 +5,20 @@
         <RouterLink v-if="Features.battle" class="link" to="/battle">
           対戦ツールはこちら(試作品)
         </RouterLink>
-        <o-button 
-          v-if="loggedIn" 
-          variant="warning" 
-          size="small"
-          @click="authStore.signOut()"
-        >ログアウト</o-button>
+        <template v-if="loggedIn">
+          <o-button 
+            variant="warning" 
+            size="small"
+            style="margin-right: 4px;"
+            @click="authStore.signOut()"
+          >ログアウト</o-button>
+          <RouterLink to="/decks/edit">
+            <o-button
+              variant="info"
+              size="small"
+            >デッキ編集</o-button>
+          </RouterLink>
+        </template>
         <o-button
           v-else
           variant="info"
@@ -28,52 +36,7 @@
       <div style="margin-top: 1rem;">下記の画像無しのサンプルデッキは本サービスの使用感を確かめるためのものとなっております。</div>
       <SampleDecks></SampleDecks>
       <GoogleSheetInput style="margin-top: 2rem;"/>
-      <table class="roomTable" style="margin-top: 20px">
-        <thead>
-          <th><div>デッキ名</div></th>
-          <th><div>カード枚数</div></th>
-          <th colspan="3"><div></div></th>
-        </thead>
-        <template v-for="(decksSource, sourceIndex) in userDecks">
-          <tr v-for="(deck, deckIndex) in decksSource.decks" :key="decksSource.url + deck.name">
-            <td>
-              <div style="text-align: left;">{{ deck.name }}</div>
-            </td>
-            <td>
-              <div style="text-align: left;">{{ cardsNumInDeck(deck) }}</div>
-            </td>
-            <td style="text-align: center;">
-              <router-link
-                :to="{
-                  path: '/single',
-                  query: { deck_id: sourceIndex + '-' + deck.name },
-                }"
-              >
-                <o-button variant="info" size="small">動かす</o-button>
-              </router-link>
-            </td>
-            <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
-              <o-button variant="info" size="small" @click="updateDeckFromSource(decksSource.url)">更新</o-button>
-            </td>
-            <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
-              <a
-                class="link"
-                :href="decksSource.url.replace('/export', '/edit')"
-                target="sheet"
-                rel="noopener"
-              >
-                <span>シートを開く</span>
-                <o-icon
-                  pack="fas"
-                  style="margin-left: 4px;"
-                  icon="arrow-up-right-from-square"
-                  size="small"
-                ></o-icon>
-              </a>
-            </td>
-          </tr>
-        </template>
-      </table>
+      <UserDecks></UserDecks>
       <div style="margin-top: 1rem;">
         <a
           class="link"
@@ -123,124 +86,18 @@
 </template>
 
 <script setup lang="ts">
-import { getCloudRunCookie } from "@/helpers/Util";
-import { makeRandomString } from "@/helpers/makeRandomString";
 import SampleDecks from './index/SampleDecks.vue'
 import GoogleSpreadsheetCopy from '@/components/explanations/GoogleSpreadsheetCopy.vue'
 import GoogleSpreadsheetDeck from '@/components/explanations/GoogleSpreadsheetDeck.vue'
-import FolderDrop from "@/components/FolderDrop.vue";
-import axios from "axios";
 import { Features } from "@/features";
 import GoogleSheetInput from "@/components/deck-inputs/GoogleSheetInput.vue";
-
-import { computed, reactive, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-const router = useRouter()
-
-function deckRecipeLink(deckId: string) {
-  return `https://gachi-matome.com/deckrecipe-detail-dm/?tcgrevo_deck_maker_deck_id=${deckId}`
-}
-
-function cardsNumInDeck(deck: SourceDeck) {
-  let num = 0
-  for (const card of deck.cards) {
-    num += card.times
-  }
-  let chojigenCardsNum = 0
-  for (const card of deck.chojigenCards) {
-    chojigenCardsNum += card.times
-  }
-  let grCardsNum = 0
-  for (const card of deck.grCards) {
-    grCardsNum += card.times
-  }
-  let expression = num.toString()
-  const specialCardsExpressions = []
-  if (chojigenCardsNum > 0) {
-    specialCardsExpressions.push(`超次元:${chojigenCardsNum}`)
-  }
-  if (grCardsNum > 0) {
-    specialCardsExpressions.push(`GR: ${grCardsNum}`)
-  }
-  if (specialCardsExpressions.length > 0) {
-    expression += '(' + specialCardsExpressions.join(', ') + ')'
-  }
-  return expression
-}
-
-const decksStore = useDecksStore()
-const userDecks = computed(() => {
-  return decksStore.data
-})
-
-function useDeckForm() {
-  const deckUrl = ref('')
-  const deckUrlError = ref('')
-  const scraping = ref(false)
-  function onKeyPress() {
-    deckUrlError.value = "ペーストのみ可能です";
-  }
-  function onDeckUrlChange() {
-    const newVal = deckUrl.value
-    if (!newVal) {
-      deckUrlError.value = "";
-      return;
-    }
-    if (
-      !newVal.match(/^https:\/\/gachi-matome.com\/deckrecipe-detail-dm/) ||
-      !newVal.includes("tcgrevo_deck_maker_deck_id=")
-    ) {
-      deckUrlError.value = "不適切なURLです";
-      return;
-    } else {
-      if (scraping.value || deckUrlError.value) return;
-      const deckId = newVal.split("tcgrevo_deck_maker_deck_id=")[1];
-      scraping.value = true
-      setTimeout(() => {
-        router.push({
-          path: "/single",
-          query: { deck_id: deckId },
-        });
-      }, 500)
-    }
-    deckUrlError.value = "";
-  }
-  return {
-    deckUrl,
-    deckUrlError,
-    scraping,
-    onKeyPress,
-    onDeckUrlChange,
-  }
-}
-
-const DeckForm = useDeckForm()
-
-import defaultDecks from '../decks.json'
-import { DecksSource, SourceDeck } from "@/entities/Deck";
-import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
+import { computed, onMounted } from "vue";
+import { DecksSource } from "@/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
 import { useAuthStore } from "@/stores/auth";
+import UserDecks from "@/components/UserDecks.vue";
 
-function randomRoomId() {
-  return makeRandomString(4) + "-" + makeRandomString(3);
-}
-async function createRoom() {
-  const router = useRouter()
-  const roomId = randomRoomId();
-  await axios.put(`/api/rooms/${roomId}`, {
-    cookie: getCloudRunCookie(),
-  });
-  router.push({
-    path: "room",
-    query: { roomId, player: "a" },
-  });
-}
-async function updateDeckFromSource(url: string) {
-  const decksSource = await fetchDeck(url)
-  console.log(decksSource)
-  decksStore.addDecksSource(decksSource)
-}
+const decksStore = useDecksStore()
 
 onMounted(() => {
   // TODO: 2024/04/01ごろに削除する
@@ -280,14 +137,6 @@ const loggedIn = computed(() => authStore.loggedIn)
 }
 .deckForm_searchField {
   max-width: 600px;
-}
-.roomTable {
-  border-collapse: collapse;
-  th,
-  td {
-    border: 1px solid darkgray;
-    padding: 5px 10px;
-  }
 }
 a {
   text-decoration: none;
