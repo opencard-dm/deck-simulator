@@ -6,7 +6,7 @@
     "dev": "nuxi dev",
     "build": "nuxi build",
     "lint": "vite lint",
-    "start": "nuxi start",
+    "start": "node ./.output/server/index.mjs",
     "test": "vitest"
   },
   "dependencies": {
