@@ -17,6 +17,11 @@ export default defineNuxtConfig({
         '~/plugins/app',
         { src: 'plugins/oruga.ts' }
     ],
+    runtimeConfig: {
+        public: {
+            dev: process.env.NODE_ENV === 'development',
+        },
+    },
     vite: {
         resolve: {
             alias: {
