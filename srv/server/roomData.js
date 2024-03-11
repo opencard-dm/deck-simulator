@@ -1,4 +1,4 @@
-import { createClient } from 'redis'
+// import { createClient } from 'redis'
 import fs from 'fs'
 import { useConfig } from '../../src/plugins/useConfig.js'
 
