@@ -46,6 +46,7 @@ export interface Deck {
     chojigenCards: Card[]
     grCards: Card[]
     cardDetails?: {[key: string]: CardDetail}
+    hasChojigen: boolean
 }
 
 export interface DecksSource {

@@ -76,10 +76,10 @@ export class Deck {
    * @returns
    */
   static async prepareDeckForGame(deck: SourceDeck, playerA = false, withoutApi = false): Promise<DeckType> {
-    const mainCards = [];
-    const chojigenCards = [];
+    const mainCards: Card[] = [];
+    const chojigenCards: Card[] = [];
     const startId = playerA ? START_ID_A : START_ID_B;
-    const imageHost = useConfig().IMAGE_HOST;
+    const copiedDeck: DeckType = JSON.parse(JSON.stringify(deck))
     let count = startId;
     deck.cards.forEach(c => {
       // デッキメーカーから取り込んだデータにはtimeがないことによる対応。
@@ -100,13 +100,10 @@ export class Deck {
           delete card.imageUrl
           delete card.backImageUrl
         }
-        if (c.imageUrl || c.imageId) {
-          card.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`
-        }
         mainCards.push(card);
       }
     })
-    deck.cards = Deck.shuffle(mainCards).map(c => {
+    copiedDeck.cards = Deck.shuffle(mainCards).map(c => {
       return {
         ...c,
         id: count++,
@@ -114,38 +111,33 @@ export class Deck {
     })
     //
     // 超次元ゾーン
-    if (deck.chojigenCards && deck.chojigenCards.length > 0) {
-      deck.chojigenCards.forEach(c => {
+    if (copiedDeck.chojigenCards && copiedDeck.chojigenCards.length > 0) {
+      copiedDeck.chojigenCards.forEach(c => {
         const times = c.times || 1
         for (let i = 0; i < times; i++) {
           chojigenCards.push({
             ...c,
-            imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
             backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
-            mainCardId: c.mainCardId,
             isChojigen: true,
           });
         }
       });
       // 超次元のカードはシャッフル不要
-      deck.chojigenCards = chojigenCards.map(c => {
+      copiedDeck.chojigenCards = chojigenCards.map(c => {
         return {
           ...c,
           id: count++,
         }
       })
-      deck.hasChojigen = true
-    } else {
-      deck.chojigenCards = chojigenCards;
+      copiedDeck.hasChojigen = true
     }
     // grゾーン
-    if (deck.grCards && deck.grCards.length > 0) {
-      deck.grCards.forEach(c => {
+    if (copiedDeck.grCards && copiedDeck.grCards.length > 0) {
+      copiedDeck.grCards.forEach(c => {
         const times = c.times || 1
         for (let i = 0; i < times; i++) {
           deck.chojigenCards.push({
             ...c,
-            imageUrl: c.imageUrl || `${imageHost}/${c.imageId}`,
             backImageUrl: c.backImageUrl || 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg',
             mainCardId: c.mainCardId,
             isGr: true,
@@ -153,59 +145,19 @@ export class Deck {
         }
       })
     }
-    if (withoutApi === false) {
-      // カードにテキストを追加
-      const cardMap = await Deck.fetchCardsData([
-        ...deck.cards,
-        ...deck.chojigenCards,
-      ]);
-      deck.cards.forEach((c) => {
-        if (Object.prototype.hasOwnProperty.call(cardMap, c.mainCardId)) {
-          c.text = c.text || cardMap[c.mainCardId].card_text;
-        }
-      });
-      deck.chojigenCards.forEach((c) => {
-        if (Object.prototype.hasOwnProperty.call(cardMap, c.mainCardId)) {
-          c.text = c.text || cardMap[c.mainCardId].card_text;
-          if (cardMap[c.mainCardId].image_paths 
-            && cardMap[c.mainCardId].image_paths.length >= 2) {
-            c.backImageUrl = `https://storage.googleapis.com/ka-nabell-card-images/img/card/${cardMap[c.mainCardId].image_paths[1]}`
-          }
-        }
-      });
-    }
-    return deck
+    return copiedDeck
   }
 
   static formatData(deckD: SourceDeck) {
     const deck = Object.assign({}, deckD);
-    const imageHost = useConfig().IMAGE_HOST
 
     deck.cards.forEach(c => {
-      if (c.imageUrl || c.imageId) {
-        c.imageUrl = c.imageUrl || `${imageHost}/${c.imageId}`;
-      }
       if (!c.cd) {
         if (c.name) {
           c.cd = c.name
         }
       }
     })
-    // timeのないデータだった場合、集計する。
-    if (!deck.cards[0].times && deck.cards[0].times !== 0) {
-      deck.cards = deck.cards.reduce((result, current) => {
-        const element = result.find((p) => p.imageUrl === current.imageUrl);
-        if (element) {
-          element.times++;
-        } else {
-          result.push({
-            ...current,
-            times: 1,
-          });
-        }
-        return result;
-      }, []);
-    }
     // 並べ替える
     deck.cards.sort((a, b) => {
       return b.times - a.times;
