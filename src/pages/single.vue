@@ -1,7 +1,9 @@
 <template>
-  <Suspense>
-    <DuelRoomSuspense :single="true" :roomId="'single'"></DuelRoomSuspense>
-  </Suspense>
+  <ClientOnly>
+    <Suspense>
+      <DuelRoomSuspense :single="true" :roomId="'single'"></DuelRoomSuspense>
+    </Suspense>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">

@@ -268,8 +268,9 @@ export class Deck {
 export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoomStore>) {
   const localDeck = await Deck.getFromId(deckId)
   if (localDeck) {
-    if (localDeck.cardDetails) {
-      store.addCardDetails(localDeck.cardDetails)
+    if (localDeck.source === 'builtin') {
+      await fetchCardDetails(localDeck, store)
+      return localDeck
     }
     if (localDeck.source === 'airtable') {
       const cardIds: string[] = []
