@@ -6,6 +6,19 @@ import markdownRawPlugin from "vite-raw-plugin";
 import VitePluginRadar from "vite-plugin-radar";
 
 export default defineNuxtConfig({
+    app: {
+        head: {
+            charset: 'utf-8',
+            viewport: 'width=device-width, initial-scale=1',
+            title: 'DECK SIMULATOR | デュエマのデッキの一人回しができる！',
+            link: [
+              { rel: 'icon', href: '/favicon.svg' }
+            ],
+            htmlAttrs: {
+              lang: 'ja',
+            },
+        },
+    },
     alias: {
         "@": 'src/'
     },

@@ -113,6 +113,13 @@ onMounted(() => {
   }
 })
 
+useHead({
+  title: 'DECK SIMULATOR | デュエマのデッキの一人回しができる！',
+  meta: [
+    { name: 'description', content: 'デュエル・マスターズのデッキを一人回しできるサイトです！' }
+  ],
+})
+
 // auth
 const authStore = useAuthStore()
 const loggedIn = computed(() => authStore.loggedIn)
