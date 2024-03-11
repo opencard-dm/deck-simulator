@@ -39,13 +39,6 @@ export default defineNuxtConfig({
         //     setupFiles: './tests/vitest.setup.ts',
         // },
         build: {
-            rollupOptions: {
-                output: {
-                    entryFileNames: `assets/[name].js`,
-                    chunkFileNames: `assets/[name].js`,
-                    assetFileNames: `assets/[name].[ext]`,
-                },
-            },
         }
     }
 })
