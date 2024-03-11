@@ -3,21 +3,14 @@ module.exports = {
   
     env: {
       browser: true,
-      es2021: true,
       node: true,
     },
   
+    // https://zenn.dev/bs_kansai/articles/nuxt3-eslint-module
     extends: [
-        "plugin:vue/vue3-recommended",
         "eslint:recommended",
-        "@vue/typescript/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:vue/vue3-recommended",
     ],
-
-    parserOptions: {
-        ecmaVersion: 12,
-    },
-
-    plugins: ["vue", "@typescript-eslint"],
-
     rules: {},
 }
