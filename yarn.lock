@@ -1646,13 +1646,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/vue-fontawesome@npm:latest-3":
-  version: 3.0.5
-  resolution: "@fortawesome/vue-fontawesome@npm:3.0.5"
+"@fortawesome/vue-fontawesome@npm:^3.0.6":
+  version: 3.0.6
+  resolution: "@fortawesome/vue-fontawesome@npm:3.0.6"
   peerDependencies:
     "@fortawesome/fontawesome-svg-core": ~1 || ~6
     vue: ">= 3.0.0 < 4"
-  checksum: 74c828a09f2c179bac8c550d80fb6c308eb925ac6ffa84197a77562996a5218b6271e2764d85ac0aa2841ef35d89d62e97444c60fc54cb950fb7a87efec05d40
+  checksum: 26e78c067d52c5fd314706b34cac84c13be707b27ec36a278e42c5c3eb3f98ca952c594de699757b55f628b44a2daa2672977c92c91849823063ccecb85a87c6
   languageName: node
   linkType: hard
 
@@ -2297,12 +2297,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oruga-ui/oruga-next@npm:^0.8.3":
-  version: 0.8.3
-  resolution: "@oruga-ui/oruga-next@npm:0.8.3"
+"@oruga-ui/oruga-next@npm:^0.8.6":
+  version: 0.8.6
+  resolution: "@oruga-ui/oruga-next@npm:0.8.6"
   peerDependencies:
     vue: ^3.0.0
-  checksum: 45f47b12f1804309332592a99a1c43fc7a2f8568df4c97dbdd1d05c7a9f454aac394dc5ed07a7d9284e3533ab64242a6ae2d4b2a71883f821dad5659d482c575
+  checksum: 985da29bf67ff9d8d917cee0b7555f2dc6c94fa0a03496aab31ab8bd8aeb8606b43bfe2d282faa127aa3c2c20971714bfbafb953fe6903ba738d6d5a5c7e1210
   languageName: node
   linkType: hard
 
@@ -5049,9 +5049,9 @@ __metadata:
     "@fortawesome/fontawesome-svg-core": "npm:^6.5.1"
     "@fortawesome/free-regular-svg-icons": "npm:^6.5.1"
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.1"
-    "@fortawesome/vue-fontawesome": "npm:latest-3"
+    "@fortawesome/vue-fontawesome": "npm:^3.0.6"
     "@nuxtjs/eslint-module": "npm:^4.1.0"
-    "@oruga-ui/oruga-next": "npm:^0.8.3"
+    "@oruga-ui/oruga-next": "npm:^0.8.6"
     "@oruga-ui/theme-oruga": "npm:^0.2.2"
     "@pinia/nuxt": "npm:^0.5.1"
     "@types/node": "npm:^20.10.5"
