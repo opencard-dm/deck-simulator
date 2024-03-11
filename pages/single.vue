@@ -10,7 +10,7 @@
 import { RoomConfig } from '@/helpers/room';
 import { SocketUtil } from '@/helpers/socket';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
-import DuelRoomSuspense from '../components/DuelRoomSuspense.vue'
+import DuelRoomSuspense from '@/components/DuelRoomSuspense.vue'
 
 const router = useRouter()
 const route = useRoute()

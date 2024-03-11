@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import SampleDecks from './index/SampleDecks.vue'
+import SampleDecks from '@/pages/index/SampleDecks.vue'
 import GoogleSpreadsheetCopy from '@/components/explanations/GoogleSpreadsheetCopy.vue'
 import GoogleSpreadsheetDeck from '@/components/explanations/GoogleSpreadsheetDeck.vue'
 import { Features } from "@/features";
