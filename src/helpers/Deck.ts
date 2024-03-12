@@ -82,8 +82,7 @@ export class Deck {
     const copiedDeck: DeckType = JSON.parse(JSON.stringify(deck))
     let count = startId;
     deck.cards.forEach(c => {
-      // デッキメーカーから取り込んだデータにはtimeがないことによる対応。
-      const times = c.times || 1
+      const times = c.times
       delete c.times
       for (let i = 0; i < times; i++) {
         const card: Card = {
