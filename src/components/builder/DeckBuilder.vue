@@ -45,7 +45,7 @@ import DeckEditor from "./DeckEditor.vue";
 import TextCard from "@/components/elements/TextCard.vue";
 import { fetchCardDetails } from "@/helpers/Deck";
 import systemDecks from '@/decks.json'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoomStore } from "@/stores/room";
 import { SourceDeck } from "@/entities/Deck";
 import { isPhone } from "@/helpers/Util";
@@ -79,22 +79,21 @@ const message = ref('')
 
 const roomStore = useRoomStore();
 
-// on created
-(async function () {
+onMounted(async function () {
   message.value = "データを\n取得中です";
-  // 現状、ローカルストレージのデッキはスプレッドシートのものだから、含めない
-  // decksStore.data.forEach(source => {
-  //   decks.push(...source.decks)
-  // })
-  const userDecks = await getUserDecks()
-  deckList.push(...userDecks)
-  deckList.push(...systemDecks as any[])
-  loading.value = false
+  // TODO: ログイン後のデータを取得するために、
+  // 500ms待っているがより良い方法にしたい
+  setTimeout(async () => {
+    const userDecks = await getUserDecks()
+    deckList.push(...userDecks)
+    deckList.push(...systemDecks as any[])
+    loading.value = false
 
-  fetchCardDetails(deckList[0], roomStore)
-  fetchCardDetails(deckList[1], roomStore)
-  message.value = "";
-})();
+    fetchCardDetails(deckList[0], roomStore)
+    fetchCardDetails(deckList[1], roomStore)
+    message.value = "";
+  }, 500)
+})
 
 // hovered card
 const hoveredCard = computed(() => roomStore.hoveredCard)
