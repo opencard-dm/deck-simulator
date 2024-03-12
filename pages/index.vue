@@ -24,7 +24,7 @@
           variant="info"
           size="small"
           @click="authStore.signIn()"
-        >ログイン</o-button>
+        >ログイン（Google）</o-button>
         <!-- <RouterLink class="link" to="/decks/edit">
           デッキ編集
         </RouterLink> -->
