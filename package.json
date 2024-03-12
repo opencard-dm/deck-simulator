@@ -3,7 +3,7 @@
   "version": "1.11.0",
   "type": "module",
   "scripts": {
-    "dev": "nuxi dev",
+    "dev": "nuxi dev --host",
     "build": "nuxi build",
     "lint": "vite lint",
     "start": "node ./.output/server/index.mjs",
