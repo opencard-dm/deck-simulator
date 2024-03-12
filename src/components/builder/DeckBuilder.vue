@@ -162,11 +162,6 @@ function onDeleteDeck(deckId: string) {
   left: calc((100vw / 2) - 85px);
   // border: 1px solid white;
   text-align: center;
-  @media screen and (max-width: 800px) {
-    & {
-      left: 400px - 85px;
-    }
-  }
 }
 .tool-footer {
   $size: 60px;

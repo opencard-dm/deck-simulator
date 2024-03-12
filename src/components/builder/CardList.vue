@@ -1,33 +1,21 @@
 <template>
   <div>
-    <draggable
-      v-model="deckCards"
+    <div
       class="card-list"
       :id="side + 'draggable'"
       item-key="id"
-      :group="{ name: 'deck', pull: 'clone', put: true }"
-      :data-side="side"
-      :move="onMove"
-      :sort="false"
-      :clone="
-        (origin) => {
-          return { ...origin, times: 0 };
-        }
-      "
-      @start="onDragstart"
-      @end="setDraggingCard(null)"
     >
-      <template #item="{ element }">
+      <template v-for="card in deckCards">
         <div class="card-wrapper" :style="{
           width: `${cardWidth}px`
         }">
           <div class="card">
             <!-- insted of prevent default -->
-            <div draggable="true">
+            <div>
               <TextCard
-                @mouseenter="isPhone() ? null : roomStore.setHoveredCard(element)"
+                @mouseenter="isPhone() ? null : roomStore.setHoveredCard(card)"
                 @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
-                :card="element"
+                :card="card"
                 :width="cardWidth"
                 :selected="false"
                 :deck="deck"
@@ -37,15 +25,15 @@
             <div class="cardTool">
               <div class="cardTool_times">
                 <span style="margin-right: 2px">x</span>
-                <span>{{ element.times }}</span>
+                <span>{{ card.times }}</span>
               </div>
 
               <div v-if="deck.source === 'firebase'" class="cardTool_buttonGroup">
-                <div class="cardTool_plus" @click.stop="addCardNum(element)">
+                <div class="cardTool_plus" @click.stop="addCardNum(card)">
                   <!-- <o-icon pack="fas" icon="plus"> </o-icon> -->
                   <o-button variant="danger" icon-right="plus" size="small" />
                 </div>
-                <div class="cardTool_minus" @click.stop="decrementCardNum(element)">
+                <div class="cardTool_minus" @click.stop="decrementCardNum(card)">
                   <o-button variant="info" icon-right="minus" size="small" />
                 </div>
               </div>
@@ -54,12 +42,12 @@
             <div 
               v-if="deck.source === 'firebase'"
               class="delele-button hidden"
-              @click.stop="deleteCard(element)"
+              @click.stop="deleteCard(card)"
             >X</div>
           </div>
         </div>
       </template>
-    </draggable>
+    </div>
   </div>
 </template>
 
@@ -106,32 +94,6 @@ let instance: ReturnType<typeof getCurrentInstance> = null
 onMounted(() => {
   instance = getCurrentInstance();
 });
-
-function dragCardStart(event) {
-  const card = props.cards[event.oldIndex];
-  instance.parent.dragging = {
-    card: card,
-    side: this.side,
-  };
-}
-function cloneNew(original) {
-  let after = Object.assign({}, original);
-  after.times = 0;
-  return after;
-}
-function checkMove(event) {
-  // 要検討
-  // 他のデッキリストに移動したいかチェックしたい
-  const targetZone = event.to.getAttribute("data-side");
-  if (targetZone !== event.from.getAttribute("data-side")) {
-    for (let c of instance.parent[targetZone]["deckData"]["cards"]) {
-      if (c.imageUrl === event.draggedContext.element.imageUrl) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
 function addCardNum(card: SourceCard) {
   if (card.times <= 3) {
     card.times += 1;
@@ -146,14 +108,6 @@ function decrementCardNum(card: SourceCard) {
 }
 function deleteCard(card: SourceCard) {
   emit('delete-card', card)
-}
-function onMove(evt) {
-  // https://github.com/SortableJS/vue.draggable.next#move
-  // evt.draggedContext.element.time = 0;
-  this.setDraggingCard(evt.draggedContext.element);
-}
-function onDragstart(evt) {
-  this.setDraggingCard(evt.item.__draggable_context);
 }
 
 // hovered card
