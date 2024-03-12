@@ -83,11 +83,14 @@ import { getUserDecks } from "./builder/decks";
 import { SourceDeck } from "@/entities/Deck";
 import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
 import { useDecksStore } from "@/stores/decks";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firebaseDecks = reactive<SourceDeck[]>([])
 
-onMounted(async () => {
-  firebaseDecks.push(...(await getUserDecks()))
+onAuthStateChanged(getAuth(), async (user) => {
+  if (user) {
+    firebaseDecks.push(...(await getUserDecks()))
+  }
 })
 
 function cardsNumInDeck(deck: SourceDeck) {

@@ -220,7 +220,7 @@ export class Deck {
 export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoomStore>) {
   const localDeck = await Deck.getFromId(deckId)
   if (localDeck) {
-    if (localDeck.source === 'builtin') {
+    if (localDeck.source === 'builtin' || localDeck.source === 'firebase') {
       await fetchCardDetails(localDeck, store)
       return localDeck
     }

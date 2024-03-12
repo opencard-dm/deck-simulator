@@ -68,13 +68,13 @@ onMounted(async () => {
       return
     }
     if (deckId) {
-      const localDeck = await Deck.getFromId(deckId)
+      const localDeck = await fetchDeck(deckId, roomStore)
       if (!localDeck) {
         console.error('デッキの取得に失敗しました', deckId)
         return
       }
       sourceDeck.value = localDeck
-      cardActions.selectDeck('a', await Deck.prepareDeckForGame(await fetchDeck(deckId, roomStore), true, true) as any)
+      cardActions.selectDeck('a', await Deck.prepareDeckForGame(localDeck, true, true) as any)
       players.a.isReady = true
     }
     if (typeof route.query.deck_b === 'string' && route.query.deck_b) {

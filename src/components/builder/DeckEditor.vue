@@ -94,14 +94,15 @@ const getEmptyDeck = (): SourceDeck => {
 
 // data
 const deckData = reactive({
-  deckIndex: 0,
+  deckIndex: -1,
   deckData: getEmptyDeck() as SourceDeck,
 })
 const message = ref('')
 
 onMounted(() => {
   const deckId = new URLSearchParams(location.search).get('deck_id')
-  if (props.isMain && deckId) {
+  if (!props.isMain) return
+  if (deckId && props.isMain) {
     for (const [index, deck] of props.deckList.entries()) {
       if (deck.id === deckId) {
         deckData.deckData = deck
@@ -111,6 +112,7 @@ onMounted(() => {
     }
   }
   if (props.deckList.length > 0) {
+    deckData.deckIndex = 0
     deckData.deckData = props.deckList[deckData.deckIndex]
   }
 })
