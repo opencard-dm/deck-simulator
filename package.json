@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@nuxt/content": "^2.12.1",
     "@pinia/nuxt": "^0.5.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@vueuse/components": "^10.7.0",
