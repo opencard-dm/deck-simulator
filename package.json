@@ -37,6 +37,7 @@
     "@nuxtjs/eslint-module": "^4.1.0",
     "@oruga-ui/oruga-next": "^0.8.6",
     "@oruga-ui/theme-oruga": "^0.2.2",
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@types/node": "^20.10.5",
     "@types/uuid": "^9",
     "@typescript-eslint/eslint-plugin": "^7.1.1",

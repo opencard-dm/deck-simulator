@@ -6,7 +6,10 @@ interface State {
 }
 
 export const useDecksStore = defineStore('decks', {
-    persist: true,
+    persist: {
+        storage: persistedState.localStorage,
+        paths: ['decks'],
+    },
     state: (): State => ({
         data: []
     }),

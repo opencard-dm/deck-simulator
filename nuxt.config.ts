@@ -24,7 +24,8 @@ export default defineNuxtConfig({
     },
     modules: [
         '@pinia/nuxt',
-        '@nuxt/content'
+        '@pinia-plugin-persistedstate/nuxt',
+        '@nuxt/content',
         // '@nuxtjs/eslint-module',
     ],
     plugins: [

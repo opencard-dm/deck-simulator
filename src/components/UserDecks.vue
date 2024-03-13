@@ -5,7 +5,7 @@
       <th><div>カード枚数</div></th>
       <th colspan="3"><div></div></th>
     </thead>
-    <template v-for="(decksSource, sourceIndex) in userDecks">
+    <template v-for="(decksSource, sourceIndex) in userDecks" :key="`spreadsheet-${sourceIndex}`">
       <tr v-for="(deck, deckIndex) in decksSource.decks" :key="decksSource.url + deck.name">
         <td>
           <div style="text-align: left;">{{ deck.name }}</div>
