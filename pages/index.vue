@@ -82,6 +82,7 @@
         <div>2. スマートフォンでスプレッドシートのリンクを取得し、上記の入力欄に貼り付ける</div>
       </details>
     </div>
+    <IndexFooter></IndexFooter>
   </div>
 </template>
 
@@ -96,6 +97,7 @@ import { DecksSource } from "@/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
 import { useAuthStore } from "@/stores/auth";
 import UserDecks from "@/components/UserDecks.vue";
+import IndexFooter from "@/components/IndexFooter.vue";
 
 const decksStore = useDecksStore()
 
