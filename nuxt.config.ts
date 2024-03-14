@@ -2,56 +2,63 @@ import { defineNuxtConfig } from "nuxt/config";
 import path from "path";
 
 import 'dotenv/config'
-// import vue from '@vitejs/plugin-vue'
-// import { defineConfig } from 'vite'
-// import markdownRawPlugin from 'vite-raw-plugin'
-// import tsconfigPaths from 'vite-tsconfig-paths'
-// import { VitePluginRadar } from 'vite-plugin-radar'
+import markdownRawPlugin from "vite-raw-plugin";
+import VitePluginRadar from "vite-plugin-radar";
 
 export default defineNuxtConfig({
+    app: {
+        head: {
+            charset: 'utf-8',
+            viewport: 'width=device-width, initial-scale=1',
+            title: 'DECK SIMULATOR | デュエマのデッキの一人回しができる！',
+            link: [
+              { rel: 'icon', href: '/favicon.svg' }
+            ],
+            htmlAttrs: {
+              lang: 'ja',
+            },
+        },
+    },
     alias: {
         "@": 'src/'
     },
-    dir: {
-        pages: 'src/pages'
-    },
     modules: [
         '@pinia/nuxt',
+        '@pinia-plugin-persistedstate/nuxt',
+        '@nuxt/content',
+        // '@nuxtjs/eslint-module',
     ],
     plugins: [
+        '~/plugins/app',
         { src: 'plugins/oruga.ts' }
     ],
+    runtimeConfig: {
+        public: {
+            dev: process.env.NODE_ENV === 'development',
+        },
+    },
     vite: {
         resolve: {
             alias: {
                 '@': path.resolve(__dirname, './src')
             },
         },
-        // plugins: [
-        //     vue(),
-        //     markdownRawPlugin({
-        //         fileRegex: /\.md$/
-        //     }),
-        //     tsconfigPaths(),
-        //     VitePluginRadar({
-        //         analytics: {
-        //             id: 'G-MC3V0FB8RH',
-        //         }
-        //     })
-        // ],
+        plugins: [
+            markdownRawPlugin({
+                fileRegex: /\.md$/
+            }),
+            VitePluginRadar({
+                analytics: {
+                    id: 'G-MC3V0FB8RH',
+                }
+            })
+        ],
         // test: {
         //     globals: true,
         //     environment: 'happy-dom',
         //     setupFiles: './tests/vitest.setup.ts',
         // },
         build: {
-            rollupOptions: {
-                output: {
-                    entryFileNames: `assets/[name].js`,
-                    chunkFileNames: `assets/[name].js`,
-                    assetFileNames: `assets/[name].[ext]`,
-                },
-            },
         }
     }
 })

@@ -283,6 +283,9 @@ function getCardNames(cards: readonly Card[], cardDetails: state["cardDetails"])
     if (c.faceDown) {
       return 'カード'
     }
+    if (!(c.cd in cardDetails)) {
+      return '《xxx》'
+    }
     return '《' + cardDetails[c.cd as string].name + '》'
   })
 }

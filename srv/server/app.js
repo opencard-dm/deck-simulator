@@ -30,6 +30,9 @@ function createApp(app) {
     app.get('/logs/:logId', function (req, res) {
       res.sendFile(filepath + '/index.html');
     });
+    app.get('/decks/edit', function (req, res) {
+      res.sendFile(filepath + '/index.html');
+    });
     app.get('/battle', function (req, res) {
       res.sendFile(filepath + '/index.html');
     });

@@ -51,6 +51,7 @@
             <PlaySheet
               :side="'lower'"
               :player="lowerPlayer"
+              :lowerPlayer="lowerPlayer"
               :cards="players[lowerPlayer].cards"
               :name="players[lowerPlayer].name"
               :roomId="players[lowerPlayer].roomId"
@@ -103,8 +104,9 @@
             </div>
             <PlaySheet
               v-if="players[upperPlayer].isReady"
-              :side="single && isPhone() ? 'lower' : 'upper'"
+              :side="'lower'"
               :player="upperPlayer"
+              :lowerPlayer="lowerPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"
               :roomId="players[upperPlayer].roomId"

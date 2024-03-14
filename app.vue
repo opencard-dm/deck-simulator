@@ -4,17 +4,7 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  computed: {
-    deviseWidth() {
-      return window.screen.width;
-    },
-  },
-  mounted() {
-    window.app = this;
-  },
-};
+<script setup lang="ts">
 </script>
 
 <style lang="scss" scoped>

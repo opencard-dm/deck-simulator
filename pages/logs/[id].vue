@@ -1,14 +1,16 @@
 <template>
-  <DuelRoom
-    :upper-player="'b'"
-    :lower-player="'a'"
-    :card-actions="cardActions"
-    :game-logger="gameLogger"
-    :players="players"
-    :roomId="roomId"
-    :single="true"
-    :sourceDeck="sourceDeck"
-  ></DuelRoom>
+  <ClientOnly>
+    <DuelRoom
+      :upper-player="'b'"
+      :lower-player="'a'"
+      :card-actions="cardActions"
+      :game-logger="gameLogger"
+      :players="players"
+      :roomId="roomId"
+      :single="true"
+      :sourceDeck="sourceDeck"
+    ></DuelRoom>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -25,7 +27,7 @@ import { useRoomStore } from '@/stores/room';
 import { startTurnParams } from '@/helpers/TurnActions';
 
 const route = useRoute()
-const logId = route.params.log_id as string
+const logId = route.params.id as string
 const roomId = 'single'
 
 const players = reactive(initialData(roomId).players)

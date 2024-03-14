@@ -46,6 +46,7 @@ export interface Deck {
     chojigenCards: Card[]
     grCards: Card[]
     cardDetails?: {[key: string]: CardDetail}
+    hasChojigen: boolean
 }
 
 export interface DecksSource {
@@ -54,8 +55,10 @@ export interface DecksSource {
 }
 
 export interface SourceDeck {
+    /** firestoreのid */
+    id?: string
     name: string
-    source: string
+    source: 'firebase' | 'airtable' | 'googleSheet' | 'builtin'
     cards: SourceCard[]
     chojigenCards: SourceCard[]
     grCards: SourceCard[]
@@ -63,8 +66,8 @@ export interface SourceDeck {
 }
 
 export interface SourceCard {
-    imageUrl: string
-    name: string
+    imageUrl?: string
+    name?: string
     cd: string
     backImageUrl?: string
     times: number

@@ -1,10 +1,14 @@
-import Oruga from '@oruga-ui/oruga-next'
+import Oruga, { ConfigProgrammatic } from '@oruga-ui/oruga-next'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import '../src/assets/scss/oruga.scss'
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.component('vue-fontawesome', FontAwesomeIcon)
-    nuxtApp.vueApp.use(Oruga)
+  nuxtApp.vueApp.component('vue-fontawesome', FontAwesomeIcon)
+  nuxtApp.vueApp.use(Oruga)
+  ConfigProgrammatic.setOptions({
+    iconComponent: 'vue-fontawesome',
+    iconPack: 'fas',
+  })
 })
 
 //

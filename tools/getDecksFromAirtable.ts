@@ -23,12 +23,7 @@ const deckFiles = [
     // 'tools/json/202402_サガループリペア.json',
 ] as string[]
 
-const localDeckFiles = [
-    'tools/json/local/202402_青黒コンプレックス退化.json',
-] as string[]
-
 fetchDeckCardIdsAndWrite(deckFiles, './src/decks.json')
-fetchDeckCardIdsAndWrite(localDeckFiles, './src/decks.local.json')
 
 async function fetchDeckCardIdsAndWrite(files: string[], out: string) {
     if (files.length === 0) {

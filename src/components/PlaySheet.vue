@@ -14,7 +14,7 @@
       @change-cards-state="changeCardsState"
     ></BattleZone>
     <!-- NOTE: HTMLの重なり順の関係で下に配置している -->
-    <div v-if="!started" class="startButtons">
+    <div v-if="!started && player === lowerPlayer" class="startButtons">
       <o-button variant="danger" 
         @click="emit('start-game', player, true)"
         :disabled="false"
@@ -146,6 +146,7 @@ const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
   side: side
   player: player,
+  lowerPlayer: player,
   cards: {
     manaCards: Card[],
     battleCards: Card[],

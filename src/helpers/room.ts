@@ -95,7 +95,6 @@ function useRoomListners({
       player,
       turn: nextTurn
     })
-    const totalTurns = players['a'].turn.total + players['b'].turn.total
     if (players[player].cards.battleCards.filter(c => c.tapped).length > 0) {
       onChangeCardsState({ 
         from: 'battleCards',
@@ -116,7 +115,9 @@ function useRoomListners({
         }
       })
     }
-    if (totalTurns >= 2 && players[player].cards.yamafudaCards.length > 0) {
+    if (!(gameLogger.firstPlayer === player && nextTurn === 1) 
+      && players[player].cards.yamafudaCards.length > 0
+    ) {
       onMoveCards(
         'yamafudaCards',
         'tefudaCards',

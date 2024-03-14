@@ -1,7 +1,7 @@
-import { Socket, io } from 'socket.io-client'
+// import { Socket, io } from 'socket.io-client'
 
 export class SocketUtil {
-  static socket: Socket | null = null
+  static socket = null
   static connect() {
     this.socket = io({
       transports: [ "websocket", "polling" ],
