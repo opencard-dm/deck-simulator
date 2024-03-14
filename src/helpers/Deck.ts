@@ -235,6 +235,31 @@ export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoom
       })
       store.addCardDetails(cards)
     }
+    if (localDeck.source.startsWith('https://docs.google.com')) {
+      const cardDetails: any = {}
+      localDeck.cards.forEach(c => {
+        c.cd = c.imageUrl as string
+        cardDetails[c.cd] = {
+          ...c,
+          name: '',
+        }
+      })
+      localDeck.chojigenCards.forEach(c => {
+        c.cd = c.imageUrl as string
+        cardDetails[c.cd] = {
+          ...c,
+          name: '',
+        }
+      })
+      localDeck.grCards.forEach(c => {
+        c.cd = c.imageUrl as string
+        cardDetails[c.cd] = {
+          ...c,
+          name: '',
+        }
+      })
+      store.addCardDetails(cardDetails)
+    }
     return localDeck;
   }
   throw Error('デッキの取得に失敗しました. deckId=' + deckId)

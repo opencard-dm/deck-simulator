@@ -1,5 +1,5 @@
 <template>
-  <img v-if="Features.using_image && card?.imageUrl" draggable="false" :src="card?.imageUrl" :style="{
+  <img v-if="Features.using_image && cardDetail?.imageUrl" draggable="false" :src="cardDetail?.imageUrl" :style="{
     width: `${width}px`
   }">
   <div v-else class="cardElem" 
