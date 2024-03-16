@@ -27,6 +27,7 @@
       :style="{
         paddingLeft: '8px',
       }"
+      message="カード名の部分一致で検索できます。ひらがな・カタカナは区別して入力する必要があります。"
     >
       <OInput
         list="card_left"
@@ -54,6 +55,17 @@
         ></option>
       </datalist>
     </OField>
+    <div v-if="cardExists" class="preview">
+      <TextCard
+        @mouseenter="isPhone() ? null : roomStore.setHoveredCard(inputCard)"
+        @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
+        @click.stop="isPhone() ? roomStore.setHoveredCard(inputCard) : null"
+        :card="inputCard"
+        :width="80"
+        :selected="false"
+        :deck="null"
+      ></TextCard>
+    </div>
   </div>
 </template>
 
@@ -69,6 +81,7 @@ import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";
 import axios from "axios";
 import { addDeck, deleteDeck, updateDeck } from "./decks";
+import TextCard from "../elements/TextCard.vue";
 
 const props = defineProps<{
   deckList: SourceDeck[]
@@ -155,6 +168,23 @@ function onDeleteCard(card: SourceCard) {
 // cardname
 const cardname = ref('')
 const cardExists = computed(() => cardname.value in cardnames)
+const inputCard = computed(() => {
+  if (!cardExists) return null
+  const cardId = (cardnames as any)[cardname.value]
+  if (!(cardId in roomStore.cardDetails)) {
+    // 通信量を減らすために、カード詳細情報がない場合のみ取得
+    axios.get('/api/cards', {
+      params: {
+        cardIds: cardId
+      }
+    }).then(({data: cards}) => {
+      roomStore.addCardDetails(cards)
+    })
+  }
+  return {
+    cd: cardId
+  }
+})
 async function addCard() {
   if (!(cardname.value in cardnames)) {
     return
@@ -184,5 +214,9 @@ async function addCard() {
 }
 .cardList_wrapper {
   width: 100%;
+}
+.preview {
+  padding-left: 10px;
+  opacity: 0.8;
 }
 </style>
