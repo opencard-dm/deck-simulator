@@ -15,6 +15,7 @@
               <TextCard
                 @mouseenter="isPhone() ? null : roomStore.setHoveredCard(card)"
                 @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
+                @click.stop="isPhone() ? roomStore.setHoveredCard(card) : null"
                 :card="card"
                 :width="cardWidth"
                 :selected="false"

@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <div class="app-wrapper" @mousemove="isPhone() ? null : traceMouseMove($event)">
+    <div class="app-wrapper"
+      @mousemove="isPhone() ? null : traceMouseMove($event)"
+      @click.stop="isPhone() ? roomStore.setHoveredCard(null) : null"
+    >
       <div class="content" v-if="!loading">
         <div class="deck-wrapper left">
           <DeckEditor
@@ -25,6 +28,7 @@
       >
         <div>
           <TextCard
+            @click.stop="roomStore.setHoveredCard(null)"
             :card="hoveredCard"
             :width="300"
             :large="true"
@@ -134,9 +138,6 @@ function onDeleteDeck(deckId: string) {
   opacity: 0.6;
 }
 
-#display:hover {
-  opacity: 0.6;
-}
 #display .card-image img {
   width: 350px;
 }
