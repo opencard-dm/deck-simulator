@@ -5695,6 +5695,7 @@ __metadata:
     github-markdown-css: "npm:^5.4.0"
     happy-dom: "npm:^12.10.3"
     nuxt: "npm:^3.10.2"
+    nuxt-gtag: "npm:^2.0.5"
     pinia: "npm:^2.1.7"
     pinia-plugin-persistedstate: "npm:^3.2.1"
     prettier: "npm:^3.2.5"
@@ -5702,7 +5703,6 @@ __metadata:
     supertest: "npm:^6.3.3"
     typescript: "npm:^5.3.3"
     uuid: "npm:^9.0.1"
-    vite-plugin-radar: "npm:^0.9.3"
     vite-raw-plugin: "npm:^1.0.2"
     vite-tsconfig-paths: "npm:^4.2.2"
     vue3-markdown-it: "npm:^1.0.10"
@@ -10043,6 +10043,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nuxt-gtag@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "nuxt-gtag@npm:2.0.5"
+  dependencies:
+    "@nuxt/kit": "npm:^3.10.3"
+    defu: "npm:^6.1.4"
+    pathe: "npm:^1.1.2"
+    ufo: "npm:^1.4.0"
+  checksum: 3043d1566943efb0b291ceaf6ae5ac6ed0a6c5220e7c19b5c2951728904f9294d1ed5503563a1c1f4c561e262661cbc8447b53e7c7401ebcd35da7b57e1a0590
+  languageName: node
+  linkType: hard
+
 "nuxt@npm:^3.10.2":
   version: 3.10.2
   resolution: "nuxt@npm:3.10.2"
@@ -13171,15 +13183,6 @@ __metadata:
     "@nuxt/kit":
       optional: true
   checksum: f9eaf9e0ad7478f491608d2fe0bd65585ede5d9fa17614b7623c7a51481ed94a73a9694decac5aceb16a59c3e52ae988cf0558be5ac07ea3998e9b8affff3edf
-  languageName: node
-  linkType: hard
-
-"vite-plugin-radar@npm:^0.9.3":
-  version: 0.9.3
-  resolution: "vite-plugin-radar@npm:0.9.3"
-  peerDependencies:
-    vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
-  checksum: 442cbf3322e39ef7a58d98190fa1cb6a1aa18c8b15223db86fa9f7ad3ecf64e5e0d417218c1d2e069a56172dd9f40a939b03fd9bb38ed87500f4b580175211a5
   languageName: node
   linkType: hard
 

@@ -44,12 +44,12 @@
     "@vue/test-utils": "^2.4.3",
     "eslint": "^8.55.0",
     "eslint-plugin-vue": "^9.22.0",
+    "nuxt-gtag": "^2.0.5",
     "pinia-plugin-persistedstate": "^3.2.1",
     "prettier": "^3.2.5",
     "sass": "^1.69.5",
     "supertest": "^6.3.3",
     "typescript": "^5.3.3",
-    "vite-plugin-radar": "^0.9.3",
     "vue3-markdown-it": "^1.0.10"
   },
   "files": [

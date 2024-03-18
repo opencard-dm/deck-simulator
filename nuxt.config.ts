@@ -3,7 +3,6 @@ import path from "path";
 
 import 'dotenv/config'
 import markdownRawPlugin from "vite-raw-plugin";
-import VitePluginRadar from "vite-plugin-radar";
 
 export default defineNuxtConfig({
     app: {
@@ -26,6 +25,7 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         '@nuxt/content',
+        'nuxt-gtag',
         // '@nuxtjs/eslint-module',
     ],
     plugins: [
@@ -37,6 +37,9 @@ export default defineNuxtConfig({
             dev: process.env.NODE_ENV === 'development',
         },
     },
+    gtag: {
+      id: 'G-MC3V0FB8RH'
+    },
     vite: {
         resolve: {
             alias: {
@@ -46,11 +49,6 @@ export default defineNuxtConfig({
         plugins: [
             markdownRawPlugin({
                 fileRegex: /\.md$/
-            }),
-            VitePluginRadar({
-                analytics: {
-                    id: 'G-MC3V0FB8RH',
-                }
             })
         ],
         // test: {
