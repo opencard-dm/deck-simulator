@@ -29,7 +29,7 @@
                 <span>{{ card.times }}</span>
               </div>
 
-              <div v-if="deck.source === 'firebase'" class="cardTool_buttonGroup">
+              <div v-if="editable" class="cardTool_buttonGroup">
                 <div class="cardTool_plus" @click.stop="addCardNum(card)">
                   <!-- <o-icon pack="fas" icon="plus"> </o-icon> -->
                   <o-button variant="danger" icon-right="plus" size="small" />
@@ -41,7 +41,7 @@
             </div>
 
             <div 
-              v-if="deck.source === 'firebase'"
+              v-if="editable"
               class="delele-button hidden"
               @click.stop="deleteCard(card)"
             >X</div>
@@ -64,6 +64,7 @@ const props = defineProps<{
   cards: SourceCard[]
   side: string
   deck: SourceDeck
+  editable: boolean
 }>()
 
 const emit = defineEmits<{

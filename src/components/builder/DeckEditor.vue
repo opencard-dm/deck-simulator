@@ -5,6 +5,7 @@
       :deckList="deckList"
       :deckIndex="deckData.deckIndex"
       :side="'left'"
+      :editable="editable"
       @change-deck="changeDeck"
       @update-deck="saveDeck"
       @delete-deck="onDeleteDeck"
@@ -16,12 +17,13 @@
       :cards="deckData.deckData.cards"
       :deck="deckData.deckData"
       :side="'left'"
+      :editable="editable"
       @delete-card="onDeleteCard"
       @save-deck="saveDeck"
       @update:cards="deckData.deckData.cards = $event"
     ></CardList>
   </div>
-  <div v-if="deckData.deckData.source === 'firebase'" style="padding-bottom: 1rem;">
+  <div v-if="editable" style="padding-bottom: 1rem;">
     <OField
       class="deckInput"
       :style="{
@@ -94,6 +96,7 @@ const emit = defineEmits<{
 
 const roomStore = useRoomStore()
 const decksStore = useDecksStore()
+const config = useRuntimeConfig()
 
 const getEmptyDeck = (): SourceDeck => {
   return {
@@ -111,6 +114,13 @@ const deckData = reactive({
   deckData: getEmptyDeck() as SourceDeck,
 })
 const message = ref('')
+const editable = computed(() => {
+  if (config.public.dev) return true
+  if (deckData.deckData.source === 'firebase') {
+    return true
+  }
+  return false
+})
 
 onMounted(() => {
   const deckId = new URLSearchParams(location.search).get('deck_id')

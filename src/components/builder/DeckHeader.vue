@@ -26,21 +26,26 @@
       <!-- <span
         class="save-button click"
         @click.stop="emit('update-deck')"
-        v-if="deckData.source === 'firebase'"
+        v-if="editable"
         >変更を保存</span
       > -->
       <span
         class="click"
         @click.stop="openModal(deckData.name, 'update')"
-        v-if="deckData.source === 'firebase'"
+        v-if="editable"
         >名前を変更</span
       >
       <span 
-        v-if="deckData.source === 'firebase'"
+        v-if="editable"
         class="click"
         @click.stop="modal.delete = true"
       >デッキを削除</span>
       <span class="click" @click.stop="emit('copy-deck')">コピー</span>
+      <span 
+        v-if="config.public.dev"
+        class="click"
+        @click.stop="outputJson()"
+      >JSONに書き込み</span>
     </div>
 
     <Modal
@@ -83,13 +88,17 @@
 import { reactive, computed } from "vue";
 import Modal from "./Modal.vue";
 import { SourceDeck } from '@/entities/Deck'
+import axios from "axios";
 
 const props = defineProps<{
   deckData: SourceDeck
   deckList: SourceDeck[]
   side: string
   deckIndex: number
+  editable: boolean
 }>()
+
+const config = useRuntimeConfig()
 
 const params = reactive({
   name: "",
@@ -127,6 +136,11 @@ function updateDeckName() {
 function deleteDeck() {
   emit("delete-deck");
   modal.delete = false;
+}
+async function outputJson() {
+  await axios.put('/api/decks', {
+    deck: props.deckData,
+  });
 }
 </script>
 
