@@ -3,84 +3,68 @@
     "name": "赤青マジック",
     "cards": [
       {
-        "name": "AQvibrato",
-        "times": 4,
-        "cd": "recBti78ph7hJUSSt"
+        "cd": "dm23rp2x-059",
+        "times": 4
       },
       {
-        "name": "歌舞音愛 ヒメカット / ♪蛙の子 遭えるの何処？好きと謂ひて",
-        "times": 4,
-        "cd": "recHbtajnNzjJUIGh"
+        "cd": "promoy22-018",
+        "times": 4
       },
       {
-        "name": "瞬閃と疾駆と双撃の決断",
-        "times": 4,
-        "cd": "recB5AmKawRnAN12v"
+        "cd": "dm23rp4x-SP2",
+        "times": 4
       },
       {
-        "name": "氷柱と炎弧の決断",
-        "times": 4,
-        "cd": "rec4IgMWWPPyiT136"
+        "cd": "dm23rp4x-003",
+        "times": 4
       },
       {
-        "name": "芸魔隠狐 カラクリバーシ",
-        "times": 4,
-        "cd": "recUpBAPzPmzuVsLi"
+        "cd": "dm23rp3-006",
+        "times": 4
       },
       {
-        "name": "芸魔王将 カクメイジン",
-        "times": 4,
-        "cd": "recoqcwa1xYOtj5Vz"
+        "cd": "dm23rp3-OR2",
+        "times": 4
       },
       {
-        "name": "イシカワ・ハンドシーカー / ♪聞くだけで 才能バレる このチューン",
-        "times": 2,
-        "cd": "recx5DwxAORQEiX2T"
+        "cd": "dm23rp4x-056",
+        "times": 2
       },
       {
-        "name": "同期の妖精 / ド浮きの動悸",
-        "times": 2,
-        "cd": "reczxUBRDrwYI9jfV"
+        "cd": "dm23rp3-013",
+        "times": 2
       },
       {
-        "name": "ボン・キゴマイム / ♪やせ蛙 ラッキーナンバー ここにあり",
-        "times": 2,
-        "cd": "rech5BG2mLDtiR9vm"
+        "cd": "dm23rp3-S04",
+        "times": 2
       },
       {
-        "name": "Napo獅子-Vi無粋 / ♪オレの歌 聞けよ聞かなきゃ 殴り合い",
-        "times": 2,
-        "cd": "recHjqOL3laHqTZIF"
+        "cd": "dm22bd2-002",
+        "times": 1
       },
       {
-        "name": "灼熱の演奏 テスタ・ロッサ",
-        "times": 3,
-        "cd": "recVfrlilS1hENacJ"
+        "cd": "dm23rp2x-060",
+        "times": 2
       },
       {
-        "name": "単騎連射 マグナム",
-        "times": 1,
-        "cd": "recoFfQZdZ1zsKfM6"
+        "cd": "dm23ex1-026",
+        "times": 1
       },
       {
-        "name": "♪なぜ離れ どこへ行くのか 君は今",
-        "times": 1,
-        "cd": "reciCjqttq6ajBjOT"
+        "cd": "dm23ex1-074",
+        "times": 3
       },
       {
-        "name": "強瀾怒闘 キューブリック",
-        "times": 1,
-        "cd": "recDhngxERep2JwDg"
+        "cd": "dm23ex1-003",
+        "times": 1
       },
       {
-        "name": "機術士ディール / 「本日のラッキーナンバー！」",
-        "times": 1,
-        "cd": "recbjpNrbVcKi1nKj"
+        "cd": "dm23rp4x-065",
+        "times": 1
       },
       {
-        "name": "飛翔龍 5000VT",
-        "times": 1,
-        "cd": "recVF11isbQ0rIu9y"
+        "cd": "dmex16-052",
+        "times": 1
       }
     ],
     "chojigenCards": [],
