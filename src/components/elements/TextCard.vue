@@ -1,37 +1,48 @@
 <template>
-  <img v-if="Features.using_image && cardDetail?.imageUrl" draggable="false" :src="cardDetail?.imageUrl" :style="{
-    width: `${width}px`
-  }">
-  <div v-else class="cardElem" 
-    :class="{
-      selected: selected,
-      target: canBeTarget,
-      large: large,
-    }"
+  <div class="cardElem_wrapper"
     :style="{
       width: `${width}px`,
       height: `${height}px`,
-      background: color,
+    }"
+  >
+    <img v-if="Features.using_image && cardDetail?.imageUrl" draggable="false" :src="cardDetail?.imageUrl" :style="{
+      width: `${width}px`
     }">
-    <div class="card_top">
-      <span class="card_cost">{{ cardDetail?.name === '∞龍 ゲンムエンペラー' ? '∞'
-        : cardDetail?.cost }}</span>
-      <span class="card_name">{{ cardDetail?.combined_card ?  cardDetail?.name.split('/')[0].trim() : cardDetail?.name }}</span>
-    </div>
-    <div class="card_reces" :style="{
-      width: large ? 'unset' : `${width / 0.6 - 2}px`
-    }">{{ cardDetail?.races?.join(' / ') }}</div>
-    <div class="card_text" v-if="cardDetail && large">{{ getReadableText(cardDetail?.card_text) }}</div>
-    <template v-if="cardDetail?.combined_card">
+    <div v-else class="cardElem" 
+      :class="{
+        selected: selected,
+        target: canBeTarget,
+        large: large,
+      }" 
+      :style="{
+        width: `${width <= 50 && !large ? 80 : width}px`,
+        height: `${width <= 50 && !large ? calcHeight(80) : height}px`,
+        background: color,
+        transform: width <= 50 && !large ? `scale(${width / 80})` : null,
+        transformOrigin: 'left top',
+      }">
       <div class="card_top">
-        <span class="card_cost">{{ cardDetail?.combined_card.cost }}</span>
-        <span class="card_name">{{
-          cardDetail?.combined_card.name.includes('/')
-          ? cardDetail?.combined_card.name.split('/')[1].trim() : cardDetail?.combined_card.name }}</span>
+        <span class="card_cost">{{ cardDetail?.name === '∞龍 ゲンムエンペラー' ? '∞'
+          : cardDetail?.cost }}</span>
+        <span v-if="cardDetail?.types?.includes('GR')" class="card_type">GR</span>
+        <span v-if="cardDetail?.types?.includes('サイキック') || cardDetail?.types?.includes('ドラグハート')" class="card_type">超</span>
+        <span class="card_name">{{ cardDetail?.combined_card ?  cardDetail?.name.split('/')[0].trim() : cardDetail?.name }}</span>
       </div>
-      <div class="card_text" v-if="large && cardDetail?.combined_card">{{ getReadableText(cardDetail?.combined_card.card_text) }}</div>
-    </template>
-    <div class="card_power" v-if="cardDetail?.power">{{ cardDetail?.power }}</div>
+      <div class="card_reces" :style="{
+        width: large ? 'unset' : `${width / 0.6 - 2}px`
+      }">{{ cardDetail?.races?.join(' / ') }}</div>
+      <div class="card_text" v-if="cardDetail && large">{{ getReadableText(cardDetail?.card_text) }}</div>
+      <template v-if="cardDetail?.combined_card">
+        <div class="card_top">
+          <span class="card_cost">{{ cardDetail?.combined_card.cost }}</span>
+          <span class="card_name">{{
+            cardDetail?.combined_card.name.includes('/')
+            ? cardDetail?.combined_card.name.split('/')[1].trim() : cardDetail?.combined_card.name }}</span>
+        </div>
+        <div class="card_text" v-if="large && cardDetail?.combined_card">{{ getReadableText(cardDetail?.combined_card.card_text) }}</div>
+      </template>
+      <div class="card_power" v-if="cardDetail?.power">{{ cardDetail?.power }}</div>
+    </div>
   </div>
 </template>
 
@@ -56,7 +67,7 @@ const props = withDefaults(defineProps<{
   large: false,
   width: -1, // 不正な値だとスタイルがセットされない仕様を利用
 })
-const height = computed(() => props.width * 908 / 650)
+const height = computed(() => calcHeight(props.width))
 const cardDetail = computed<CardDetail|null>(() => {
   if (!props.card) return null
   if (props.card.cd) {
@@ -133,6 +144,9 @@ function getCardDetail(cardId: string) {
     return null
   }
 }
+function calcHeight(width: number) {
+  return width * 908 / 650
+}
 </script>
 
 <style lang="scss" scoped>
@@ -162,6 +176,15 @@ function getCardDetail(cardId: string) {
     border-radius: 50%;
     margin-right: 5px;
     text-shadow: 0.5px 0.5px black;
+  }
+  .card_type {
+    color: #444;
+    background-color: white;
+    border-radius: 4px;
+    padding: 0px 2px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-right: 4px;
   }
   .card_name {
     word-break: break-all;
