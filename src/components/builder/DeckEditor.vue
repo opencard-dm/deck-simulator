@@ -15,7 +15,22 @@
   <div class="cardList_wrapper">
     <CardList
       :cards="deckData.deckData.cards"
-      :deck="deckData.deckData"
+      :side="'left'"
+      :editable="editable"
+      @delete-card="onDeleteCard"
+      @save-deck="saveDeck"
+      @update:cards="deckData.deckData.cards = $event"
+    ></CardList>
+    <CardList
+      :cards="deckData.deckData.chojigenCards"
+      :side="'left'"
+      :editable="editable"
+      @delete-card="onDeleteCard"
+      @save-deck="saveDeck"
+      @update:cards="deckData.deckData.cards = $event"
+    ></CardList>
+    <CardList
+      :cards="deckData.deckData.grCards"
       :side="'left'"
       :editable="editable"
       @delete-card="onDeleteCard"
@@ -23,11 +38,12 @@
       @update:cards="deckData.deckData.cards = $event"
     ></CardList>
   </div>
-  <div v-if="editable" style="padding-bottom: 1rem;">
+  <div class="deckEditor_footer" v-if="editable" style="padding-bottom: 1rem;">
     <OField
       class="deckInput"
       :style="{
         paddingLeft: '8px',
+        marginBottom: '4px',
       }"
       message="カード名の部分一致で検索できます。ひらがな・カタカナは区別して入力する必要があります。"
     >
@@ -63,7 +79,7 @@
         @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
         @click.stop="isPhone() ? roomStore.setHoveredCard(inputCard) : null"
         :card="inputCard"
-        :width="80"
+        :width="50"
         :selected="false"
         :deck="null"
       ></TextCard>
@@ -77,7 +93,7 @@ import CardList from "./CardList.vue";
 import { fetchCardDetails } from "@/helpers/Deck";
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoomStore } from "@/stores/room";
-import { SourceCard, SourceDeck } from "@/entities/Deck";
+import { CardDetail, SourceCard, SourceDeck } from "@/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
 import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";
@@ -205,10 +221,25 @@ async function addCard() {
       cardIds: cardId
     }
   })
-  deckData.deckData.cards.push({
-    cd: cardId,
-    times: 0,
-  })
+  const cardDetail: CardDetail = cards[cardId]
+  if (cardDetail.types?.includes('GR')) {
+    deckData.deckData.grCards.push({
+      cd: cardId,
+      times: 0,
+    })
+  } else if (cardDetail.types?.includes('サイキック')
+    || cardDetail.types?.includes('ドラグハート')
+  ) {
+    deckData.deckData.chojigenCards.push({
+      cd: cardId,
+      times: 0,
+    })
+  } else {
+    deckData.deckData.cards.push({
+      cd: cardId,
+      times: 0,
+    })
+  }
   cardname.value = ''
   roomStore.addCardDetails(cards)
   saveDeck()
@@ -224,9 +255,19 @@ async function addCard() {
 }
 .cardList_wrapper {
   width: 100%;
+  // deckEditor_footer のheightと連動する
+  padding-bottom: 140px;
 }
 .preview {
   padding-left: 10px;
-  opacity: 0.8;
+  opacity: 0.6;
+}
+.deckEditor_footer {
+  width: 100%;
+  height: 140px;
+  padding-top: 8px;
+  background-color: white;
+  position: fixed;
+  bottom: 0px;
 }
 </style>

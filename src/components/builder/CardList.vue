@@ -19,7 +19,6 @@
                 :card="card"
                 :width="cardWidth"
                 :selected="false"
-                :deck="deck"
               ></TextCard>
             </div>
 
@@ -63,7 +62,6 @@ import { useRoomStore } from '@/stores/room';
 const props = defineProps<{
   cards: SourceCard[]
   side: string
-  deck: SourceDeck
   editable: boolean
 }>()
 
@@ -73,22 +71,8 @@ const emit = defineEmits<{
 }>()
 // const store = useStore()
 
-const deckCards = computed({
-  get() {
-    return props.cards;
-  },
-  set(newVal) {
-    // すでに含まれているカードがあれば更新しない。
-    if (
-      props.cards.find(
-        (c) => c.imageUrl === this.$store.state.builder.draggingCard.imageUrl
-      )
-    ) {
-      console.log("すでに含まれているカードです。");
-      return;
-    }
-    this.$emit("update:cards", newVal);
-  },
+const deckCards = computed(() => {
+  return props.cards;
 })
 const cardWidth = computed(() => 80)
 

@@ -42,7 +42,7 @@
       >デッキを削除</span>
       <span class="click" @click.stop="emit('copy-deck')">コピー</span>
       <span 
-        v-if="config.public.dev"
+        v-if="config.public.dev && deckData.source === 'builtin'"
         class="click"
         @click.stop="outputJson()"
       >JSONに書き込み</span>
