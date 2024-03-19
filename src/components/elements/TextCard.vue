@@ -16,7 +16,7 @@
     <div class="card_top">
       <span class="card_cost">{{ cardDetail?.name === '∞龍 ゲンムエンペラー' ? '∞'
         : cardDetail?.cost }}</span>
-      <span class="card_name">{{ cardDetail?.name.split('/')[0].trim() }}</span>
+      <span class="card_name">{{ cardDetail?.combined_card ?  cardDetail?.name.split('/')[0].trim() : cardDetail?.name }}</span>
     </div>
     <div class="card_reces" :style="{
       width: large ? 'unset' : `${width / 0.6 - 2}px`
@@ -25,7 +25,9 @@
     <template v-if="cardDetail?.combined_card">
       <div class="card_top">
         <span class="card_cost">{{ cardDetail?.combined_card.cost }}</span>
-        <span class="card_name">{{ cardDetail?.combined_card.name }}</span>
+        <span class="card_name">{{
+          cardDetail?.combined_card.name.includes('/')
+          ? cardDetail?.combined_card.name.split('/')[1].trim() : cardDetail?.combined_card.name }}</span>
       </div>
       <div class="card_text" v-if="large && cardDetail?.combined_card">{{ getReadableText(cardDetail?.combined_card.card_text) }}</div>
     </template>
