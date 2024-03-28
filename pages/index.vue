@@ -92,28 +92,10 @@ import GoogleSpreadsheetCopy from '@/components/explanations/GoogleSpreadsheetCo
 import GoogleSpreadsheetDeck from '@/components/explanations/GoogleSpreadsheetDeck.vue'
 import { Features } from "@/features";
 import GoogleSheetInput from "@/components/deck-inputs/GoogleSheetInput.vue";
-import { computed, onMounted } from "vue";
-import { DecksSource } from "@/entities/Deck";
-import { useDecksStore } from "@/stores/decks";
+import { computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import UserDecks from "@/components/UserDecks.vue";
 import IndexFooter from "@/components/IndexFooter.vue";
-
-const decksStore = useDecksStore()
-
-onMounted(() => {
-  // TODO: 2024/04/01ごろに削除する
-  if (localStorage) {
-    const vuex = localStorage.getItem('vuex')
-    if (vuex !== null) {
-      const deckSources = JSON.parse(vuex).decks.data
-      deckSources.forEach((d: DecksSource) => {
-        decksStore.addDecksSource(d)
-      })
-      localStorage.removeItem('vuex')
-    }
-  }
-})
 
 useHead({
   title: 'DECK SIMULATOR | デュエマのデッキの一人回しができる！',
