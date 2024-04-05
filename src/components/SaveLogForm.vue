@@ -19,6 +19,7 @@ import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import { SourceDeck } from '@/entities/Deck';
 import { GameLogger } from '@/helpers/GameLogger';
+import { useAuthStore } from '@/stores/auth';
 
 const props = defineProps<{
   gameLogger: GameLogger,
@@ -29,6 +30,7 @@ const route = useRoute()
 const router = useRouter()
 const logName = ref(props.deck?.name || '')
 const saveHistoriesSent = ref(false)
+const authStore = useAuthStore()
 
 function saveHistories() {
   if (saveHistoriesSent.value) return
@@ -43,7 +45,8 @@ function saveHistories() {
   axios.post('/api/logs', {
     name: logName.value,
     histories: props.gameLogger.histories,
-    deck: props.deck
+    deck: props.deck,
+    userId: authStore.user?.uid
   }).then((res) => {
     router.push('/logs/' + res.data.id)
   })

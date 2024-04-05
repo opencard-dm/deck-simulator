@@ -23,6 +23,7 @@ export const useAuthStore = defineStore('auth', {
         if (user) {
           this.user = user
           this.loggedIn = true
+          console.debug('ログインユーザのID', user.uid)
         } else {
           this.user = null
           this.loggedIn = false

@@ -1,10 +1,11 @@
-import { createLog } from '../../services/roomService'
+import { createLog } from '../../services/logService'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     if (!body.histories
       || !body.name
       || !body.deck
+      || !body.userId
     ) {
         setResponseStatus(event, 422)
         return {}
@@ -12,6 +13,7 @@ export default defineEventHandler(async (event) => {
     const log = await createLog(
         body.name,
         body.deck,
-        body.histories)
+        body.histories,
+        body.userId)
     return { id: log.id }
 })

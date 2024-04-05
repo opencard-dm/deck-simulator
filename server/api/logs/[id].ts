@@ -1,4 +1,4 @@
-import { getLog } from '../../services/roomService'
+import { getLog } from '../../services/logService'
 
 export default defineEventHandler(async (event) => {
     const logId = getRouterParam(event, 'id')
