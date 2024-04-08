@@ -47,5 +47,10 @@ export async function getLogs(userId: string) {
 }
 
 export async function deleteLog(logId: string) {
+  const logDoc = await FireStore.db.doc(`/logs/${logId}`).get()
+  const userId = logDoc.get('userId')
+  await FireStore.db.doc(`users/${userId}`).update({
+    logIds: FieldValue.arrayRemove(logId)
+  })
   await FireStore.db.doc(`/logs/${logId}`).delete()
 }
