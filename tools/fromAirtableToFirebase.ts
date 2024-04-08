@@ -4,7 +4,7 @@
 import 'dotenv/config'
 import { CardDetail } from '@/entities/Deck';
 import Airtable from 'airtable'
-import { FireStore } from '../srv/server/firestore'
+import { FireStore } from '../server/firestore'
 import { getCardDetailFromRecord } from './helpers';
 
 type CardDetails = {[key: string]: CardDetail}
