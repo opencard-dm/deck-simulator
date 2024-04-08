@@ -14,7 +14,7 @@ export class Deck {
 
   static async getFromId(id: string): Promise<SourceDeck|null> {
     const localDeck = decks.find(d => d.dmDeckId === id || d.name === id) as DeckType|undefined
-    if (localDeck) return localDeck
+    if (localDeck) return JSON.parse(JSON.stringify(localDeck))
     const decksStore = useDecksStore()
     // firebaseのデッキの場合
     if (id.startsWith('firebase-')) {
