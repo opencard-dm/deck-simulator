@@ -47,7 +47,6 @@ export const useAuthStore = defineStore('auth', {
 
 function signIn() {
   const provider = new GoogleAuthProvider();
-  provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
   const auth = getAuth(Firebase.app);
   auth.languageCode = 'ja';
   signInWithPopup(auth, provider).then((result) => {
