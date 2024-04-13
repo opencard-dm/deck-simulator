@@ -125,10 +125,7 @@ const emit = defineEmits([
 const headerHeight = `${Layout.headerHeight()}px`
 
 const config = useRuntimeConfig()
-console.log(config)
-// TODO: ログ保存機能は非公開
-const canSaveLog = computed(() => config.public.dev
-  && props.deck && props.deck.source !== 'googleSheet')
+const canSaveLog = computed(() => props.deck && props.deck.source !== 'googleSheet')
 
 const isMounted = ref(false);
 onMounted(() => {

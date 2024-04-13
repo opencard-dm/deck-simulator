@@ -12,6 +12,13 @@
             style="margin-right: 4px;"
             @click="authStore.signOut()"
           >ログアウト</o-button>
+          <RouterLink to="/logs">
+            <o-button
+              variant="info"
+              size="small"
+              style="margin-right: 4px;"
+            >ログ一覧</o-button>
+          </RouterLink>
           <RouterLink to="/decks/edit">
             <o-button
               variant="info"
@@ -111,10 +118,6 @@ const loggedIn = computed(() => authStore.loggedIn)
 </script>
 
 <style lang="scss" scoped>
-.h2 {
-  font-size: 18px;
-  font-weight: 500;
-}
 .link {
   color: #0969da;
   font-size: 14px;

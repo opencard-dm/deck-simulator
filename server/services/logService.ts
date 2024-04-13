@@ -25,7 +25,10 @@ export async function createLog(
 
 export async function getLog(logId: string) {
   const logDoc = await FireStore.db.doc(`/logs/${logId}`).get()
-  return logDoc
+  if (!logDoc.exists) {
+    return null
+  }
+  return logDoc.data()
 }
 
 export async function getLogs(userId: string) {

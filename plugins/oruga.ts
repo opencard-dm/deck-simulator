@@ -34,6 +34,7 @@ import {
   faUndo,
   faRedo,
   faArrowUpRightFromSquare,
+  faRotate,
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faTimesCircle as farTimesCircle,
@@ -62,4 +63,5 @@ library.add(
   faUndo,
   faRedo,
   faArrowUpRightFromSquare,
+  faRotate,
 )
