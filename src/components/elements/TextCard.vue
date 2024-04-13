@@ -5,10 +5,10 @@
       height: `${height}px`,
     }"
   >
-    <img v-if="Features.using_image && cardDetail?.imageUrl" draggable="false" :src="cardDetail?.imageUrl" :style="{
+    <img v-if="Features.using_image && cardDetail?.imageUrl" draggable="false" :src="cardDetail.imageUrl" :style="{
       width: `${width}px`
     }">
-    <div v-else class="cardElem" 
+    <div v-else-if="cardDetail" class="cardElem" 
       :class="{
         selected: selected,
         target: canBeTarget,
@@ -22,26 +22,30 @@
         transformOrigin: 'left top',
       }">
       <div class="card_top">
-        <span class="card_cost">{{ cardDetail?.name === '∞龍 ゲンムエンペラー' ? '∞'
-          : cardDetail?.cost }}</span>
-        <span v-if="cardDetail?.types?.includes('GR')" class="card_type">GR</span>
-        <span v-if="cardDetail?.types?.includes('サイキック') || cardDetail?.types?.includes('ドラグハート')" class="card_type">超</span>
-        <span class="card_name">{{ cardDetail?.combined_card ?  cardDetail?.name.split('/')[0].trim() : cardDetail?.name }}</span>
+        <span class="card_cost">{{ cardDetail.name === '∞龍 ゲンムエンペラー' ? '∞'
+          : cardDetail.cost }}</span>
+        <span v-if="cardDetail.types?.includes('GR')" class="card_type">GR</span>
+        <span v-if="cardDetail.types?.includes('サイキック') || cardDetail.types?.includes('ドラグハート')" class="card_type">超</span>
+        <span class="card_name">{{ cardDetail.combined_card ?  cardDetail.name.split('/')[0].trim() : cardDetail.name }}</span>
       </div>
       <div class="card_reces" :style="{
         width: large ? 'unset' : `${width / 0.6 - 2}px`
-      }">{{ cardDetail?.races?.join(' / ') }}</div>
-      <div class="card_text" v-if="cardDetail && large">{{ getReadableText(cardDetail?.card_text) }}</div>
-      <template v-if="cardDetail?.combined_card">
-        <div class="card_top">
-          <span class="card_cost">{{ cardDetail?.combined_card.cost }}</span>
-          <span class="card_name">{{
-            cardDetail?.combined_card.name.includes('/')
-            ? cardDetail?.combined_card.name.split('/')[1].trim() : cardDetail?.combined_card.name }}</span>
-        </div>
-        <div class="card_text" v-if="large && cardDetail?.combined_card">{{ getReadableText(cardDetail?.combined_card.card_text) }}</div>
+      }">{{ cardDetail.races?.join(' / ') }}</div>
+      <template v-if="cardDetail && large">
+        <div class="card_text" v-if="cardDetail.races?.includes('超化獣') && cardDetail.combined_card">{{ getReadableText(cardDetail.combined_card?.card_text) }}</div>
+        <div class="card_text" v-else>{{ getReadableText(cardDetail.card_text) }}</div>
       </template>
-      <div class="card_power" v-if="cardDetail?.power">{{ cardDetail?.power }}</div>
+      <template v-if="cardDetail.combined_card && cardDetail.types?.includes('ツインパクト')">
+        <div class="card_top">
+          <span class="card_cost">{{ cardDetail.combined_card.cost }}</span>
+          <span class="card_name">{{
+            cardDetail.combined_card.name.includes('/')
+            ? cardDetail.combined_card.name.split('/')[1].trim() : cardDetail.combined_card.name }}</span>
+        </div>
+        <div class="card_text" v-if="large && cardDetail.combined_card">{{ getReadableText(cardDetail.combined_card.card_text) }}</div>
+      </template>
+      <div class="card_hyperPower" v-if="cardDetail.races?.includes('超化獣')">{{ cardDetail.combined_card?.power }}</div>
+      <div class="card_power" v-if="cardDetail.power">{{ cardDetail.power }}</div>
     </div>
   </div>
 </template>
@@ -213,6 +217,18 @@ function calcHeight(width: number) {
     border-top-right-radius: 5px;
     border-bottom-left-radius: 5px;
     color: white;
+    background-color: #444;
+  }
+  .card_hyperPower {
+    position: absolute;
+    bottom: 20px;
+    right: 0px;
+    padding: 0px 4px;
+    font-size: 14px;
+    font-weight: 600;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    color: red;
     background-color: #444;
   }
   &.large {
