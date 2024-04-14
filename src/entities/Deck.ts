@@ -20,6 +20,7 @@ type cardType = 'ツインパクト'
     | 'GR'
     | 'オレガ・オーラ'
     | 'タマシード'
+    | 'セル'
 
 export interface CardDetail {
     id: string

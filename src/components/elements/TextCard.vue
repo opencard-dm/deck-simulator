@@ -94,7 +94,7 @@ const color = computed(() => {
     return 'white'
   }
   const civilizations = cardDetail.value.civilizations || []
-  if (cardDetail.value.combined_card) {
+  if (cardDetail.value.combined_card && !cardDetail.value.types?.includes('セル')) {
     cardDetail.value.combined_card.civilizations.forEach(c => {
       if (!civilizations.includes(c)) {
         civilizations.push(c)
