@@ -47,7 +47,7 @@
             <o-button
               v-if="
                 ['yamafudaCards', 'shieldCards'].includes(workSpace.zone) &&
-                isOwner
+                (isOwner || single)
               "
               variant="grey-dark"
               @click.stop="openAllCards"
