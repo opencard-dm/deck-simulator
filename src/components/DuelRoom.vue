@@ -4,6 +4,7 @@
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
       :deck="sourceDeck"
+      :deckb="deckb"
       @switch-tab="switchTab()"
       @reset-game="onResetGame()"
     ></CHeader>
@@ -268,10 +269,14 @@ function shuffleCards(from: zone, cards: Card[], player: player) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
+const deckb = ref<SourceDeck|null>(null)
 function onDeckSelected({ deck, sourceDeck }: {
   deck: DeckType,
   sourceDeck: SourceDeck,
 }) {
+  if (props.single && currentPlayer.value === 'b') {
+    deckb.value = sourceDeck
+  }
   onSelectDeck(currentPlayer.value, deck)
 }
 

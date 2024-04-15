@@ -8,17 +8,26 @@ export async function createLog(
   name: string,
   deck: SourceDeck,
   histories: GameHistory[],
-  userId: string
+  userId: string,
+  options: {
+    deckb: SourceDeck | null
+  }
 ) {
-  const doc = await FireStore.db.collection('logs').add({
+  const logData = {
     name,
     deck,
     histories,
     userId,
     createdAt: (new Date()).toISOString()
-  })
-  await FireStore.db.doc(`users/${userId}`).update({
+  }
+  if (options.deckb) {
+    logData.deckb = options.deckb
+  }
+  const doc = await FireStore.db.collection('logs').add(logData)
+  await FireStore.db.doc(`users/${userId}`).set({
     logIds: FieldValue.arrayUnion(doc.id)
+  }, {
+    merge: true
   })
   return doc
 }

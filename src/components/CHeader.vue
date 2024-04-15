@@ -62,6 +62,7 @@
         <div class="nav-item">
           <SaveLogForm 
             :deck="deck"
+            :deckb="deckb"
             :gameLogger="gameLogger"
           />
         </div>
@@ -115,6 +116,7 @@ const props = defineProps<{
   gameLogger: GameLogger,
   currentPlayer: player,
   deck: SourceDeck|null
+  deckb: SourceDeck|null
 }>()
 
 const emit = defineEmits([

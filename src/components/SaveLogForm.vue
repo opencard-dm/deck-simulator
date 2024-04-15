@@ -24,6 +24,7 @@ import { useAuthStore } from '@/stores/auth';
 const props = defineProps<{
   gameLogger: GameLogger,
   deck: SourceDeck|null
+  deckb: SourceDeck|null
 }>()
 
 const route = useRoute()
@@ -46,9 +47,13 @@ function saveHistories() {
     name: logName.value,
     histories: props.gameLogger.histories,
     deck: props.deck,
+    deckb: props.deckb,
     userId: authStore.user?.uid
   }).then((res) => {
     router.push('/logs/' + res.data.id)
+  }).catch((error) => {
+    console.error(error)
+    alert('保存に失敗しました')
   })
 }
 </script>

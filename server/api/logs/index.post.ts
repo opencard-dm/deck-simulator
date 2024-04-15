@@ -14,6 +14,8 @@ export default defineEventHandler(async (event) => {
         body.name,
         body.deck,
         body.histories,
-        body.userId)
+        body.userId, {
+            deckb: body.deckb
+        })
     return { id: log.id }
 })
