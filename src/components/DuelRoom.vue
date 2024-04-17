@@ -261,6 +261,9 @@ function emitRoomState() {
 
 function shuffleCards(from: zone, cards: Card[], player: player) {
   players[player]['cards'][from] = Deck.shuffle(cards);
+  players[player]['cards'][from].forEach(c => {
+    c.showInWorkSpace = false
+  })
   const shuffleMessage = {
     shieldCards: 'シールド',
     yamafudaCards: '山札',
