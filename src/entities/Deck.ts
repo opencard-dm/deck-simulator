@@ -30,7 +30,7 @@ export interface CardDetail {
     name: string
     name_ruby?: string
     image_paths?: string[]
-    types?: cardType[]
+    types: cardType[]
     power: string | null
     power_int?: number
     cost: number
