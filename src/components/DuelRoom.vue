@@ -4,6 +4,7 @@
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
       :deck="sourceDeck"
+      :deckb="deckb"
       @switch-tab="switchTab()"
       @reset-game="onResetGame()"
     ></CHeader>
@@ -51,6 +52,7 @@
             <PlaySheet
               :side="'lower'"
               :player="lowerPlayer"
+              :lowerPlayer="lowerPlayer"
               :cards="players[lowerPlayer].cards"
               :name="players[lowerPlayer].name"
               :roomId="players[lowerPlayer].roomId"
@@ -103,8 +105,9 @@
             </div>
             <PlaySheet
               v-if="players[upperPlayer].isReady"
-              :side="single && isPhone() ? 'lower' : 'upper'"
+              :side="'lower'"
               :player="upperPlayer"
+              :lowerPlayer="lowerPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"
               :roomId="players[upperPlayer].roomId"
@@ -258,6 +261,9 @@ function emitRoomState() {
 
 function shuffleCards(from: zone, cards: Card[], player: player) {
   players[player]['cards'][from] = Deck.shuffle(cards);
+  players[player]['cards'][from].forEach(c => {
+    c.showInWorkSpace = false
+  })
   const shuffleMessage = {
     shieldCards: 'シールド',
     yamafudaCards: '山札',
@@ -266,10 +272,14 @@ function shuffleCards(from: zone, cards: Card[], player: player) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
+const deckb = ref<SourceDeck|null>(null)
 function onDeckSelected({ deck, sourceDeck }: {
   deck: DeckType,
   sourceDeck: SourceDeck,
 }) {
+  if (props.single && currentPlayer.value === 'b') {
+    deckb.value = sourceDeck
+  }
   onSelectDeck(currentPlayer.value, deck)
 }
 

@@ -4,33 +4,48 @@
       <select
         name="deckId"
         id="select-deck"
-        @change="changeDeck"
-        v-model="selected.index"
+        @change="($event) => {
+          const value = ($event.target as HTMLSelectElement).value
+          emit('change-deck', parseInt(value))
+        }"
+        :value="deckIndex"
       >
         <option
-          v-for="(deck, index) in deckList[selected.deckType]"
+          v-for="(deck, index) in deckList"
           :value="index"
           :key="index"
         >
           {{ deck.name }}
+          {{ deck.source === 'builtin' ? '（サンプル）' : '' }}
         </option>
       </select>
     </div>
     <div class="small">
       <span>合計枚数{{ totalNum }}</span>
-      <span
+      <!-- 保存は自動で行われるため、非表示 -->
+      <!-- <span
         class="save-button click"
-        @click.stop="updateDeck()"
-        v-if="selected.deckType === 'custom'"
+        @click.stop="emit('update-deck')"
+        v-if="editable"
         >変更を保存</span
-      >
+      > -->
       <span
         class="click"
-        @click.stop="openModal(deckList['custom'][selected.index].name, 'update')"
-        v-if="selected.deckType === 'custom'"
+        @click.stop="openModal(deckData.name, 'update')"
+        v-if="editable"
         >名前を変更</span
       >
-      <span class="click" @click.stop="modal.delete = true">デッキを削除</span>
+      <span 
+        v-if="editable"
+        class="click"
+        @click.stop="modal.delete = true"
+      >デッキを削除</span>
+      <span class="click" @click.stop="emit('copy-deck')">コピー</span>
+      <span 
+        v-if="config.public.dev && deckData.source === 'builtin'"
+        class="click"
+        @click.stop="outputJson()"
+      >JSONに書き込み</span>
     </div>
 
     <Modal
@@ -53,31 +68,12 @@
 
     <Modal
       class="deck-header-modal"
-      v-if="modal.create"
-      @close-modal="modal.create = false"
-    >
-      <template v-slot:content>
-        <div>
-          <p>カード画像のURLを貼り付けてください</p>
-        </div>
-        <div>
-          <input v-model="params.cardUrl" />
-        </div>
-      </template>
-      <template v-slot:footer>
-        <button @click.stop="addCard">追加</button>
-      </template>
-    </Modal>
-
-    <Modal
-      class="deck-header-modal"
       v-if="modal.delete"
       @close-modal="modal.delete = false"
     >
       <template v-slot:content>
         <div>
           <p>デッキを削除してもよろしいですか？</p>
-          <p style="font-size: 12px; margin-top:10px;">※削除後には画面のリロードが行われるため、変更の保存はあらかじめお済ませください。</p>
         </div>
       </template>
       <template v-slot:footer>
@@ -92,21 +88,20 @@
 import { reactive, computed } from "vue";
 import Modal from "./Modal.vue";
 import { SourceDeck } from '@/entities/Deck'
+import axios from "axios";
 
 const props = defineProps<{
   deckData: SourceDeck
   deckList: SourceDeck[]
   side: string
   deckIndex: number
+  editable: boolean
 }>()
 
-const selected = reactive({
-  deckType: "custom",
-  index: props.deckIndex,
-})
+const config = useRuntimeConfig()
+
 const params = reactive({
   name: "",
-  cardUrl: "",
 })
 const modal = reactive({
   create: false,
@@ -123,42 +118,29 @@ const totalNum = computed(() => {
 })
 
 const emit = defineEmits<{
-  "change-deck": [string, number]
+  "change-deck": [number]
   "create-deck": []
   "update-deck": []
   "delete-deck": []
+  "copy-deck": []
 }>()
-function openModal(name, method) {
+function openModal(name: string, method: 'create' | 'update' | 'delete') {
   params.name = name;
   modal[method] = true;
 }
-function changeDeck() {
-  emit("change-deck", selected.deckType, selected.index);
-  // parent[this.side].deckData = parent.deckList[index];
-}
-function updateDeck() {
-  emit("update-deck", params, props.side);
-}
 function updateDeckName() {
-  // parent.deckList[this.selected.deckType][
-  //   this.selected.index
-  // ].name = this.params.name;
-  this.updateDeck();
-  this.modal.update = false;
-  this.params.name = "";
-}
-function createDeck() {
-  this.modal.create = false;
-  emit("create-deck", params, props.side, selected);
-  params.name = "";
-}
-function addCard() {
-  emit("update-deck", params, props.side);
-  params.cardUrl = ""
+  props.deckData.name = params.name
+  emit('update-deck')
+  modal.update = false
 }
 function deleteDeck() {
-  emit("delete-deck", props.side);
-  this.modal.delete = false;
+  emit("delete-deck");
+  modal.delete = false;
+}
+async function outputJson() {
+  await axios.put('/api/decks', {
+    deck: props.deckData,
+  });
 }
 </script>
 

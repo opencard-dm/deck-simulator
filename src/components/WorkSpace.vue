@@ -47,7 +47,7 @@
             <o-button
               v-if="
                 ['yamafudaCards', 'shieldCards'].includes(workSpace.zone) &&
-                isOwner
+                (isOwner || single)
               "
               variant="grey-dark"
               @click.stop="openAllCards"
@@ -74,7 +74,7 @@
             @mouseenter="isPhone() ? null : setHoveredCard(card)"
             @mouseleave="isPhone() ? null : setHoveredCard(null)"
           >
-            <Dropdown class="dropdown" :triggers="dropdownTriggers">
+            <o-dropdown class="dropdown" :triggers="dropdownTriggers">
               <template #trigger>
                 <MarkTool
                   :active="cardIsSelected(card)"
@@ -155,7 +155,7 @@
                   >墓地へ</span
                 >
               </o-dropdown-item>
-            </Dropdown>
+            </o-dropdown>
             <div class="card_bottomButton">
               <template v-if="['yamafudaCards'].includes(workSpace.zone)">
                 <!-- 裏向きのカードを見るボタン -->

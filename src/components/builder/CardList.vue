@@ -1,57 +1,53 @@
 <template>
   <div>
-    <draggable
-      v-model="deckCards"
+    <div
       class="card-list"
       :id="side + 'draggable'"
       item-key="id"
-      :group="{ name: 'deck', pull: 'clone', put: true }"
-      :data-side="side"
-      :move="onMove"
-      :sort="false"
-      :clone="
-        (origin) => {
-          return { ...origin, times: 0 };
-        }
-      "
-      @start="onDragstart"
-      @end="setDraggingCard(null)"
     >
-      <template #item="{ element }">
-        <div class="card-wrapper">
+      <template v-for="card in deckCards">
+        <div class="card-wrapper" :style="{
+          width: `${cardWidth}px`
+        }">
           <div class="card">
             <!-- insted of prevent default -->
-            <div draggable="true">
+            <div>
               <TextCard
-                :card="element"
+                @mouseenter="isPhone() ? null : roomStore.setHoveredCard(card)"
+                @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
+                @click.stop="isPhone() ? roomStore.setHoveredCard(card) : null"
+                :card="card"
                 :width="cardWidth"
                 :selected="false"
-                :deck="deck"
               ></TextCard>
             </div>
 
             <div class="cardTool">
               <div class="cardTool_times">
                 <span style="margin-right: 2px">x</span>
-                <span>{{ element.times }}</span>
+                <span>{{ card.times }}</span>
               </div>
 
-              <div class="cardTool_buttonGroup">
-                <div class="cardTool_plus" @click.stop="addCardNum(element)">
+              <div v-if="editable" class="cardTool_buttonGroup">
+                <div class="cardTool_plus" @click.stop="addCardNum(card)">
                   <!-- <o-icon pack="fas" icon="plus"> </o-icon> -->
                   <o-button variant="danger" icon-right="plus" size="small" />
                 </div>
-                <div class="cardTool_minus" @click.stop="decrementCardNum(element)">
+                <div class="cardTool_minus" @click.stop="decrementCardNum(card)">
                   <o-button variant="info" icon-right="minus" size="small" />
                 </div>
               </div>
             </div>
 
-            <div class="delele-button hidden" @click.stop="deleteCard(element)">X</div>
+            <div 
+              v-if="editable"
+              class="delele-button hidden"
+              @click.stop="deleteCard(card)"
+            >X</div>
           </div>
         </div>
       </template>
-    </draggable>
+    </div>
   </div>
 </template>
 
@@ -60,97 +56,48 @@ import { onMounted, getCurrentInstance, computed } from 'vue';
 import draggable from 'vuedraggable'
 import { SourceCard, SourceDeck } from '@/entities/Deck'
 import TextCard from '../elements/TextCard.vue'
+import { isPhone } from '@/helpers/Util';
+import { useRoomStore } from '@/stores/room';
 
 const props = defineProps<{
-  cards: SourceCard
+  cards: SourceCard[]
   side: string
-  deck: SourceDeck
+  editable: boolean
 }>()
 
+const emit = defineEmits<{
+  'delete-card': [SourceCard]
+  'save-deck': []
+}>()
 // const store = useStore()
 
-const deckCards = computed({
-  get() {
-    return props.cards;
-  },
-  set(newVal) {
-    // すでに含まれているカードがあれば更新しない。
-    if (
-      props.cards.find(
-        (c) => c.imageUrl === this.$store.state.builder.draggingCard.imageUrl
-      )
-    ) {
-      console.log("すでに含まれているカードです。");
-      return;
-    }
-    this.$emit("update:cards", newVal);
-  },
+const deckCards = computed(() => {
+  return props.cards;
 })
-const cardWidth = computed(() => 100)
+const cardWidth = computed(() => 80)
 
 let instance: ReturnType<typeof getCurrentInstance> = null
 onMounted(() => {
   instance = getCurrentInstance();
 });
-
-function dragCardStart(event) {
-  const card = props.cards[event.oldIndex];
-  instance.parent.dragging = {
-    card: card,
-    side: this.side,
-  };
-}
-function cloneNew(original) {
-  let after = Object.assign({}, original);
-  after.times = 0;
-  return after;
-}
-function checkMove(event) {
-  // 要検討
-  // 他のデッキリストに移動したいかチェックしたい
-  const targetZone = event.to.getAttribute("data-side");
-  if (targetZone !== event.from.getAttribute("data-side")) {
-    for (let c of instance.parent[targetZone]["deckData"]["cards"]) {
-      if (c.imageUrl === event.draggedContext.element.imageUrl) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-function addCardNum(card) {
+function addCardNum(card: SourceCard) {
   if (card.times <= 3) {
     card.times += 1;
   }
+  emit('save-deck')
 }
-function decrementCardNum(card) {
-  if (card.times === 0) {
-    if (window.confirm("削除してもよろしいですか?")) {
-      // this.$emit('delete-card', card, this.side);
-      this.deleteCard(card);
-    }
-  }
+function decrementCardNum(card: SourceCard) {
   if (card.times > 0) {
     card.times -= 1;
   }
+  emit('save-deck')
 }
-function deleteCard(card) {
-  let filterd = [];
-  for (let c of this.cards) {
-    if (c.imageUrl !== card.imageUrl) {
-      filterd.push(c);
-    }
-  }
-  instance.parent[this.side]["deckData"]["cards"] = filterd;
+function deleteCard(card: SourceCard) {
+  emit('delete-card', card)
 }
-function onMove(evt) {
-  // https://github.com/SortableJS/vue.draggable.next#move
-  // evt.draggedContext.element.time = 0;
-  this.setDraggingCard(evt.draggedContext.element);
-}
-function onDragstart(evt) {
-  this.setDraggingCard(evt.item.__draggable_context);
-}
+
+// hovered card
+const roomStore = useRoomStore()
 </script>
 
 <style lang="scss" scoped>
@@ -159,7 +106,6 @@ function onDragstart(evt) {
   flex-wrap: wrap;
   padding: 10px;
   > * {
-    width: 100px;
     margin: 0 10px 15px 0px;
   }
 }
@@ -194,10 +140,11 @@ function onDragstart(evt) {
     align-items: center;
     height: 30px;
     width: 100%;
-    &_times {
-      margin-left: 5px;
+    .cardTool_times {
+      margin-left: 2px;
       margin-right: auto;
       font-weight: 500;
+      font-size: 14px;
     }
     &_buttonGroup {
       display: flex;

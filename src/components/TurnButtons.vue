@@ -17,6 +17,7 @@
         class="turnButtons_currentTurn"
         :class="{
           startTurn: gameLogger.currentHistory?.method === 'startTurn'
+            && gameLogger.currentHistory?.player === player
         }"
         style="margin-left: 8px;"
         variant="grey-dark"

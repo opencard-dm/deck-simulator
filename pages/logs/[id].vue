@@ -1,14 +1,16 @@
 <template>
-  <DuelRoom
-    :upper-player="'b'"
-    :lower-player="'a'"
-    :card-actions="cardActions"
-    :game-logger="gameLogger"
-    :players="players"
-    :roomId="roomId"
-    :single="true"
-    :sourceDeck="sourceDeck"
-  ></DuelRoom>
+  <ClientOnly>
+    <DuelRoom
+      :upper-player="'b'"
+      :lower-player="'a'"
+      :card-actions="cardActions"
+      :game-logger="gameLogger"
+      :players="players"
+      :roomId="roomId"
+      :single="true"
+      :sourceDeck="sourceDeck"
+    ></DuelRoom>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -25,7 +27,7 @@ import { useRoomStore } from '@/stores/room';
 import { startTurnParams } from '@/helpers/TurnActions';
 
 const route = useRoute()
-const logId = route.params.log_id as string
+const logId = route.params.id as string
 const roomId = 'single'
 
 const players = reactive(initialData(roomId).players)
@@ -38,16 +40,10 @@ const roomStore = useRoomStore()
 fetchLog(logId).then(async log => {
   const deck = log.deck
   sourceDeck.value = deck
-  const cardIds: string[] = []
-  deck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-  deck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-  deck.grCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-  const { data: cards } = await axios.get('/api/cards', {
-    params: {
-      cardIds: cardIds.join(',')
-    }
-  })
-  roomStore.addCardDetails(cards)
+  fetchCardDetails(deck)
+  if (log.deckb) {
+    fetchCardDetails(log.deckb)
+  }
   const firstTurnId = log.histories.find(h =>
     h.method === 'startTurn' && h.args.player === 'a'
   )?.id
@@ -63,6 +59,9 @@ fetchLog(logId).then(async log => {
       if (history.method === 'startTurn') {
         players[history.args.player].turn.total = (history.args as startTurnParams).turn
       }
+      if (history.player === 'b' && !players.b.isReady) {
+        players.b.isReady = true
+      }
     }
   }
   gameLogger.histories = log.histories
@@ -71,9 +70,23 @@ fetchLog(logId).then(async log => {
 async function fetchLog(logId: string): Promise<{
   name: string,
   deck: SourceDeck,
+  deckb: SourceDeck|null,
   histories: GameHistory[],
 }> {
   const { data: log } = await axios.get(`/api/logs/${logId}`)
   return log
+}
+
+async function fetchCardDetails(deck: SourceDeck) {
+  const cardIds: string[] = []
+  deck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+  deck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+  deck.grCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+  const { data: cards } = await axios.get('/api/cards', {
+    params: {
+      cardIds: cardIds.join(',')
+    }
+  })
+  roomStore.addCardDetails(cards)
 }
 </script>

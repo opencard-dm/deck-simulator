@@ -251,7 +251,6 @@ function changeCards(card: Card) {
 </script>
 
 <style lang="scss">
-@import "@/assets/scss/mixin.scss";
 @function cardHeight($value) {
   @return calc($value * 908 / 650);
 }

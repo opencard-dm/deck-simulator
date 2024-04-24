@@ -36,15 +36,10 @@
 
 <script setup lang="ts">
 import jsonDecks from '@/decks.json'
-import localJsonDecks from '@/decks.local.json'
 import { SourceDeck } from '@/entities/Deck'
 import { Features } from '@/features';
 
 const decks: SourceDeck[] = jsonDecks as any
-
-if (import.meta.env.DEV) {
-  decks.push(...localJsonDecks as any[])
-}
 
 function getLogs(deckName: string): {id: string, name: string}[] {
   const logs = {

@@ -4,6 +4,7 @@ import { Card, CardGroup } from "@/entities/Card";
 import { Deck } from "@/entities/Deck";
 import { GameLogger } from "./GameLogger";
 import { RoomConfig, initialData } from "./room";
+import { cardData } from "./CardData";
 
 export interface moveCardsParams {
   from: zone
@@ -168,6 +169,14 @@ export class CardActions {
       cardsCopy.forEach((c) => {
         c.markColor = ''
         c.tapped = false
+      })
+    }
+    // 多色カードはタップしてマナに置く
+    if (to === 'manaCards') {
+      cardsCopy.forEach(c => {
+        if (cardData(c).isRainbow()) {
+          c.tapped = true
+        }
       })
     }
     this.players[player]['cards'][from] = Util.arrayRemoveCards(

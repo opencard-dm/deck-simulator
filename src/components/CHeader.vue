@@ -62,6 +62,7 @@
         <div class="nav-item">
           <SaveLogForm 
             :deck="deck"
+            :deckb="deckb"
             :gameLogger="gameLogger"
           />
         </div>
@@ -115,6 +116,7 @@ const props = defineProps<{
   gameLogger: GameLogger,
   currentPlayer: player,
   deck: SourceDeck|null
+  deckb: SourceDeck|null
 }>()
 
 const emit = defineEmits([
@@ -124,9 +126,8 @@ const emit = defineEmits([
 
 const headerHeight = `${Layout.headerHeight()}px`
 
-// TODO: ログ保存機能は非公開
-const canSaveLog = computed(() => import.meta.env.DEV 
-  && props.deck && props.deck.source === 'airtable')
+const config = useRuntimeConfig()
+const canSaveLog = computed(() => props.deck && props.deck.source !== 'googleSheet')
 
 const isMounted = ref(false);
 onMounted(() => {

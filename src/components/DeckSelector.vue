@@ -8,6 +8,9 @@
     <div id="deck-form" v-if="!isReady">
       <p class="deckForm_p">デッキを選択してください</p>
       <select name="deck" v-model="deckId">
+        <option v-for="deck in firebaseDecks" :key="deck.id" :value="'firebase-' + deck.id">
+          {{ deck.name }}
+        </option>
         <template v-for="(decksSource, sourceIndex) in userDecks" :key="sourceIndex">
           <option v-for="deck in decksSource.decks" :value="sourceIndex + '-' + deck.name">
             {{ deck.name }}
@@ -106,6 +109,7 @@ import deckList from '../decks.json'
 import { Features } from "@/features";
 import { useDecksStore } from "@/stores/decks";
 import { useRoomStore } from "@/stores/room";
+import { getUserDecks } from "./builder/decks";
 
 const route = useRoute()
 const router = useRouter()
@@ -163,7 +167,12 @@ const inviteLink = computed(() => {
     "&player=b"
   );
 })
-onMounted(() => {
+const firebaseDecks = reactive<SourceDeck[]>([])
+onMounted(async () => {
+  const decks = await getUserDecks()
+  if (decks && decks.length > 0) {
+    firebaseDecks.push(...decks)
+  }
   // axios
   //     .get('/api/decks')
   //     .then((res) => {

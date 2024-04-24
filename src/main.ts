@@ -17,6 +17,10 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 vueApp.use(pinia)
 
+import { useAuthStore } from './stores/auth'
+const authStore = useAuthStore()
+authStore.listenAuthStateChange()
+
 //
 // useConfig
 import useConfig from './plugins/useConfig'

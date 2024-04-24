@@ -4,7 +4,6 @@ body {
 }
 .app-wrapper {
   position: relative;
-  overflow-x: scroll;
   // スクロールバーのスタイル
   ::-webkit-scrollbar {
     width: 8px;
@@ -95,4 +94,9 @@ body {
   .click:hover {
     color: rgb(122, 117, 117);
   }
+}
+
+.h2 {
+  font-size: 18px;
+  font-weight: 500;
 }

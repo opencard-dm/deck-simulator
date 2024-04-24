@@ -20,6 +20,7 @@ type cardType = 'ツインパクト'
     | 'GR'
     | 'オレガ・オーラ'
     | 'タマシード'
+    | 'セル'
 
 export interface CardDetail {
     id: string
@@ -29,7 +30,7 @@ export interface CardDetail {
     name: string
     name_ruby?: string
     image_paths?: string[]
-    types?: cardType[]
+    types: cardType[]
     power: string | null
     power_int?: number
     cost: number
@@ -46,6 +47,7 @@ export interface Deck {
     chojigenCards: Card[]
     grCards: Card[]
     cardDetails?: {[key: string]: CardDetail}
+    hasChojigen: boolean
 }
 
 export interface DecksSource {
@@ -54,8 +56,10 @@ export interface DecksSource {
 }
 
 export interface SourceDeck {
+    /** firestoreのid */
+    id?: string
     name: string
-    source: string
+    source: 'firebase' | 'airtable' | 'googleSheet' | 'builtin'
     cards: SourceCard[]
     chojigenCards: SourceCard[]
     grCards: SourceCard[]
@@ -63,8 +67,8 @@ export interface SourceDeck {
 }
 
 export interface SourceCard {
-    imageUrl: string
-    name: string
+    imageUrl?: string
+    name?: string
     cd: string
     backImageUrl?: string
     times: number

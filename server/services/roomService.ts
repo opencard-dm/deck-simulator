@@ -1,8 +1,8 @@
 
 import { GameHistory } from '@/entities/History'
-import { FireStore } from '../server/firestore'
+import { FireStore } from '../firestore'
 import { SourceDeck } from '@/entities/Deck'
-import { FieldPath } from 'firebase-admin/firestore'
+import { FieldPath, FieldValue } from 'firebase-admin/firestore'
 
 export async function createRoom(roomId: string, cookie: string) {
   const roomDoc = await FireStore.db.doc(`/envs/${FireStore.env}/rooms/${roomId}`).get()
@@ -19,21 +19,6 @@ export async function deleteRoom(roomId: string) {
     histories: [],
     ttl: FireStore.Timestamp.fromMillis(Date.now() + (1 * 60 * 60 * 1000)),
   }, { merge: true })
-}
-
-export async function createLog(name: string, deck: SourceDeck, histories: GameHistory[]) {
-  const doc = await FireStore.db.collection('logs').add({
-    name,
-    deck,
-    histories,
-    createdAt: (new Date()).toISOString()
-  })
-  return doc
-}
-
-export async function getLog(logId: string) {
-  const logDoc = await FireStore.db.doc(`/logs/${logId}`).get()
-  return logDoc
 }
 
 export async function getCardsByIds(ids: string[]) {
