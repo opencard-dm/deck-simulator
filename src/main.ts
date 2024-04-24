@@ -6,10 +6,6 @@ import './assets/scss/layout.scss'
 
 const vueApp = createApp(App)
 
-// vue router
-import router from './router'
-vueApp.use(router)
-
 // pinia
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
