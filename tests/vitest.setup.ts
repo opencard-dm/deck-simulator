@@ -6,19 +6,17 @@ import App from '@/app.vue'
 
 const vueApp = createApp(App)
 
-// vue router
-import router from '@/router'
-vueApp.use(router)
-
 //
 // useConfig
 import useConfig from '@/plugins/useConfig'
 vueApp.use(useConfig)
 
-//
-// oruga ui
-import { useOruga } from '@/plugins/oruga'
-useOruga(vueApp)
+// pinia
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+vueApp.use(pinia)
 
 // import ClientOnlyStub from './stub/ClientOnlyStub.vue'
 // // Mock Router components

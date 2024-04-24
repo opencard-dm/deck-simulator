@@ -1,10 +1,11 @@
-import { deckList } from '@/helpers/data'
+import deckList from '@/decks.json'
 import { Deck } from '@/helpers/Deck'
 import { initialData } from './room'
 import { CardActions } from './CardActions'
 import { expect } from 'vitest'
 import { GameLogger } from './GameLogger'
 import { it } from 'vitest'
+import { SourceDeck } from '@/entities/Deck'
 
 it('カードのグループ化', async () => {
   const deck = await Deck.prepareDeckForGame(
@@ -43,7 +44,7 @@ it('カードのグループ化', async () => {
 
 it('山札を裏返す、重ねる、やり直す', async () => {
   const deck = await Deck.prepareDeckForGame(
-    Deck.convertGmFormat(deckList[0] as any),
+    deckList[0] as SourceDeck,
     true,
     true
   )
@@ -52,6 +53,10 @@ it('山札を裏返す、重ねる、やり直す', async () => {
   
   const cardActions = new CardActions('test', players)
   const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
+  gameLogger.turnActions.startTurn({
+    turn: 1,
+    player: 'a',
+  })
   const playerCards = players.a.cards
   cardActions.moveCards({
     from: 'tefudaCards',
@@ -86,7 +91,7 @@ it('山札を裏返す、重ねる、やり直す', async () => {
 
 it('ギャラクシールド', async () => {
   const deck = await Deck.prepareDeckForGame(
-    Deck.convertGmFormat(deckList[0] as any),
+    deckList[0] as SourceDeck,
     true,
     true
   )
@@ -95,6 +100,10 @@ it('ギャラクシールド', async () => {
   
   const cardActions = new CardActions('test', players)
   const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
+  gameLogger.turnActions.startTurn({
+    turn: 1,
+    player: 'a',
+  })
   const playerCards = players.a.cards
   const firstTefudaCardId = playerCards.tefudaCards[0].id
   const firstShieldCardId = playerCards.shieldCards[0].id
