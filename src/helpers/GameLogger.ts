@@ -1,4 +1,3 @@
-import { SocketUtil } from "./socket"
 import { player } from "@/entities"
 import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "./CardActions"
 import { reactive } from 'vue'
@@ -134,9 +133,6 @@ export class GameLogger {
       default:
         break;
     }
-    if (SocketUtil.socket) {
-      SocketUtil.socket.emit('pop-history', history)
-    }
   }
 
   canredo() {
@@ -194,9 +190,6 @@ export class GameLogger {
       }
       this.histories.push(history)
       this.historyIndex = this.histories.length - 1
-    }
-    if (SocketUtil.socket) {
-      SocketUtil.socket.emit('append-history', history)
     }
   }
 
