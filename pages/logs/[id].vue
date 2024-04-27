@@ -20,11 +20,12 @@ import DuelRoom from '@/components/DuelRoom.vue';
 import { RoomConfig, initialData } from '@/helpers/room';
 import { reactive, ref } from 'vue';
 import { CardActions } from '@/helpers/CardActions';
-import { GameLogger } from '@/helpers/GameLogger';
+import { GameLogger } from '../../core/usecase/GameLogger';
 import { SourceDeck } from '@/entities/Deck';
-import { GameHistory } from '@/entities/History';
+import { GameHistory } from '../../core/entities/game';
 import { useRoomStore } from '@/stores/room';
 import { startTurnParams } from '@/helpers/TurnActions';
+import { fetchLog } from '../../core/services/log.service'
 
 const route = useRoute()
 const logId = route.params.id as string
@@ -67,15 +68,6 @@ fetchLog(logId).then(async log => {
   gameLogger.histories = log.histories
 })
 
-async function fetchLog(logId: string): Promise<{
-  name: string,
-  deck: SourceDeck,
-  deckb: SourceDeck|null,
-  histories: GameHistory[],
-}> {
-  const { data: log } = await axios.get(`/api/logs/${logId}`)
-  return log
-}
 
 async function fetchCardDetails(deck: SourceDeck) {
   const cardIds: string[] = []
