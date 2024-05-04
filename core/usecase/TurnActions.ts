@@ -1,6 +1,6 @@
 import { player } from "@/entities";
 import { GameLogger } from "./GameLogger";
-import { RoomConfig } from "./room";
+import { RoomConfig } from "../../src/helpers/room";
 
 export interface startTurnParams {
   /** 開始したいターンのターン数.

@@ -7,7 +7,7 @@ export async function fetchLog(logId: string): Promise<GameLog> {
     name: logData.name,
     deck: logData.deck,
     deckb: logData.deckb,
-    histories: logData.histories.map((h: GameHistoryData) => GameHistory.formData(h))
+    histories: logData.histories.map((h: GameHistoryData) => GameHistory.fromData(h))
   }
   return log
 }

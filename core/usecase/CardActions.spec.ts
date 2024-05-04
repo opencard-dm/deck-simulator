@@ -1,6 +1,6 @@
 import deckList from '@/decks.json'
 import { Deck } from '@/helpers/Deck'
-import { initialData } from './room'
+import { initialData } from '../../src/helpers/room'
 import { CardActions } from './CardActions'
 import { expect } from 'vitest'
 import { GameLogger } from './GameLogger'

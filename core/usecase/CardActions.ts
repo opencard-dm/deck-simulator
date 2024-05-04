@@ -1,10 +1,11 @@
 import { zone, player, cardState, groupableZone, playerCards } from "@/entities";
-import { Util } from "./Util";
+import { Util } from "@/helpers/Util";
 import { Card, CardGroup } from "@/entities/Card";
 import { Deck } from "@/entities/Deck";
 import { GameLogger } from "./GameLogger";
-import { RoomConfig, initialData } from "./room";
-import { cardData } from "./CardData";
+import { RoomConfig } from "@/helpers/room";
+import { cardData } from "@/helpers/CardData";
+import { Game } from "../entities/game";
 
 export interface moveCardsParams {
   from: zone
@@ -41,11 +42,11 @@ export class CardActions {
 
   private gameLogger?: GameLogger
   /**
-   * @param players reactive
+   * @param game reactive
    */
   constructor(
     public roomId: string,
-    public players: ReturnType<typeof initialData>['players']
+    public game: Game
   ) {}
 
   setGameLogger(gameLogger: GameLogger) {
@@ -73,19 +74,19 @@ export class CardActions {
   moveCards({ from, to, cards, player, prepend, index }: moveCardsParams) {
     if (!cards || cards.length === 0) return;
     // カードにインデックスを付与する
-    this.players[player].cards[from].forEach((card, index) => {
+    this.game.players[player].cards[from].forEach((card, index) => {
       card.index = index
     })
     const card = cards[0];
     if (card.groupId && cards.length === 1) {
       // 先頭のカードがグループに属していた場合、そのグループから抜ける。
       // NOTE: グループの中で一番最後のカードがベースとなる
-      const toCard = this.players[player].cards[from].filter(c => c.groupId === card.groupId
+      const toCard = this.game.players[player].cards[from].filter(c => c.groupId === card.groupId
         && c.id !== card.id).slice(-1)[0]
       const fromCard = {
         ...card,
         groupId: null,
-        index: prepend ? 0 : this.players[player].cards[to].length,
+        index: prepend ? 0 : this.game.players[player].cards[to].length,
       }
       this.gameLogger?.undoGroupCard({
         from: to as groupableZone,
@@ -142,7 +143,7 @@ export class CardActions {
         cards: deck.chojigenCards,
         player,
       })
-      this.players[player].hasChojigen = true
+      this.game.players[player].hasChojigen = true
     }
   }
 
@@ -179,26 +180,26 @@ export class CardActions {
         }
       })
     }
-    this.players[player]['cards'][from] = Util.arrayRemoveCards(
-      this.players[player]['cards'][from],
+    this.game.players[player]['cards'][from] = Util.arrayRemoveCards(
+      this.game.players[player]['cards'][from],
       cardsCopy
     );
     if (index !== undefined && cardsCopy.length === 1) {
       if (index === 0) {
-        this.players[player]['cards'][to].unshift(card)
+        this.game.players[player]['cards'][to].unshift(card)
       } else {
-        this.players[player]['cards'][to].splice(index, 0, card)
+        this.game.players[player]['cards'][to].splice(index, 0, card)
       }
       return
     }
     if (prepend) {
-      this.players[player]['cards'][to] = Util.arrayPrependCards(
-        this.players[player]['cards'][to],
+      this.game.players[player]['cards'][to] = Util.arrayPrependCards(
+        this.game.players[player]['cards'][to],
         cardsCopy
       )
     } else {
-      this.players[player]['cards'][to] = Util.arrayAppendCards(
-        this.players[player]['cards'][to],
+      this.game.players[player]['cards'][to] = Util.arrayAppendCards(
+        this.game.players[player]['cards'][to],
         cardsCopy
       )
     }
@@ -223,7 +224,7 @@ export class CardActions {
 
   changeCardsStateWithoutHistory({ from, cards, player, cardState }: changeCardsStateParams) {
     const cardIds = cards.map((c) => c.id);
-    this.players[player]["cards"][from].forEach((c: Card) => {
+    this.game.players[player]["cards"][from].forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
       if (cardState?.tapped !== undefined) {
         c.tapped = cardState.tapped
@@ -239,7 +240,7 @@ export class CardActions {
 
   undoCardsState({ from, cards, player }: changeCardsStateParams) {
     const cardIds = cards.map((c) => c.id);
-    this.players[player]["cards"][from].forEach((c: Card) => {
+    this.game.players[player]["cards"][from].forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
       for (const card of cards) {
         if (card.id === c.id) {
@@ -254,7 +255,7 @@ export class CardActions {
 
   groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
     // カードにインデックスを付与する
-    this.players[player].cards[from].forEach((card, index) => {
+    this.game.players[player].cards[from].forEach((card, index) => {
       card.index = index
     })
     this.gameLogger?.groupCard({ from, to, fromCard, toCard, player })
@@ -271,8 +272,8 @@ export class CardActions {
       this.moveCardsWithoutHistory({ from, to, cards: [fromCard], player, prepend: false })
     }
     // NOTE: redoのときはポインタが外れているため対象のカードをIDで探す
-    const toCards: Card[] = this.players[player]["cards"][to]
-    const fromCards: Card[] = this.players[player]["cards"][from]
+    const toCards: Card[] = this.game.players[player]["cards"][to]
+    const fromCards: Card[] = this.game.players[player]["cards"][from]
     const toCardRef = toCards.find(c => c.id === toCard.id) as Card
     const fromCardRef = toCards.find(c => c.id === fromCard.id) as Card
 
@@ -284,7 +285,7 @@ export class CardActions {
       if (from === to && to === 'battleCards') {
         toCardRef.groupId = fromCardRef.groupId
         getCardGroup(fromCards, fromCardRef.groupId).cards.forEach(c => {
-          Util.arrayInsertBefore(this.players[player]['cards'][to], toCardRef, c);
+          Util.arrayInsertBefore(this.game.players[player]['cards'][to], toCardRef, c);
         })
       }
       return
@@ -292,7 +293,7 @@ export class CardActions {
     // 単独カードをグループに重ねる場合、単独カードを上に
     if (toCardRef.groupId && !fromCardRef.groupId) {
       fromCardRef.groupId = toCardRef.groupId
-      Util.arrayInsertBefore(this.players[player]['cards'][to], toCardRef, fromCardRef);
+      Util.arrayInsertBefore(this.game.players[player]['cards'][to], toCardRef, fromCardRef);
       // 状態を引き継ぐ
       fromCardRef.tapped = toCardRef.tapped
       return
@@ -312,7 +313,7 @@ export class CardActions {
 
   undoGroupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
     let cardsInGroup = 0
-    const cards: Card[] = this.players[player]["cards"][to]
+    const cards: Card[] = this.game.players[player]["cards"][to]
     const groupId = cards.find(c => c.id === fromCard.id)?.groupId as string
     if (fromCard.groupId) {
       if (from === to && to === 'battleCards') {
@@ -348,7 +349,7 @@ export class CardActions {
     player: player,
     zone: zone,
   }) {
-    const cards: Card[] = this.players[player]["cards"][zone]
+    const cards: Card[] = this.game.players[player]["cards"][zone]
     const groupId = card.groupId
     card.groupId = ''
     const cardsInGroup = cards.filter(c => c.groupId === groupId).length

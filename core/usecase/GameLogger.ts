@@ -1,12 +1,12 @@
 import { player } from "@/entities"
-import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "@/helpers/CardActions"
+import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "@@/core/usecase/CardActions"
 import { reactive } from 'vue'
 import { RoomConfig, initialData } from "@/helpers/room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
 import { cardActionMethodParams } from "@/entities/History"
 import { GameHistory } from "../entities/game"
 import { v4 as uuidv4 } from 'uuid'
-import { TurnActions, startTurnParams } from "@/helpers/TurnActions"
+import { TurnActions, startTurnParams } from "@@/core/usecase/TurnActions"
 import { state } from "@/store"
 import { readableZone } from "@/components/zones/zone"
 import { Card } from "@/entities/Card"
@@ -27,7 +27,7 @@ export class GameLogger {
     private cardActions: CardActions,
     private who: player = 'a'
   ) {
-    this.players = cardActions.players
+    this.players = cardActions.game.players
     this.turnActions = new TurnActions()
     this.turnActions.setGameLogger(this)
     this.firstPlayer = 'a'
@@ -166,7 +166,7 @@ export class GameLogger {
   }
 
   appendHistory(method: GameHistory['method'], args: cardActionMethodParams, message='') {
-    const history: GameHistory = {
+    const history: GameHistory = GameHistory.fromData({
       id: uuidv4(),
       canundo: true,
       who: this.who,
@@ -174,7 +174,7 @@ export class GameLogger {
       method,
       args,
       message,
-    }
+    })
     // 履歴を切り捨てる
     if (this.historyIndex < this.histories.length - 1) {
       console.debug(`deleted ${this.histories.length - this.historyIndex - 1} histories.`)

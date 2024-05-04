@@ -1,22 +1,51 @@
-import { SourceDeck } from "@/entities/Deck"
+import { CardDetail, SourceDeck } from "@/entities/Deck"
 import { player } from "./player"
 import { cardActionMethodParams } from "@/entities/History"
+import { Zone } from "./zones"
 
 export class Game {
-  public players: {
-    a: GamePlayer
-    b: GamePlayer
-  }
-  public histories: GameHistory[]
 
-  constructor() {
-    this.players = {
+  private constructor(
+    public players: {
+      a: GamePlayer
+      b: GamePlayer
+    },
+    public histories: GameHistory[],
+    public cardDetails: { [key:string]: CardDetail }
+  ) { }
+
+  static init() {
+    const players = {
       a: new GamePlayer('a'),
       b: new GamePlayer('b'),
     }
-    this.histories = []
+    return new Game(
+      players,
+      [],
+      {}
+    )
   }
 
+  static fromData(data: GameData) {
+    const players = {
+      a: GamePlayer.fromData(data.players.a),
+      b: GamePlayer.fromData(data.players.b),
+    }
+    return new Game(
+      players,
+      data.histories.map(h => GameHistory.fromData(h)),
+      data.cardDetails
+    )
+  }
+}
+
+export type GameData = {
+  players: {
+    a: GamePlayer
+    b: GamePlayer
+  }
+  histories: GameHistoryData[]
+  cardDetails: { [key:string]: CardDetail }
 }
 
 export type GameLog = {
@@ -28,6 +57,15 @@ export type GameLog = {
 
 export class GamePlayer {
   public turn
+  public deck: SourceDeck|null = null
+  public manaZone: Zone
+  public battleZone: Zone
+  public bochiZone: Zone
+  public shieldZone: Zone
+  public tafudaZone: Zone
+  public yamafudaZone: Zone
+  public chojigenZone: Zone
+  public triggeredAbilities: Zone
 
   constructor(
     public name: string,
@@ -36,15 +74,32 @@ export class GamePlayer {
       current: 0,
       total: 0
     }
+    // TODO: zoneに置き換える
+    this.cards = {
+      manaCards: [],
+      battleCards: [],
+      bochiCards: [],
+      shieldCards: [],
+      tefudaCards: [],
+      yamafudaCards: [],
+      chojigenCards: [],
+    }
 
-    // public manaZone: zone,
-    // public battleZone: zone,
-    // public bochiZone: zone,
-    // public shieldZone: zone,
-    // public tafudaZone: zone,
-    // public yamafudaZone: zone,
-    // public chojigenZone: zone,
-    // public triggeredAbilities: zone,
+    this.manaZone = Zone.init()
+    this.battleZone = Zone.init()
+    this.bochiZone = Zone.init()
+    this.shieldZone = Zone.init()
+    this.tafudaZone = Zone.init()
+    this.yamafudaZone = Zone.init()
+    this.chojigenZone = Zone.init()
+    this.triggeredAbilities = Zone.init()
+  }
+
+  static fromData(data: GamePlayer) {
+    const self = new GamePlayer(data.name)
+    self.turn = data.turn
+    self.deck = data.deck
+    return self
   }
 }
 
@@ -71,7 +126,7 @@ export class GameHistory {
 
   }
 
-  static formData(data: GameHistoryData) {
+  static fromData(data: GameHistoryData) {
     return new GameHistory(
       data.id,
       data.canundo,
