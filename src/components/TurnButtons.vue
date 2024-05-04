@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { player as playerType } from '@/entities';
-import { GameLogger } from '@/helpers/GameLogger';
+import { GameLogger } from '@@/core/usecase/GameLogger';
 import { isPhone } from '@/helpers/Util';
 import { initialData } from '@/helpers/room';
 

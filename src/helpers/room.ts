@@ -8,6 +8,7 @@ import { RoomProps } from '@/components';
 import { Deck } from '@/entities/Deck';
 import axios from 'axios';
 import { useRoomStore } from '@/stores/room';
+import { Game } from '@@/core/entities/game';
 
 export class RoomConfig {
   static useFirebase = false
@@ -145,6 +146,8 @@ export function useRoomSetup(props: RoomProps) {
   const route = useRoute();
   const roomId = route.query.roomId as string || 'single'
 
+  const players = props.game.players
+
   function scrollZone(targetSelector: string, direction: string) {
     const target = document.querySelector(targetSelector);
         if (!target) return
@@ -156,8 +159,9 @@ export function useRoomSetup(props: RoomProps) {
 
   async function resetGame() {
     // TODO: propsを書き換えない
-    props.players.a = initialData(roomId).players.a;
-    props.players.b = initialData(roomId).players.b;
+    const initialGame = Game.init()
+    players.a = initialGame.players.a;
+    players.b = initialGame.players.b;
     window.scrollTo({
       top: 0,
       // behavior: "smooth",
@@ -171,12 +175,12 @@ export function useRoomSetup(props: RoomProps) {
     }
     // 状態の変更を送信する
     if (!SocketUtil.socket) return;
-    SocketUtil.socket.emit("cards-moved", props.players.a);
-    SocketUtil.socket.emit("cards-moved", props.players.b);
+    SocketUtil.socket.emit("cards-moved", players.a);
+    SocketUtil.socket.emit("cards-moved", players.b);
   }
   return {
     ...useRoomListners({
-      players: props.players,
+      players,
       cardActions: props.cardActions,
       gameLogger: props.gameLogger,
       props,
@@ -184,7 +188,7 @@ export function useRoomSetup(props: RoomProps) {
     }),
     props,
     resetGame,
-    players: props.players,
+    players,
   }
 }
 

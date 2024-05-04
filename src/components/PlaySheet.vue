@@ -140,7 +140,7 @@ import { zoneEmit } from './zones/zone';
 import type { player, side } from '@/entities';
 import { Card } from '@/entities/Card';
 import { ref } from 'vue';
-import { GameLogger } from '@/helpers/GameLogger';
+import { GameLogger } from '@@/core/usecase/GameLogger';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{

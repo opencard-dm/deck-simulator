@@ -1,9 +1,8 @@
 import { player } from '@/entities'
 import MarkTool from './mark-tool/MarkTool.vue'
-import { CardActions } from '@/helpers/CardActions'
-import { GameLogger } from '@/helpers/GameLogger'
-import { Room } from '@/entities/Room'
-import { SourceDeck } from '@/entities/Deck'
+import { CardActions } from '@@/core/usecase/CardActions'
+import { GameLogger } from '@@/core/usecase/GameLogger'
+import { Game } from '@@/core/entities/game'
 
 export {
   MarkTool,
@@ -12,10 +11,9 @@ export {
 export type RoomProps = {
   upperPlayer: player
   lowerPlayer: player
+  game: Game
   cardActions: CardActions
   gameLogger: GameLogger
-  players: Room['players']
   roomId: string
   single: boolean
-  sourceDeck: SourceDeck|null
 }

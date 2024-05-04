@@ -101,6 +101,13 @@ export class GamePlayer {
     self.deck = data.deck
     return self
   }
+
+  isReady(): boolean {
+    if (this.deck) {
+      return true
+    }
+    return false
+  }
 }
 
 export type GameHistoryData = {

@@ -1,10 +1,9 @@
 <template>
   <div id="app" style="background-color: lightgray">
     <CHeader :single="single"
+      :game="game"
       :gameLogger="gameLogger"
       :currentPlayer="currentPlayer"
-      :deck="sourceDeck"
-      :deckb="deckb"
       @switch-tab="switchTab()"
       @reset-game="onResetGame()"
     ></CHeader>
@@ -13,7 +12,7 @@
       v-if="deckSelectorActiveWatch"
       v-model:active="deckSelectorActive"
       :player="currentPlayer"
-      :isReady="players[currentPlayer].isReady"
+      :isReady="players[currentPlayer].isReady()"
       :partnerIsReady="true"
       :cardActions="cardActions"
       @moveCards="onMoveCards"
@@ -56,7 +55,7 @@
               :cards="players[lowerPlayer].cards"
               :name="players[lowerPlayer].name"
               :roomId="players[lowerPlayer].roomId"
-              :isReady="players[lowerPlayer].isReady"
+              :isReady="players[lowerPlayer].isReady()"
               :hasChojigen="players[lowerPlayer].hasChojigen"
               :single="single"
               :started="started"
@@ -104,14 +103,14 @@
               ></TurnButtons>
             </div>
             <PlaySheet
-              v-if="players[upperPlayer].isReady"
+              v-if="players[upperPlayer].isReady()"
               :side="'lower'"
               :player="upperPlayer"
               :lowerPlayer="lowerPlayer"
               :cards="players[upperPlayer].cards"
               :name="players[upperPlayer].name"
               :roomId="players[upperPlayer].roomId"
-              :isReady="players[upperPlayer].isReady"
+              :isReady="players[upperPlayer].isReady()"
               :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
               :started="started"
@@ -182,9 +181,9 @@ function switchTab() {
     tabId.value = 1;
   }
   // NOTE: tabIdの変更後に記述する必要がある
-  if (!players[currentPlayer.value].isReady) {
+  if (!players[currentPlayer.value].isReady()) {
     if (players[currentPlayer.value].cards.yamafudaCards.length > 0) {
-      players[currentPlayer.value].isReady = true
+      // players[currentPlayer.value].isReady() = true
       return
     }
     deckSelectorActive.value = true;
@@ -195,10 +194,10 @@ const deckSelectorActive = ref(false);
 const deckSelectorActiveWatch = computed<boolean>({
   get() {
     if (players[currentPlayer.value].cards.yamafudaCards.length > 0) {
-      players[currentPlayer.value].isReady = true
+      // players[currentPlayer.value].isReady = true
       return false
     }
-    if (players[currentPlayer.value].isReady) {
+    if (players[currentPlayer.value].isReady()) {
       return false
     }
     return true
@@ -213,10 +212,10 @@ const logsViewer = ref(false)
 const playerZoneHeight = isPhone() ? `${Layout.playerZoneHeight(70)}px` : '';
 const isMounted = ref(false);
 onMounted(() => {
-  if (!players[currentPlayer.value].isReady) {
+  if (!players[currentPlayer.value].isReady()) {
     deckSelectorActive.value = true
   }
-    isMounted.value = true;
+  isMounted.value = true;
 });
 
 const {
@@ -272,18 +271,13 @@ function shuffleCards(from: zone, cards: Card[], player: player) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
-const deckb = ref<SourceDeck|null>(null)
 function onDeckSelected({ deck, sourceDeck }: {
   deck: DeckType,
   sourceDeck: SourceDeck,
 }) {
   if (props.single && currentPlayer.value === 'b') {
-    deckb.value = sourceDeck
+    players.b.deck = sourceDeck
   }
   onSelectDeck(currentPlayer.value, deck)
-}
-
-function setMessage() {
-  //
 }
 </script>

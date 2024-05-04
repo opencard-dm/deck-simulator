@@ -61,8 +61,7 @@
       <nav class="nav-links" v-if="canSaveLog">
         <div class="nav-item">
           <SaveLogForm 
-            :deck="deck"
-            :deckb="deckb"
+            :game="game"
             :gameLogger="gameLogger"
           />
         </div>
@@ -105,18 +104,15 @@ import { Layout } from '@/helpers/layout'
 import SaveLogForm from '@/components/SaveLogForm.vue'
 import { computed, onMounted, ref } from 'vue';
 import { isPhone } from '@/helpers/Util';
-import { GameLogger } from '@/helpers/GameLogger';
+import { GameLogger } from '@@/core/usecase/GameLogger';
 import { player } from '@/entities';
-import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
-import { SourceDeck } from '@/entities/Deck';
+import { Game } from '@@/core/entities/game';
 
 const props = defineProps<{
   single: boolean,
+  game: Game,
   gameLogger: GameLogger,
   currentPlayer: player,
-  deck: SourceDeck|null
-  deckb: SourceDeck|null
 }>()
 
 const emit = defineEmits([
@@ -126,8 +122,7 @@ const emit = defineEmits([
 
 const headerHeight = `${Layout.headerHeight()}px`
 
-const config = useRuntimeConfig()
-const canSaveLog = computed(() => props.deck && props.deck.source !== 'googleSheet')
+const canSaveLog = computed(() => props.game.players.a.deck && props.game.players.a.deck.source !== 'googleSheet')
 
 const isMounted = ref(false);
 onMounted(() => {
@@ -146,7 +141,7 @@ function undo() {
   if (!props.gameLogger.canundo()) {
     return
   }
-  if (isPhone() && props.currentPlayer !== props.gameLogger.currentHistory.player) {
+  if (isPhone() && props.currentPlayer !== props.gameLogger.currentHistory?.player) {
     emit('switch-tab')
     return
   }

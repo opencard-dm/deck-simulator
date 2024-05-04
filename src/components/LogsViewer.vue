@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { state } from '@/store'
-import { GameLogger } from '@/helpers/GameLogger';
+import { GameLogger } from '@@/core/usecase/GameLogger';
 import { useRoomStore } from '@/stores/room';
 
 const roomStore = useRoomStore()

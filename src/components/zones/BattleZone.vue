@@ -162,7 +162,7 @@ import { Card } from "@/entities/Card";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
-import { GameLogger, HistoryComparator } from "@/helpers/GameLogger";
+import { GameLogger, HistoryComparator } from "@@/core/usecase/GameLogger";
 import { groupCardParams } from "@/helpers/CardActions";
 
 const cardWidth = isPhone() ? 80 : 100

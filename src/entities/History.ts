@@ -1,6 +1,6 @@
-import { moveCardsParams, changeCardsStateParams, groupCardParams } from "@/helpers/CardActions"
+import { moveCardsParams, changeCardsStateParams, groupCardParams } from "@@/core/usecase/CardActions"
 import { player } from "."
-import { startTurnParams } from "@/helpers/TurnActions"
+import { startTurnParams } from "@@/core/usecase/TurnActions"
 
 export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | startTurnParams
 
