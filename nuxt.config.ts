@@ -19,7 +19,8 @@ export default defineNuxtConfig({
         },
     },
     alias: {
-        "@": 'src/'
+        "@": 'src/',
+        "@@": "/<rootDir>",
     },
     modules: [
         '@pinia/nuxt',
@@ -43,7 +44,8 @@ export default defineNuxtConfig({
     vite: {
         resolve: {
             alias: {
-                '@': path.resolve(__dirname, './src')
+                '@': path.resolve(__dirname, './src'),
+                '@@': path.resolve(__dirname, '.')
             },
         },
         plugins: [
