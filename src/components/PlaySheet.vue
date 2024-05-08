@@ -31,7 +31,7 @@
     <TefudaZone
       :side="side"
       :player="player"
-      :cards="cards.tefudaCards"
+      :cards="game.players[player].tefudaZone.cards"
       :single="single"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
@@ -105,7 +105,7 @@
     <TefudaZone
       :side="side"
       :player="player"
-      :cards="cards.tefudaCards"
+      :cards="game.players[player].tefudaZone.cards"
       :single="single"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
@@ -141,12 +141,14 @@ import type { player, side } from '@/entities';
 import { Card } from '@/entities/Card';
 import { ref } from 'vue';
 import { GameLogger } from '@@/core/usecase/GameLogger';
+import { Game } from '@@/core/entities/game';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
   side: side
   player: player,
   lowerPlayer: player,
+  game: Game,
   cards: {
     manaCards: Card[],
     battleCards: Card[],

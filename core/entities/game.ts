@@ -62,7 +62,7 @@ export class GamePlayer {
   public battleZone: Zone
   public bochiZone: Zone
   public shieldZone: Zone
-  public tafudaZone: Zone
+  public tefudaZone: Zone
   public yamafudaZone: Zone
   public chojigenZone: Zone
   public triggeredAbilities: Zone
@@ -89,7 +89,7 @@ export class GamePlayer {
     this.battleZone = Zone.init()
     this.bochiZone = Zone.init()
     this.shieldZone = Zone.init()
-    this.tafudaZone = Zone.init()
+    this.tefudaZone = Zone.init()
     this.yamafudaZone = Zone.init()
     this.chojigenZone = Zone.init()
     this.triggeredAbilities = Zone.init()
@@ -107,6 +107,11 @@ export class GamePlayer {
       return true
     }
     return false
+  }
+
+  getZone(zoneName: string): Zone {
+    const name = zoneName.replace('Cards', 'Zone')
+    return this[name]
   }
 }
 

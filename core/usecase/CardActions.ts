@@ -184,20 +184,32 @@ export class CardActions {
       this.game.players[player]['cards'][from],
       cardsCopy
     );
+    // 新実装
+    // カードをゾーンから取り除く
+    cards.forEach(c => {
+      this.game.players[player].getZone(from).remove(c)
+    })
+
     if (index !== undefined && cardsCopy.length === 1) {
-      if (index === 0) {
-        this.game.players[player]['cards'][to].unshift(card)
-      } else {
-        this.game.players[player]['cards'][to].splice(index, 0, card)
-      }
+      this.game.players[player]['cards'][to].splice(index, 0, card)
+      // 新実装
+      this.game.players[player].getZone(to).insertAt(card, index)
       return
     }
     if (prepend) {
+      // 新実装
+      cardsCopy.reverse().forEach(c => {
+        this.game.players[player].getZone(to).insertAt(c, 0)
+      })
       this.game.players[player]['cards'][to] = Util.arrayPrependCards(
         this.game.players[player]['cards'][to],
         cardsCopy
       )
     } else {
+      // 新実装
+      cardsCopy.forEach(c => {
+        this.game.players[player].getZone(to).pushCard(c)
+      })
       this.game.players[player]['cards'][to] = Util.arrayAppendCards(
         this.game.players[player]['cards'][to],
         cardsCopy
