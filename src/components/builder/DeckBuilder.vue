@@ -47,7 +47,7 @@
 <script setup lang="ts">
 import DeckEditor from "./DeckEditor.vue";
 import TextCard from "@/components/elements/TextCard.vue";
-import { fetchCardDetails } from "@/helpers/Deck";
+import { fetchCardDetails } from "@@/core/services/card.service";
 import systemDecks from '@/decks.json'
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoomStore } from "@/stores/room";
@@ -93,8 +93,8 @@ onMounted(async function () {
     deckList.push(...systemDecks as any[])
     loading.value = false
 
-    fetchCardDetails(deckList[0], roomStore)
-    fetchCardDetails(deckList[1], roomStore)
+    roomStore.addCardDetails(await fetchCardDetails(deckList[0]))
+    roomStore.addCardDetails(await fetchCardDetails(deckList[1]))
     message.value = "";
   }, 500)
 })

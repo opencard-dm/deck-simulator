@@ -1,7 +1,10 @@
 <template>
   <ClientOnly>
     <Suspense>
-      <DuelRoomSuspense :single="true" :roomId="'single'"></DuelRoomSuspense>
+      <DuelRoomSuspense
+        :single="true"
+        :room-id="'single'"
+      />
     </Suspense>
   </ClientOnly>
 </template>
@@ -11,6 +14,7 @@ import { RoomConfig } from '@/helpers/room';
 import { SocketUtil } from '@/helpers/socket';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import DuelRoomSuspense from '@/components/DuelRoomSuspense.vue'
+import { deleteTemporarilySavedGame } from '@@/core/services/game.service';
 
 const router = useRouter()
 const route = useRoute()
@@ -23,7 +27,6 @@ if (!deckId) {
   router.push('/')
 }
 onBeforeRouteLeave(() => {
-  sessionStorage.removeItem('room-single')
-  console.debug('deleted session storage cache. key=room-single')
+  deleteTemporarilySavedGame()
 })
 </script>

@@ -162,6 +162,7 @@ import { useRoomStore } from '@/stores/room';
 const store = useRoomStore()
 
 const props = defineProps<RoomProps>()
+const players = props.game.players
 
 const tabId = ref(1);
 const currentPlayer = computed({
@@ -186,7 +187,7 @@ function switchTab() {
   }
   // NOTE: tabIdの変更後に記述する必要がある
   if (!players[currentPlayer.value].isReady()) {
-    if (players[currentPlayer.value].cards.yamafudaCards.length > 0) {
+    if (players[currentPlayer.value].yamafudaZone.cards.length > 0) {
       // players[currentPlayer.value].isReady() = true
       return
     }
@@ -197,7 +198,7 @@ function switchTab() {
 const deckSelectorActive = ref(false);
 const deckSelectorActiveWatch = computed<boolean>({
   get() {
-    if (players[currentPlayer.value].cards.yamafudaCards.length > 0) {
+    if (players[currentPlayer.value].yamafudaZone.cards.length > 0) {
       // players[currentPlayer.value].isReady = true
       return false
     }
@@ -228,7 +229,6 @@ const {
   onChangeCardsState,
   onSelectDeck,
   onStartTurn,
-  players,
   resetGame,
 } = useRoomSetup(props);
 

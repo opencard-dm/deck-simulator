@@ -7,8 +7,8 @@ import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
 import { Deck } from '@/entities/Deck';
 import axios from 'axios';
-import { useRoomStore } from '@/stores/room';
-import { Game } from '@@/core/entities/game';
+import { Game, GamePlayer } from '@@/core/entities/game';
+import { saveGameTemporarily } from '@@/core/services/game.service';
 
 export class RoomConfig {
   static useFirebase = false
@@ -21,15 +21,16 @@ function useRoomListners({
   scrollZone,
   props,
 }: {
-  players: ReturnType<typeof initialData>['players'],
+  players: {
+    a: GamePlayer
+    b: GamePlayer
+  },
   cardActions: CardActions,
   gameLogger: GameLogger,
   scrollZone: Function,
   props: any,
 }
 ) {
-  const route = useRoute();
-  const roomStore = useRoomStore();
   const side = (player: player) => player === props.upperPlayer ? 'upper' : 'lower'
   
   function onMoveCards(from: zone, to: zone, cards: Card[], player: player, prepend = false) {
@@ -55,16 +56,9 @@ function useRoomListners({
       }, 300);
     }
     if (props.single || props.lowerPlayer === 'a') {
-      sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
-        cardDetails: roomStore.cardDetails,
-        sourceDeck: props.sourceDeck,
-        players,
-        histories: gameLogger.histories,
-      }));
-      return;
+      saveGameTemporarily(props.game)
     }
     if (!SocketUtil.socket) return;
-    players[player].isReady = true;
     SocketUtil.socket.emit('cards-moved', players[player]);
   }
 
@@ -80,13 +74,7 @@ function useRoomListners({
     // 実際に変更を加える前に状態を保存する
     cardActions.changeCardsState({ from, cards, player, cardState })
     if (props.single || props.lowerPlayer === 'a') {
-      sessionStorage.setItem(`room-${props.roomId}`, JSON.stringify({
-        cardDetails: roomStore.cardDetails,
-        sourceDeck: props.sourceDeck,
-        players,
-        histories: gameLogger.histories,
-      }));
-      return;
+      saveGameTemporarily(props.game)
     }
   }
 
@@ -96,20 +84,20 @@ function useRoomListners({
       player,
       turn: nextTurn
     })
-    if (players[player].cards.battleCards.filter(c => c.tapped).length > 0) {
+    if (players[player].battleZone.cards.filter(c => c.tapped).length > 0) {
       onChangeCardsState({ 
         from: 'battleCards',
-        cards: players[player].cards.battleCards,
+        cards: players[player].battleZone.cards,
         player,
         cardState: {
           tapped: false,
         }
       })
     }
-    if (players[player].cards.manaCards.filter(c => c.tapped).length > 0) {
+    if (players[player].manaZone.cards.filter(c => c.tapped).length > 0) {
       onChangeCardsState({
         from: 'manaCards',
-        cards: players[player].cards.manaCards,
+        cards: players[player].manaZone.cards,
         player,
         cardState: {
           tapped: false,
@@ -117,19 +105,18 @@ function useRoomListners({
       })
     }
     if (!(gameLogger.firstPlayer === player && nextTurn === 1) 
-      && players[player].cards.yamafudaCards.length > 0
+      && players[player].yamafudaZone.cards.length > 0
     ) {
       onMoveCards(
         'yamafudaCards',
         'tefudaCards',
-        [players[player].cards.yamafudaCards[0]],
+        [players[player].yamafudaZone.cards[0]],
         player
       )
     }
   }
 
   function onSelectDeck(player: player, deck: Deck) {
-    players[player].isReady = true;
     cardActions.selectDeck(player, deck)
   }
 
@@ -143,9 +130,6 @@ function useRoomListners({
 }
 
 export function useRoomSetup(props: RoomProps) {
-  const route = useRoute();
-  const roomId = route.query.roomId as string || 'single'
-
   const players = props.game.players
 
   function scrollZone(targetSelector: string, direction: string) {

@@ -1,18 +1,21 @@
 <template>
   <div class="gameBoard_topButtons">
     <div
-      v-if="players[player].isReady"
+      v-if="players[player].isReady()"
       class="turnButtons"
       :class="{
         right: isPhone() && player === upperPlayer
       }"
-      style="">
+      style=""
+    >
       <o-button
         variant="grey-dark"
         size="small"
-        :disabled="gameLogger.totalTurns === 0"
+        :disabled="players.a.turn.total + players.b.turn.total === 0"
         @click="emit('start-turn', player)"
-      >{{ players[player].turn.current + 1 }}ターン目を開始</o-button>
+      >
+        {{ players[player].turn.current + 1 }}ターン目を開始
+      </o-button>
       <o-button
         class="turnButtons_currentTurn"
         :class="{
@@ -25,15 +28,20 @@
         @click="emit('open-logs')"
       >
         <span>{{ player === gameLogger.firstPlayer ? '先' : '後' }}</span>
-      {{ players[player].turn.current }} / {{ players[player].turn.total }}</o-button>
+        {{ players[player].turn.current }} / {{ players[player].turn.total }}
+      </o-button>
     </div>
-    <div v-if="!isPhone() && !players[player].isReady"
-      style="float: right;">
+    <div
+      v-if="!isPhone() && !players[player].isReady()"
+      style="float: right;"
+    >
       <o-button
         variant="grey-dark"
         size="small"
         @click="emit('select-deck', player)"
-      >相手のデッキを選択する</o-button>
+      >
+        相手のデッキを選択する
+      </o-button>
     </div>
   </div>
 </template>
@@ -42,18 +50,21 @@
 import { player as playerType } from '@/entities';
 import { GameLogger } from '@@/core/usecase/GameLogger';
 import { isPhone } from '@/helpers/Util';
-import { initialData } from '@/helpers/room';
+import { GamePlayer } from '@@/core/entities/game';
 
 const props = defineProps<{
   player: playerType
   upperPlayer: playerType
-  players: ReturnType<typeof initialData>['players']
+  players: {
+    a: GamePlayer
+    b: GamePlayer
+  }
   gameLogger: GameLogger
 }>()
 
 const emit = defineEmits<{
-  'start-turn': [player],
-  'select-deck': [player],
+  'start-turn': [playerType],
+  'select-deck': [playerType],
   'open-logs': [],
 }>()
 

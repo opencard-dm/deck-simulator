@@ -2,30 +2,53 @@
   <o-modal
     :active="active"
     :cancelable="canCansel"
-    @close="onClose"
     :width="600"
+    @close="onClose"
   >
-    <div id="deck-form" v-if="!isReady">
-      <p class="deckForm_p">デッキを選択してください</p>
-      <select name="deck" v-model="deckId">
-        <option v-for="deck in firebaseDecks" :key="deck.id" :value="'firebase-' + deck.id">
+    <div
+      v-if="!isReady"
+      id="deck-form"
+    >
+      <p class="deckForm_p">
+        デッキを選択してください
+      </p>
+      <select
+        v-model="deckId"
+        name="deck"
+      >
+        <option
+          v-for="deck in firebaseDecks"
+          :key="deck.id"
+          :value="'firebase-' + deck.id"
+        >
           {{ deck.name }}
         </option>
-        <template v-for="(decksSource, sourceIndex) in userDecks" :key="sourceIndex">
-          <option v-for="deck in decksSource.decks" :value="sourceIndex + '-' + deck.name">
+        <template
+          v-for="(decksSource, sourceIndex) in userDecks"
+          :key="sourceIndex"
+        >
+          <option
+            v-for="deck in decksSource.decks"
+            :value="sourceIndex + '-' + deck.name"
+          >
             {{ deck.name }}
           </option>
         </template>
-        <option v-for="(deck, sampleIndex) in deckList" :value="deck.name" :key="sampleIndex">
+        <option
+          v-for="(deck, sampleIndex) in deckList"
+          :key="sampleIndex"
+          :value="deck.name"
+        >
           {{ deck.name }}
         </option>
       </select>
       <o-button
-        @click.stop="onClickSelectButton"
         variant="info"
         :style="{ marginTop: '20px' }"
-        >選択</o-button
+        @click.stop="onClickSelectButton"
       >
+        選択
+      </o-button>
       <template v-if="Features.using_my_deck">
         <div :style="{ marginTop: '20px', width: '250px' }">
           <o-field
@@ -45,15 +68,17 @@
               @input="validateUrl()"
               @keypress.prevent="onKeyPress"
               @icon-click="scrape"
-            >
-            </o-input>
+            />
             <a
               class="deckForm_searchField_help"
               href="https://note.com/tcgsimulator/n/n3f94a7d126f3#a7ea3459-6fe4-46d1-bc53-3bb7da71b792"
               target="_blank"
               rel="noopener"
             >
-              <o-icon pack="far" icon="question-circle"></o-icon>
+              <o-icon
+                pack="far"
+                icon="question-circle"
+              />
             </a>
           </o-field>
         </div>
@@ -67,9 +92,15 @@
     </div>
 
     <template v-if="!isReady || !partnerIsReady">
-      <hr v-if="!isReady" style="margin: 20px 0" />
+      <hr
+        v-if="!isReady"
+        style="margin: 20px 0"
+      >
       <div id="waiting-player">
-        <p v-if="isReady" class="deckForm_p">
+        <p
+          v-if="isReady"
+          class="deckForm_p"
+        >
           相手プレイヤーがデッキを選択するのを待ってください。
         </p>
         <div v-if="player === 'a'">
@@ -86,9 +117,13 @@
             :triggers="['click']"
             :closeable="false"
           >
-            <o-button variant="info" size="small" @click="copyInviteLink"
-              >招待リンクをコピーする</o-button
+            <o-button
+              variant="info"
+              size="small"
+              @click="copyInviteLink"
             >
+              招待リンクをコピーする
+            </o-button>
           </o-tooltip>
         </div>
       </div>
@@ -133,7 +168,7 @@ const errors = reactive({
 const copyLinkTooltip = ref(false)
 
 function validateUrl() {
-  if (scrapeUrl) {
+  if (scrapeUrl.value) {
     if (scrapeUrl.value.match(/^https:\/\/gachi-matome.com\/deckrecipe-detail-dm/)) {
       scrape();
     } else {

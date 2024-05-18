@@ -9,6 +9,7 @@ import { Card } from '@/entities/Card';
 import { useDecksStore } from '../stores/decks';
 import { useRoomStore } from '@/stores/room';
 import { getUserDeck } from '@/components/builder/decks.js';
+import { fetchCardDetails } from '@@/core/services/card.service.js';
 
 export class Deck {
 
@@ -220,20 +221,8 @@ export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoom
   const localDeck = await Deck.getFromId(deckId)
   if (localDeck) {
     if (localDeck.source === 'builtin' || localDeck.source === 'firebase') {
-      await fetchCardDetails(localDeck, store)
+      store.addCardDetails(await fetchCardDetails(localDeck))
       return localDeck
-    }
-    if (localDeck.source === 'airtable') {
-      const cardIds: string[] = []
-      localDeck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-      localDeck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-      localDeck.grCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
-      const { data: cards } = await axios.get('/api/cards', {
-        params: {
-          cardIds: cardIds.join(',')
-        }
-      })
-      store.addCardDetails(cards)
     }
     if (localDeck.source.startsWith('https://docs.google.com')) {
       const cardDetails: any = {}
@@ -263,20 +252,4 @@ export async function fetchDeck(deckId: string, store: ReturnType<typeof useRoom
     return localDeck;
   }
   throw Error('デッキの取得に失敗しました. deckId=' + deckId)
-}
-
-export async function fetchCardDetails(deck: SourceDeck, store: ReturnType<typeof useRoomStore>) {
-  const cards: SourceCard[] = []
-  deck.cards.forEach(c => {
-    cards.push(c)
-  })
-  deck.chojigenCards.forEach(c => {
-    cards.push(c)
-  })
-  deck.grCards.forEach(c => {
-    cards.push(c)
-  })
-  const cardIds = cards.map(c => c.cd)
-  const res = await axios.get(`/api/cards?cardIds=${cardIds.join(',')}`)
-  store.addCardDetails(res.data)
 }

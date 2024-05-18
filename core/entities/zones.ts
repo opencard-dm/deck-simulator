@@ -20,6 +20,13 @@ export class Zone {
     return new Zone([])
   }
 
+  static fromData(data: {
+    cards: Card[]
+  }) {
+    const self = new Zone(data.cards)
+    return self
+  }
+
   remove(card: Card) {
     this.cards = this.cards.filter(c => c.id !== card.id)
   }

@@ -74,16 +74,6 @@ export class GamePlayer {
       current: 0,
       total: 0
     }
-    // TODO: zoneに置き換える
-    this.cards = {
-      manaCards: [],
-      battleCards: [],
-      bochiCards: [],
-      shieldCards: [],
-      tefudaCards: [],
-      yamafudaCards: [],
-      chojigenCards: [],
-    }
 
     this.manaZone = Zone.init()
     this.battleZone = Zone.init()
@@ -99,6 +89,15 @@ export class GamePlayer {
     const self = new GamePlayer(data.name)
     self.turn = data.turn
     self.deck = data.deck
+
+    self.manaZone = Zone.fromData(data.manaZone)
+    self.battleZone = Zone.fromData(data.battleZone)
+    self.bochiZone = Zone.fromData(data.bochiZone)
+    self.shieldZone = Zone.fromData(data.shieldZone)
+    self.tefudaZone = Zone.fromData(data.tefudaZone)
+    self.yamafudaZone = Zone.fromData(data.yamafudaZone)
+    self.chojigenZone = Zone.fromData(data.chojigenZone)
+    self.triggeredAbilities = data.triggeredAbilities
     return self
   }
 

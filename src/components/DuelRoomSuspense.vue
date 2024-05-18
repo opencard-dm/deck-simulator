@@ -6,13 +6,13 @@
     :game="game"
     :card-actions="cardActions"
     :game-logger="gameLogger"
-    :roomId="roomId"
+    :room-id="roomId"
     :single="single"
-  ></DuelRoom>
+  />
 </template>
 
 <script setup lang="ts">
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import DuelRoom from './DuelRoom.vue';
 import { reactive, ref, onMounted } from 'vue';
 import { CardActions } from '@@/core/usecase/CardActions';
@@ -21,6 +21,7 @@ import { player } from '@/entities';
 import { Deck, fetchDeck } from '@/helpers/Deck';
 import { useRoomStore } from '@/stores/room';
 import { Game } from '@@/core/entities/game';
+import { deleteTemporarilySavedGame, getTemporarilySavedGame } from '@@/core/services/game.service';
 
 const props = defineProps<{
   single: boolean
@@ -49,19 +50,24 @@ onBeforeRouteLeave(() => {
 onMounted(async () => {
   // oncreated
   if (props.single) {
-    const sessionRoom = sessionStorage.getItem(`room-${roomId}`)
-    if (sessionRoom) {
-      const parsed = JSON.parse(sessionRoom)
-      game.players.a = parsed.players.a
-      game.players.b = parsed.players.b
-      roomStore.addCardDetails(parsed.cardDetails)
-      gameLogger.setHistories(parsed.histories)
-      console.debug('get room data from session storage. key=' + `room-${roomId}`)
+    const savedGame = getTemporarilySavedGame()
+    if (savedGame) {
+      deleteTemporarilySavedGame()
+      game.players = savedGame.players
+      game.cardDetails = savedGame.cardDetails
+      roomStore.addCardDetails(savedGame.cardDetails)
+      game.histories = savedGame.histories
+      gameLogger.setHistories(savedGame.histories)
+      console.debug('get room data from session storage.')
       loading.value = false
       return
     }
     if (deckId) {
       const localDeck = await fetchDeck(deckId, roomStore)
+      game.cardDetails = {
+        ...game.cardDetails,
+        ...roomStore.cardDetails,
+      }
       if (!localDeck) {
         console.error('デッキの取得に失敗しました', deckId)
         return
@@ -71,6 +77,10 @@ onMounted(async () => {
     }
     if (typeof route.query.deck_b === 'string' && route.query.deck_b) {
       const deckB = await fetchDeck(route.query.deck_b, roomStore)
+      game.cardDetails = {
+        ...game.cardDetails,
+        ...roomStore.cardDetails,
+      }
       game.players.b.deck = deckB
       cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, false, true) as any)
     }

@@ -1,16 +1,16 @@
 <template>
   <div class="select-bar">
     <DeckHeader
-      :deckData="deckData.deckData"
-      :deckList="deckList"
-      :deckIndex="deckData.deckIndex"
+      :deck-data="deckData.deckData"
+      :deck-list="deckList"
+      :deck-index="deckData.deckIndex"
       :side="'left'"
       :editable="editable"
       @change-deck="changeDeck"
       @update-deck="saveDeck"
       @delete-deck="onDeleteDeck"
       @copy-deck="copyDeck"
-    ></DeckHeader>
+    />
   </div>
   <div class="cardList_wrapper">
     <CardList
@@ -20,7 +20,7 @@
       @delete-card="onDeleteCard"
       @save-deck="saveDeck"
       @update:cards="deckData.deckData.cards = $event"
-    ></CardList>
+    />
     <CardList
       :cards="deckData.deckData.chojigenCards"
       :side="'left'"
@@ -28,7 +28,7 @@
       @delete-card="onDeleteCard"
       @save-deck="saveDeck"
       @update:cards="deckData.deckData.cards = $event"
-    ></CardList>
+    />
     <CardList
       :cards="deckData.deckData.grCards"
       :side="'left'"
@@ -36,9 +36,13 @@
       @delete-card="onDeleteCard"
       @save-deck="saveDeck"
       @update:cards="deckData.deckData.cards = $event"
-    ></CardList>
+    />
   </div>
-  <div class="deckEditor_footer" v-if="editable" style="padding-bottom: 1rem;">
+  <div
+    v-if="editable"
+    class="deckEditor_footer"
+    style="padding-bottom: 1rem;"
+  >
     <OField
       class="deckInput"
       :style="{
@@ -48,8 +52,8 @@
       message="カード名の部分一致で検索できます。ひらがな・カタカナは区別して入力する必要があります。"
     >
       <OInput
-        list="card_left"
         v-model="cardname"
+        list="card_left"
         :style="{
           paddingRight: '0px',
           minWidth: '200px',
@@ -57,32 +61,36 @@
         size="small"
         placeholder="カード名を入力"
         :expanded="false"
-      >
-      </OInput>
-      <o-button variant="info" 
-        @click="addCard"
+      />
+      <o-button
+        variant="info" 
         size="small"
         :disabled="!cardExists"
-        >追加</o-button
+        @click="addCard"
       >
+        追加
+      </o-button>
       <datalist id="card_left">
         <option 
           v-for="cardname in Object.keys(cardnames)"
           :key="cardname" 
           :value="cardname"
-        ></option>
+        />
       </datalist>
     </OField>
-    <div v-if="cardExists" class="preview">
+    <div
+      v-if="cardExists"
+      class="preview"
+    >
       <TextCard
-        @mouseenter="isPhone() ? null : roomStore.setHoveredCard(inputCard)"
-        @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
-        @click.stop="isPhone() ? roomStore.setHoveredCard(inputCard) : null"
         :card="inputCard"
         :width="50"
         :selected="false"
         :deck="null"
-      ></TextCard>
+        @mouseenter="isPhone() ? null : roomStore.setHoveredCard(inputCard)"
+        @mouseleave="isPhone() ? null : roomStore.setHoveredCard(null)"
+        @click.stop="isPhone() ? roomStore.setHoveredCard(inputCard) : null"
+      />
     </div>
   </div>
 </template>
@@ -90,7 +98,7 @@
 <script setup lang="ts">
 import DeckHeader from "./DeckHeader.vue";
 import CardList from "./CardList.vue";
-import { fetchCardDetails } from "@/helpers/Deck";
+import { fetchCardDetails } from "@@/core/services/card.service";
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoomStore } from "@/stores/room";
 import { CardDetail, SourceCard, SourceDeck } from "@/entities/Deck";
@@ -160,10 +168,10 @@ onMounted(() => {
 async function saveDeck() {
   await updateDeck(deckData.deckData)
 }
-function changeDeck(index: number) {
+async function changeDeck(index: number) {
   const selectedDeck = props.deckList[index]
   deckData.deckData = selectedDeck
-  fetchCardDetails(selectedDeck, roomStore)
+  roomStore.addCardDetails(await fetchCardDetails(selectedDeck))
   deckData.deckIndex = index
 }
 async function onDeleteDeck() {
@@ -195,7 +203,7 @@ function onDeleteCard(card: SourceCard) {
 const cardname = ref('')
 const cardExists = computed(() => cardname.value in cardnames)
 const inputCard = computed(() => {
-  if (!cardExists) return null
+  if (!cardExists.value) return null
   const cardId = (cardnames as any)[cardname.value]
   if (!(cardId in roomStore.cardDetails)) {
     // 通信量を減らすために、カード詳細情報がない場合のみ取得
