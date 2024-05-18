@@ -24,7 +24,6 @@ const props = withDefaults(defineProps<{
   player: player
   cards: Card[]
   side: side
-  hasChojigen: boolean
   zone?: zone
 }>(), {
   zone: 'chojigenCards',

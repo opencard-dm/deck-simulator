@@ -6,25 +6,32 @@
       }"
       :side="side"
       :player="player"
-      :cards="cards.battleCards"
+      :cards="game.players[player].battleZone.cards"
       :game-logger="gameLogger"
       @move-cards="moveCards"
       @group-card="groupCard"
       @emit-room-state="emitRoomState"
       @change-cards-state="changeCardsState"
-    ></BattleZone>
+    />
     <!-- NOTE: HTMLの重なり順の関係で下に配置している -->
-    <div v-if="!started && player === lowerPlayer" class="startButtons">
-      <o-button variant="danger" 
+    <div
+      v-if="!started && player === lowerPlayer"
+      class="startButtons"
+    >
+      <o-button
+        variant="danger" 
+        :disabled="false"
         @click="emit('start-game', player, true)"
-        :disabled="false"
-        >先攻で開始</o-button
       >
-      <o-button variant="info" 
+        先攻で開始
+      </o-button>
+      <o-button
+        variant="info" 
+        :disabled="false"
         @click="emit('start-game', player, false)"
-        :disabled="false"
-        >後攻で開始</o-button
       >
+        後攻で開始
+      </o-button>
     </div>
   </template>
   <template v-if="side === 'upper'">
@@ -35,14 +42,14 @@
       :single="single"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
-      @drawOne="deckZone?.drawOne()"
-    ></TefudaZone>
+      @draw-one="deckZone?.drawOne()"
+    />
     <ManaZone
       :side="side"
       :player="player"
-      :cards="cards.manaCards"
+      :cards="game.players[player].manaZone.cards"
       @move-cards="moveCards"
-    ></ManaZone>
+    />
   </template>
   <player-zone
     :side="side"
@@ -52,56 +59,55 @@
       <ShieldButton
         :side="side"
         :player="player"
-        :cards="cards.shieldCards"
+        :cards="game.players[player].shieldZone.cards"
         @move-cards="moveCards"
-      ></ShieldButton>
+      />
     </template>
     <template #shield-zone>
       <ShieldZone
         :side="side"
         :player="player"
-        :cards="cards.shieldCards"
+        :cards="game.players[player].shieldZone.cards"
         @move-cards="moveCards"
         @group-card="groupCard"
         @change-cards-state="changeCardsState"
-      ></ShieldZone>
+      />
     </template>
     <template #deck-zone>
       <DeckZone
-        :side="side"
         ref="deckZone"
+        :side="side"
         :player="player"
-        :cards="cards.yamafudaCards"
+        :cards="game.players[player].yamafudaZone.cards"
         @move-cards="moveCards"
         @change-cards-state="changeCardsState"
-      ></DeckZone>
+      />
     </template>
     <template #bochi-zone>
       <BochiZone
         :side="side"
         :player="player"
-        :cards="cards.bochiCards"
+        :cards="game.players[player].bochiZone.cards"
         @move-cards="moveCards"
-      ></BochiZone>
+      />
     </template>
     <template #chojigenZone>
       <ChojigenZone
         :side="side"
         :player="player"
-        :cards="cards.chojigenCards"
-        :hasChojigen="hasChojigen"
+        :cards="game.players[player].chojigenZone.cards"
         @move-cards="moveCards"
-      ></ChojigenZone>
+      />
     </template>
   </player-zone>
   <template v-if="side === 'lower'">
     <ManaZone
       :side="side"
       :player="player"
-      :cards="cards.manaCards"
+      :cards="game.players[player].manaZone.cards"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
-    ></ManaZone>
+    />
     <TefudaZone
       :side="side"
       :player="player"
@@ -109,20 +115,20 @@
       :single="single"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
-      @drawOne="deckZone?.drawOne()"
-    ></TefudaZone>
+      @draw-one="deckZone?.drawOne()"
+    />
   </template>
   <template v-if="side === 'upper'">
     <BattleZone
       :side="side"
       :player="player"
-      :cards="cards.battleCards"
+      :cards="game.players[player].battleZone.cards"
       :game-logger="gameLogger"
       @move-cards="moveCards"
       @group-card="groupCard"
       @change-cards-state="changeCardsState"
       @emit-room-state="emitRoomState"
-    ></BattleZone>
+    />
   </template>
 </template>
 
@@ -137,38 +143,25 @@ import DeckZone from './zones/DeckZone.vue';
 import ChojigenZone from './zones/ChojigenZone.vue';
 import BochiZone from './zones/BochiZone.vue';
 import { zoneEmit } from './zones/zone';
-import type { player, side } from '@/entities';
-import { Card } from '@/entities/Card';
+import type { player as playerType, side as sideType } from '@/entities';
 import { ref } from 'vue';
 import { GameLogger } from '@@/core/usecase/GameLogger';
 import { Game } from '@@/core/entities/game';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
-  side: side
-  player: player,
-  lowerPlayer: player,
+  side: sideType
+  player: playerType,
+  lowerPlayer: playerType,
   game: Game,
-  cards: {
-    manaCards: Card[],
-    battleCards: Card[],
-    bochiCards: Card[],
-    shieldCards: Card[],
-    tefudaCards: Card[],
-    yamafudaCards: Card[],
-    chojigenCards: Card[],
-  },
   name: string,
-  roomId: string,
-  isReady: boolean,
-  hasChojigen: boolean,
   single: boolean,
   started: boolean,
   gameLogger: GameLogger,
 }>();
 
 type playSheetEmit = zoneEmit & {
-  'start-game': [player: player, first: boolean]
+  'start-game': [player: playerType, first: boolean]
 }
 
 const emit = defineEmits<playSheetEmit>();

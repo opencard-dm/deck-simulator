@@ -1,34 +1,41 @@
 <template>
-  <div id="app" style="background-color: lightgray">
-    <CHeader :single="single"
+  <div
+    id="app"
+    style="background-color: lightgray"
+  >
+    <CHeader
+      :single="single"
       :game="game"
-      :gameLogger="gameLogger"
-      :currentPlayer="currentPlayer"
+      :game-logger="gameLogger"
+      :current-player="currentPlayer"
       @switch-tab="switchTab()"
       @reset-game="onResetGame()"
-    ></CHeader>
+    />
 
     <DeckSelector
       v-if="deckSelectorActiveWatch"
       v-model:active="deckSelectorActive"
       :player="currentPlayer"
-      :isReady="players[currentPlayer].isReady()"
-      :partnerIsReady="true"
-      :cardActions="cardActions"
-      @moveCards="onMoveCards"
+      :is-ready="players[currentPlayer].isReady()"
+      :partner-is-ready="true"
+      :card-actions="cardActions"
+      @move-cards="onMoveCards"
       @selected="onDeckSelected"
-    ></DeckSelector>
+    />
 
-    <PlayerTabs :tab="tabId" @switch-tab="switchTab()">
+    <PlayerTabs
+      :tab="tabId"
+      @switch-tab="switchTab()"
+    >
       <template #lower-player>
         <ImageViewer>
           <WorkSpace
-            :lowerPlayer="lowerPlayer"
+            :lower-player="lowerPlayer"
             :single="single"
             @move-cards="onMoveCards"
             @shuffle-cards="shuffleCards"
             @emit-room-state="emitRoomState"
-          ></WorkSpace>
+          />
 
           <div
             id="js_gameBoard"
@@ -41,45 +48,44 @@
             <div class="gameBoard_topButtons">
               <TurnButtons
                 :players="players"
-                :gameLogger="gameLogger"
+                :game-logger="gameLogger"
                 :player="lowerPlayer"
-                :upperPlayer="upperPlayer"
+                :upper-player="upperPlayer"
                 @start-turn="onStartTurn({ player: lowerPlayer })"
                 @open-logs="logsViewer = true"
-              ></TurnButtons>
+              />
             </div>
             <PlaySheet
               :side="'lower'"
               :player="lowerPlayer"
-              :lowerPlayer="lowerPlayer"
-              :cards="players[lowerPlayer].cards"
+              :lower-player="lowerPlayer"
               :name="players[lowerPlayer].name"
-              :roomId="players[lowerPlayer].roomId"
-              :isReady="players[lowerPlayer].isReady()"
-              :hasChojigen="players[lowerPlayer].hasChojigen"
               :single="single"
               :started="started"
               :game="game"
-              :gameLogger="gameLogger"
+              :game-logger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
               @change-cards-state="onChangeCardsState"
               @start-game="onStartGame"
-            ></PlaySheet>
+            />
           </div>
         </ImageViewer>
       </template>
-      <template v-if="true" #upper-player>
+      <template
+        v-if="true"
+        #upper-player
+      >
         <ImageViewer :hide="!isPhone()">
           <WorkSpace
             v-if="isPhone()"
-            :lowerPlayer="upperPlayer"
+            :lower-player="upperPlayer"
             :single="single"
             @move-cards="onMoveCards"
             @shuffle-cards="shuffleCards"
             @emit-room-state="emitRoomState"
-          ></WorkSpace>
+          />
 
           <div
             id="js_gameBoard"
@@ -92,46 +98,42 @@
             <div class="gameBoard_topButtons">
               <TurnButtons
                 :players="players"
-                :gameLogger="gameLogger"
+                :game-logger="gameLogger"
                 :player="upperPlayer"
-                :upperPlayer="upperPlayer"
+                :upper-player="upperPlayer"
                 @start-turn="onStartTurn({ player: upperPlayer })"
                 @open-logs="logsViewer = true"
                 @select-deck="() => {
                   currentPlayer = upperPlayer
                   deckSelectorActive = true
                 }"
-              ></TurnButtons>
+              />
             </div>
             <PlaySheet
               v-if="players[upperPlayer].isReady()"
               :side="'lower'"
               :player="upperPlayer"
-              :lowerPlayer="lowerPlayer"
-              :cards="players[upperPlayer].cards"
+              :lower-player="lowerPlayer"
               :name="players[upperPlayer].name"
-              :roomId="players[upperPlayer].roomId"
-              :isReady="players[upperPlayer].isReady()"
-              :hasChojigen="players[upperPlayer].hasChojigen"
               :single="single"
               :started="started"
               :game="game"
-              :gameLogger="gameLogger"
+              :game-logger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
               @emit-room-state="emitRoomState"
               @change-cards-state="onChangeCardsState"
-            ></PlaySheet>
+            />
           </div>
         </ImageViewer>
       </template>
     </PlayerTabs>
     <o-modal
-      rootClass="gameLoggerModal"
       v-model:active="logsViewer"
-      contentClass="gameLoggerModal__content"
+      root-class="gameLoggerModal"
+      content-class="gameLoggerModal__content"
     >
-      <LogsViewer :game-logger="gameLogger"></LogsViewer>
+      <LogsViewer :game-logger="gameLogger" />
     </o-modal>
   </div>
 </template>
