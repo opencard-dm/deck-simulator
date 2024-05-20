@@ -235,10 +235,25 @@ export class CardActions {
 
   changeCardsStateWithoutHistory({ from, cards, player, cardState }: changeCardsStateParams) {
     const cardIds = cards.map((c) => c.id);
-    this.game.players[player].getZone(from).cards.forEach((c: Card) => {
+    const zoneCards = this.game.players[player].getZone(from).cards;
+    zoneCards.forEach((c: Card) => {
       if (!cardIds.includes(c.id)) return;
       if (cardState?.tapped !== undefined) {
         c.tapped = cardState.tapped
+        // カードごとの効果を適用
+        if (cardData(c) && cardData(c).cardDetail) {
+          const ability = getCardAbility(cardData(c).cardDetail.name)
+          if (ability) {
+            if (ability.onTapStateChanging) {
+              ability.onTapStateChanging({
+                card: c,
+                group: c.groupId ? getCardGroup(zoneCards, c.groupId) : null,
+                player: this.game.players[player],
+                opponent: this.game.players[player === 'a' ? 'b' : 'a'],
+              })
+            }
+          }
+        }
       }
       if (cardState?.faceDown !== undefined) {
         c.faceDown = cardState.faceDown
@@ -316,7 +331,16 @@ export class CardActions {
       fromCardRef.groupId = groupId
       toCardRef.groupId = groupId
       // 状態を引き継ぐ
-      fromCardRef.tapped = toCardRef.tapped
+      if (fromCardRef.tapped !== toCardRef.tapped) {
+        this.changeCardsStateWithoutHistory({
+          from: to,
+          cards: toCards,
+          player,
+          cardState: {
+            tapped: toCardRef.tapped,
+          }
+        })
+      }
       this.game.players[player].getZone(to).insertBefore(fromCardRef, toCardRef)
       return;
     }

@@ -4,9 +4,17 @@ const card = {
   onMovingToBattleZone({
     card
   }) {
-    console.log(card)
     card.tapped = true
   },
+
+  onTapStateChanging({
+    card,
+    group
+  }) {
+    if (group.cards.length <= 8) {
+      card.tapped = true
+    }
+  }
 }
 
 export default card
