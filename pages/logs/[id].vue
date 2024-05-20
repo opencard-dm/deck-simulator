@@ -15,15 +15,15 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import DuelRoom from '@/components/DuelRoom.vue';
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
 import { CardActions } from '@@/core/usecase/CardActions';
 import { GameLogger } from '@@/core/usecase/GameLogger';
 import { SourceDeck } from '@/entities/Deck';
-import { Game, GameHistory } from '@@/core/entities/game';
+import { Game } from '@@/core/entities/game';
 import { useRoomStore } from '@/stores/room';
 import { startTurnParams } from '@@/core/usecase/TurnActions';
 import { fetchLog } from '@@/core/services/log.service'
-import { fetchCardDetails } from '@@/core/services/card.service'
+import { fetchCardDetails, fetchCardAbility } from '@@/core/services/card.service'
 
 const route = useRoute()
 const logId = route.params.id as string
@@ -69,9 +69,11 @@ fetchLog(logId).then(async log => {
   gameLogger.histories = log.histories
 })
 
-
 async function fetchCardDetailsAndStore(deck: SourceDeck) {
   const cardDetails = await fetchCardDetails(deck)
   roomStore.addCardDetails(cardDetails)
+  Object.values(cardDetails).forEach(cardDetail => {
+    fetchCardAbility(cardDetail.name)
+  })
 }
 </script>

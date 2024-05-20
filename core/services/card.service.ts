@@ -1,5 +1,7 @@
 import { CardDetail, SourceDeck } from "@/entities/Deck"
+import { CardAbility } from "@@/core/entities/card"
 import axios from "axios"
+import implementedCardNames from "@/implementedCardNames.json"
 
 export async function fetchCardDetails(deck: SourceDeck): Promise<{[key: string]: CardDetail}> {
   const cardIds: string[] = []
@@ -12,4 +14,29 @@ export async function fetchCardDetails(deck: SourceDeck): Promise<{[key: string]
     }
   })
   return cards
+}
+
+const cardAbilities: {[key: string]: CardAbility} = {};
+
+export async function fetchCardAbility(cardName: string): Promise<CardAbility|null> {
+  if (!implementedCardNames.includes(cardName)) {
+    return null
+  }
+  if (cardName in cardAbilities) {
+    return cardAbilities[cardName]
+  }
+  try {
+    const mod = await import(`/cards/${cardName}.js`)
+    cardAbilities[cardName] = mod.default
+    return cardAbilities[cardName]
+  } catch (error) {
+    return null
+  }
+}
+
+export function getCardAbility(cardName: string): CardAbility|null {
+  if (cardName in cardAbilities) {
+    return cardAbilities[cardName]
+  }
+  return null
 }

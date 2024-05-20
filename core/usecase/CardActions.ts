@@ -5,6 +5,7 @@ import { GameLogger } from "./GameLogger";
 import { RoomConfig } from "@/helpers/room";
 import { cardData } from "@/helpers/CardData";
 import { Game } from "../entities/game";
+import { getCardAbility } from "../services/card.service";
 
 export interface moveCardsParams {
   from: zone
@@ -178,6 +179,23 @@ export class CardActions {
         }
       })
     }
+    // カードごとの効果を適用
+    cardsCopy.forEach(c => {
+      if (!cardData(card) || !cardData(card).cardDetail) return;
+      const ability = getCardAbility(cardData(card).cardDetail.name)
+      if (ability) {
+        if (to === 'battleCards') {
+          if (ability.onMovingToBattleZone) {
+            ability.onMovingToBattleZone({
+              card: c,
+              group: null,
+              player: this.game.players[player],
+              opponent: this.game.players[player === 'a' ? 'b' : 'a'],
+            })
+          }
+        }
+      }
+    })
     // カードをゾーンから取り除く
     cards.forEach(c => {
       this.game.players[player].getZone(from).remove(c)
