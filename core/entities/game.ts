@@ -119,7 +119,7 @@ export type GameHistoryData = {
   canundo: true
   who: player
   player: player
-  method: 'moveCards' | 'changeCardsState' | 'groupCard' | 'undoGroupCard' | 'startTurn'
+  method: 'moveCards' | 'changeCardsState' | 'groupCard' | 'undoGroupCard' | 'putUnderCard' | 'startTurn'
   args: cardActionMethodParams
   message: string
 }
@@ -130,7 +130,7 @@ export class GameHistory {
     public canundo: true,
     public who: player,
     public player: player,
-    public method: 'moveCards' | 'changeCardsState' | 'groupCard' | 'undoGroupCard' | 'startTurn',
+    public method: GameHistoryData['method'],
     public args: cardActionMethodParams,
     public message: string,
   ) {

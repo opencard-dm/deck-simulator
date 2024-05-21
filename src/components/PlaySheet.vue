@@ -10,6 +10,7 @@
       :game-logger="gameLogger"
       @move-cards="moveCards"
       @group-card="groupCard"
+      @put-under-card="putUnderCard"
       @emit-room-state="emitRoomState"
       @change-cards-state="changeCardsState"
     />
@@ -127,6 +128,7 @@
       @move-cards="moveCards"
       @group-card="groupCard"
       @change-cards-state="changeCardsState"
+      @put-under-card="putUnderCard"
       @emit-room-state="emitRoomState"
     />
   </template>
@@ -177,6 +179,10 @@ function groupCard(...args: any[]) {
 function changeCardsState(...args: any[]) {
   // @ts-ignore
   emit('change-cards-state', ...args);
+}
+function putUnderCard(...args: any[]) {
+  // @ts-ignore
+  emit('put-under-card', ...args);
 }
 function emitRoomState() {
   emit('emit-room-state', props.player);

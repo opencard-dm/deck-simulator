@@ -41,6 +41,12 @@ export class Zone {
     this.cards.splice(index, 0, card)
   }
 
+  insertAfter(card: Card, after: Card) {
+    this.remove(card)
+    const index = this.cards.findIndex(c => c.id === after.id) + 1
+    this.cards.splice(index, 0, card)
+  }
+
   pushCard(card: Card) {
     this.cards.push(card)
   }

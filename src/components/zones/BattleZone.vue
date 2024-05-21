@@ -128,6 +128,16 @@
             @click.stop="changeCards(card)"
             >チェンジ</o-button
           >
+          <!-- 【DARK MATERIAL COMPLEX】-->
+          <template v-if="cardDetail(card).name === 'DARK MATERIAL COMPLEX'">
+            <o-button
+              v-if="selectMode?.zone === 'yamafudaCards' && !selectMode.card.faceDown"
+              variant="grey-dark"
+              size="small"
+              @click.stop="putUnder(card)"
+              >下へ</o-button
+            >
+          </template>
         </div>
       </div>
       
@@ -233,6 +243,23 @@ function clickCard(card: Card) {
       return;
     }
   }
+}
+function putUnder(card: Card) {
+  if (!selectMode.value) {
+    return
+  }
+  const {
+    zone: from,
+    card: fromCard
+  } = selectMode.value
+  setSelectMode(null)
+  emit("put-under-card", {
+    from,
+    to: props.zone,
+    fromCard,
+    toCard: card,
+    player: props.player,
+  });
 }
 function isLastGroupedCard(card: Card) {
   if (!props.gameLogger.currentHistory) return false

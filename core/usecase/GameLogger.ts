@@ -1,5 +1,5 @@
 import { player } from "@/entities"
-import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams } from "@@/core/usecase/CardActions"
+import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams, putUnderCardParams } from "@@/core/usecase/CardActions"
 import { reactive } from 'vue'
 import { RoomConfig, initialData } from "@/helpers/room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
@@ -81,6 +81,11 @@ export class GameLogger {
     this.appendHistory('groupCard', argsCopy)
   }
 
+  putUnderCard(args: putUnderCardParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as putUnderCardParams
+    this.appendHistory('putUnderCard', argsCopy)
+  }
+
   undoGroupCard(args: groupCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
     this.appendHistory('undoGroupCard', argsCopy)
@@ -128,6 +133,9 @@ export class GameLogger {
       case this.changeCardsState.name:
         this.cardActions.undoCardsState(history.args as changeCardsStateParams)
         break
+      case this.putUnderCard.name:
+        this.cardActions.undoPutUnderCard(history.args as putUnderCardParams)
+        break
       case this.startTurn.name:
         this.turnActions.undoStartTurn(history.args as startTurnParams)
         break
@@ -156,6 +164,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.putUnderCard.name:
+        this.cardActions.putUnderCardWithoutHistory(history.args as putUnderCardParams)
         break
       case this.startTurn.name:
         this.turnActions.startTurnWithoutHistory(history.args as startTurnParams)
@@ -210,6 +221,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.putUnderCard.name:
+        this.cardActions.putUnderCardWithoutHistory(history.args as groupCardParams)
         break
       case this.startTurn.name:
         this.turnActions.startTurnWithoutHistory(history.args as startTurnParams)

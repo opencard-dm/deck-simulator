@@ -11,7 +11,7 @@ const card = {
     card,
     group
   }) {
-    if (group.cards.length <= 8) {
+    if (!group || group.cards.length <= 8) {
       card.tapped = true
     }
   }

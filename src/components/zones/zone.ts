@@ -15,6 +15,7 @@ export type zoneEmit = {
     'move-cards': [from: zone, to: zone, cards: Card[], player: player, prepend?: boolean]
     'change-cards-state': [param: changeCardsStateParams]
     'group-card': [param: {from: zone, to: groupableZone, fromCard: Card, toCard: Card, player: player}]
+    'put-under-card': [param: {from: zone, to: groupableZone, fromCard: Card, toCard: Card, player: player}]
     'shuffle-cards': [from: zone, cards: Card[], player: player]
     'emit-room-state': [player: player]
 }
@@ -114,7 +115,9 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
       } catch (error) {
         console.error('card not found:', card.cd)
       }
-      detail = {} as CardDetail
+      if (!detail) {
+        detail = {} as CardDetail
+      }
       if (!detail.backImageUrl) {
         detail.backImageUrl = 'https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg'
       }
