@@ -66,6 +66,7 @@
               :game-logger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
+              @put-under-card="onPutUnderCard"
               @emit-room-state="emitRoomState"
               @change-cards-state="onChangeCardsState"
               @start-game="onStartGame"
@@ -121,6 +122,7 @@
               :game-logger="gameLogger"
               @move-cards="onMoveCards"
               @group-card="onGroupCard"
+              @put-under-card="onPutUnderCard"
               @emit-room-state="emitRoomState"
               @change-cards-state="onChangeCardsState"
             />
@@ -227,6 +229,7 @@ const {
   onMoveCards,
   onGroupCard,
   onChangeCardsState,
+  onPutUnderCard,
   onSelectDeck,
   onStartTurn,
   resetGame,

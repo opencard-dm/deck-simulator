@@ -1,4 +1,4 @@
-import { GameHistory } from '@/entities/History';
+import { GameHistoryData } from '@@/core/entities/game';
 import { Firebase } from '../helpers/firebase'
 import { arrayUnion, doc, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 
@@ -12,7 +12,7 @@ export async function getRoom(roomId: string) {
     return null
 }
 
-export async function pushHistory(roomId: string, history: GameHistory) {
+export async function pushHistory(roomId: string, history: GameHistoryData) {
     const docRef = doc(Firebase.db, Firebase.env('rooms'), roomId);
     await updateDoc(docRef, {
         histories: arrayUnion(JSON.stringify(history)),

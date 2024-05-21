@@ -6,6 +6,9 @@ import { RoomConfig } from "@/helpers/room";
 import { cardData } from "@/helpers/CardData";
 import { Game } from "../entities/game";
 import { getCardAbility } from "../services/card.service";
+import { startTurnParams } from "./TurnActions";
+
+export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | putUnderCardParams | startTurnParams
 
 export interface moveCardsParams {
   from: zone
@@ -26,6 +29,14 @@ export interface changeCardsStateParams {
 export interface groupCardParams {
   from: zone,
   to: groupableZone,
+  fromCard: Card,
+  toCard: Card,
+  player: player,
+}
+
+export interface putUnderCardParams {
+  from: zone,
+  to: groupableZone
   fromCard: Card,
   toCard: Card,
   player: player,
@@ -392,5 +403,54 @@ export class CardActions {
     if (cardsInGroup <= 2) {
       cards.map(c => c.groupId === groupId ? c.groupId = '' : null)
     }
+  }
+
+  putUnderCard({ from, to, fromCard, toCard, player }: putUnderCardParams) {
+    // カードにインデックスを付与する
+    this.game.players[player].getZone(from).cards.forEach((card, index) => {
+      card.index = index
+    })
+    this.gameLogger?.putUnderCard({ from, to, fromCard, toCard, player })
+    if (!RoomConfig.useFirebase) {
+      this.putUnderCardWithoutHistory({ from, to, fromCard, toCard, player })
+    }
+  }
+
+  /**
+   * カードをすでにあるカードの下に置く
+   * 
+   * @returns 
+   */
+  putUnderCardWithoutHistory({ from, to, fromCard, toCard, player }: putUnderCardParams) {
+    // NOTE: redoのときはポインタが外れているため対象のカードをIDで探す
+    const fromCards: Card[] = this.game.players[player].getZone(from).cards
+    const toCards: Card[] = this.game.players[player].getZone(to).cards
+    const toCardRef = toCards.find(c => c.id === toCard.id) as Card
+    const fromCardRef = fromCards.find(c => c.id === fromCard.id) as Card
+
+    // 移動するカードを削除する
+    this.game.players[player].getZone(from).remove(fromCard)
+
+    // 上になるカードがまだ単独のカードの場合
+    if (!toCardRef.groupId) {
+      const groupId = `${fromCard.id}-${toCard.id}`;
+      console.debug(`created group '${groupId}'`)
+      fromCardRef.groupId = groupId
+      toCardRef.groupId = groupId
+      this.game.players[player].getZone(to).insertAfter(fromCardRef, toCardRef)
+      return;
+    }
+
+    // 上になるカードがすでにグループの場合
+    if (toCardRef.groupId) {
+      const lastCard = getCardGroup(toCards, toCardRef.groupId).cards.slice(-1)[0]
+      this.game.players[player].getZone(to).insertAfter(fromCardRef, lastCard)
+      fromCardRef.groupId = toCardRef.groupId
+      return
+    }
+  }
+
+  undoPutUnderCard({ from, to, fromCard, toCard, player }: putUnderCardParams) {
+    this.undoMoveCards({ from, to, cards: [fromCard], player })
   }
 }

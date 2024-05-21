@@ -1,5 +1,4 @@
 
-import { GameHistory } from '@/entities/History'
 import { FireStore } from '../firestore'
 import { SourceDeck } from '@/entities/Deck'
 import { FieldPath, FieldValue } from 'firebase-admin/firestore'
