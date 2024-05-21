@@ -12,5 +12,9 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "plugin:vue/vue3-recommended",
     ],
-    rules: {},
+    // https://stackoverflow.com/a/66598327/20308611
+    parser: "vue-eslint-parser",
+    parserOptions: { 
+      parser: "@typescript-eslint/parser" 
+    },
 }
