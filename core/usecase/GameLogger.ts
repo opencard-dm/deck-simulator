@@ -3,7 +3,7 @@ import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams, 
 import { reactive } from 'vue'
 import { RoomConfig, initialData } from "@/helpers/room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
-import { cardActionMethodParams } from "@/entities/History"
+import { cardActionMethodParams } from "@@/core/usecase/CardActions"
 import { GameHistory } from "../entities/game"
 import { v4 as uuidv4 } from 'uuid'
 import { TurnActions, startTurnParams } from "@@/core/usecase/TurnActions"

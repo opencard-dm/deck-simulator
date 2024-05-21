@@ -1,6 +1,6 @@
 import { CardDetail, SourceDeck } from "@/entities/Deck"
 import { player } from "./player"
-import { cardActionMethodParams } from "@/entities/History"
+import { cardActionMethodParams } from "@@/core/usecase/CardActions"
 import { Zone } from "./zones"
 
 export class Game {

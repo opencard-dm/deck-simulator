@@ -6,6 +6,9 @@ import { RoomConfig } from "@/helpers/room";
 import { cardData } from "@/helpers/CardData";
 import { Game } from "../entities/game";
 import { getCardAbility } from "../services/card.service";
+import { startTurnParams } from "./TurnActions";
+
+export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | putUnderCardParams | startTurnParams
 
 export interface moveCardsParams {
   from: zone
