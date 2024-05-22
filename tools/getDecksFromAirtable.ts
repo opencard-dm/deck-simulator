@@ -8,7 +8,7 @@ import { readFileSync,  writeFileSync } from 'fs'
 
 console.assert(process.env.AIRTABLE_SECRET_TOKEN, 'AIRTABLE_SECRET_TOKEN is required')
 
-var base = new Airtable({
+const base = new Airtable({
     apiKey: process.env.AIRTABLE_SECRET_TOKEN
 }).base('appNBBdv4EODRJJJI');
 

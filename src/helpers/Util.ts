@@ -11,7 +11,7 @@ export class Util {
 
   static arrayRemoveCards(array: readonly Card[], cards: readonly Card[]) {
     let result = array;
-    for (let card of cards) {
+    for (const card of cards) {
       result = result.filter((elem) => {
         return elem.id !== card.id;
       })

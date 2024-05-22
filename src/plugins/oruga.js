@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import '../assets/scss/oruga.scss'
 
 export function useOruga(vueApp) {
-  vueApp.component('vue-fontawesome', FontAwesomeIcon)
+  vueApp.component('VueFontawesome', FontAwesomeIcon)
   vueApp
     .use(Modal)
     .use(Icon)
