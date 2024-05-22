@@ -11,6 +11,7 @@
     <div v-else-if="cardDetail" class="cardElem" 
       :class="{
         selected: selected,
+        tapped: card?.tapped,
         target: canBeTarget,
         large: large,
       }" 
@@ -162,6 +163,7 @@ function calcHeight(width: number) {
   overflow: hidden;
   user-select: none;
   box-sizing: border-box;
+  box-shadow: 1px 1px 5px #666;
   &.target {
     border: 3px solid orange;
     border-radius: 5px;
@@ -218,6 +220,11 @@ function calcHeight(width: number) {
     border-bottom-left-radius: 5px;
     color: white;
     background-color: #444;
+  }
+  &.tapped {
+    .card_power {
+      bottom: calc(258 / 908 * 100%);
+    }
   }
   .card_hyperPower {
     position: absolute;

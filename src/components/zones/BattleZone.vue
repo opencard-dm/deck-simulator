@@ -175,7 +175,7 @@ import TextCard from "../elements/TextCard.vue";
 import { GameLogger, HistoryComparator } from "@@/core/usecase/GameLogger";
 import { groupCardParams } from "@/helpers/CardActions";
 
-const cardWidth = isPhone() ? 80 : 100
+const cardWidth = isPhone() ? 80 : 80
 const cardHeight = cardWidth * 908 / 650
 
 const props = withDefaults(defineProps<{
