@@ -17,7 +17,7 @@ import DuelRoom from './DuelRoom.vue';
 import { reactive, ref, onMounted } from 'vue';
 import { CardActions } from '@@/core/usecase/CardActions';
 import { GameLogger } from '@@/core/usecase/GameLogger';
-import { player } from '@/entities';
+import { PlayerType } from "@@/core/entities/player";
 import { Deck, fetchDeck } from '@/helpers/Deck';
 import { useRoomStore } from '@/stores/room';
 import { Game } from '@@/core/entities/game';
@@ -34,8 +34,8 @@ const roomId = props.roomId as string
 const deckId = route.query.deck_id as string
 const loading = ref(true)
 // クエリストリングのplayerが未設定の場合はaにする
-const lowerPlayer = route.query.player === "b" ? "b" : "a" as player
-const upperPlayer = lowerPlayer === "a" ? "b" : "a" as player
+const lowerPlayer = route.query.player === "b" ? "b" : "a" as PlayerType
+const upperPlayer = lowerPlayer === "a" ? "b" : "a" as PlayerType
 
 // data
 const game = reactive<Game>(Game.init())

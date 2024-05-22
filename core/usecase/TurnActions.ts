@@ -1,4 +1,4 @@
-import { player } from "@/entities";
+import { PlayerType } from "@@/core/entities/player";
 import { GameLogger } from "./GameLogger";
 import { RoomConfig } from "../../src/helpers/room";
 
@@ -6,7 +6,7 @@ export interface startTurnParams {
   /** 開始したいターンのターン数.
    * 現在1ターン目で2ターン目を開始したいなら2となる. */
   turn: number
-  player: player
+  player: PlayerType
 }
 
 export class TurnActions {

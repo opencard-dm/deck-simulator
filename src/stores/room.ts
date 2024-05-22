@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
-import { player, zone } from '@/entities';
-import { Card } from '@/entities/Card';
+import type { PlayerType } from "@@/core/entities/player";
+import { Card } from '@@/core/entities/card';
+import { ZoneType } from '@@/core/entities/zones';
 import { CardDetail } from '@/entities/Deck';
 
 export interface State {
   selectMode: {
-    player: player
-    zone: zone
+    player: PlayerType
+    zone: ZoneType
     card: Card
     selectingTarget: boolean
   } | null
@@ -15,8 +16,8 @@ export interface State {
   workSpace: {
     active: boolean
     cards: Card[]
-    zone: zone | ''
-    player: player | ''
+    zone: ZoneType | ''
+    player: PlayerType | ''
     minimal: boolean
     single: boolean
   }
@@ -58,8 +59,8 @@ export const useRoomStore = defineStore('state', {
     },
     openWorkSpace({ cards, zone, player, single = false }: {
       cards: Card[],
-      zone: zone,
-      player: player,
+      zone: ZoneType,
+      player: PlayerType,
       single: boolean
     }) {
       // 既に開いている状態で、同じゾーンを開こうとした場合は閉じる。

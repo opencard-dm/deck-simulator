@@ -134,10 +134,11 @@
 import { OnLongPress } from '@vueuse/components'
 import CardPopup from '../elements/CardPopup.vue'
 import { computed } from 'vue'
-import { Card } from "@/entities/Card";
+import { Card } from "@@/core/entities/card";
+import { ZoneType } from "@@/core/entities/zones";
 import { useZone, zoneEmit } from "./zone";
 import { defineExpose } from 'vue';
-import type { player, side, zone } from "@/entities";
+import type { PlayerType, SideType } from "@@/core/entities/player";
 import { isPhone } from '@/helpers/Util';
 import TextCard from "../elements/TextCard.vue";
 import { cardData } from '@/helpers/CardData';
@@ -146,12 +147,12 @@ const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`
 
 const props = withDefaults(defineProps<{
-  player: player
+  player: PlayerType
   cards: Card[]
-  side: side
-  zone?: zone
+  side: SideType
+  zone?: ZoneType
 }>(), {
-  zone: 'yamafudaCards',
+  zone: 'yamafudaZone',
 })
 
 const emit = defineEmits<zoneEmit>()
@@ -170,7 +171,7 @@ const {
 } = useZone(props, emit)
 
 const drawOne = () => {
-  emit('move-cards', props.zone, 'tefudaCards', [props.cards[0]], props.player)
+  emit('move-cards', props.zone, 'tefudaZone', [props.cards[0]], props.player)
 }
 defineExpose({
   drawOne

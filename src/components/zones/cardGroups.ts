@@ -1,4 +1,4 @@
-import { Card, CardGroup } from "@/entities/Card";
+import { Card, CardGroup } from "@@/core/entities/card";
 import { computed } from "vue";
 import { zoneProps } from "./zone";
 

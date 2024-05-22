@@ -1,5 +1,5 @@
 import { CardDetail, SourceDeck } from "@/entities/Deck"
-import { player } from "./player"
+import { PlayerType } from "./player"
 import { cardActionMethodParams } from "@@/core/usecase/CardActions"
 import { Zone } from "./zones"
 
@@ -117,8 +117,8 @@ export class GamePlayer {
 export type GameHistoryData = {
   id: string
   canundo: true
-  who: player
-  player: player
+  who: PlayerType
+  player: PlayerType
   method: 'moveCards' | 'changeCardsState' | 'groupCard' | 'undoGroupCard' | 'putUnderCard' | 'startTurn'
   args: cardActionMethodParams
   message: string
@@ -128,8 +128,8 @@ export class GameHistory {
   private constructor(
     public id: string,
     public canundo: true,
-    public who: player,
-    public player: player,
+    public who: PlayerType,
+    public player: PlayerType,
     public method: GameHistoryData['method'],
     public args: cardActionMethodParams,
     public message: string,

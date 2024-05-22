@@ -105,14 +105,14 @@ import SaveLogForm from '@/components/SaveLogForm.vue'
 import { computed, onMounted, ref } from 'vue';
 import { isPhone } from '@/helpers/Util';
 import { GameLogger } from '@@/core/usecase/GameLogger';
-import { player } from '@/entities';
+import { PlayerType } from "@@/core/entities/player";
 import { Game } from '@@/core/entities/game';
 
 const props = defineProps<{
   single: boolean,
   game: Game,
   gameLogger: GameLogger,
-  currentPlayer: player,
+  currentPlayer: PlayerType,
 }>()
 
 const emit = defineEmits([

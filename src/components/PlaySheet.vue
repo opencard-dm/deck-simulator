@@ -145,16 +145,16 @@ import DeckZone from './zones/DeckZone.vue';
 import ChojigenZone from './zones/ChojigenZone.vue';
 import BochiZone from './zones/BochiZone.vue';
 import { zoneEmit } from './zones/zone';
-import type { player as playerType, side as sideType } from '@/entities';
+import { PlayerType, SideType } from "@@/core/entities/player";
 import { ref } from 'vue';
 import { GameLogger } from '@@/core/usecase/GameLogger';
 import { Game } from '@@/core/entities/game';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
-  side: sideType
-  player: playerType,
-  lowerPlayer: playerType,
+  side: SideType
+  player: PlayerType,
+  lowerPlayer: PlayerType,
   game: Game,
   name: string,
   single: boolean,
@@ -163,7 +163,7 @@ const props = defineProps<{
 }>();
 
 type playSheetEmit = zoneEmit & {
-  'start-game': [player: playerType, first: boolean]
+  'start-game': [player: PlayerType, first: boolean]
 }
 
 const emit = defineEmits<playSheetEmit>();

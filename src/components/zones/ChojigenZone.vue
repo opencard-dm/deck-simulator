@@ -16,17 +16,18 @@
 
 <script setup lang="ts">
 
-import type { player, side, zone } from "@/entities";
-import { Card } from "@/entities/Card";
+import type { PlayerType, SideType } from "@@/core/entities/player";
+import { Card } from "@@/core/entities/card";
+import { ZoneType } from "@@/core/entities/zones";
 import { zoneEmit, useZone } from "./zone";
 
 const props = withDefaults(defineProps<{
-  player: player
+  player: PlayerType
   cards: Card[]
-  side: side
-  zone?: zone
+  side: SideType
+  zone?: ZoneType
 }>(), {
-  zone: 'chojigenCards',
+  zone: 'chojigenZone',
 })
 const emit = defineEmits<zoneEmit>()
 const {

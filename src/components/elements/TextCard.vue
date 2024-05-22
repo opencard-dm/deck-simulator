@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { Card } from '@/entities/Card';
+import { Card } from '@@/core/entities/card';
 import { CardDetail, SourceDeck } from '@/entities/Deck';
 import { Features } from '@/features';
 import { useRoomStore } from '@/stores/room';

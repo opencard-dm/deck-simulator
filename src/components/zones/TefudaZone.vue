@@ -57,7 +57,7 @@
             size="small"
             @click.stop="
               setSelectMode(null);
-              moveCard(zone, 'battleCards', card);
+              moveCard(zone, 'battleZone', card);
             "
             >出す</o-button
           >
@@ -108,8 +108,9 @@
 </template>
 
 <script setup lang="ts">
-import type { player, side, zone } from '@/entities';
-import { Card } from '@/entities/Card';
+import type { PlayerType, SideType } from "@@/core/entities/player";
+import { Card } from '@@/core/entities/card';
+import { ZoneType } from "@@/core/entities/zones";
 import CardPopup from '../elements/CardPopup.vue'
 import TextCard from '../elements/TextCard.vue'
 import { isPhone } from '@/helpers/Util'
@@ -122,13 +123,13 @@ const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
   `${Layout.tefudaHeight(cardWidth)}px` : ''
 
 const props = withDefaults(defineProps<{
-  player: player
+  player: PlayerType
   cards: Card[]
-  side: side
+  side: SideType
   single: boolean
-  zone?: zone
+  zone?: ZoneType
 }>(), {
-  zone: 'tefudaCards'
+  zone: 'tefudaZone'
 })
 const hideTefuda = computed(() => {
   return !props.single && props.side === 'upper'
@@ -140,7 +141,6 @@ const emit = defineEmits<zoneEmit & {
 
 const {
   setHoveredCard,
-  selectTargetMode,
   selectMode,
   setSelectMode,
   setCardState,

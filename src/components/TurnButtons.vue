@@ -47,14 +47,14 @@
 </template>
 
 <script setup lang="ts">
-import { player as playerType } from '@/entities';
+import { PlayerType } from '@@/core/entities/player';
 import { GameLogger } from '@@/core/usecase/GameLogger';
 import { isPhone } from '@/helpers/Util';
 import { GamePlayer } from '@@/core/entities/game';
 
 const props = defineProps<{
-  player: playerType
-  upperPlayer: playerType
+  player: PlayerType
+  upperPlayer: PlayerType
   players: {
     a: GamePlayer
     b: GamePlayer
@@ -63,8 +63,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'start-turn': [playerType],
-  'select-deck': [playerType],
+  'start-turn': [PlayerType],
+  'select-deck': [PlayerType],
   'open-logs': [],
 }>()
 

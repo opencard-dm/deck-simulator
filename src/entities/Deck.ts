@@ -1,4 +1,4 @@
-import { Card } from "./Card";
+import { Card } from "@@/core/entities/card";
 
 type civilization = 'light'
     | 'water'

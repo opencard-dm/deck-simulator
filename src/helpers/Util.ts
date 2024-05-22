@@ -1,4 +1,4 @@
-import { Card } from "@/entities/Card";
+import { Card } from "@@/core/entities/card";
 
 export function isPc() {
   return window.innerWidth >= 800

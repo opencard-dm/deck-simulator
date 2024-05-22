@@ -5,7 +5,7 @@ import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
 import { Deck as DeckType, GmDeckData, SourceCard, SourceDeck } from '@/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
-import { Card } from '@/entities/Card';
+import { Card } from '@@/core/entities/card';
 import { useDecksStore } from '../stores/decks';
 import { useRoomStore } from '@/stores/room';
 import { getUserDeck } from '@/components/builder/decks.js';

@@ -167,8 +167,9 @@
 import { isPhone } from "@/helpers/Util"
 import CardPopup from '../elements/CardPopup.vue'
 import MarkTool from "../mark-tool/MarkTool.vue";
-import type { groupableZone, player, side } from "@/entities";
-import { Card } from "@/entities/Card";
+import type { PlayerType, SideType } from "@@/core/entities/player";
+import { Card } from "@@/core/entities/card";
+import { GroupableZoneType } from "@@/core/entities/zones";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
@@ -179,13 +180,13 @@ const cardWidth = isPhone() ? 80 : 80
 const cardHeight = cardWidth * 908 / 650
 
 const props = withDefaults(defineProps<{
-  player: player
+  player: PlayerType
   cards: Card[]
-  side: side
-  zone?: groupableZone
+  side: SideType
+  zone?: GroupableZoneType
   gameLogger: GameLogger
 }>(), {
-  zone: 'battleCards',
+  zone: 'battleZone',
 })
 
 const emit = defineEmits<zoneEmit>()

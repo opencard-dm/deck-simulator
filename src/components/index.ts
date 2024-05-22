@@ -1,4 +1,4 @@
-import { player } from '@/entities'
+import { PlayerType } from '@@/core/entities/player';
 import MarkTool from './mark-tool/MarkTool.vue'
 import { CardActions } from '@@/core/usecase/CardActions'
 import { GameLogger } from '@@/core/usecase/GameLogger'
@@ -9,8 +9,8 @@ export {
 }
 
 export type RoomProps = {
-  upperPlayer: player
-  lowerPlayer: player
+  upperPlayer: PlayerType
+  lowerPlayer: PlayerType
   game: Game
   cardActions: CardActions
   gameLogger: GameLogger

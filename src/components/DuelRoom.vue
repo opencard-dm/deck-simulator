@@ -155,8 +155,9 @@ import LogsViewer from './LogsViewer.vue';
 import { useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
-import { player, zone } from '@/entities';
-import { Card } from '@/entities/Card';
+import { PlayerType } from "@@/core/entities/player";
+import { Card } from '@@/core/entities/card';
+import { ZoneType } from '@@/core/entities/zones';
 import { RoomProps } from '.';
 import { Deck as DeckType, SourceDeck } from '@/entities/Deck';
 import { useRoomStore } from '@/stores/room';
@@ -240,7 +241,7 @@ const totalTurns = computed(() => {
   return players['a'].turn.total + players['b'].turn.total
 })
 const started = computed(() => totalTurns.value > 0)
-function onStartGame(player: player, first: boolean) {
+function onStartGame(player: PlayerType, first: boolean) {
   // 先攻後攻を選べるのはlowerPlayerだけとして、
   // 送られてきたplayerを使わない
   if (first) {
@@ -265,9 +266,9 @@ function emitRoomState() {
   }
 }
 
-function shuffleCards(from: zone, cards: Card[], player: player) {
-  players[player]['cards'][from] = Deck.shuffle(cards);
-  players[player]['cards'][from].forEach(c => {
+function shuffleCards(from: ZoneType, cards: Card[], player: PlayerType) {
+  players[player].getZone(from).cards = Deck.shuffle(cards);
+  players[player].getZone(from).cards.forEach(c => {
     c.showInWorkSpace = false
   })
   const shuffleMessage = {

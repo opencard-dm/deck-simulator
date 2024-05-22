@@ -1,4 +1,4 @@
-import { Card } from "@/entities/Card"
+import { Card } from "@@/core/entities/card"
 
 export type ZoneType = 'tefudaZone' 
   | 'shieldZone'
@@ -7,6 +7,8 @@ export type ZoneType = 'tefudaZone'
   | 'yamafudaZone'
   | 'manaZone'
   | 'bochiZone'
+
+export type GroupableZoneType = 'battleZone' | 'shieldZone'
 
 export class Zone {
 

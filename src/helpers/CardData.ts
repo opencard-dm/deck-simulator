@@ -1,4 +1,4 @@
-import { Card } from "@/entities/Card";
+import { Card } from "@@/core/entities/card";
 import { CardDetail } from "@/entities/Deck";
 import { useRoomStore } from "@/stores/room";
 

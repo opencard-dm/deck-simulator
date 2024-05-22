@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { OnLongPress } from '@vueuse/components'
 import { isPhone } from '@/helpers/Util'
-import { Card } from '@/entities/Card';
+import { Card } from '@@/core/entities/card';
 import { useRoomStore } from '@/stores/room';
 
 const props = withDefaults(defineProps<{

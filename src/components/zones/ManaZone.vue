@@ -87,19 +87,20 @@
 <script setup lang="ts">
 import RoundButton from '../elements/RoundButton.vue'
 import { computed } from 'vue'
-import type { player, side, zone } from "@/entities";
-import { Card } from "@/entities/Card";
+import type { PlayerType, SideType } from "@@/core/entities/player";
+import { Card } from "@@/core/entities/card";
+import { ZoneType } from "@@/core/entities/zones";
 import { useZone, zoneEmit } from "./zone";
 import TextCard from "../elements/TextCard.vue";
 import { isPhone } from '@/helpers/Util';
 
 const props = withDefaults(defineProps<{
-  player: player
+  player: PlayerType
   cards: Card[]
-  side: side
-  zone?: zone
+  side: SideType
+  zone?: ZoneType
 }>(), {
-  zone: 'manaCards',
+  zone: 'manaZone',
 })
 const emit = defineEmits<zoneEmit>()
 

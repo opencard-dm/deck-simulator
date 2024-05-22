@@ -132,12 +132,11 @@
 </template>
 
 <script setup lang="ts">
-import type { player } from "@/entities";
-import type { Deck as DeckType, DecksSource, SourceDeck } from "@/entities/Deck";
+import { PlayerType } from "@@/core/entities/player";
+import type { Deck as DeckType, SourceDeck } from "@/entities/Deck";
 import { CardActions } from "@/helpers/CardActions";
 import { Deck, fetchDeck } from "@/helpers/Deck";
 import { isPhone } from "@/helpers/Util";
-import axios from "axios";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import deckList from '../decks.json'
@@ -150,7 +149,7 @@ const route = useRoute()
 const router = useRouter()
 const decksStore = useDecksStore()
 const props = defineProps<{
-  player: player
+  player: PlayerType
   isReady: boolean
   partnerIsReady: boolean
   active: boolean

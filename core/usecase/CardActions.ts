@@ -1,5 +1,6 @@
-import { zone, player, cardState, groupableZone, playerCards } from "@/entities";
-import { Card, CardGroup } from "@/entities/Card";
+import { Card, CardGroup, cardState } from "@@/core/entities/card";
+import { GroupableZoneType, ZoneType } from "@@/core/entities/zones";
+import { PlayerType } from "@@/core/entities/player";
 import { Deck } from "@/entities/Deck";
 import { GameLogger } from "./GameLogger";
 import { RoomConfig } from "@/helpers/room";
@@ -11,35 +12,35 @@ import { startTurnParams } from "./TurnActions";
 export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | putUnderCardParams | startTurnParams
 
 export interface moveCardsParams {
-  from: zone
-  to: zone
+  from: ZoneType
+  to: ZoneType
   cards: readonly Card[]
-  player: player
+  player: PlayerType
   prepend?: boolean
   index?: number
 }
 
 export interface changeCardsStateParams {
-  from: zone,
+  from: ZoneType,
   cards: Card[],
-  player: player,
+  player: PlayerType,
   cardState?: cardState,
 }
 
 export interface groupCardParams {
-  from: zone,
-  to: groupableZone,
+  from: ZoneType,
+  to: GroupableZoneType,
   fromCard: Card,
   toCard: Card,
-  player: player,
+  player: PlayerType,
 }
 
 export interface putUnderCardParams {
-  from: zone,
-  to: groupableZone
+  from: ZoneType,
+  to: GroupableZoneType
   fromCard: Card,
   toCard: Card,
-  player: player,
+  player: PlayerType,
 }
 
 function getCardGroup(cards: Card[], groupId: string): CardGroup {
@@ -64,22 +65,23 @@ export class CardActions {
     this.gameLogger = gameLogger
   }
 
-  static setupForPlayer(deck: Deck): playerCards {
-    return {
-      manaCards: [],
-      battleCards: [],
-      bochiCards: [],
-      shieldCards: deck.cards.slice(0, 5).map(c => {
-        c.faceDown = true
-        return c
-      }),
-      tefudaCards: deck.cards.slice(5, 10),
-      yamafudaCards: deck.cards.slice(10).map(c => {
-        c.faceDown = true
-        return c
-      }),
-      chojigenCards: deck.chojigenCards,
-    }
+  static setupForPlayer(deck: Deck) {
+    // TODO: 修正、使用されているのはテストのみ
+    // return {
+    //   manaCards: [],
+    //   battleCards: [],
+    //   bochiCards: [],
+    //   shieldCards: deck.cards.slice(0, 5).map(c => {
+    //     c.faceDown = true
+    //     return c
+    //   }),
+    //   tefudaCards: deck.cards.slice(5, 10),
+    //   yamafudaCards: deck.cards.slice(10).map(c => {
+    //     c.faceDown = true
+    //     return c
+    //   }),
+    //   chojigenCards: deck.chojigenCards,
+    // }
   }
 
   moveCards({ from, to, cards, player, prepend, index }: moveCardsParams) {
@@ -100,16 +102,16 @@ export class CardActions {
         index: prepend ? 0 : this.game.players[player].getZone(to).cards.length,
       }
       this.gameLogger?.undoGroupCard({
-        from: to as groupableZone,
-        to: from as groupableZone,
+        from: to as GroupableZoneType,
+        to: from as GroupableZoneType,
         fromCard,
         toCard,
         player,
       })
       if (!RoomConfig.useFirebase) {
         this.undoGroupCard({
-          from: to as groupableZone,
-          to: from as groupableZone,
+          from: to as GroupableZoneType,
+          to: from as GroupableZoneType,
           fromCard,
           toCard,
           player,
@@ -123,24 +125,24 @@ export class CardActions {
     }
   }
 
-  selectDeck(player: player, deck: Deck) {
+  selectDeck(player: PlayerType, deck: Deck) {
     deck.cards.forEach(c => c.faceDown = true)
     // fromのカードは存在しなくても良いため、仮にyamafudaCardsにしている。
     this.moveCards({
-      from: 'yamafudaCards',
-      to: 'yamafudaCards',
+      from: 'yamafudaZone',
+      to: 'yamafudaZone',
       cards: deck.cards,
       player,
     })
     this.moveCards({
-      from: 'yamafudaCards',
-      to: 'shieldCards',
+      from: 'yamafudaZone',
+      to: 'shieldZone',
       cards: deck.cards.slice(-5),
       player,
     })
     this.moveCards({
-      from: 'yamafudaCards',
-      to: 'tefudaCards',
+      from: 'yamafudaZone',
+      to: 'tefudaZone',
       cards: deck.cards.slice(-10, -5).map(c => {
         c.faceDown = false
         return c
@@ -149,8 +151,8 @@ export class CardActions {
     })
     if (deck.chojigenCards.length > 0) {
       this.moveCards({
-        from: 'chojigenCards',
-        to: 'chojigenCards',
+        from: 'chojigenZone',
+        to: 'chojigenZone',
         cards: deck.chojigenCards,
         player,
       })
@@ -183,7 +185,7 @@ export class CardActions {
       })
     }
     // 多色カードはタップしてマナに置く
-    if (to === 'manaCards') {
+    if (to === 'manaZone') {
       cardsCopy.forEach(c => {
         if (cardData(c).isRainbow()) {
           c.tapped = true
@@ -195,7 +197,7 @@ export class CardActions {
       if (!cardData(card) || !cardData(card).cardDetail) return;
       const ability = getCardAbility(cardData(card).cardDetail.name)
       if (ability) {
-        if (to === 'battleCards') {
+        if (to === 'battleZone') {
           if (ability.onMovingToBattleZone) {
             ability.onMovingToBattleZone({
               card: c,
@@ -319,7 +321,7 @@ export class CardActions {
 
     // グループを単独カードに重ねる場合、単独カードを下に
     if (fromCardRef.groupId && !toCardRef.groupId) {
-      if (from === to && to === 'battleCards') {
+      if (from === to && to === 'battleZone') {
         getCardGroup(fromCards, fromCardRef.groupId).cards.forEach(c => {
           this.game.players[player].getZone(to).insertBefore(c, toCardRef)
         })
@@ -362,7 +364,7 @@ export class CardActions {
     const cards: Card[] = this.game.players[player].getZone(to).cards
     const groupId = cards.find(c => c.id === fromCard.id)?.groupId as string
     if (fromCard.groupId) {
-      if (from === to && to === 'battleCards') {
+      if (from === to && to === 'battleZone') {
         // TODO: 順番の変更を元に戻す関数に一本化する
         getCardGroup(cards, fromCard.groupId).cards.forEach(c => {
           if (c.id === toCard.id) return true
@@ -392,8 +394,8 @@ export class CardActions {
 
   ungroupCard({ card, player, zone }: {
     card: Card,
-    player: player,
-    zone: zone,
+    player: PlayerType,
+    zone: ZoneType,
   }) {
     const cards: Card[] = this.game.players[player].getZone(zone).cards
     const groupId = card.groupId

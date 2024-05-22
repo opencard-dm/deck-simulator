@@ -1,8 +1,8 @@
 import { SocketUtil } from '../helpers/socket';
-import { useRoute } from 'vue-router';
 import { CardActions, changeCardsStateParams, groupCardParams } from './CardActions';
-import { player, playerCards, zone } from '@/entities';
-import { Card } from '@/entities/Card';
+import type { PlayerType } from "@@/core/entities/player";
+import { Card } from '@@/core/entities/card';
+import { ZoneType } from '@@/core/entities/zones';
 import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
 import { Deck } from '@/entities/Deck';
@@ -32,13 +32,13 @@ function useRoomListners({
   props: any,
 }
 ) {
-  const side = (player: player) => player === props.upperPlayer ? 'upper' : 'lower'
+  const side = (player: PlayerType) => player === props.upperPlayer ? 'upper' : 'lower'
   
-  function onMoveCards(from: zone, to: zone, cards: Card[], player: player, prepend = false) {
+  function onMoveCards(from: ZoneType, to: ZoneType, cards: Card[], player: PlayerType, prepend = false) {
     if (!cards || cards.length === 0) return;
     cardActions.moveCards({ from, to, cards: cards, player, prepend })
     // 少し待てば、レンダリングが完了しているため、うまくいった。
-    if (to === 'tefudaCards') {
+    if (to === 'tefudaZone') {
       setTimeout(() => {
         scrollZone(
           '.tefuda-zone.' + side(player),
@@ -47,7 +47,7 @@ function useRoomListners({
       }, 300);
     }
     // 少し待てば、レンダリングが完了しているため、うまくいった。
-    if (to === 'shieldCards') {
+    if (to === 'shieldZone') {
       setTimeout(() => {
         const shieldZone = document.querySelector('.shield-zone.' + side(player))
         shieldZone?.scrollTo({
@@ -86,7 +86,7 @@ function useRoomListners({
     // SocketUtil.socket.emit('cards-moved', players[player]);
   }
 
-  function onStartTurn({ player }: { player: player }) {
+  function onStartTurn({ player }: { player: PlayerType }) {
     const nextTurn = players[player].turn.current + 1
     gameLogger.turnActions.startTurn({
       player,
@@ -94,7 +94,7 @@ function useRoomListners({
     })
     if (players[player].battleZone.cards.filter(c => c.tapped).length > 0) {
       onChangeCardsState({ 
-        from: 'battleCards',
+        from: 'battleZone',
         cards: players[player].battleZone.cards,
         player,
         cardState: {
@@ -104,7 +104,7 @@ function useRoomListners({
     }
     if (players[player].manaZone.cards.filter(c => c.tapped).length > 0) {
       onChangeCardsState({
-        from: 'manaCards',
+        from: 'manaZone',
         cards: players[player].manaZone.cards,
         player,
         cardState: {
@@ -116,15 +116,15 @@ function useRoomListners({
       && players[player].yamafudaZone.cards.length > 0
     ) {
       onMoveCards(
-        'yamafudaCards',
-        'tefudaCards',
+        'yamafudaZone',
+        'tefudaZone',
         [players[player].yamafudaZone.cards[0]],
         player
       )
     }
   }
 
-  function onSelectDeck(player: player, deck: Deck) {
+  function onSelectDeck(player: PlayerType, deck: Deck) {
     cardActions.selectDeck(player, deck)
   }
 
@@ -183,49 +183,4 @@ export function useRoomSetup(props: RoomProps) {
     resetGame,
     players,
   }
-}
-
-export function initialData(roomId: string) {
-  return {
-    players: {
-      a: {
-        cards: {
-          manaCards: [],
-          battleCards: [],
-          bochiCards: [],
-          shieldCards: [],
-          tefudaCards: [],
-          yamafudaCards: [],
-          chojigenCards: [],
-        } as playerCards,
-        name: 'a',
-        roomId: roomId,
-        isReady: false,
-        hasChojigen: false,
-        turn: {
-          current: 0,
-          total: 0,
-        }
-      },
-      b: {
-        cards: {
-          manaCards: [],
-          battleCards: [],
-          bochiCards: [],
-          shieldCards: [],
-          tefudaCards: [],
-          yamafudaCards: [],
-          chojigenCards: [],
-        } as playerCards,
-        name: 'b',
-        roomId: roomId,
-        isReady: false,
-        hasChojigen: false,
-        turn: {
-          current: 0,
-          total: 0,
-        }
-      },
-    },
-  };
 }

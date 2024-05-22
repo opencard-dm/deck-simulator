@@ -1,23 +1,24 @@
 import { useRoomStore } from "@/stores/room";
-import { cardState, groupableZone, player, zone } from "@/entities";
-import { Card } from "@/entities/Card";
+import type { PlayerType } from "@@/core/entities/player";
+import { Card, cardState } from "@@/core/entities/card";
+import { GroupableZoneType, ZoneType } from "@@/core/entities/zones";
 import { computed } from "vue";
-import { changeCardsStateParams } from "@/helpers/CardActions";
+import { changeCardsStateParams } from "@@/core/usecase/CardActions";
 import { CardDetail } from "@/entities/Deck";
 
 export interface zoneProps {
-    player: player
+    player: PlayerType
     cards: Card[]
-    zone?: zone
+    zone?: ZoneType
 }
 
 export type zoneEmit = {
-    'move-cards': [from: zone, to: zone, cards: Card[], player: player, prepend?: boolean]
+    'move-cards': [from: ZoneType, to: ZoneType, cards: Card[], player: PlayerType, prepend?: boolean]
     'change-cards-state': [param: changeCardsStateParams]
-    'group-card': [param: {from: zone, to: groupableZone, fromCard: Card, toCard: Card, player: player}]
-    'put-under-card': [param: {from: zone, to: groupableZone, fromCard: Card, toCard: Card, player: player}]
-    'shuffle-cards': [from: zone, cards: Card[], player: player]
-    'emit-room-state': [player: player]
+    'group-card': [param: {from: ZoneType, to: GroupableZoneType, fromCard: Card, toCard: Card, player: PlayerType}]
+    'put-under-card': [param: {from: ZoneType, to: GroupableZoneType, fromCard: Card, toCard: Card, player: PlayerType}]
+    'shuffle-cards': [from: ZoneType, cards: Card[], player: PlayerType]
+    'emit-room-state': [player: PlayerType]
 }
 
 export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zoneEmit>>) {
@@ -41,7 +42,7 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
         setHoveredCard: (...args: Parameters<typeof store.setHoveredCard>) => store.setHoveredCard(...args),
     }
 
-    function moveCard(from: zone, to: zone, card: Card, prepend = false) {
+    function moveCard(from: ZoneType, to: ZoneType, card: Card, prepend = false) {
       emit('move-cards', from, to, [card], props.player, prepend);
     }
     function toggleTap(card: Card) {
@@ -60,7 +61,7 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
     function setCardState(card: Card, cardState: cardState) {
       console.assert(props.zone, 'props.zone is required')
       emit('change-cards-state', {
-        from: props.zone as zone,
+        from: props.zone as ZoneType,
         cards: [card],
         player: props.player,
         cardState: cardState,
@@ -70,7 +71,7 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
       setSelectMode(null)
       console.assert(props.zone, 'props.zone is required')
       emit('change-cards-state', {
-        from: props.zone as zone,
+        from: props.zone as ZoneType,
         cards: [card],
         player: props.player,
         cardState: {
@@ -95,14 +96,14 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
       }
       return false;
     }
-    function moveSelectedCard(to: zone, prepend = false) {
+    function moveSelectedCard(to: ZoneType, prepend = false) {
       if (selectMode.value === null) return
       // 本人確認
       if (selectMode.value.player !== props.player) return
       emit('move-cards', selectMode.value.zone, to, [selectMode.value.card], props.player, prepend)
       setSelectMode(null)
     }
-    function shuffleCards(from: zone, cards: Card[]) {
+    function shuffleCards(from: ZoneType, cards: Card[]) {
       emit('shuffle-cards', from, cards, props.player)
     }
     function emitState() {
@@ -151,21 +152,21 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
     }
 }
 
-export function readableZone(zone: zone) {
+export function readableZone(zone: ZoneType) {
   switch (zone) {
-    case "tefudaCards":
+    case "tefudaZone":
       return '手札'
-    case "shieldCards":
+    case "shieldZone":
       return 'シールドゾーン'
-    case "battleCards":
+    case "battleZone":
       return 'バトルゾーン'
-    case "chojigenCards":
+    case "chojigenZone":
       return '超次元ゾーン'
-    case "yamafudaCards":
+    case "yamafudaZone":
       return '山札'
-    case "manaCards":
+    case "manaZone":
       return 'マナゾーン'
-    case "bochiCards":
+    case "bochiZone":
       return '墓地'
     default:
       return '';

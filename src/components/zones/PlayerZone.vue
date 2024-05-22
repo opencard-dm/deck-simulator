@@ -26,11 +26,11 @@
 
 <script setup lang="ts">
 import { isPhone } from "@/helpers/Util"
-import type { player, side } from "@/entities";
+import type { PlayerType, SideType } from "@@/core/entities/player";
 
 const props = defineProps<{
-  player: player
-  side: side
+  player: PlayerType
+  side: SideType
 }>()
 
 </script>

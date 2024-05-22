@@ -1,15 +1,15 @@
-import { player } from "@/entities"
+import { PlayerType } from "@@/core/entities/player";
 import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams, putUnderCardParams } from "@@/core/usecase/CardActions"
 import { reactive } from 'vue'
-import { RoomConfig, initialData } from "@/helpers/room"
+import { RoomConfig } from "@/helpers/room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
 import { cardActionMethodParams } from "@@/core/usecase/CardActions"
-import { GameHistory } from "../entities/game"
+import { Game, GameHistory } from "../entities/game"
 import { v4 as uuidv4 } from 'uuid'
 import { TurnActions, startTurnParams } from "@@/core/usecase/TurnActions"
 import { state } from "@/store"
 import { readableZone } from "@/components/zones/zone"
-import { Card } from "@/entities/Card"
+import { Card } from "@@/core/entities/card"
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
@@ -19,13 +19,13 @@ export class GameLogger {
   private doneIds: string[] = []
   public unsubscribes: any[] = []
   public turnActions: TurnActions
-  public players: ReturnType<typeof initialData>['players']
-  public firstPlayer: player
+  public players: Game['players']
+  public firstPlayer: PlayerType
   // vue component
 
   constructor(
     private cardActions: CardActions,
-    private who: player = 'a'
+    private who: PlayerType = 'a'
   ) {
     this.players = cardActions.game.players
     this.turnActions = new TurnActions()
@@ -47,7 +47,7 @@ export class GameLogger {
     }
   }
 
-  static useGameLogger(cardActions: CardActions, who: player) {
+  static useGameLogger(cardActions: CardActions, who: PlayerType) {
     // https://zenn.dev/tanukikyo/articles/40603fbdc88c05#%E3%80%87-object-%C3%97-reactive
     const gameLogger = reactive(new GameLogger(cardActions, who)) as GameLogger
     cardActions.setGameLogger(gameLogger)

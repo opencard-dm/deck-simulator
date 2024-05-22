@@ -1,4 +1,4 @@
 
-export type player = 'a' | 'b'
+export type PlayerType = 'a' | 'b'
 
-export type side = 'lower' | 'upper'
+export type SideType = 'lower' | 'upper'
