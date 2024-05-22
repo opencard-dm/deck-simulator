@@ -168,20 +168,16 @@ type playSheetEmit = zoneEmit & {
 
 const emit = defineEmits<playSheetEmit>();
 
-function moveCards(...args: any[]) {
-  // @ts-ignore
+function moveCards(...args: zoneEmit['move-cards']) {
   emit('move-cards', ...args);
 }
-function groupCard(...args: any[]) {
-  // @ts-ignore
+function groupCard(...args: zoneEmit['group-card']) {
   emit('group-card', ...args);
 }
-function changeCardsState(...args: any[]) {
-  // @ts-ignore
+function changeCardsState(...args: zoneEmit['change-cards-state']) {
   emit('change-cards-state', ...args);
 }
-function putUnderCard(...args: any[]) {
-  // @ts-ignore
+function putUnderCard(...args: zoneEmit['put-under-card']) {
   emit('put-under-card', ...args);
 }
 function emitRoomState() {

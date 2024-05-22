@@ -7,7 +7,7 @@ import { cardActionMethodParams } from "@@/core/usecase/CardActions"
 import { Game, GameHistory } from "../entities/game"
 import { v4 as uuidv4 } from 'uuid'
 import { TurnActions, startTurnParams } from "@@/core/usecase/TurnActions"
-import { state } from "@/store"
+import { State } from "@/stores/room"
 import { readableZone } from "@/components/zones/zone"
 import { Card } from "@@/core/entities/card"
 
@@ -197,7 +197,7 @@ export class GameLogger {
       // 連続するマナタップは一つの履歴にまとめる
       if (this.currentHistory && HistoryComparator.isManaStateChange(this.currentHistory, history)) {
         const currentChangeCardsStateArgs = this.currentHistory.args as changeCardsStateParams
-        currentChangeCardsStateArgs.cards.push(...(args as any).cards)
+        currentChangeCardsStateArgs.cards.push(...(args as changeCardsStateParams).cards)
         return
       }
       this.histories.push(history)
@@ -233,7 +233,7 @@ export class GameLogger {
     }
   }
   
-  readableHistory(history: GameHistory, cardDetails: state["cardDetails"]) {
+  readableHistory(history: GameHistory, cardDetails: State["cardDetails"]) {
     if (history.method === this.moveCards.name) {
       const { from, to, cards, player, prepend, index } = history.args as moveCardsParams
       if (from === to) {
@@ -245,7 +245,7 @@ export class GameLogger {
     }
     if (history.method === this.groupCard.name) {
       const { from, to, fromCard, toCard, player } = history.args as groupCardParams
-      if (to === 'shieldCards') {
+      if (to === 'shieldZone') {
         return getCardNames([fromCard], cardDetails).join('')
           + 'をシールドに重ねました'
       }
@@ -258,7 +258,7 @@ export class GameLogger {
         return readableZone(from) + 'の'
           + getCardNames([fromCard], cardDetails).join('') + 'を動かしました'
       }
-      if (to === 'battleCards' && from === 'tefudaCards') {
+      if (to === 'battleZone' && from === 'tefudaZone') {
         // 革命チェンジ
         return getCardNames([fromCard], cardDetails).join('') + 'を手札に戻しました'
       }
@@ -286,7 +286,7 @@ export class GameLogger {
   }
 }
 
-function getCardNames(cards: readonly Card[], cardDetails: state["cardDetails"]) {
+function getCardNames(cards: readonly Card[], cardDetails: State["cardDetails"]) {
   return cards.map(c => {
     if (c.faceDown) {
       return 'カード'
@@ -305,8 +305,8 @@ export class HistoryComparator {
     ) {
       const currentHistoryArgs = currentHistory.args as changeCardsStateParams
       const nextHistoryArgs = nextHistory.args as changeCardsStateParams
-      if (currentHistoryArgs.from === 'manaCards'
-        && nextHistoryArgs.from === 'manaCards'
+      if (currentHistoryArgs.from === 'manaZone'
+        && nextHistoryArgs.from === 'manaZone'
         && JSON.stringify(currentHistoryArgs.cardState) === JSON.stringify(nextHistoryArgs.cardState)
       ) {
         return true
@@ -322,8 +322,8 @@ export class HistoryComparator {
     if (!card.groupId) return false
     if (currentHistory.method === 'groupCard') {
       const currentHistoryArgs = currentHistory.args as groupCardParams
-      if (currentHistoryArgs.to === 'battleCards'
-        && ['tefudaCards', 'manaCards'].includes(currentHistoryArgs.from)
+      if (currentHistoryArgs.to === 'battleZone'
+        && ['tefudaZone', 'manaZone'].includes(currentHistoryArgs.from)
         && card.id === currentHistoryArgs.fromCard.id
       ) {
         return true

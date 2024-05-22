@@ -1,9 +1,9 @@
 import { SocketUtil } from '../helpers/socket';
-import { CardActions, changeCardsStateParams, groupCardParams } from './CardActions';
+import { CardActions, changeCardsStateParams, groupCardParams } from '@@/core/usecase/CardActions';
 import type { PlayerType } from "@@/core/entities/player";
 import { Card } from '@@/core/entities/card';
 import { ZoneType } from '@@/core/entities/zones';
-import { GameLogger } from './GameLogger';
+import { GameLogger } from '@@/core/usecase/GameLogger';
 import { RoomProps } from '@/components';
 import { Deck } from '@@/core/entities/Deck';
 import axios from 'axios';

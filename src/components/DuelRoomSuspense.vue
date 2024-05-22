@@ -73,7 +73,7 @@ onMounted(async () => {
         return
       }
       game.players.a.deck = localDeck
-      cardActions.selectDeck('a', await Deck.prepareDeckForGame(localDeck, true, true) as any)
+      cardActions.selectDeck('a', await Deck.prepareDeckForGame(localDeck, true, true))
     }
     if (typeof route.query.deck_b === 'string' && route.query.deck_b) {
       const deckB = await fetchDeck(route.query.deck_b, roomStore)
@@ -82,7 +82,7 @@ onMounted(async () => {
         ...roomStore.cardDetails,
       }
       game.players.b.deck = deckB
-      cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, false, true) as any)
+      cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, false, true))
     }
   }
   loading.value = false

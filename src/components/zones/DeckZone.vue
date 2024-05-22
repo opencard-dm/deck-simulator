@@ -68,9 +68,9 @@
           />
         </div>
         <CardPopup
-          v-if="hasSelectedCard()" 
-          :url="cards.length > 0 ? cards[0].imageUrl : ''"
-          :card="cards.length > 0 ? cards[0] : null"
+          v-if="hasSelectedCard() && cards.length > 0" 
+          :url="cards[0].imageUrl"
+          :card="cards[0]"
         >
           <div class="deck_buttons"
             :style="{
@@ -115,7 +115,7 @@
             >
             <!-- メクレイド -->
             <o-button
-              v-if="selectMode?.zone === 'battleCards' && cardData(selectMode.card).hasMekuraidAbility()"
+              v-if="selectMode?.zone === 'battleZone' && cardData(selectMode.card).hasMekuraidAbility()"
               style="z-index: 1;"
               variant="grey-dark"
               class="deck_buttons_out_buttom"

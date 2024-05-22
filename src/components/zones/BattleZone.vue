@@ -131,7 +131,7 @@
           <!-- 【DARK MATERIAL COMPLEX】-->
           <template v-if="cardDetail(card).name === 'DARK MATERIAL COMPLEX'">
             <o-button
-              v-if="selectMode?.zone === 'yamafudaCards' && !selectMode.card.faceDown"
+              v-if="selectMode?.zone === 'yamafudaZone' && !selectMode.card.faceDown"
               variant="grey-dark"
               size="small"
               @click.stop="putUnder(card)"
@@ -174,7 +174,7 @@ import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
 import { GameLogger, HistoryComparator } from "@@/core/usecase/GameLogger";
-import { groupCardParams } from "@/helpers/CardActions";
+import { groupCardParams } from "@@/core/usecase/CardActions";
 
 const cardWidth = isPhone() ? 80 : 80
 const cardHeight = cardWidth * 908 / 650

@@ -29,6 +29,7 @@
         >
           <option
             v-for="deck in decksSource.decks"
+            :key="sourceIndex + '-' + deck.name"
             :value="sourceIndex + '-' + deck.name"
           >
             {{ deck.name }}
@@ -134,7 +135,7 @@
 <script setup lang="ts">
 import { PlayerType } from "@@/core/entities/player";
 import type { Deck as DeckType, SourceDeck } from "@@/core/entities/Deck";
-import { CardActions } from "@/helpers/CardActions";
+import { CardActions } from "@@/core/usecase/CardActions";
 import { Deck, fetchDeck } from "@/helpers/Deck";
 import { isPhone } from "@/helpers/Util";
 import { computed, onMounted, reactive, ref } from "vue";

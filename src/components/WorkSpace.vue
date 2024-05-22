@@ -264,6 +264,7 @@ const cardWidth = isPhone() ? 70 : 100
 const cardHeight = cardWidth * 908 / 650
 
 const props = withDefaults(defineProps<{
+  // Typeエラーを防ぐためで使わない
   player?: PlayerType
   cards?: Card[]
   side?: SideType
@@ -271,8 +272,6 @@ const props = withDefaults(defineProps<{
   lowerPlayer: PlayerType
 }>(), {
   side: 'lower',
-  // Typeエラーを防ぐためで使わない
-  player: 'a',
   cards: () => [],
 })
 
@@ -300,7 +299,7 @@ const dropdownTriggers = computed(() => {
   }
   return ["click"];
 })
-const player = computed(() => roomStore.workSpace.player)
+
 const orderedCards = computed(() => {
   if (workSpace.value.zone === "manaZone") {
     const tappedCards = workSpace.value.cards.filter((c) => c.tapped);
