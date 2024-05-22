@@ -1,7 +1,7 @@
 
 import { GameHistoryData } from '@@/core/entities/game';
 import { FireStore } from '../firestore'
-import { SourceDeck } from '@/entities/Deck'
+import { SourceDeck } from '@@/core/entities/Deck'
 import { FieldPath, FieldValue } from 'firebase-admin/firestore'
 
 export async function createLog(

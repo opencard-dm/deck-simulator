@@ -80,7 +80,7 @@
 <script setup lang="ts">
 import { computed, reactive, onMounted } from "vue";
 import { getUserDecks } from "./builder/decks";
-import { SourceDeck } from "@/entities/Deck";
+import { SourceDeck } from "@@/core/entities/Deck";
 import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
 import { useDecksStore } from "@/stores/decks";
 import { getAuth, onAuthStateChanged } from "firebase/auth";

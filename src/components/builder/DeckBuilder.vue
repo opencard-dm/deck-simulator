@@ -51,7 +51,7 @@ import { fetchCardDetails } from "@@/core/services/card.service";
 import systemDecks from '@/decks.json'
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoomStore } from "@/stores/room";
-import { SourceDeck } from "@/entities/Deck";
+import { SourceDeck } from "@@/core/entities/Deck";
 import { isPhone } from "@/helpers/Util";
 import { getUserDecks } from "./decks";
 

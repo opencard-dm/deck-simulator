@@ -101,7 +101,7 @@ import CardList from "./CardList.vue";
 import { fetchCardDetails } from "@@/core/services/card.service";
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoomStore } from "@/stores/room";
-import { CardDetail, SourceCard, SourceDeck } from "@/entities/Deck";
+import { CardDetail, SourceCard, SourceDeck } from "@@/core/entities/Deck";
 import { useDecksStore } from "@/stores/decks";
 import cardnames from '@/cardnames.json'
 import { isPhone } from "@/helpers/Util";

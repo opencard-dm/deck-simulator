@@ -5,7 +5,7 @@ import { CardActions } from './CardActions'
 import { expect } from 'vitest'
 import { GameLogger } from './GameLogger'
 import { it } from 'vitest'
-import { SourceDeck } from '@/entities/Deck'
+import { SourceDeck } from '@@/core/entities/Deck'
 
 it('カードのグループ化', async () => {
   const deck = await Deck.prepareDeckForGame(

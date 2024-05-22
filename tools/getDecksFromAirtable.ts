@@ -2,7 +2,7 @@
  * カード名からAirtableのIDを検索し付与します。
  */
 import 'dotenv/config'
-import { SourceDeck } from '@/entities/Deck';
+import { SourceDeck } from '@@/core/entities/Deck';
 import Airtable from 'airtable'
 import { readFileSync,  writeFileSync } from 'fs'
 

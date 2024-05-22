@@ -1,10 +1,10 @@
 import { Card, CardGroup, cardState } from "@@/core/entities/card";
 import { GroupableZoneType, ZoneType } from "@@/core/entities/zones";
 import { PlayerType } from "@@/core/entities/player";
-import { Deck } from "@/entities/Deck";
+import { Deck } from "@@/core/entities/Deck";
 import { GameLogger } from "./GameLogger";
 import { RoomConfig } from "@/helpers/room";
-import { cardData } from "@/helpers/CardData";
+import { cardData } from "@@/core/entities/CardData";
 import { Game } from "../entities/game";
 import { getCardAbility } from "../services/card.service";
 import { startTurnParams } from "./TurnActions";

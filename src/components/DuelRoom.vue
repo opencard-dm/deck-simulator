@@ -159,7 +159,7 @@ import { PlayerType } from "@@/core/entities/player";
 import { Card } from '@@/core/entities/card';
 import { ZoneType } from '@@/core/entities/zones';
 import { RoomProps } from '.';
-import { Deck as DeckType, SourceDeck } from '@/entities/Deck';
+import { Deck as DeckType, SourceDeck } from '@@/core/entities/Deck';
 import { useRoomStore } from '@/stores/room';
 
 const store = useRoomStore()

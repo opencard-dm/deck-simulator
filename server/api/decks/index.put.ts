@@ -1,4 +1,4 @@
-import { SourceDeck } from '@/entities/Deck'
+import { SourceDeck } from '@@/core/entities/Deck'
 import { readFileSync, writeFileSync } from 'fs'
 
 const DECKS_FILE = 'src/decks.json'

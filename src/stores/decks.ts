@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { DecksSource } from '@/entities/Deck';
+import { DecksSource } from '@@/core/entities/Deck';
 
 interface State {
     data: DecksSource[]

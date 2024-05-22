@@ -133,7 +133,7 @@
 
 <script setup lang="ts">
 import { PlayerType } from "@@/core/entities/player";
-import type { Deck as DeckType, SourceDeck } from "@/entities/Deck";
+import type { Deck as DeckType, SourceDeck } from "@@/core/entities/Deck";
 import { CardActions } from "@/helpers/CardActions";
 import { Deck, fetchDeck } from "@/helpers/Deck";
 import { isPhone } from "@/helpers/Util";

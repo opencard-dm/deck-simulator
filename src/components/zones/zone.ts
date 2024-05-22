@@ -4,7 +4,7 @@ import { Card, cardState } from "@@/core/entities/card";
 import { GroupableZoneType, ZoneType } from "@@/core/entities/zones";
 import { computed } from "vue";
 import { changeCardsStateParams } from "@@/core/usecase/CardActions";
-import { CardDetail } from "@/entities/Deck";
+import { CardDetail } from "@@/core/entities/Deck";
 
 export interface zoneProps {
     player: PlayerType

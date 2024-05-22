@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { CardDetail } from '@/entities/Deck'
+import { CardDetail } from '@@/core/entities/Deck'
 import { Record, FieldSet } from 'airtable'
 
 export function getCardDetailFromRecord(record: Record<FieldSet>): CardDetail {

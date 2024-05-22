@@ -1,4 +1,4 @@
-import { DecksSource, SourceDeck } from '@/entities/Deck';
+import { DecksSource, SourceDeck } from '@@/core/entities/Deck';
 import { read, utils } from 'xlsx'
 
 export async function fetchDeck(url: string): Promise<DecksSource> {

@@ -18,7 +18,7 @@ import DuelRoom from '@/components/DuelRoom.vue';
 import { reactive } from 'vue';
 import { CardActions } from '@@/core/usecase/CardActions';
 import { GameLogger } from '@@/core/usecase/GameLogger';
-import { SourceDeck } from '@/entities/Deck';
+import { SourceDeck } from '@@/core/entities/Deck';
 import { Game } from '@@/core/entities/game';
 import { useRoomStore } from '@/stores/room';
 import { startTurnParams } from '@@/core/usecase/TurnActions';

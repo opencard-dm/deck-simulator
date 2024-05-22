@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import jsonDecks from '@/decks.json'
-import { SourceDeck } from '@/entities/Deck'
+import { SourceDeck } from '@@/core/entities/Deck'
 import { Features } from '@/features';
 import { useAuthStore } from '@/stores/auth'
 import axios from  'axios'

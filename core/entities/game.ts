@@ -1,4 +1,4 @@
-import { CardDetail, SourceDeck } from "@/entities/Deck"
+import { CardDetail, SourceDeck } from "@@/core/entities/Deck"
 import { PlayerType } from "./player"
 import { cardActionMethodParams } from "@@/core/usecase/CardActions"
 import { Zone } from "./zones"

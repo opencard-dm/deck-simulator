@@ -5,7 +5,7 @@ import { Card } from '@@/core/entities/card';
 import { ZoneType } from '@@/core/entities/zones';
 import { GameLogger } from './GameLogger';
 import { RoomProps } from '@/components';
-import { Deck } from '@/entities/Deck';
+import { Deck } from '@@/core/entities/Deck';
 import axios from 'axios';
 import { Game, GamePlayer } from '@@/core/entities/game';
 import { saveGameTemporarily } from '@@/core/services/game.service';

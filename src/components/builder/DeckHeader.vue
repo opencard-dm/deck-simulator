@@ -87,7 +87,7 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
 import Modal from "./Modal.vue";
-import { SourceDeck } from '@/entities/Deck'
+import { SourceDeck } from '@@/core/entities/Deck'
 import axios from "axios";
 
 const props = defineProps<{

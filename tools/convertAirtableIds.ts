@@ -2,7 +2,7 @@
  * yarn ts-node tools/convertAirtableIds.ts
  */
 
-import { SourceDeck } from '@/entities/Deck'
+import { SourceDeck } from '@@/core/entities/Deck'
 import { writeFileSync, readFileSync } from 'fs'
 import cardnames from '../src/cardnames.json' assert { type: "json" }
 

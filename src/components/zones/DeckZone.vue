@@ -141,7 +141,7 @@ import { defineExpose } from 'vue';
 import type { PlayerType, SideType } from "@@/core/entities/player";
 import { isPhone } from '@/helpers/Util';
 import TextCard from "../elements/TextCard.vue";
-import { cardData } from '@/helpers/CardData';
+import { cardData } from '@@/core/entities/CardData';
 
 const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`

@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import { onMounted, getCurrentInstance, computed } from 'vue';
 import draggable from 'vuedraggable'
-import { SourceCard, SourceDeck } from '@/entities/Deck'
+import { SourceCard, SourceDeck } from '@@/core/entities/Deck'
 import TextCard from '../elements/TextCard.vue'
 import { isPhone } from '@/helpers/Util';
 import { useRoomStore } from '@/stores/room';

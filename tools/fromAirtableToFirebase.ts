@@ -2,7 +2,7 @@
  * 現在airtableはローカルでのデッキデータのjsonファイル作成に使用し、本番環境では使用していません。
  */
 import 'dotenv/config'
-import { CardDetail } from '@/entities/Deck';
+import { CardDetail } from '@@/core/entities/Deck';
 import Airtable from 'airtable'
 import { FireStore } from '../server/firestore'
 import { getCardDetailFromRecord } from './helpers';

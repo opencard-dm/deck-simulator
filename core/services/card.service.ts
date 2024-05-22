@@ -1,4 +1,4 @@
-import { CardDetail, SourceDeck } from "@/entities/Deck"
+import { CardDetail, SourceDeck } from "@@/core/entities/Deck"
 import { CardAbility } from "@@/core/entities/card"
 import axios from "axios"
 import implementedCardNames from "@/implementedCardNames.json"

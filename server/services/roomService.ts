@@ -1,6 +1,6 @@
 
 import { FireStore } from '../firestore'
-import { SourceDeck } from '@/entities/Deck'
+import { SourceDeck } from '@@/core/entities/Deck'
 import { FieldPath, FieldValue } from 'firebase-admin/firestore'
 
 export async function createRoom(roomId: string, cookie: string) {

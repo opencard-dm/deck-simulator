@@ -3,7 +3,7 @@ const START_ID_B = 101;
 
 import { useConfig } from '../plugins/useConfig.js'
 import axios from 'axios';
-import { Deck as DeckType, GmDeckData, SourceCard, SourceDeck } from '@/entities/Deck';
+import { Deck as DeckType, GmDeckData, SourceCard, SourceDeck } from '@@/core/entities/Deck';
 import decks from '../decks.json' assert { type: "json" }
 import { Card } from '@@/core/entities/card';
 import { useDecksStore } from '../stores/decks';

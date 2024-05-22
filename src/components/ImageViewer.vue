@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { CardDetail } from '@/entities/Deck';
+import { CardDetail } from '@@/core/entities/Deck';
 import { isPhone } from '@/helpers/Util';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { Features } from '@/features';

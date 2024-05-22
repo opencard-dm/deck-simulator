@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import type { PlayerType } from "@@/core/entities/player";
 import { Card } from '@@/core/entities/card';
 import { ZoneType } from '@@/core/entities/zones';
-import { CardDetail } from '@/entities/Deck';
+import { CardDetail } from '@@/core/entities/Deck';
 
 export interface State {
   selectMode: {

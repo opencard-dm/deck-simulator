@@ -1,4 +1,4 @@
-import { SourceDeck } from '@/entities/Deck';
+import { SourceDeck } from '@@/core/entities/Deck';
 import { Firebase } from '@/helpers/firebase';
 import { useAuthStore } from '@/stores/auth';
 import { doc, setDoc, addDoc, collection, getDocs, deleteDoc, getDoc } from 'firebase/firestore';
