@@ -113,6 +113,16 @@
               @click.stop="openDeck()"
               >山札を見る</o-button
             >
+            <!-- メクレイド -->
+            <o-button
+              v-if="selectMode?.zone === 'battleCards' && cardData(selectMode.card).hasMekuraidAbility()"
+              style="z-index: 1;"
+              variant="grey-dark"
+              class="deck_buttons_out_buttom"
+              size="small"
+              @click.stop="mekuraid()"
+              >メクレイド</o-button
+            >
           </div>
         </CardPopup>
       </div>
@@ -130,6 +140,7 @@ import { defineExpose } from 'vue';
 import type { player, side, zone } from "@/entities";
 import { isPhone } from '@/helpers/Util';
 import TextCard from "../elements/TextCard.vue";
+import { cardData } from '@/helpers/CardData';
 
 const cardWidthNum = 50
 const cardWidth = `${cardWidthNum}px`
@@ -194,6 +205,16 @@ function openDeck() {
   openWorkSpace({
     zone: props.zone,
     cards: props.cards,
+    player: props.player,
+  });
+}
+function mekuraid() {
+  setSelectMode(null)
+  const cards = props.cards.slice(0, 3)
+  cards.forEach(c => c.showInWorkSpace = true)
+  openWorkSpace({
+    zone: props.zone,
+    cards,
     player: props.player,
   });
 }
