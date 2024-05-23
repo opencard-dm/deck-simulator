@@ -2,6 +2,7 @@ import { CardDetail, SourceDeck } from "@@/core/entities/Deck"
 import { PlayerType } from "./player"
 import { cardActionMethodParams } from "@@/core/usecase/CardActions"
 import { Zone } from "./zones"
+import { Card } from "./card"
 
 export class Game {
 
@@ -66,6 +67,7 @@ export class GamePlayer {
   public yamafudaZone: Zone
   public chojigenZone: Zone
   public triggeredAbilities: Zone
+  public attackingCard: Card | null = null
 
   constructor(
     public name: string,

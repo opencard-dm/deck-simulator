@@ -62,6 +62,21 @@
             >出す</o-button
           >
         </div>
+        <div
+          v-if="true"
+          class="card_bottomButton"
+        >
+          <o-button
+            v-if="cardData(card).ability.kakumeiChange"
+            variant="danger"
+            size="small"
+            @click.stop="
+              setSelectMode(null);
+              moveCard(zone, 'battleZone', card);
+            "
+            >チェンジ</o-button
+          >
+        </div>
       </div>
 
       <div class="card_wrapper card-placeholder-wrapper" :style="{height: `${cardHeight}px`}">
@@ -117,6 +132,7 @@ import { isPhone } from '@/helpers/Util'
 import { Layout } from '@/helpers/layout'
 import { useZone, zoneEmit } from './zone';
 import { computed } from 'vue';
+import { cardData } from "@@/core/entities/CardData";
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650
 const tefudaHeight = Layout.tefudaHeight(cardWidth) ?

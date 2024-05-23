@@ -21,6 +21,7 @@ class CardData {
   ability: {
     mekuraid: undefined | boolean
     lookDeckTopNumberOfCards: undefined | number
+    kakumeiChange: undefined | boolean
   }
 
   constructor(cardDetail: CardDetail) {
@@ -28,6 +29,7 @@ class CardData {
     this.ability = {} as any
     this.setDeckTopXAbility()
     this.setMekuraidAbility()
+    this.setKakumeiChangeAbility()
   }
   
   get name() {
@@ -92,6 +94,14 @@ class CardData {
         return
       }
     }
+  }
+
+  private setKakumeiChangeAbility(): void {
+    if (this.card_text.includes('革命チェンジ')) {
+      this.ability.kakumeiChange = true
+      return
+    }
+    // クリーチャーのみが持つ能力のため、ツインパクトの下面はチェックしない
   }
 
   private setDeckTopXAbility(): void {
