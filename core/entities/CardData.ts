@@ -1,6 +1,7 @@
 import { Card } from "@@/core/entities/card";
 import { CardDetail } from "@@/core/entities/Deck";
 import { useRoomStore } from "@/stores/room";
+import { StringUtil } from "../utils/string";
 
 const cardDataStore: {[key: string]: CardData} = {}
 
@@ -10,15 +11,23 @@ export function cardData(card: Card) {
   }
   const roomStore = useRoomStore()
   const cardDetail = roomStore.cardDetails[card.cd]
-  return new CardData(cardDetail)
+  const thisInstance = new CardData(cardDetail)
+  return thisInstance
 }
 
 class CardData {
 
   cardDetail: CardDetail
+  ability: {
+    mekuraid: undefined | boolean
+    lookDeckTopNumberOfCards: undefined | number
+  }
 
   constructor(cardDetail: CardDetail) {
     this.cardDetail = cardDetail
+    this.ability = {} as any
+    this.setDeckTopXAbility()
+    this.setMekuraidAbility()
   }
   
   get name() {
@@ -72,15 +81,32 @@ class CardData {
     return false
   }
 
-  hasMekuraidAbility(): boolean {
+  private setMekuraidAbility(): void {
     if (this.card_text.includes('メクレイド')) {
-      return true
+      this.ability.mekuraid = true
+      return
     }
     if (this.types.includes('ツインパクト') && this.combined_card) {
       if (this.combined_card.card_text.includes('メクレイド')) {
-        return true
+        this.ability.mekuraid = true
+        return
       }
     }
-    return false
+  }
+
+  private setDeckTopXAbility(): void {
+    const match = this.card_text.match(/山札の上から([０-９]+)枚を見/)
+    if (match) {
+      this.ability.lookDeckTopNumberOfCards = parseInt(StringUtil.toHalfNum(match[1]))
+      return
+    }
+    // クリーチャー面になかった場合はツインパクト面もチェックする
+    if (this.combined_card) {
+      const match2 = this.card_text.match(/山札の上から([０-９]+)枚を見/)
+      if (match2) {
+        this.ability.lookDeckTopNumberOfCards = parseInt(StringUtil.toHalfNum(match2[1]))
+        return
+      }
+    }
   }
 }

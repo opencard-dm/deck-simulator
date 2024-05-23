@@ -4,23 +4,24 @@
     position="top-left"
   >
     <div>
-      <div class="deck_zone" 
+      <div
+        class="deck_zone" 
+        :class="side"
         @mouseenter="isPhone() ? null : setHoveredCard(cards[0])"
         @mouseleave="isPhone() ? null : setHoveredCard(null)"
-        :class="side"
       >
         <div
-          class="deck_card"
           v-for="i in deckViews"
           :key="i"
+          class="deck_card"
           :style="{ 
             top: `${(i - 1) * -2}px`,
             left: `${(i - 1) * -2}px` 
           }"
-        ></div>
+        />
         <div
-          class="deck_topImg"
           v-if="cards.length > 0"
+          class="deck_topImg"
           :class="[{ is_selected: cardIsSelected(cards[0]) }]"
           :style="{
             top: `${deckViews.length * -2}px`,
@@ -30,21 +31,21 @@
           @click.stop="clickDeck()"
         >
           <OnLongPress
+            :prevent="true"
             @trigger="openDeck()"
             @contextmenu.prevent
-            :prevent="true"
           >
             <img
               v-if="cards[0].faceDown"
               :src="cardDetail(cards[0]).backImageUrl"
               alt=""
-            />
+            >
             <TextCard
               v-else
               :card="cards[0]"
               :width="cardWidthNum"
               :selected="cardIsSelected(cards[0])"
-            ></TextCard>
+            />
             <div
               class="cards-num"
             >
@@ -53,8 +54,8 @@
           </OnLongPress>
         </div>
         <div
-          class="deck_topImg"
           v-else
+          class="deck_topImg"
           :style="{
             top: `${deckViews.length * -2}px`,
             left: `${deckViews.length * -2}px`,
@@ -65,14 +66,15 @@
           <img
             src="https://cdn.jsdelivr.net/npm/dmdeck-simulator@latest/dist/images/card-back.jpg"
             alt=""
-          />
+          >
         </div>
         <CardPopup
           v-if="hasSelectedCard() && cards.length > 0" 
           :url="cards[0].imageUrl"
           :card="cards[0]"
         >
-          <div class="deck_buttons"
+          <div
+            class="deck_buttons"
             :style="{
               top: `${deckViews.length * -2}px`,
               left: `${deckViews.length * -2}px`,
@@ -88,41 +90,58 @@
               class="deck_buttons_top"
               @click.stop="setCardState(cards[0], {
                 faceDown: !cards[0].faceDown
-              })">裏返す</o-button
+              })"
             >
+              裏返す
+            </o-button>
             <o-button
               v-else
               variant="grey-dark"
               size="small"
               @click.stop="moveSelectedCard(zone, true)"
-              >上へ</o-button
             >
+              上へ
+            </o-button>
             <o-button
               variant="grey-dark"
               class="deck_buttons_buttom"
               size="small"
               @click.stop="moveSelectedCard(zone, false)"
-              >下へ</o-button
             >
+              下へ
+            </o-button>
             <o-button
-              v-if="selectMode?.zone === zone && !isPhone()"
+              v-if="selectMode?.zone === zone"
               style="z-index: 1;"
               variant="grey-dark"
               class="deck_buttons_out_buttom"
               size="small"
               @click.stop="openDeck()"
-              >山札を見る</o-button
             >
+              山札を見る
+            </o-button>
             <!-- メクレイド -->
             <o-button
-              v-if="selectMode?.zone === 'battleZone' && cardData(selectMode.card).hasMekuraidAbility()"
+              v-if="selectMode?.zone === 'battleZone' && selectedCardData?.ability.mekuraid"
               style="z-index: 1;"
               variant="grey-dark"
               class="deck_buttons_out_buttom"
               size="small"
               @click.stop="mekuraid()"
-              >メクレイド</o-button
             >
+              メクレイド
+            </o-button>
+            <!-- 山札の上からX枚を見る -->
+            <o-button
+              v-else-if="selectMode?.zone === 'battleZone' && selectedCardData?.ability.lookDeckTopNumberOfCards"
+              style="z-index: 1;"
+              variant="grey-dark"
+              class="deck_buttons_out_buttom"
+              size="small"
+              @click.stop="lookDeckTopCards(selectedCardData.ability.lookDeckTopNumberOfCards)"
+            >
+              {{ selectedCardData.ability.lookDeckTopNumberOfCards }}枚見る
+            </o-button>
           </div>
         </CardPopup>
       </div>
@@ -170,6 +189,13 @@ const {
   cardDetail,
 } = useZone(props, emit)
 
+const selectedCardData = computed(() => {
+  if (selectMode.value) {
+    return cardData(selectMode.value.card)
+  }
+  return null
+})
+
 const drawOne = () => {
   emit('move-cards', props.zone, 'tefudaZone', [props.cards[0]], props.player)
 }
@@ -212,6 +238,16 @@ function openDeck() {
 function mekuraid() {
   setSelectMode(null)
   const cards = props.cards.slice(0, 3)
+  cards.forEach(c => c.showInWorkSpace = true)
+  openWorkSpace({
+    zone: props.zone,
+    cards,
+    player: props.player,
+  });
+}
+function lookDeckTopCards(num: number) {
+  setSelectMode(null)
+  const cards = props.cards.slice(0, num)
   cards.forEach(c => c.showInWorkSpace = true)
   openWorkSpace({
     zone: props.zone,

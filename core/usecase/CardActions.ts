@@ -164,7 +164,7 @@ export class CardActions {
     const card = cardsCopy[0];
     // 手札、マナ、墓地へ行く場合は表向きにする。
     if (
-      ['tefudaCards', 'manaCards', 'bochiCards'].includes(to) &&
+      ['tefudaZone', 'manaZone', 'bochiZone'].includes(to) &&
       to !== from
     ) {
       cardsCopy.forEach((c) => {
@@ -172,7 +172,7 @@ export class CardActions {
       })
     }
     // 山札へ行くときは裏向きにする。
-    if (['yamafudaCards'].includes(to) && to !== from) {
+    if (['yamafudaZone'].includes(to) && to !== from) {
       cardsCopy.forEach((c) => {
         c.faceDown = true
       })
