@@ -199,6 +199,7 @@ export default {
     },
     resetGame(keepDecks: boolean) {
       this.sidebarOpen = false;
+      this.resetGameModal = false;
       this.$emit("reset-game", keepDecks);
     },
     copyInviteLink() {

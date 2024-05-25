@@ -16,13 +16,11 @@
           ]"
         >
           <!-- 対戦相手の手札は常に裏向き -->
-          <div v-if="side === 'upper' && !single">
-            <TextCard
-              :width="cardWidth"
-              :card="card"
-              :selected="selectMode && selectMode.card.id === card.id"
-              @click.stop="clickCard(card)"
-            ></TextCard>
+          <div v-if="opponent && !single" @click.stop="clickCard(card)">
+            <img 
+              :src="cardDetail(card).backImageUrl"
+              :style="{width: `${cardWidth}px`}"
+            />
           </div>
           <div v-else @click.stop="clickCard(card)">
             <img 
@@ -142,6 +140,7 @@ const props = withDefaults(defineProps<{
   cards: Card[]
   side: SideType
   single: boolean
+  opponent: boolean
   zone?: ZoneType
   game: Game
   cardActions: CardActions

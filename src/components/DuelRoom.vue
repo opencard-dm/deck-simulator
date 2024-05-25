@@ -283,9 +283,8 @@ async function onDeckSelected({ deck, sourceDeck, player }: {
   sourceDeck: SourceDeck,
   player: PlayerType
 }) {
-  if (props.single && currentPlayer.value === 'b') {
-    players.b.deck = sourceDeck
-  }
+  // eslint-disable-next-line vue/no-mutating-props
+  props.game.players[player].deck = sourceDeck
   if (RoomConfig.useFirebase) {
     if (player === 'a') {
       await updateRoom({
