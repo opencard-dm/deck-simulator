@@ -132,13 +132,6 @@
             </template>
           </div>
           <div v-else class="card_bottomButton">
-            <!-- 革命チェンジ、Jチェンジ -->
-            <o-button
-              v-if="card.groupId && isLastGroupedCard(card)"
-              variant="danger"
-              @click.stop="changeCards(card)"
-              >チェンジ</o-button
-            >
             <!-- 【DARK MATERIAL COMPLEX】-->
             <template v-if="cardDetail(card).name === 'DARK MATERIAL COMPLEX'">
               <o-button
@@ -185,8 +178,8 @@ import { GroupableZoneType } from "@@/core/entities/zones";
 import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
-import { GameLogger, HistoryComparator } from "@@/core/usecase/GameLogger";
-import { CardActions, groupCardParams } from "@@/core/usecase/CardActions";
+import { GameLogger } from "@@/core/usecase/GameLogger";
+import { CardActions } from "@@/core/usecase/CardActions";
 import { Game } from "@@/core/entities/game";
 
 const cardWidth = isPhone() ? 80 : 80
@@ -286,20 +279,6 @@ function startAttacking() {
     card: selectMode.value.card,
   })
   setSelectMode(null)
-}
-function isLastGroupedCard(card: Card) {
-  if (!props.gameLogger.currentHistory) return false
-  return HistoryComparator.isLastGroupedCard(card, props.gameLogger.currentHistory)
-}
-function changeCards(card: Card) {
-  const group = getGroup(card)
-  if (!group || group.cards.length <= 1) return
-  emit('move-cards',
-    props.zone,
-    (props.gameLogger.currentHistory?.args as groupCardParams).from,
-    group.cards.slice(1),
-    props.player
-  )
 }
 function cardIsAttacking(card: Card): boolean {
   const attackingCard = props.game.players[props.player].attackingCard
