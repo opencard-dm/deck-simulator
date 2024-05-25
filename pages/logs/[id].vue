@@ -30,8 +30,8 @@ const logId = route.params.id as string
 const roomId = 'single'
 
 const game = reactive<Game>(Game.init())
-const cardActions = new CardActions(roomId, game)
-const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
+const cardActions = new CardActions(game)
+const { gameLogger } = GameLogger.useGameLogger(cardActions, roomId, 'a')
 const roomStore = useRoomStore()
 
 fetchLog(logId).then(async log => {

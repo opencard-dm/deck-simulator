@@ -62,7 +62,6 @@ export class CardActions {
    * @param game reactive
    */
   constructor(
-    public roomId: string,
     public game: Game
   ) {}
 

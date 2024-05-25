@@ -16,8 +16,8 @@ it('カードのグループ化', async () => {
   const players = initialData('test').players
   players.a.cards = CardActions.setupForPlayer(deck)
   
-  const cardActions = new CardActions('test', players)
-  const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
+  const cardActions = new CardActions(players)
+  const { gameLogger } = GameLogger.useGameLogger(cardActions, 'test', 'a')
   const playerCards = players.a.cards
   cardActions.moveCards({
     from: 'tefudaCards',
@@ -51,8 +51,8 @@ it('山札を裏返す、重ねる、やり直す', async () => {
   const players = initialData('test').players
   players.a.cards = CardActions.setupForPlayer(deck)
   
-  const cardActions = new CardActions('test', players)
-  const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
+  const cardActions = new CardActions(players)
+  const { gameLogger } = GameLogger.useGameLogger(cardActions, 'test', 'a')
   gameLogger.turnActions.startTurn({
     turn: 1,
     player: 'a',
@@ -98,8 +98,8 @@ it('ギャラクシールド', async () => {
   const players = initialData('test').players
   players.a.cards = CardActions.setupForPlayer(deck)
   
-  const cardActions = new CardActions('test', players)
-  const { gameLogger } = GameLogger.useGameLogger(cardActions, 'a')
+  const cardActions = new CardActions(players)
+  const { gameLogger } = GameLogger.useGameLogger(cardActions, 'test', 'a')
   gameLogger.turnActions.startTurn({
     turn: 1,
     player: 'a',

@@ -40,8 +40,8 @@ const upperPlayer = lowerPlayer === "a" ? "b" : "a" as PlayerType
 
 // data
 const game = reactive<Game>(Game.init())
-const cardActions = new CardActions(roomId, game)
-const { gameLogger } = GameLogger.useGameLogger(cardActions, lowerPlayer)
+const cardActions = new CardActions(game)
+const { gameLogger } = GameLogger.useGameLogger(cardActions, roomId, lowerPlayer)
 gameLogger.listenChanges()
 
 onBeforeRouteLeave(() => {

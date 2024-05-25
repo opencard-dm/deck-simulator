@@ -26,6 +26,7 @@ export class GameLogger {
 
   constructor(
     private cardActions: CardActions,
+    private readonly roomId: string,
     private who: PlayerType = 'a'
   ) {
     this.players = cardActions.game.players
@@ -37,7 +38,7 @@ export class GameLogger {
 
   listenChanges() {
     if (RoomConfig.useFirebase) {
-      this.unsubscribes.push(listenHistoriesChange(this.cardActions.roomId, (histories) => {
+      this.unsubscribes.push(listenHistoriesChange(this.roomId, (histories) => {
         if (!Array.isArray(histories)) return
         if (histories.length === 0) return
         console.debug(`receive ${histories.length} histories`)
@@ -49,9 +50,9 @@ export class GameLogger {
     }
   }
 
-  static useGameLogger(cardActions: CardActions, who: PlayerType) {
+  static useGameLogger(cardActions: CardActions, roomId: string, who: PlayerType) {
     // https://zenn.dev/tanukikyo/articles/40603fbdc88c05#%E3%80%87-object-%C3%97-reactive
-    const gameLogger = reactive(new GameLogger(cardActions, who)) as GameLogger
+    const gameLogger = reactive(new GameLogger(cardActions, roomId, who)) as GameLogger
     cardActions.setGameLogger(gameLogger)
     return {
       gameLogger
@@ -205,7 +206,7 @@ export class GameLogger {
       this.histories = this.histories.slice(0, this.historyIndex + 1)
     }
     if (RoomConfig.useFirebase) {
-      pushHistory(this.cardActions.roomId, history)
+      pushHistory(this.roomId, history)
     } else {
       // 連続するマナタップは一つの履歴にまとめる
       if (this.currentHistory && HistoryComparator.isManaStateChange(this.currentHistory, history)) {

@@ -155,14 +155,15 @@ export function useRoomSetup(props: RoomProps) {
       props.gameLogger.historyIndex = -1
     }
     const initialGame = Game.init()
+    const cardActions = new CardActions(initialGame)
     if (keepDecks) {
       initialGame.players.a.deck = deckA
       initialGame.players.b.deck = deckB
       if (deckA) {
-        props.cardActions.selectDeck('a', await Deck.prepareDeckForGame(deckA, true, true))
+        cardActions.selectDeck('a', await Deck.prepareDeckForGame(deckA, true, true))
       }
       if (deckB) {
-        props.cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, true, true))
+        cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, true, true))
       }
     }
     players.a = initialGame.players.a;
