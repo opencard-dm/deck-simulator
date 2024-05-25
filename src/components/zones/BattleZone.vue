@@ -1,173 +1,175 @@
 <template>
-  <div class="battleZone_topButtonWrapper">
-    <o-button
-      v-if="selectMode && selectMode.zone === 'battleZone' && !selectMode.card.tapped"
-      variant="danger"
-      class="battleZone_topButton"
-      @click.stop="startAttacking()"
-    >
-      攻撃
-    </o-button>
-  </div>
-  <div class="battle-zone-wrapper">
-    <div class="battleZoneButton_wrapper" :class="side">
-      <o-icon
-        class="openZoneButton battleZoneButton"
-        pack="fas"
-        size="medium"
-        icon="arrow-circle-up"
-        variant="primary"
-        @click.stop="
-          openWorkSpace({
-            zone: zone,
-            cards: cards,
-            player: player,
-          })
-        "
-      ></o-icon>
-    </div>
-    <div
-      class="battle-zone"
-      :class="{
-        [side]: true,
-      }"
-      :style="{minHeight: cardHeight}"
-    >
-      <!-- keyをindexにしていると、カード移動後MarkerToolが同じindexの別のカードに移ってしまう。 -->
-      <div
-        class="card_wrapper"
-        v-for="card in visibleCards"
-        :key="card.id"
-        @mouseenter="isPhone() ? null : setHoveredCard(card)"
-        @mouseleave="isPhone() ? null : setHoveredCard(null)"
-        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
+  <div>
+    <div class="battleZone_topButtonWrapper">
+      <o-button
+        v-if="selectMode && selectMode.zone === 'battleZone' && !selectMode.card.tapped"
+        variant="danger"
+        class="battleZone_topButton"
+        @click.stop="startAttacking()"
       >
-        <MarkTool
-          :reverse="side === 'upper'"
-          :tapped="card.tapped"
-          :active="cardIsSelected(card)"
-          :color="card.markColor"
-          @change="setMarkColor(card, $event)"
+        攻撃
+      </o-button>
+    </div>
+    <div class="battle-zone-wrapper">
+      <div class="battleZoneButton_wrapper" :class="side">
+        <o-icon
+          class="openZoneButton battleZoneButton"
+          pack="fas"
+          size="medium"
+          icon="arrow-circle-up"
+          variant="primary"
+          @click.stop="
+            openWorkSpace({
+              zone: zone,
+              cards: cards,
+              player: player,
+            })
+          "
+        ></o-icon>
+      </div>
+      <div
+        class="battle-zone"
+        :class="{
+          [side]: true,
+        }"
+        :style="{minHeight: cardHeight}"
+      >
+        <!-- keyをindexにしていると、カード移動後MarkerToolが同じindexの別のカードに移ってしまう。 -->
+        <div
+          class="card_wrapper"
+          v-for="card in visibleCards"
+          :key="card.id"
+          @mouseenter="isPhone() ? null : setHoveredCard(card)"
+          @mouseleave="isPhone() ? null : setHoveredCard(null)"
+          :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         >
-          <div
-            class="card in-battle"
-            :class="{
-              tapped: card.tapped,
-              'is-group': !!card.groupId,
-              'is-selectMode': selectTargetMode(),
-              'is-selected': cardIsSelected(card),
-            }"
-            :draggable="!card.groupId"
-            @click.stop="clickCard(card)"
+          <MarkTool
+            :reverse="side === 'upper'"
+            :tapped="card.tapped"
+            :active="cardIsSelected(card)"
+            :color="card.markColor"
+            @change="setMarkColor(card, $event)"
           >
-            <img
-              v-if="card.faceDown === true"
-              :src="cardDetail(card).backImageUrl"
-              :width="cardWidth"
-              draggable="false"
-            />
-            <CardPopup v-else :card="card" :url="card.imageUrl">
-              <TextCard
-                class="textCard"
-                :card="card"
-                :width="cardWidth"
-                :selected="cardIsSelected(card) || cardIsAttacking(card)"
-                :canBeTarget="selectTargetMode()"
-              ></TextCard>
-            </CardPopup>
             <div
-              v-if="card.groupId"
-              class="cards-num"
+              class="card in-battle"
+              :class="{
+                tapped: card.tapped,
+                'is-group': !!card.groupId,
+                'is-selectMode': selectTargetMode(),
+                'is-selected': cardIsSelected(card),
+              }"
+              :draggable="!card.groupId"
+              @click.stop="clickCard(card)"
             >
-              {{ getGroup(card)?.cards.length }}
+              <img
+                v-if="card.faceDown === true"
+                :src="cardDetail(card).backImageUrl"
+                :width="cardWidth"
+                draggable="false"
+              />
+              <CardPopup v-else :card="card" :url="card.imageUrl">
+                <TextCard
+                  class="textCard"
+                  :card="card"
+                  :width="cardWidth"
+                  :selected="cardIsSelected(card) || cardIsAttacking(card)"
+                  :canBeTarget="selectTargetMode()"
+                ></TextCard>
+              </CardPopup>
+              <div
+                v-if="card.groupId"
+                class="cards-num"
+              >
+                {{ getGroup(card)?.cards.length }}
+              </div>
             </div>
-          </div>
-        </MarkTool>
-        <div v-if="cardIsSelected(card)" class="card_bottomButton">
-          <!-- 重ねる or 見る -->
-          <o-button
-            v-if="card.groupId"
-            variant="grey-dark"
-            size="small"
-            @click.stop="
-              openWorkSpace({
-                zone: zone,
-                cards: getGroup(card)?.cards,
-                player: player,
-                single: true,
-              })
-            "
-            >見る</o-button
-          >
-          <template v-else>
+          </MarkTool>
+          <div v-if="cardIsSelected(card)" class="card_bottomButton">
+            <!-- 重ねる or 見る -->
             <o-button
-              v-if="card.isChojigen"
+              v-if="card.groupId"
               variant="grey-dark"
               size="small"
+              @click.stop="
+                openWorkSpace({
+                  zone: zone,
+                  cards: getGroup(card)?.cards,
+                  player: player,
+                  single: true,
+                })
+              "
+              >見る</o-button
+            >
+            <template v-else>
+              <o-button
+                v-if="card.isChojigen"
+                variant="grey-dark"
+                size="small"
+                @click.stop="setCardState(card, { faceDown: !card.faceDown })"
+                >裏返す</o-button
+              >
+            </template>
+            <o-button
+              v-if="card.faceDown && !card.isChojigen"
+              variant="grey-dark"
+              :size="isPhone() ? 'small' : ''"
               @click.stop="setCardState(card, { faceDown: !card.faceDown })"
               >裏返す</o-button
             >
-          </template>
-          <o-button
-            v-if="card.faceDown && !card.isChojigen"
-            variant="grey-dark"
-            :size="isPhone() ? 'small' : ''"
-            @click.stop="setCardState(card, { faceDown: !card.faceDown })"
-            >裏返す</o-button
-          >
-          <!-- アンタップ or タップ -->
-          <template v-else>
-            <o-button
-              v-if="card.tapped"
-              variant="grey-dark"
-            :size="isPhone() ? 'small' : ''"
-              @click.stop="toggleTap(card)"
-              >アンタップ</o-button
-            >
-            <o-button v-else variant="grey-dark"
+            <!-- アンタップ or タップ -->
+            <template v-else>
+              <o-button
+                v-if="card.tapped"
+                variant="grey-dark"
               :size="isPhone() ? 'small' : ''"
-              @click.stop="toggleTap(card)"
-            >タップ</o-button>
-          </template>
-        </div>
-        <div v-else class="card_bottomButton">
-          <!-- 革命チェンジ、Jチェンジ -->
-          <o-button
-            v-if="card.groupId && isLastGroupedCard(card)"
-            variant="danger"
-            @click.stop="changeCards(card)"
-            >チェンジ</o-button
-          >
-          <!-- 【DARK MATERIAL COMPLEX】-->
-          <template v-if="cardDetail(card).name === 'DARK MATERIAL COMPLEX'">
+                @click.stop="toggleTap(card)"
+                >アンタップ</o-button
+              >
+              <o-button v-else variant="grey-dark"
+                :size="isPhone() ? 'small' : ''"
+                @click.stop="toggleTap(card)"
+              >タップ</o-button>
+            </template>
+          </div>
+          <div v-else class="card_bottomButton">
+            <!-- 革命チェンジ、Jチェンジ -->
             <o-button
-              v-if="selectMode?.zone === 'yamafudaZone' && !selectMode.card.faceDown"
-              variant="grey-dark"
-              size="small"
-              @click.stop="putUnder(card)"
-              >下へ</o-button
+              v-if="card.groupId && isLastGroupedCard(card)"
+              variant="danger"
+              @click.stop="changeCards(card)"
+              >チェンジ</o-button
             >
-          </template>
+            <!-- 【DARK MATERIAL COMPLEX】-->
+            <template v-if="cardDetail(card).name === 'DARK MATERIAL COMPLEX'">
+              <o-button
+                v-if="selectMode?.zone === 'yamafudaZone' && !selectMode.card.faceDown"
+                variant="grey-dark"
+                size="small"
+                @click.stop="putUnder(card)"
+                >下へ</o-button
+              >
+            </template>
+          </div>
         </div>
-      </div>
-      
-      <div
-        class="card_wrapper card-placeholder-wrapper"
-        :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
-      >
+        
         <div
-          class="card in-battle card-placeholder"
+          class="card_wrapper card-placeholder-wrapper"
+          :style="{width: `${cardWidth}px`, height: `${cardHeight}px`}"
         >
+          <div
+            class="card in-battle card-placeholder"
+          >
+          </div>
+          <o-button
+            v-if="hasSelectedCard()"
+            class="battleZoneButton"
+            variant="danger"
+            rounded
+            @click.stop="moveSelectedCard(zone, false)"
+          >
+            出す
+          </o-button>
         </div>
-        <o-button
-          v-if="hasSelectedCard()"
-          class="battleZoneButton"
-          variant="danger"
-          rounded
-          @click.stop="moveSelectedCard(zone, false)"
-        >
-          出す
-        </o-button>
       </div>
     </div>
   </div>
