@@ -22,6 +22,7 @@ import { Deck, fetchDeck } from '@/helpers/Deck';
 import { useRoomStore } from '@/stores/room';
 import { Game } from '@@/core/entities/game';
 import { deleteTemporarilySavedGame, getTemporarilySavedGame } from '@@/core/services/game.service';
+import { fetchCardAbility } from '@@/core/services/card.service';
 
 const props = defineProps<{
   single: boolean
@@ -56,6 +57,10 @@ onMounted(async () => {
       game.players = savedGame.players
       game.cardDetails = savedGame.cardDetails
       roomStore.addCardDetails(savedGame.cardDetails)
+      // カードの能力を取得
+      Object.values(game.cardDetails).forEach(cardDetail => {
+        fetchCardAbility(cardDetail.name)
+      })
       game.histories = savedGame.histories
       gameLogger.setHistories(savedGame.histories)
       console.debug('get room data from session storage.')
@@ -84,6 +89,10 @@ onMounted(async () => {
       game.players.b.deck = deckB
       cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, false, true))
     }
+    // カードの能力を取得
+    Object.values(game.cardDetails).forEach(cardDetail => {
+      fetchCardAbility(cardDetail.name)
+    })
   }
   loading.value = false
 })
