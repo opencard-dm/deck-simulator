@@ -3,6 +3,8 @@ import { CardContext } from "@@/core/entities/effects"
 export interface CardAbility {
   onMovingToBattleZone?: (ctx: CardContext) => void
   onTapStateChanging?: (ctx: CardContext) => void
+  /** 攻撃する時 */
+  onAttacking?: (ctx: CardContext) => void
 }
 
 export interface Card {

@@ -1,5 +1,5 @@
 import { PlayerType } from "@@/core/entities/player";
-import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams, putUnderCardParams } from "@@/core/usecase/CardActions"
+import { CardActions, changeCardsStateParams, groupCardParams, moveCardsParams, putUnderCardParams, startAttackingParams } from "@@/core/usecase/CardActions"
 import { reactive } from 'vue'
 import { RoomConfig } from "@/helpers/room"
 import { listenHistoriesChange, pushHistory } from "@/services/roomService"
@@ -96,6 +96,11 @@ export class GameLogger {
     this.appendHistory('changeCardsState', argsCopy)
   }
 
+  startAttacking(args: startAttackingParams) {
+    const argsCopy = JSON.parse(JSON.stringify(args)) as startAttackingParams
+    this.appendHistory('startAttacking', argsCopy)
+  }
+
   startTurn(args: startTurnParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as startTurnParams
     this.appendHistory('startTurn', argsCopy)
@@ -133,6 +138,9 @@ export class GameLogger {
       case this.changeCardsState.name:
         this.cardActions.undoCardsState(history.args as changeCardsStateParams)
         break
+      case this.startAttacking.name:
+        this.cardActions.undoStartAttacking(history.args as startAttackingParams)
+        break
       case this.putUnderCard.name:
         this.cardActions.undoPutUnderCard(history.args as putUnderCardParams)
         break
@@ -164,6 +172,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.startAttacking.name:
+        this.cardActions.startAttackingWithoutHistory(history.args as startAttackingParams)
         break
       case this.putUnderCard.name:
         this.cardActions.putUnderCardWithoutHistory(history.args as putUnderCardParams)
@@ -221,6 +232,9 @@ export class GameLogger {
         break
       case this.changeCardsState.name:
         this.cardActions.changeCardsStateWithoutHistory(history.args as changeCardsStateParams)
+        break
+      case this.startAttacking.name:
+        this.cardActions.startAttackingWithoutHistory(history.args as startAttackingParams)
         break
       case this.putUnderCard.name:
         this.cardActions.putUnderCardWithoutHistory(history.args as groupCardParams)

@@ -9,7 +9,7 @@ import { Game } from "../entities/game";
 import { getCardAbility } from "../services/card.service";
 import { startTurnParams } from "./TurnActions";
 
-export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | putUnderCardParams | startTurnParams
+export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | putUnderCardParams | startTurnParams | startAttackingParams
 
 export interface moveCardsParams {
   from: ZoneType
@@ -25,6 +25,11 @@ export interface changeCardsStateParams {
   cards: Card[],
   player: PlayerType,
   cardState?: cardState,
+}
+
+export interface startAttackingParams {
+  card: Card,
+  player: PlayerType,
 }
 
 export interface groupCardParams {
@@ -277,6 +282,45 @@ export class CardActions {
     });
   }
 
+  startAttacking({ card, player }: startAttackingParams) {
+    this.gameLogger?.startAttacking({ card, player })
+    if (!RoomConfig.useFirebase) {
+      this.startAttackingWithoutHistory({ card, player })
+    }
+  }
+
+  startAttackingWithoutHistory({ card, player }: startAttackingParams) {
+    const from: ZoneType = 'battleZone';
+    const zoneCards = this.game.players[player].getZone(from).cards;
+    this.game.players[player].attackingCard = card;
+    zoneCards.forEach((c: Card) => {
+      if (c.id !== card.id) return;
+      c.tapped = true // カードをタップ
+      // カードごとの効果を適用
+      if (cardData(c) && cardData(c).cardDetail) {
+        const ability = getCardAbility(cardData(c).cardDetail.name)
+        if (ability) {
+          if (ability.onTapStateChanging) {
+            ability.onTapStateChanging({
+              card: c,
+              group: c.groupId ? getCardGroup(zoneCards, c.groupId) : null,
+              player: this.game.players[player],
+              opponent: this.game.players[player === 'a' ? 'b' : 'a'],
+            })
+          }
+          if (ability.onAttacking) {
+            ability.onAttacking({
+              card: c,
+              group: c.groupId ? getCardGroup(zoneCards, c.groupId) : null,
+              player: this.game.players[player],
+              opponent: this.game.players[player === 'a' ? 'b' : 'a'],
+            })
+          }
+        }
+      }
+    });
+  }
+
   undoCardsState({ from, cards, player }: changeCardsStateParams) {
     const cardIds = cards.map((c) => c.id);
     this.game.players[player].getZone(from).cards.forEach((c: Card) => {
@@ -290,6 +334,16 @@ export class CardActions {
         }
       }
     });
+  }
+
+  undoStartAttacking({ card, player }: startAttackingParams) {
+    // 前の攻撃中のカードにではなく、nullにすることで何か不具合があるかも
+    this.game.players[player].attackingCard = null;
+    this.undoCardsState({
+      from: 'battleZone',
+      cards: [ card ],
+      player,
+    })
   }
 
   groupCard({ from, to, fromCard, toCard, player }: groupCardParams) {
