@@ -8,6 +8,8 @@
       :player="player"
       :cards="game.players[player].battleZone.cards"
       :game-logger="gameLogger"
+      :game="game"
+      :card-actions="cardActions"
       @move-cards="moveCards"
       @group-card="groupCard"
       @put-under-card="putUnderCard"
@@ -41,6 +43,8 @@
       :player="player"
       :cards="game.players[player].tefudaZone.cards"
       :single="single"
+      :game="game"
+      :card-actions="cardActions"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
       @draw-one="deckZone?.drawOne()"
@@ -114,6 +118,8 @@
       :player="player"
       :cards="game.players[player].tefudaZone.cards"
       :single="single"
+      :game="game"
+      :card-actions="cardActions"
       @move-cards="moveCards"
       @change-cards-state="changeCardsState"
       @draw-one="deckZone?.drawOne()"
@@ -125,6 +131,8 @@
       :player="player"
       :cards="game.players[player].battleZone.cards"
       :game-logger="gameLogger"
+      :game="game"
+      :card-actions="cardActions"
       @move-cards="moveCards"
       @group-card="groupCard"
       @change-cards-state="changeCardsState"
@@ -149,6 +157,7 @@ import { PlayerType, SideType } from "@@/core/entities/player";
 import { ref } from 'vue';
 import { GameLogger } from '@@/core/usecase/GameLogger';
 import { Game } from '@@/core/entities/game';
+import { CardActions } from '@@/core/usecase/CardActions';
 
 const deckZone = ref<InstanceType<typeof DeckZone> | null>(null)
 const props = defineProps<{
@@ -160,6 +169,7 @@ const props = defineProps<{
   single: boolean,
   started: boolean,
   gameLogger: GameLogger,
+  cardActions: CardActions,
 }>();
 
 type playSheetEmit = zoneEmit & {

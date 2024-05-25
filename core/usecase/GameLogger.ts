@@ -20,6 +20,7 @@ export class GameLogger {
   public unsubscribes: any[] = []
   public turnActions: TurnActions
   public players: Game['players']
+  public game: Game
   public firstPlayer: PlayerType
   // vue component
 
@@ -28,6 +29,7 @@ export class GameLogger {
     private who: PlayerType = 'a'
   ) {
     this.players = cardActions.game.players
+    this.game = cardActions.game
     this.turnActions = new TurnActions()
     this.turnActions.setGameLogger(this)
     this.firstPlayer = 'a'

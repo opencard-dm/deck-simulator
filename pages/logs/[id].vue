@@ -44,10 +44,10 @@ fetchLog(logId).then(async log => {
   }
 
   if (game.players.a.deck) {
-    fetchCardDetailsAndStore(game.players.a.deck)
+    await fetchCardDetailsAndStore(game.players.a.deck)
   }
   if (game.players.b.deck) {
-    fetchCardDetailsAndStore(game.players.b.deck)
+    await fetchCardDetailsAndStore(game.players.b.deck)
   }
   const firstTurnId = log.histories.find(h =>
     h.method === 'startTurn' && h.args.player === 'a'

@@ -1,4 +1,14 @@
 <template>
+  <div class="battleZone_topButtonWrapper">
+    <o-button
+      v-if="selectMode && selectMode.zone === 'battleZone' && !selectMode.card.tapped"
+      variant="danger"
+      class="battleZone_topButton"
+      @click.stop="startAttacking()"
+    >
+      攻撃
+    </o-button>
+  </div>
   <div class="battle-zone-wrapper">
     <div class="battleZoneButton_wrapper" :class="side">
       <o-icon
@@ -61,7 +71,7 @@
                 class="textCard"
                 :card="card"
                 :width="cardWidth"
-                :selected="cardIsSelected(card)"
+                :selected="cardIsSelected(card) || cardIsAttacking(card)"
                 :canBeTarget="selectTargetMode()"
               ></TextCard>
             </CardPopup>
@@ -174,7 +184,8 @@ import { useZone, zoneEmit } from "./zone";
 import { useCardGroups } from "./cardGroups";
 import TextCard from "../elements/TextCard.vue";
 import { GameLogger, HistoryComparator } from "@@/core/usecase/GameLogger";
-import { groupCardParams } from "@@/core/usecase/CardActions";
+import { CardActions, groupCardParams } from "@@/core/usecase/CardActions";
+import { Game } from "@@/core/entities/game";
 
 const cardWidth = isPhone() ? 80 : 80
 const cardHeight = cardWidth * 908 / 650
@@ -185,6 +196,8 @@ const props = withDefaults(defineProps<{
   side: SideType
   zone?: GroupableZoneType
   gameLogger: GameLogger
+  game: Game
+  cardActions: CardActions
 }>(), {
   zone: 'battleZone',
 })
@@ -262,6 +275,16 @@ function putUnder(card: Card) {
     player: props.player,
   });
 }
+function startAttacking() {
+  if (!selectMode.value) {
+    return
+  }
+  props.cardActions.startAttacking({
+    player: props.player,
+    card: selectMode.value.card,
+  })
+  setSelectMode(null)
+}
 function isLastGroupedCard(card: Card) {
   if (!props.gameLogger.currentHistory) return false
   return HistoryComparator.isLastGroupedCard(card, props.gameLogger.currentHistory)
@@ -275,6 +298,15 @@ function changeCards(card: Card) {
     group.cards.slice(1),
     props.player
   )
+}
+function cardIsAttacking(card: Card): boolean {
+  const attackingCard = props.game.players[props.player].attackingCard
+  if (attackingCard) {
+    if (card.id === attackingCard.id) {
+      return true
+    }
+  }
+  return false
 }
 </script>
 
@@ -346,7 +378,7 @@ $card-width: 100px;
       }
     }
     &.lower {
-      margin-top: 40px;
+      margin-top: 20px;
       // box-shadowが見えるようにするため。
       padding-bottom: 10px;
       .card.tapped {
@@ -424,5 +456,11 @@ $card-width: 100px;
     justify-content: center;
     align-items: center;
   }
+}
+.battleZone_topButtonWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 36px; // 内部のボタンが非表示のときでもスタイルを崩さないため
 }
 </style>

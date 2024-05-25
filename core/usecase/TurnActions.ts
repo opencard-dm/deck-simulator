@@ -31,6 +31,9 @@ export class TurnActions {
 
   startTurnWithoutHistory({ turn, player }: startTurnParams) {
     if (this.gameLogger) {
+      // 攻撃中のカードを未設定にする
+      this.gameLogger.game.players.a.attackingCard = null
+      this.gameLogger.game.players.b.attackingCard = null
       if (turn === 1) {
         // TODO: ここでやるべき処理ではないのではないか？
         const totalTurns = this.gameLogger.players['a'].turn.total

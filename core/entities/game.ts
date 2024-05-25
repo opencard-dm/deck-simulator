@@ -1,7 +1,7 @@
 import { CardDetail, SourceDeck } from "@@/core/entities/Deck"
 import { PlayerType } from "./player"
 import { cardActionMethodParams } from "@@/core/usecase/CardActions"
-import { Zone } from "./zones"
+import { Zone, ZoneType } from "./zones"
 import { Card } from "./card"
 
 export class Game {
@@ -110,8 +110,10 @@ export class GamePlayer {
     return false
   }
 
-  getZone(zoneName: string): Zone {
-    const name = zoneName.replace('Cards', 'Zone')
+  getZone(zoneName: ZoneType): Zone {
+    // もともとはGamePlayer.BattleCardsなど、Zoneではなく、Cardsと名付けていた名残。
+    // 適した時期に削除する
+    const name = zoneName.replace('Cards', 'Zone') as ZoneType
     return this[name]
   }
 }

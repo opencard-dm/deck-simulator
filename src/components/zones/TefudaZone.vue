@@ -67,13 +67,10 @@
           class="card_bottomButton"
         >
           <o-button
-            v-if="cardData(card).ability.kakumeiChange"
+            v-if="game.players[player].attackingCard && cardData(card).ability.kakumeiChange"
             variant="danger"
             size="small"
-            @click.stop="
-              setSelectMode(null);
-              moveCard(zone, 'battleZone', card);
-            "
+            @click.stop="kakumeiChange(card)"
             >チェンジ</o-button
           >
         </div>
@@ -133,6 +130,8 @@ import { Layout } from '@/helpers/layout'
 import { useZone, zoneEmit } from './zone';
 import { computed } from 'vue';
 import { cardData } from "@@/core/entities/CardData";
+import { Game } from "@@/core/entities/game";
+import { CardActions } from "@@/core/usecase/CardActions";
 const cardWidth = 70
 const cardHeight = cardWidth * 908 / 650
 const tefudaHeight = Layout.tefudaHeight(cardWidth) ?
@@ -144,6 +143,8 @@ const props = withDefaults(defineProps<{
   side: SideType
   single: boolean
   zone?: ZoneType
+  game: Game
+  cardActions: CardActions
 }>(), {
   zone: 'tefudaZone'
 })
@@ -203,6 +204,18 @@ function clickPlaceholderCard() {
   } else {
     emit('drawOne');
   }
+}
+function kakumeiChange(tefudaCard: Card) {
+  const attackingCard = props.game.players[props.player].attackingCard
+  if (!attackingCard) {
+    return
+  }
+  props.cardActions.changeAttackingCard({
+    from: 'tefudaZone',
+    attackingCard,
+    card: tefudaCard,
+    player: props.player,
+  })
 }
 </script>
 

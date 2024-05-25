@@ -130,6 +130,39 @@ export class CardActions {
     }
   }
 
+  /**
+   * 攻撃中のカードの入れ替え（Jチェンジ、革命チェンジ）
+   */
+  changeAttackingCard({ from, card, player, attackingCard }: {
+    from: ZoneType
+    card: Card
+    player: PlayerType
+    attackingCard: Card
+  }) {
+    const attackingCardIndex = this.game.players[player].battleZone.cards.findIndex(c => c.id === attackingCard.id)
+    const fromCardIndex = this.game.players[player].getZone(from).cards.findIndex(c => c.id === card.id)
+    // 攻撃中のカードを先に移動させる。
+    this.moveCards({
+      from: 'battleZone',
+      to: from,
+      cards: [ attackingCard ],
+      player,
+      index: fromCardIndex
+    })
+    // this.game.players[player].attackingCard = card
+    this.moveCards({
+      from,
+      to: 'battleZone',
+      cards: [ card ],
+      player,
+      index: attackingCardIndex
+    })
+    this.startAttacking({
+      card,
+      player,
+    })
+  }
+
   selectDeck(player: PlayerType, deck: Deck) {
     deck.cards.forEach(c => c.faceDown = true)
     // fromのカードは存在しなくても良いため、仮にyamafudaCardsにしている。
@@ -292,10 +325,10 @@ export class CardActions {
   startAttackingWithoutHistory({ card, player }: startAttackingParams) {
     const from: ZoneType = 'battleZone';
     const zoneCards = this.game.players[player].getZone(from).cards;
-    this.game.players[player].attackingCard = card;
     zoneCards.forEach((c: Card) => {
       if (c.id !== card.id) return;
       c.tapped = true // カードをタップ
+      this.game.players[player].attackingCard = c; // 攻撃中のカードを設定
       // カードごとの効果を適用
       if (cardData(c) && cardData(c).cardDetail) {
         const ability = getCardAbility(cardData(c).cardDetail.name)
