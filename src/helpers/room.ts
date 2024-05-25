@@ -105,16 +105,7 @@ function useRoomListners({
         }
       })
     }
-    if (!(gameLogger.firstPlayer === player && nextTurn === 1) 
-      && players[player].yamafudaZone.cards.length > 0
-    ) {
-      onMoveCards(
-        'yamafudaZone',
-        'tefudaZone',
-        [players[player].yamafudaZone.cards[0]],
-        player
-      )
-    }
+    // ターン開始時のドローは自動で行わないようにする
   }
 
   function onSelectDeck(player: PlayerType, deck: DeckType) {

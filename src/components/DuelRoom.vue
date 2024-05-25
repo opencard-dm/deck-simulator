@@ -248,7 +248,6 @@ function onStartGame(player: PlayerType, first: boolean) {
     onStartTurn({ player: props.lowerPlayer })
   } else {
     onStartTurn({ player: props.upperPlayer })
-    onStartTurn({ player: props.lowerPlayer })
   }
 }
 
