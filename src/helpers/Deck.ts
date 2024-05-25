@@ -82,7 +82,7 @@ export class Deck {
     const startId = playerA ? START_ID_A : START_ID_B;
     const copiedDeck: DeckType = JSON.parse(JSON.stringify(deck))
     let count = startId;
-    deck.cards.forEach(c => {
+    copiedDeck.cards.forEach(c => {
       const times = c.times
       delete c.times
       for (let i = 0; i < times; i++) {

@@ -5,10 +5,11 @@ import { Card } from '@@/core/entities/card';
 import { ZoneType } from '@@/core/entities/zones';
 import { GameLogger } from '@@/core/usecase/GameLogger';
 import { RoomProps } from '@/components';
-import { Deck } from '@@/core/entities/Deck';
-import axios from 'axios';
+import { Deck as DeckType } from '@@/core/entities/Deck';
 import { Game, GamePlayer } from '@@/core/entities/game';
 import { saveGameTemporarily } from '@@/core/services/game.service';
+import { initializeRoom } from '@@/core/services/room.service';
+import { Deck } from './Deck';
 
 export class RoomConfig {
   static useFirebase = false
@@ -116,7 +117,7 @@ function useRoomListners({
     }
   }
 
-  function onSelectDeck(player: PlayerType, deck: Deck) {
+  function onSelectDeck(player: PlayerType, deck: DeckType) {
     cardActions.selectDeck(player, deck)
   }
 
@@ -141,26 +142,44 @@ export function useRoomSetup(props: RoomProps) {
     });
   }
 
-  async function resetGame() {
+  async function resetGame(keepDecks: boolean) {
     // TODO: propsを書き換えない
+    const deckA = props.game.players.a.deck
+    const deckB = props.game.players.b.deck
+    if (RoomConfig.useFirebase) {
+      if (keepDecks) {
+        await initializeRoom({
+          roomId: props.roomId,
+          deckA: props.game.players.a.deck || undefined,
+          deckB: props.game.players.b.deck || undefined,
+        })
+      } else {
+        await initializeRoom({
+          roomId: props.roomId,
+        })
+      }
+      props.gameLogger.unsubscribes.forEach(u => u())
+      props.gameLogger.listenChanges()
+      props.gameLogger.histories = []
+      props.gameLogger.historyIndex = -1
+    }
     const initialGame = Game.init()
+    if (keepDecks) {
+      initialGame.players.a.deck = deckA
+      initialGame.players.b.deck = deckB
+      if (deckA) {
+        props.cardActions.selectDeck('a', await Deck.prepareDeckForGame(deckA, true, true))
+      }
+      if (deckB) {
+        props.cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, true, true))
+      }
+    }
     players.a = initialGame.players.a;
     players.b = initialGame.players.b;
     window.scrollTo({
       top: 0,
       // behavior: "smooth",
     });
-    if (RoomConfig.useFirebase) {
-      await axios.delete(`/api/rooms/${props.roomId}`)
-      props.gameLogger.unsubscribes.forEach(u => u())
-      props.gameLogger.listenChanges()
-      props.gameLogger.histories = []
-      props.gameLogger.historyIndex = -1
-    }
-    // 状態の変更を送信する
-    if (!SocketUtil.socket) return;
-    SocketUtil.socket.emit("cards-moved", players.a);
-    SocketUtil.socket.emit("cards-moved", players.b);
   }
   return {
     ...useRoomListners({

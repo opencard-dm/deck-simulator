@@ -45,6 +45,13 @@
           <router-link to="/">{{single ? 'トップページへ' : '退出する' }}</router-link>
         </div>
       </nav>
+      <nav class="nav-links" v-if="!single">
+        <div class="nav-item">
+          <o-button size="small" variant="grey-dark" @click="resetGame(true)"
+            >同じデッキでゲームをリセットする</o-button
+          >
+        </div>
+      </nav>
       <div style="margin-top: 30px; padding: 0px 20px;">
         <div>操作方法</div>
         <div>・カードを{{isPhone() ? 'タップ' : 'クリック'}}で選択</div>
@@ -92,7 +99,7 @@
     >
     </o-modal>
     <o-modal v-model:active="resetGameModal" :width="'fit-content'">
-      <o-button variant="grey-dark" @click="resetGame()"
+      <o-button variant="grey-dark" @click="resetGame(false)"
         >ゲームをリセットする</o-button
       >
     </o-modal>
@@ -190,9 +197,9 @@ export default {
       this.sidebarOpen = false;
       this.resetGameModal = true;
     },
-    resetGame() {
-      this.resetGameModal = false;
-      this.$emit("reset-game");
+    resetGame(keepDecks: boolean) {
+      this.sidebarOpen = false;
+      this.$emit("reset-game", keepDecks);
     },
     copyInviteLink() {
       navigator.clipboard.writeText(this.inviteLink);

@@ -9,7 +9,7 @@
       :game-logger="gameLogger"
       :current-player="currentPlayer"
       @switch-tab="switchTab()"
-      @reset-game="onResetGame()"
+      @reset-game="onResetGame"
     />
 
     <DeckSelector
@@ -152,7 +152,7 @@ import DeckSelector from './DeckSelector.vue';
 import PlaySheet from './PlaySheet.vue';
 import PlayerTabs from './PlayerTabs.vue';
 import LogsViewer from './LogsViewer.vue';
-import { useRoomSetup } from '@/helpers/room';
+import { RoomConfig, useRoomSetup } from '@/helpers/room';
 import { Deck } from '@/helpers/Deck';
 import { SocketUtil } from '../helpers/socket';
 import { PlayerType } from "@@/core/entities/player";
@@ -161,6 +161,7 @@ import { ZoneType } from '@@/core/entities/zones';
 import { RoomProps } from '.';
 import { Deck as DeckType, SourceDeck } from '@@/core/entities/Deck';
 import { useRoomStore } from '@/stores/room';
+import { updateRoom } from '@@/core/services/room.service';
 
 const store = useRoomStore()
 
@@ -251,8 +252,8 @@ function onStartGame(player: PlayerType, first: boolean) {
   }
 }
 
-function onResetGame() {
-  resetGame();
+async function onResetGame(keepDecks = false) {
+  await resetGame(keepDecks);
   tabId.value = 1
   deckSelectorActive.value = true
 }
@@ -278,12 +279,27 @@ function shuffleCards(from: ZoneType, cards: Card[], player: PlayerType) {
   // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
-function onDeckSelected({ deck, sourceDeck }: {
+async function onDeckSelected({ deck, sourceDeck, player }: {
   deck: DeckType,
   sourceDeck: SourceDeck,
+  player: PlayerType
 }) {
   if (props.single && currentPlayer.value === 'b') {
     players.b.deck = sourceDeck
+  }
+  if (RoomConfig.useFirebase) {
+    if (player === 'a') {
+      await updateRoom({
+        roomId: props.roomId,
+        deckA: sourceDeck,
+      })
+    }
+    if (player === 'b') {
+      await updateRoom({
+        roomId: props.roomId,
+        deckB: sourceDeck,
+      })
+    }
   }
   onSelectDeck(currentPlayer.value, deck)
 }

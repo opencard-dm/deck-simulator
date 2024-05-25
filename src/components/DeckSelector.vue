@@ -232,6 +232,7 @@ const sourceDeck = JSON.parse(JSON.stringify(deckData))
   emit("selected", {
     deck,
     sourceDeck,
+    player: props.player,
   });
   if (props.partnerIsReady) {
     emit("update:active", false);
