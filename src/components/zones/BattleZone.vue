@@ -2,7 +2,7 @@
   <div>
     <div class="battleZone_topButtonWrapper">
       <o-button
-        v-if="selectMode && selectMode.zone === 'battleZone' && !selectMode.card.tapped"
+        v-if="selectMode && selectMode.player === player && selectMode.zone === 'battleZone' && !selectMode.card.tapped"
         variant="danger"
         class="battleZone_topButton"
         @click.stop="startAttacking()"

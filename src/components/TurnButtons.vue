@@ -14,7 +14,7 @@
         :disabled="players.a.turn.total + players.b.turn.total === 0"
         @click="emit('start-turn', player)"
       >
-        {{ players[player].turn.current + 1 }}ターン目を開始
+        ターン開始
       </o-button>
       <o-button
         class="turnButtons_currentTurn"

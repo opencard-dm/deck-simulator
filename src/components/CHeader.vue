@@ -45,7 +45,7 @@
           <router-link to="/">{{single ? 'トップページへ' : '退出する' }}</router-link>
         </div>
       </nav>
-      <nav class="nav-links" v-if="!single">
+      <nav class="nav-links">
         <div class="nav-item">
           <o-button size="small" variant="grey-dark" @click="resetGame(true)"
             >同じデッキでゲームをリセットする</o-button

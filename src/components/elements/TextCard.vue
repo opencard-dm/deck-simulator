@@ -19,7 +19,7 @@
       class="cardElem" 
       :class="{
         selected: selected,
-        tapped: card?.tapped,
+        tapped: card?.tapped && !large,
         target: canBeTarget,
         large: large,
       }" 
@@ -27,7 +27,7 @@
         width: `${width <= 50 && !large ? 80 : width}px`,
         height: `${width <= 50 && !large ? calcHeight(80) : height}px`,
         background: color,
-        transform: width <= 50 && !large ? `scale(${width / 80})` : null,
+        transform: width <= 50 && !large ? `scale(${width / 80})` : 'unset',
         transformOrigin: 'left top',
       }"
     >

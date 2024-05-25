@@ -316,3 +316,9 @@ function traceMouseMove(event: MouseEvent) {
   }
 }
 </script>
+
+<style lang="scss">
+.gameBoard_topButtons {
+  margin-left: 4px;
+}
+</style>
