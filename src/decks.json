@@ -4,67 +4,78 @@
     "cards": [
       {
         "cd": "dm23rp2x-059",
-        "times": 4
+        "times": 4,
+        "name": "AQvibrato"
       },
       {
         "cd": "promoy22-018",
-        "times": 4
+        "times": 4,
+        "name": "歌舞音愛 ヒメカット / ♪蛙の子 遭えるの何処？好きと謂ひて"
       },
       {
         "cd": "dm23rp4x-SP2",
-        "times": 4
+        "times": 4,
+        "name": "瞬閃と疾駆と双撃の決断"
       },
       {
         "cd": "dm23rp4x-003",
-        "times": 4
+        "times": 4,
+        "name": "氷柱と炎弧の決断"
       },
       {
         "cd": "dm23rp3-006",
-        "times": 4
+        "times": 4,
+        "name": "芸魔隠狐 カラクリバーシ"
       },
       {
         "cd": "dm23rp3-OR2",
-        "times": 4
-      },
-      {
-        "cd": "dm23rp4x-056",
-        "times": 2
-      },
-      {
-        "cd": "dm23rp3-013",
-        "times": 2
-      },
-      {
-        "cd": "dm23rp3-S04",
-        "times": 2
-      },
-      {
-        "cd": "dm22bd2-002",
-        "times": 1
-      },
-      {
-        "cd": "dm23rp2x-060",
-        "times": 2
-      },
-      {
-        "cd": "dm23ex1-026",
-        "times": 1
+        "times": 4,
+        "name": "芸魔王将 カクメイジン"
       },
       {
         "cd": "dm23ex1-074",
-        "times": 3
+        "times": 3,
+        "name": "灼熱の演奏 テスタ・ロッサ"
+      },
+      {
+        "cd": "dm23rp4x-056",
+        "times": 2,
+        "name": "イシカワ・ハンドシーカー / ♪聞くだけで 才能バレる このチューン"
+      },
+      {
+        "cd": "dm23rp3-S04",
+        "times": 2,
+        "name": "Napo獅子-Vi無粋 / ♪オレの歌 聞けよ聞かなきゃ 殴り合い"
+      },
+      {
+        "cd": "dm22bd2-002",
+        "times": 1,
+        "name": "単騎連射 マグナム"
       },
       {
         "cd": "dm23ex1-003",
-        "times": 1
+        "times": 2,
+        "name": "飛翔龍 5000VT"
       },
       {
-        "cd": "dm23rp4x-065",
-        "times": 1
+        "cd": "dm22bd2-017",
+        "times": 2,
+        "name": "赤い稲妻 テスタ・ロッサ"
+      },
+      {
+        "cd": "dm23rp1-013",
+        "times": 2,
+        "name": "ボン・キゴマイム / ♪やせ蛙 ラッキーナンバー ここにあり"
+      },
+      {
+        "cd": "dm23rp2x-060",
+        "times": 1,
+        "name": "♪なぜ離れ どこへ行くのか 君は今"
       },
       {
         "cd": "dmex16-052",
-        "times": 1
+        "times": 1,
+        "name": "ファイナル・ストップ"
       }
     ],
     "chojigenCards": [],
@@ -196,19 +207,15 @@
         "times": 1
       },
       {
-        "cd": "dm23ex2-055",
-        "times": 1
-      },
-      {
-        "cd": "dm22rp1-OR1",
+        "cd": "dm23rp3-TF03",
         "times": 2
       },
       {
-        "cd": "dm23rp2x-016",
-        "times": 1
+        "cd": "dm24rp1-Sec05",
+        "times": 2
       },
       {
-        "cd": "dm23rp3-008",
+        "cd": "dm23rp2-OR02",
         "times": 1
       }
     ],

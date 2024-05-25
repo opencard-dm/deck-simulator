@@ -89,6 +89,7 @@ import { reactive, computed } from "vue";
 import Modal from "./Modal.vue";
 import { SourceDeck } from '@@/core/entities/Deck'
 import axios from "axios";
+import { useRoomStore } from "@/stores/room";
 
 const props = defineProps<{
   deckData: SourceDeck
@@ -99,6 +100,7 @@ const props = defineProps<{
 }>()
 
 const config = useRuntimeConfig()
+const roomStore = useRoomStore()
 
 const params = reactive({
   name: "",
@@ -138,8 +140,12 @@ function deleteDeck() {
   modal.delete = false;
 }
 async function outputJson() {
+  const deckData: SourceDeck = JSON.parse(JSON.stringify(props.deckData))
+  deckData.cards.forEach(c => {
+    c.name = roomStore.cardDetails[c.cd].name
+  })
   await axios.put('/api/decks', {
-    deck: props.deckData,
+    deck: deckData,
   });
 }
 </script>
