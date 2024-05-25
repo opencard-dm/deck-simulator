@@ -1,12 +1,13 @@
 <template>
-  <div class="canvas"
-    @mousemove="isPhone() ? null : traceMouseMove($event)"
-    v-if="isMounted">
+  <div
+    v-if="isMounted"
+    class="canvas"
+  >
     <div
       v-if="!hide"
       class="imageDisplay"
       :class="{ hidden: display.hidden, blur: display.blur }"
-      :style="[display.left ? { left: '5px' } : { left: '520px' }]"
+      :style="[left ? { left: '5px' } : { left: '520px' }]"
     >
       <div
         v-if="Features.using_image && cardIsVisible"
@@ -16,7 +17,7 @@
         <img
           v-if="!hoveredCard?.faceDown || hoveredCard.showInWorkSpace"
           :src="cardDetail?.imageUrl"
-        />
+        >
       </div>
       <div v-if="cardIsVisible && cardDetail && cardDetail.card_text">
         <TextCard
@@ -24,21 +25,24 @@
           :selected="false"
           :large="true"
           @click="closePopup()"
-        ></TextCard>
+        />
       </div>
-
     </div>
     <!-- スマホでカードをプッシュしたときに表示される画像 -->
-    <div v-if="isPhone() && hoveredCard" class="phoneImageDisplay" @contextmenu.prevent>
+    <div
+      v-if="isPhone() && hoveredCard"
+      class="phoneImageDisplay"
+      @contextmenu.prevent
+    >
       <TextCard
         :card="hoveredCard"
         :selected="false"
         :large="true"
         @click="closePopup()"
-      ></TextCard>
+      />
     </div>
     <!-- slot -->
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
@@ -54,13 +58,13 @@ const roomStore = useRoomStore()
 
 const props = withDefaults(defineProps<{
   hide?: boolean,
+  left: boolean,
 }>(), {
   hide: false
 })
 
 // ref
 const display = reactive({
-  left: false,
   hidden: true,
   blur: false,
   imageUrl: "",
@@ -99,13 +103,6 @@ const cardIsVisible = computed(() => {
   return false;
 })
 
-function traceMouseMove(event: MouseEvent) {
-  if (event.screenX >= 520) {
-    display.left = true
-  } else {
-    display.left = false
-  }
-}
 onMounted(() => {
   if (window.innerWidth > 800) {
     display.hidden = false;

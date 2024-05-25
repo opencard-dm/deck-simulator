@@ -2,6 +2,7 @@
   <div
     id="app"
     style="background-color: lightgray"
+    @mousemove="isPhone() ? null : traceMouseMove($event)"
   >
     <CHeader
       :single="single"
@@ -28,7 +29,7 @@
       @switch-tab="switchTab()"
     >
       <template #lower-player>
-        <ImageViewer>
+        <ImageViewer :left="imageViewerLeft">
           <WorkSpace
             :lower-player="lowerPlayer"
             :single="single"
@@ -78,7 +79,10 @@
         v-if="true"
         #upper-player
       >
-        <ImageViewer :hide="!isPhone()">
+        <ImageViewer
+          :hide="!isPhone()"
+          :left="imageViewerLeft"
+        >
           <WorkSpace
             v-if="isPhone()"
             :lower-player="upperPlayer"
@@ -300,5 +304,15 @@ async function onDeckSelected({ deck, sourceDeck, player }: {
     }
   }
   onSelectDeck(currentPlayer.value, deck)
+}
+
+// imageViewer
+const imageViewerLeft = ref(false)
+function traceMouseMove(event: MouseEvent) {
+  if (event.clientX >= 520) {
+    imageViewerLeft.value = true
+  } else {
+    imageViewerLeft.value = false
+  }
 }
 </script>
