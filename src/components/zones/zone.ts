@@ -16,7 +16,6 @@ export type zoneEmit = {
     'move-cards': [from: ZoneType, to: ZoneType, cards: Card[], player: PlayerType, prepend?: boolean]
     'change-cards-state': [param: changeCardsStateParams]
     'group-card': [param: {from: ZoneType, to: GroupableZoneType, fromCard: Card, toCard: Card, player: PlayerType}]
-    'put-under-card': [param: {from: ZoneType, to: GroupableZoneType, fromCard: Card, toCard: Card, player: PlayerType}]
     'shuffle-cards': [from: ZoneType, cards: Card[], player: PlayerType]
     'emit-room-state': [player: PlayerType]
 }

@@ -267,13 +267,13 @@ function putUnder(card: Card) {
     card: fromCard
   } = selectMode.value
   setSelectMode(null)
-  emit("put-under-card", {
+  props.cardActions.putUnderCard({
     from,
     to: props.zone,
     fromCard,
     toCard: card,
     player: props.player,
-  });
+  })
 }
 function startAttacking() {
   if (!selectMode.value) {

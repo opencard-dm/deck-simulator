@@ -9,7 +9,6 @@ import { Deck } from '@@/core/entities/Deck';
 import axios from 'axios';
 import { Game, GamePlayer } from '@@/core/entities/game';
 import { saveGameTemporarily } from '@@/core/services/game.service';
-import { putUnderCardParams } from '@@/core/usecase/CardActions';
 
 export class RoomConfig {
   static useFirebase = false
@@ -79,13 +78,6 @@ function useRoomListners({
     }
   }
 
-  function onPutUnderCard({ from, to, fromCard, toCard, player }: putUnderCardParams) {
-    cardActions.putUnderCard({ from, to, fromCard, toCard, player })
-    // 状態の変更を送信する
-    // if (!SocketUtil.socket) return;
-    // SocketUtil.socket.emit('cards-moved', players[player]);
-  }
-
   function onStartTurn({ player }: { player: PlayerType }) {
     const nextTurn = players[player].turn.current + 1
     gameLogger.turnActions.startTurn({
@@ -132,7 +124,6 @@ function useRoomListners({
     onMoveCards,
     onGroupCard,
     onChangeCardsState,
-    onPutUnderCard,
     onSelectDeck,
     onStartTurn,
   }

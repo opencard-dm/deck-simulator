@@ -12,7 +12,6 @@
       :card-actions="cardActions"
       @move-cards="moveCards"
       @group-card="groupCard"
-      @put-under-card="putUnderCard"
       @emit-room-state="emitRoomState"
       @change-cards-state="changeCardsState"
     />
@@ -136,7 +135,6 @@
       @move-cards="moveCards"
       @group-card="groupCard"
       @change-cards-state="changeCardsState"
-      @put-under-card="putUnderCard"
       @emit-room-state="emitRoomState"
     />
   </template>
@@ -186,9 +184,6 @@ function groupCard(...args: zoneEmit['group-card']) {
 }
 function changeCardsState(...args: zoneEmit['change-cards-state']) {
   emit('change-cards-state', ...args);
-}
-function putUnderCard(...args: zoneEmit['put-under-card']) {
-  emit('put-under-card', ...args);
 }
 function emitRoomState() {
   emit('emit-room-state', props.player);
