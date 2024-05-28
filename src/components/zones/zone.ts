@@ -102,8 +102,8 @@ export function useZone(props: zoneProps, emit: ReturnType<typeof defineEmits<zo
       emit('move-cards', selectMode.value.zone, to, [selectMode.value.card], props.player, prepend)
       setSelectMode(null)
     }
-    function shuffleCards(from: ZoneType, cards: Card[]) {
-      emit('shuffle-cards', from, cards, props.player)
+    function shuffleCards(from: ZoneType, cards: Card[], player: PlayerType) {
+      emit('shuffle-cards', from, cards, player)
     }
     function emitState() {
       emit('emit-room-state', props.player)

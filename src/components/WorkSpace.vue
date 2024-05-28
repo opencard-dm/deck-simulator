@@ -41,7 +41,7 @@
               v-if="
                 ['yamafudaZone'].includes(workSpace.zone) && !workSpace.single
               "
-              @click.stop="shuffleCards('yamafudaZone', workSpace.cards)"
+              @click.stop="shuffleCards('yamafudaZone', workSpace.cards, workSpace.player)"
               >シャッフル</o-button
             >
             <o-button

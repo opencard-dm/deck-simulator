@@ -17,7 +17,7 @@ export interface State {
     active: boolean
     cards: Card[]
     zone: ZoneType | ''
-    player: PlayerType | ''
+    player: PlayerType
     minimal: boolean
     single: boolean
   }
@@ -36,7 +36,7 @@ export const useRoomStore = defineStore('state', {
       active: false,
       cards: [],
       zone: '',
-      player: '',
+      player: 'a',
       minimal: false,
       single: false, // シールドが重なっている場合や、進化クリーチャーの時もtrue
     },
@@ -86,7 +86,7 @@ export const useRoomStore = defineStore('state', {
       this.workSpace = {
         cards: [],
         zone: '',
-        player: '',
+        player: 'a',
         active: false,
         minimal: false,
         single: false,

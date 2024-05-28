@@ -270,16 +270,10 @@ function emitRoomState() {
 }
 
 function shuffleCards(from: ZoneType, cards: Card[], player: PlayerType) {
-  players[player].getZone(from).cards = Deck.shuffle(cards);
-  players[player].getZone(from).cards.forEach(c => {
+  props.game.players[player].getZone(from).cards = Deck.shuffle(cards);
+  props.game.players[player].getZone(from).cards.forEach(c => {
     c.showInWorkSpace = false
   })
-  const shuffleMessage = {
-    shieldCards: 'シールド',
-    yamafudaCards: '山札',
-    tefudaCards: '手札',
-  };
-  // setMessage(shuffleMessage[from] + 'をシャッフル', player);
 }
 
 async function onDeckSelected({ deck, sourceDeck, player }: {
