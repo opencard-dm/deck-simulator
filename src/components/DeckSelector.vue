@@ -185,10 +185,10 @@ const canCansel = computed(() => {
 })
 const tabUrl = computed(() => {
   // 相手プレイヤーのルームのURL
-  const roomId = route.query.roomId as string;
+  const roomId = route.params.id as string;
   const player = route.query.player as string;
   return encodeURI(
-    `/room?roomId=${roomId}&player=${player == "a" ? "b" : "a"}`
+    `/rooms/${roomId}?player=${player == "a" ? "b" : "a"}`
   );
 })
 const userDecks = computed(() => {
@@ -197,9 +197,9 @@ const userDecks = computed(() => {
 const inviteLink = computed(() => {
   return (
     window.location.origin +
-    "/room?roomId=" +
-    encodeURI(route.query.roomId as string) +
-    "&player=b"
+    "/rooms/" +
+    encodeURI(route.params.id as string) +
+    "?player=b"
   );
 })
 const firebaseDecks = reactive<SourceDeck[]>([])
@@ -273,7 +273,9 @@ function onClose() {
   emit("update:active", false);
 }
 function copyInviteLink() {
-  navigator.clipboard.writeText(inviteLink.value);
+  // NOTE: httpsではなく、httpの場合clipboardにアクセスできない。
+  // http://192.168.0.2:8082/ などのときにバグと勘違いしないように注意
+  window.navigator.clipboard.writeText(inviteLink.value);
   copyLinkTooltip.value = true;
   window.setTimeout(() => {
     copyLinkTooltip.value = false;

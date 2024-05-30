@@ -182,9 +182,9 @@ export default {
       const opponentPlayer = this.player === "a" ? "b" : "a";
       return (
         window.location.origin +
-        "/room?roomId=" +
-        encodeURI(this.$route.query.roomId as string) +
-        "&player=" +
+        "/rooms/" +
+        encodeURI(this.$route.params.id as string) +
+        "?player=" +
         opponentPlayer
       );
     },
@@ -203,7 +203,7 @@ export default {
       this.$emit("reset-game", keepDecks);
     },
     copyInviteLink() {
-      navigator.clipboard.writeText(this.inviteLink);
+      window.navigator.clipboard.writeText(this.inviteLink);
       this.copyLinkTooltip = true;
       window.setTimeout(() => {
         this.copyLinkTooltip = false;
