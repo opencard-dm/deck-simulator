@@ -15,10 +15,10 @@
         icon="times-circle"
         size="large"
         @click.stop="closeWorkSpace"
-      ></o-icon>
+      />
       <!-- position absoluteで下につける -->
       <div class="bottomMenu">
-        <div class="bottomMenu__overlay"></div>
+        <div class="bottomMenu__overlay" />
       </div>
       <div class="workSpace_inner">
         <div class="workSpace_top">
@@ -28,42 +28,52 @@
               variant="grey-dark"
               outlined
               @click.stop="closeWorkSpace"
-              >{{ (isOwner ? "" : "相手の") + zoneName }}</o-button
             >
+              {{ (isOwner ? "" : "相手の") + zoneName }}
+            </o-button>
             <template
               v-if="['manaZone', 'battleZone'].includes(workSpace.zone)"
             >
-              <o-button v-if="!workSpace.single" @click.stop="untapAllCards"
-                >全てアンタップする</o-button
+              <o-button
+                v-if="!workSpace.single"
+                @click.stop="untapAllCards"
               >
+                全てアンタップする
+              </o-button>
             </template>
             <o-button
               v-if="
                 ['yamafudaZone'].includes(workSpace.zone) && !workSpace.single
               "
               @click.stop="shuffleCards('yamafudaZone', workSpace.cards, workSpace.player)"
-              >シャッフル</o-button
             >
+              シャッフル
+            </o-button>
             <o-button
               v-if="
                 ['yamafudaZone', 'shieldZone'].includes(workSpace.zone) &&
-                (isOwner || single)
+                  (isOwner || single)
               "
               variant="grey-dark"
               @click.stop="openAllCards"
-              >全て見る</o-button
             >
-            <template v-if="
+              全て見る
+            </o-button>
+            <template
+              v-if="
                 ['chojigenCards'].includes(workSpace.zone)
-              ">
+              "
+            >
               <o-button
                 @click.stop="faceDownAllCards(true)"
-                >全て裏にする</o-button
               >
+                全て裏にする
+              </o-button>
               <o-button
                 @click.stop="faceDownAllCards(false)"
-                >全て表にする</o-button
               >
+                全て表にする
+              </o-button>
             </template>
           </div>
         </div>
@@ -74,18 +84,25 @@
             @mouseenter="isPhone() ? null : setHoveredCard(card)"
             @mouseleave="isPhone() ? null : setHoveredCard(null)"
           >
-            <o-dropdown class="dropdown" :triggers="dropdownTriggers">
+            <o-dropdown
+              class="dropdown"
+              :triggers="dropdownTriggers"
+            >
               <template #trigger>
                 <MarkTool
                   :active="cardIsSelected(card)"
                   :color="card.markColor"
                   @change="setMarkColor(card, $event)"
                 >
-                  <div class="card with-info" 
+                  <div
+                    class="card with-info" 
                     :class="{ tapped: card.tapped }"
                     :style="{ width: `${card.tapped ? cardHeight : cardWidth}px` }"
                   >
-                    <span class="card-id card-info" v-if="card.groupId">{{
+                    <span
+                      v-if="card.groupId"
+                      class="card-id card-info"
+                    >{{
                       card.groupId
                     }}</span>
                     <div>
@@ -94,13 +111,17 @@
                         v-if="card.faceDown === true && !card.showInWorkSpace"
                         :src="cardDetail(card).backImageUrl"
                         :width="cardWidth"
-                      />
-                      <CardPopup v-else :url="card.imageUrl" :card="card">
+                      >
+                      <CardPopup
+                        v-else
+                        :url="card.imageUrl"
+                        :card="card"
+                      >
                         <TextCard
                           :card="card"
                           :width="cardWidth"
                           :selected="false"
-                        ></TextCard>
+                        />
                       </CardPopup>
                     </div>
                   </div>
@@ -110,50 +131,42 @@
                 <span
                   class="drop-item-2"
                   @click.stop="moveCard(card, 'battleZone')"
-                  >出す</span
-                >
+                >出す</span>
                 <span
                   class="drop-item-2"
                   @click.stop="moveCard(card, 'tefudaZone')"
-                  >手札へ</span
-                >
+                >手札へ</span>
               </o-dropdown-item>
               <o-dropdown-item class="drop-item">
                 <span
                   class="drop-item-2"
                   @click.stop="moveCard(card, 'yamafudaZone', true)"
-                  >山札の上へ</span
-                >
+                >山札の上へ</span>
                 <span
                   class="drop-item-2"
                   @click.stop="moveCard(card, 'yamafudaZone')"
-                  >/ 下へ</span
-                >
+                >/ 下へ</span>
               </o-dropdown-item>
               <o-dropdown-item class="drop-item">
                 <span
                   class="drop-item-2"
                   @click.stop="moveCard(card, 'shieldZone')"
-                  >シールドへ</span
-                >
+                >シールドへ</span>
                 <span
                   v-if="!card.showInWorkSpace"
                   class="drop-item-2"
                   @click="openCard(card)"
-                  >裏返す</span
-                >
+                >裏返す</span>
               </o-dropdown-item>
               <o-dropdown-item class="drop-item">
                 <span
                   class="drop-item-2"
                   @click.stop="moveCard(card, 'manaZone')"
-                  >マナ</span
-                >
+                >マナ</span>
                 <span
                   class="drop-item-2"
                   @click.stop="moveCard(card, 'bochiZone')"
-                  >墓地へ</span
-                >
+                >墓地へ</span>
               </o-dropdown-item>
             </o-dropdown>
             <div class="card_bottomButton">
@@ -162,37 +175,44 @@
                 <!-- 本人確認 -->
                 <o-button
                   v-if="card.faceDown && !card.showInWorkSpace && isOwner"
-                  @click.stop="card.showInWorkSpace = true"
                   :size="'small'"
-                  >見る</o-button
+                  @click.stop="card.showInWorkSpace = true"
                 >
+                  見る
+                </o-button>
                 <!-- 見られる状態になったカードを場に出すボタン -->
                 <o-button
                   v-if="card.showInWorkSpace"
                   variant="danger"
-                  @click.stop="moveCard(card, 'battleZone')"
                   :size="'small'"
-                  >出す</o-button
+                  @click.stop="moveCard(card, 'battleZone')"
                 >
+                  出す
+                </o-button>
                 <o-button
                   v-if="card.showInWorkSpace && workSpace.zone === 'yamafudaZone'"
                   variant="info"
-                  @click.stop="moveCard(card, 'yamafudaZone')"
                   :size="'small'"
-                  >下へ</o-button
+                  @click.stop="moveCard(card, 'yamafudaZone')"
                 >
+                  下へ
+                </o-button>
               </template>
 
               <!-- ショートカット -->
               <template v-else-if="['tefudaZone'].includes(workSpace.zone)">
-                <o-button @click.stop="moveCard(card, 'battleZone')"
+                <o-button
                   :size="isPhone() ? 'small' : ''"
-                  >出す</o-button
+                  @click.stop="moveCard(card, 'battleZone')"
                 >
-                <o-button @click.stop="moveCard(card, 'manaZone')"
+                  出す
+                </o-button>
+                <o-button
                   :size="isPhone() ? 'small' : ''"
-                  >マナ</o-button
+                  @click.stop="moveCard(card, 'manaZone')"
                 >
+                  マナ
+                </o-button>
               </template>
               <o-button
                 v-else-if="
@@ -200,37 +220,49 @@
                 "
                 :size="isPhone() ? 'small' : ''"
                 @click.stop="moveCard(card, 'tefudaZone')"
-                >手札へ</o-button
               >
+                手札へ
+              </o-button>
               <template v-else-if="['shieldZone'].includes(workSpace.zone)">
                 <!-- 本人確認は無くした -->
                 <o-button
                   v-if="card.faceDown && !card.showInWorkSpace"
-                  @click.stop="card.showInWorkSpace = true"
                   :size="isPhone() ? 'small' : ''"
-                  >見る</o-button
+                  @click.stop="card.showInWorkSpace = true"
                 >
+                  見る
+                </o-button>
                 <template v-else>
-                  <o-button @click.stop="moveCard(card, 'battleZone')"
+                  <o-button
                     :size="isPhone() ? 'small' : ''"
                     variant="danger"
-                    >出す</o-button
+                    @click.stop="moveCard(card, 'battleZone')"
                   >
-                  <o-button @click.stop="moveCard(card, 'tefudaZone')"
+                    出す
+                  </o-button>
+                  <o-button
                     :size="isPhone() ? 'small' : ''"
-                    >手札</o-button
+                    @click.stop="moveCard(card, 'tefudaZone')"
                   >
+                    手札
+                  </o-button>
                 </template>
               </template>
               <template v-else-if="['manaZone'].includes(workSpace.zone)">
-                <o-button v-if="!card.tapped" @click.stop="card.tapped = true"
+                <o-button
+                  v-if="!card.tapped"
                   :size="isPhone() ? 'small' : ''"
-                  >タップ</o-button
+                  @click.stop="card.tapped = true"
                 >
-                <o-button v-else @click.stop="card.tapped = false"
+                  タップ
+                </o-button>
+                <o-button
+                  v-else
                   :size="isPhone() ? 'small' : ''"
-                  >アンタップ</o-button
+                  @click.stop="card.tapped = false"
                 >
+                  アンタップ
+                </o-button>
               </template>
             </div>
           </div>
@@ -240,8 +272,9 @@
           <o-button
             v-if="['manaZone', 'battleZone'].includes(workSpace.zone)"
             @click.stop="tapAllCards"
-            >全てタップする</o-button
           >
+            全てタップする
+          </o-button>
         </template>
       </div>
     </div>
@@ -294,7 +327,7 @@ const {
 
 // computed
 const dropdownTriggers = computed(() => {
-  if (window.innerWidth >= 800 && !hasSelectedCard()) {
+  if (!isPhone()) {
     return ["click", "hover"];
   }
   return ["click"];
@@ -551,9 +584,12 @@ onUnmounted(() => {
   }
   .o-drop__menu {
     top: 20px;
-    padding: 0;
-    width: 120px;
+    padding: 0 10px;
+    width: 140px;
     min-width: unset;
+    @media screen and (max-width: 800px) {
+      top: unset;
+    }
   }
   .o-drop__item {
     display: flex;
