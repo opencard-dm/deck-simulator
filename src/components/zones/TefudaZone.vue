@@ -61,7 +61,7 @@
           >
         </div>
         <div
-          v-if="true"
+          v-if="!opponent"
           class="card_bottomButton"
         >
           <o-button
@@ -148,7 +148,7 @@ const props = withDefaults(defineProps<{
   zone: 'tefudaZone'
 })
 const hideTefuda = computed(() => {
-  return !props.single && props.side === 'upper'
+  return !props.single && props.opponent
 })
 
 const emit = defineEmits<zoneEmit & {
