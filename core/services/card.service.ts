@@ -16,6 +16,14 @@ export async function fetchCardDetails(deck: SourceDeck): Promise<{[key: string]
   return cards
 }
 
+export async function fetchCardDetailsAndAbilities(deck: SourceDeck): Promise<{[key: string]: CardDetail}> {
+  const cardDetails = await fetchCardDetails(deck)
+  Object.values(cardDetails).forEach(cardDetail => {
+    fetchCardAbility(cardDetail.name)
+  })
+  return cardDetails
+}
+
 const cardAbilities: {[key: string]: CardAbility} = {};
 
 export async function fetchCardAbility(cardName: string): Promise<CardAbility|null> {

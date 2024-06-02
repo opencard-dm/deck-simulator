@@ -2,14 +2,20 @@ import { Card, CardGroup, cardState } from "@@/core/entities/card";
 import { GroupableZoneType, ZoneType } from "@@/core/entities/zones";
 import { PlayerType } from "@@/core/entities/player";
 import { Deck } from "@@/core/entities/Deck";
-import { GameLogger } from "./GameLogger";
+import { GameLogger, resetGameParams } from "./GameLogger";
 import { RoomConfig } from "@/helpers/room";
 import { cardData } from "@@/core/entities/CardData";
 import { Game } from "../entities/game";
 import { getCardAbility } from "../services/card.service";
 import { startTurnParams } from "./TurnActions";
 
-export type cardActionMethodParams = moveCardsParams | changeCardsStateParams | groupCardParams | putUnderCardParams | startTurnParams | startAttackingParams
+export type cardActionMethodParams = moveCardsParams 
+  | changeCardsStateParams
+  | groupCardParams
+  | putUnderCardParams
+  | startTurnParams
+  | startAttackingParams
+  | resetGameParams
 
 export interface moveCardsParams {
   from: ZoneType
@@ -18,6 +24,8 @@ export interface moveCardsParams {
   player: PlayerType
   prepend?: boolean
   index?: number
+  /** 初期盤面をセットするときに使用 */
+  withoutEffect?: boolean
 }
 
 export interface changeCardsStateParams {
@@ -88,7 +96,7 @@ export class CardActions {
     // }
   }
 
-  moveCards({ from, to, cards, player, prepend, index }: moveCardsParams) {
+  moveCards({ from, to, cards, player, prepend, index, withoutEffect }: moveCardsParams) {
     if (!cards || cards.length === 0) return;
     // カードにインデックスを付与する
     this.game.players[player].getZone(from).cards.forEach((card, index) => {
@@ -123,9 +131,9 @@ export class CardActions {
       }
       return
     }
-    this.gameLogger?.moveCards({ from, to, cards: cards, player, prepend, index })
+    this.gameLogger?.moveCards({ from, to, cards: cards, player, prepend, index, withoutEffect })
     if (!RoomConfig.useFirebase) {
-      this.moveCardsWithoutHistory({ from, to, cards, player, prepend, index })
+      this.moveCardsWithoutHistory({ from, to, cards, player, prepend, index, withoutEffect })
     }
   }
 
@@ -170,12 +178,14 @@ export class CardActions {
       to: 'yamafudaZone',
       cards: deck.cards,
       player,
+      withoutEffect: true,
     })
     this.moveCards({
       from: 'yamafudaZone',
       to: 'shieldZone',
       cards: deck.cards.slice(-5),
       player,
+      withoutEffect: true,
     })
     this.moveCards({
       from: 'yamafudaZone',
@@ -185,6 +195,7 @@ export class CardActions {
         return c
       }),
       player,
+      withoutEffect: true,
     })
     if (deck.chojigenCards.length > 0) {
       this.moveCards({
@@ -192,11 +203,12 @@ export class CardActions {
         to: 'chojigenZone',
         cards: deck.chojigenCards,
         player,
+        withoutEffect: true,
       })
     }
   }
 
-  moveCardsWithoutHistory({ from, to, cards, player, prepend, index }: moveCardsParams) {
+  moveCardsWithoutHistory({ from, to, cards, player, prepend, index, withoutEffect }: moveCardsParams) {
     const cardsCopy = JSON.parse(JSON.stringify(cards)) as Card[]
     const card = cardsCopy[0];
     // 手札、マナ、墓地へ行く場合は表向きにする。
@@ -231,6 +243,7 @@ export class CardActions {
     }
     // カードごとの効果を適用
     cardsCopy.forEach(c => {
+      if (withoutEffect) return
       if (!cardData(card) || !cardData(card).cardDetail) return;
       const ability = getCardAbility(cardData(card).cardDetail.name)
       if (ability) {

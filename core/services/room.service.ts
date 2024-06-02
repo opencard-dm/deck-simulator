@@ -10,6 +10,12 @@ type RoomType = {
   deckB?: SourceDeck
 }
 
+export type FirebaseRoomType = {
+  histories: string[] // JSON.parseでGameHistoryDataになる
+  deckA?: SourceDeck
+  deckB?: SourceDeck
+}
+
 export async function fetchRoom(roomId: string): Promise<RoomType | null> {
   const docRef = doc(Firebase.db, Firebase.env('rooms'), roomId);
   const docSnap = await getDoc(docRef);

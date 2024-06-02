@@ -123,7 +123,14 @@ export type GameHistoryData = {
   canundo: true
   who: PlayerType
   player: PlayerType
-  method: 'moveCards' | 'changeCardsState' | 'groupCard' | 'undoGroupCard' | 'putUnderCard' | 'startTurn' | 'startAttacking'
+  method: 'moveCards' 
+    | 'changeCardsState'
+    | 'groupCard'
+    | 'undoGroupCard'
+    | 'putUnderCard'
+    | 'startTurn'
+    | 'startAttacking'
+    | 'resetGame'
   args: cardActionMethodParams
   message: string
 }

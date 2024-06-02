@@ -134,40 +134,7 @@ export function useRoomSetup(props: RoomProps) {
   }
 
   async function resetGame(keepDecks: boolean) {
-    // TODO: propsを書き換えない
-    const deckA = props.game.players.a.deck
-    const deckB = props.game.players.b.deck
-    if (RoomConfig.useFirebase) {
-      if (keepDecks) {
-        await initializeRoom({
-          roomId: props.roomId,
-          deckA: props.game.players.a.deck || undefined,
-          deckB: props.game.players.b.deck || undefined,
-        })
-      } else {
-        await initializeRoom({
-          roomId: props.roomId,
-        })
-      }
-      props.gameLogger.unsubscribes.forEach(u => u())
-      props.gameLogger.listenChanges()
-      props.gameLogger.histories = []
-      props.gameLogger.historyIndex = -1
-    }
-    const initialGame = Game.init()
-    const cardActions = new CardActions(initialGame)
-    if (keepDecks) {
-      initialGame.players.a.deck = deckA
-      initialGame.players.b.deck = deckB
-      if (deckA) {
-        cardActions.selectDeck('a', await Deck.prepareDeckForGame(deckA, true, true))
-      }
-      if (deckB) {
-        cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, true, true))
-      }
-    }
-    players.a = initialGame.players.a;
-    players.b = initialGame.players.b;
+    await props.gameLogger.resetGame({ keepDecks })
     window.scrollTo({
       top: 0,
       // behavior: "smooth",

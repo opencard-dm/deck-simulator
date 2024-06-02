@@ -17,6 +17,7 @@
       v-if="deckSelectorActiveWatch"
       v-model:active="deckSelectorActive"
       :player="currentPlayer"
+      :lower-player="lowerPlayer"
       :is-ready="players[currentPlayer].isReady()"
       :partner-is-ready="true"
       :card-actions="cardActions"

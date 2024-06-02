@@ -151,6 +151,7 @@ const router = useRouter()
 const decksStore = useDecksStore()
 const props = defineProps<{
   player: PlayerType
+  lowerPlayer: PlayerType
   isReady: boolean
   partnerIsReady: boolean
   active: boolean
@@ -181,7 +182,7 @@ function validateUrl() {
 // computed
 const canCansel = computed(() => {
   if (isPhone()) return true
-  return props.isReady || props.player !== 'a';
+  return props.isReady || props.player !== props.lowerPlayer;
 })
 const tabUrl = computed(() => {
   // 相手プレイヤーのルームのURL

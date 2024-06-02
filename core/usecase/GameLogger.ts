@@ -7,9 +7,16 @@ import { cardActionMethodParams } from "@@/core/usecase/CardActions"
 import { Game, GameHistory } from "../entities/game"
 import { v4 as uuidv4 } from 'uuid'
 import { TurnActions, startTurnParams } from "@@/core/usecase/TurnActions"
-import { State } from "@/stores/room"
+import { State, useRoomStore } from "@/stores/room"
 import { readableZone } from "@/components/zones/zone"
 import { Card } from "@@/core/entities/card"
+import { fetchCardDetailsAndAbilities } from "../services/card.service";
+import { initializeRoom } from "../services/room.service";
+import { Deck } from "@/helpers/Deck";
+
+export interface resetGameParams {
+  keepDecks: boolean
+}
 
 // Roomコンポーネント内でインスタンス化して利用する。
 export class GameLogger {
@@ -38,9 +45,39 @@ export class GameLogger {
 
   listenChanges() {
     if (RoomConfig.useFirebase) {
-      this.unsubscribes.push(listenHistoriesChange(this.roomId, (histories) => {
+      const roomStore = useRoomStore()
+      this.unsubscribes.push(listenHistoriesChange(this.roomId, async (room) => {
+
+        // deck
+        // nullからそうでない値に切り替わるときに、デッキの選択が行われたと判断する
+        const {
+          deckA,
+          deckB
+        } = room;
+        if (this.players.a.deck === null && deckA) {
+          this.players.a.deck = deckA
+          this.game.cardDetails = {
+            ...this.game.cardDetails,
+            ...await fetchCardDetailsAndAbilities(deckA),
+          }
+        } else {
+          this.players.a.deck = deckA || null
+        }
+        if (this.players.b.deck === null && deckB) {
+          this.players.b.deck = deckB
+          console.debug('fetch deckB cardDetails in firebase listner')
+          this.game.cardDetails = {
+            ...this.game.cardDetails,
+            ...await fetchCardDetailsAndAbilities(deckB),
+          }
+        } else {
+          this.players.b.deck = deckB || null
+        }
+        roomStore.addCardDetails(this.game.cardDetails)
+
+        // histories
+        const histories = room.histories;
         if (!Array.isArray(histories)) return
-        if (histories.length === 0) return
         console.debug(`receive ${histories.length} histories`)
         const newHistories = histories.slice(this.historyIndex + 1)
         newHistories.forEach((history) => {
@@ -48,6 +85,48 @@ export class GameLogger {
         })
       }))
     }
+  }
+
+  async resetGame(params: resetGameParams) {
+    const {
+      keepDecks
+    } = params
+    const deckA = this.players.a.deck
+    const deckB = this.players.b.deck
+    if (RoomConfig.useFirebase) {
+      await this.appendHistory('resetGame', params)
+      if (keepDecks) {
+        await initializeRoom({
+          roomId: this.roomId,
+          deckA: deckA || undefined,
+          deckB: deckB || undefined,
+        })
+      } else {
+        await initializeRoom({
+          roomId: this.roomId,
+        })
+      }
+    }
+    if (keepDecks) {
+      if (deckA) {
+        this.cardActions.selectDeck('a', await Deck.prepareDeckForGame(deckA, true, true))
+      }
+      if (deckB) {
+        this.cardActions.selectDeck('b', await Deck.prepareDeckForGame(deckB, true, true))
+      }
+    }
+  }
+
+  resetGameWithoutHistory({
+    keepDecks,
+  }: resetGameParams) {
+    console.log('resetGameWithoutHistory')
+    this.histories = []
+    this.historyIndex = -1
+
+    const initialGame = Game.init()
+    this.players.a = initialGame.players.a;
+    this.players.b = initialGame.players.b;
   }
 
   static useGameLogger(cardActions: CardActions, roomId: string, who: PlayerType) {
@@ -74,39 +153,39 @@ export class GameLogger {
     return this.players.a.turn.total + this.players.b.turn.total
   }
 
-  moveCards(args: moveCardsParams) {
+  async moveCards(args: moveCardsParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as moveCardsParams
-    this.appendHistory('moveCards', argsCopy)
+    await this.appendHistory('moveCards', argsCopy)
   }
 
-  groupCard(args: groupCardParams) {
+  async groupCard(args: groupCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
-    this.appendHistory('groupCard', argsCopy)
+    await this.appendHistory('groupCard', argsCopy)
   }
 
-  putUnderCard(args: putUnderCardParams) {
+  async putUnderCard(args: putUnderCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as putUnderCardParams
-    this.appendHistory('putUnderCard', argsCopy)
+    await this.appendHistory('putUnderCard', argsCopy)
   }
 
-  undoGroupCard(args: groupCardParams) {
+  async undoGroupCard(args: groupCardParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as groupCardParams
-    this.appendHistory('undoGroupCard', argsCopy)
+    await this.appendHistory('undoGroupCard', argsCopy)
   }
 
-  changeCardsState(args: changeCardsStateParams) {
+  async changeCardsState(args: changeCardsStateParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as changeCardsStateParams
-    this.appendHistory('changeCardsState', argsCopy)
+    await this.appendHistory('changeCardsState', argsCopy)
   }
 
-  startAttacking(args: startAttackingParams) {
+  async startAttacking(args: startAttackingParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as startAttackingParams
-    this.appendHistory('startAttacking', argsCopy)
+    await this.appendHistory('startAttacking', argsCopy)
   }
 
-  startTurn(args: startTurnParams) {
+  async startTurn(args: startTurnParams) {
     const argsCopy = JSON.parse(JSON.stringify(args)) as startTurnParams
-    this.appendHistory('startTurn', argsCopy)
+    await this.appendHistory('startTurn', argsCopy)
   }
 
   setHistories(histories: GameHistory[]) {
@@ -190,7 +269,7 @@ export class GameLogger {
     }
   }
 
-  appendHistory(method: GameHistory['method'], args: cardActionMethodParams, message='') {
+  async appendHistory(method: GameHistory['method'], args: cardActionMethodParams, message='') {
     const history: GameHistory = GameHistory.fromData({
       id: uuidv4(),
       canundo: true,
@@ -206,7 +285,7 @@ export class GameLogger {
       this.histories = this.histories.slice(0, this.historyIndex + 1)
     }
     if (RoomConfig.useFirebase) {
-      pushHistory(this.roomId, history)
+      await pushHistory(this.roomId, history)
     } else {
       // 連続するマナタップは一つの履歴にまとめる
       if (this.currentHistory && HistoryComparator.isManaStateChange(this.currentHistory, history)) {
@@ -244,6 +323,9 @@ export class GameLogger {
         break
       case this.startTurn.name:
         this.turnActions.startTurnWithoutHistory(history.args as startTurnParams)
+        break
+      case this.resetGame.name:
+        this.resetGameWithoutHistory(history.args as resetGameParams)
         break
       default:
         break;
