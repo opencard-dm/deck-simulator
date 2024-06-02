@@ -145,6 +145,7 @@ import { Features } from "@/features";
 import { useDecksStore } from "@/stores/decks";
 import { useRoomStore } from "@/stores/room";
 import { getUserDecks } from "./builder/decks";
+import { RoomConfig } from '@/helpers/room';
 
 const route = useRoute()
 const router = useRouter()
@@ -262,7 +263,9 @@ async function scrape() {
   } else {
     console.debug('deck', sourceDeck)
   }
-  updateUrl(deckId.value)
+  if (!RoomConfig.useFirebase) {
+    updateUrl(deckId.value)
+  }
   scrapeUrl.value = "";
   scraping.value = false;
   setupDeck(sourceDeck)
