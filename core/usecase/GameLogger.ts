@@ -65,7 +65,6 @@ export class GameLogger {
         }
         if (this.players.b.deck === null && deckB) {
           this.players.b.deck = deckB
-          console.debug('fetch deckB cardDetails in firebase listner')
           this.game.cardDetails = {
             ...this.game.cardDetails,
             ...await fetchCardDetailsAndAbilities(deckB),
@@ -120,7 +119,6 @@ export class GameLogger {
   resetGameWithoutHistory({
     keepDecks,
   }: resetGameParams) {
-    console.log('resetGameWithoutHistory')
     this.histories = []
     this.historyIndex = -1
 
