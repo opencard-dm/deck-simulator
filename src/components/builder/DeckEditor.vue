@@ -146,13 +146,14 @@ const editable = computed(() => {
   return false
 })
 
-onMounted(() => {
+onMounted(async () => {
   const deckId = new URLSearchParams(location.search).get('deck_id')
   if (!props.isMain) return
   if (deckId && props.isMain) {
     for (const [index, deck] of props.deckList.entries()) {
       if (deck.id === deckId) {
         deckData.deckData = deck
+        roomStore.addCardDetails(await fetchCardDetails(deck))
         deckData.deckIndex = index
         return
       }
@@ -160,7 +161,9 @@ onMounted(() => {
   }
   if (props.deckList.length > 0) {
     deckData.deckIndex = 0
-    deckData.deckData = props.deckList[deckData.deckIndex]
+    const deck = props.deckList[deckData.deckIndex]
+    roomStore.addCardDetails(await fetchCardDetails(deck))
+    deckData.deckData = deck
   }
 })
 
