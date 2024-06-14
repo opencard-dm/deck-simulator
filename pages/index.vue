@@ -64,22 +64,21 @@
         一人回し支援ツール
       </h2>
       <div style="margin-top: 1rem;">
-        本サービスでは、ユーザーがGoogleスプレッドシートで作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。
+        本サービスでは、ユーザーが本サイト上で作成したデッキを一人回しすることができます。非公式のサービスとなりますので、私的利用に収まる範囲でご使用ください。
       </div>
       <div style="margin-top: 1rem;">
         下記の画像無しのサンプルデッキは本サービスの使用感を確かめるためのものとなっております。
       </div>
       <SampleDecks />
-      <GoogleSheetInput style="margin-top: 2rem;" />
       <UserDecks />
       <div style="margin-top: 1rem;">
         <a
           class="link"
-          href="https://docs.google.com/spreadsheets/d/1mqN0WQxLc5ksaUTnkZ_j23ODwUViUJIo1oJx-RjwkFA/copy?usp=sharing"
+          href="https://docs.google.com/document/d/1NvIiEeC8_47F0r8_crlG5QJl1KQmwzN-3AFfYmFFL84/edit?usp=sharing"
           target="_blank"
           rel="noopener"
         >
-          <span>テンプレートファイルをコピー (Google スプレッドシート)</span>
+          <span>デッキ編集機能について</span>
           <o-icon
             pack="fas"
             style="margin-left: 4px;"
@@ -88,42 +87,9 @@
           />
         </a>
       </div>
-      <details>
-        <summary style="font-weight: bolder; margin-top: 1rem;">
-          デッキを動かすまでの手順(PC)
-        </summary>
-        <div style="margin-bottom: 1rem;">
-          ioradというサービスを使ったインタラクティブな説明が下部にあります。
-        </div>
-        <div>1. 上記のリンクでGoogleスプレッドシートのコピーを作成し、空のフォルダ内に移動する</div>
-        <div>2. スプレッドシート上部のファイル名の右にあるフォルダアイコンをクリックし、現在のフォルダを新しいタブで開く</div>
-        <div>3. フォルダをリンクを知っている全員が閲覧できるように共有する</div>
-        <div>
-          4. <a
-            class="link"
-            href="https://dm.takaratomy.co.jp/card/"
-            target="_blank"
-            rel="noopener"
-          >公式のカード検索</a>を新しいウィンドウで開き、手順2のGoogleドライブのフォルダとの両方が見られる状態にする
-        </div>
-        <div>5. 公式のカード画像をGoogleドライブのフォルダにドラッグアンドドロップして、カード画像を追加する</div>
-        <div>6. スプレッドシートのシートの1行目にある「画像IDを追加」ボタンをクリックする</div>
-        <div>※ボタンを押すと、Google App Scriptが実行されるようになっており、認証が必要です。認証のモーダルが出るまで、2、3回ほどボタンを押してください。</div>
-        <div>7. 手順4、5を繰り返し、枚数を調整することでデッキを作成する</div>
-        <div>8. 下記の入力欄にスプレッドシートのURLをペーストする</div>
-        <div>9. スプレッドシートを更新した場合は、再度URLをペーストする</div>
-        <GoogleSheetInput style="margin-top: 0.5rem;" />
-        <GoogleSpreadsheetCopy />
-        <GoogleSpreadsheetDeck style="margin-top: 3rem;" />
-      </details>
-      <details>
-        <summary style="font-weight: bolder; margin-top: 1rem;">
-          デッキを動かすまでの手順(スマホ)
-        </summary>
-        <div>スマートフォンでのデッキ作成作業はおすすめしません。PCでの作業で作成したスプレッドシートのURLを利用してください。</div>
-        <div>1. PCで上記の「デッキを動かすまでの手順(PC)」を完了する</div>
-        <div>2. スマートフォンでスプレッドシートのリンクを取得し、上記の入力欄に貼り付ける</div>
-      </details>
+      <div style="margin-top: 1rem;">
+        ※デッキ編集機能の実装に伴い、以前のGoogleスプレッドシートからデッキを作成する機能はなくなりました。
+      </div>
     </div>
     <IndexFooter />
   </div>

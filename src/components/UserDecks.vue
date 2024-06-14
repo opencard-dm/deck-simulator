@@ -1,91 +1,107 @@
 <template>
-  <table class="roomTable" style="margin-top: 20px">
-    <thead>
-      <th><div>デッキ名</div></th>
-      <th><div>カード枚数</div></th>
-      <th colspan="3"><div></div></th>
-    </thead>
-    <template v-for="(decksSource, sourceIndex) in userDecks" :key="`spreadsheet-${sourceIndex}`">
-      <tr v-for="(deck, deckIndex) in decksSource.decks" :key="decksSource.url + deck.name">
-        <td>
-          <div style="text-align: left;">{{ deck.name }}</div>
-        </td>
-        <td>
-          <div style="text-align: left;">{{ cardsNumInDeck(deck) }}</div>
-        </td>
-        <td style="text-align: center;">
-          <router-link
-            :to="{
-              path: '/single',
-              query: { deck_id: sourceIndex + '-' + deck.name },
-            }"
-          >
-            <o-button variant="info" size="small">動かす</o-button>
-          </router-link>
-        </td>
-        <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
-          <o-button variant="info" size="small" @click="updateDeckFromSource(decksSource.url)">更新</o-button>
-        </td>
-        <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
-          <a
-            class="link"
-            :href="decksSource.url.replace('/export', '/edit')"
-            target="sheet"
-            rel="noopener"
-          >
-            <span>シートを開く</span>
-            <o-icon
-              pack="fas"
-              style="margin-left: 4px;"
-              icon="arrow-up-right-from-square"
-              size="small"
-            ></o-icon>
-          </a>
-        </td>
-      </tr>
-    </template>
-    <template v-for="sourceDeck in firebaseDecks" :key="sourceDeck.id">
-      <tr>
-        <td>
-          <div style="text-align: left;">{{ sourceDeck.name }}</div>
-        </td>
-        <td>
-          <div style="text-align: left;">{{ cardsNumInDeck(sourceDeck) }}</div>
-        </td>
-        <td style="text-align: center;">
-          <router-link
-            :to="{
-              path: '/single',
-              query: { deck_id: 'firebase' + '-' + sourceDeck.id },
-            }"
-          >
-            <o-button variant="info" size="small">動かす</o-button>
-          </router-link>
-        </td>
-        <td colspan="2">
-          <router-link
-            :to="{
-              path: '/decks/edit',
-              query: { deck_id: sourceDeck.id },
-            }"
-          >
-            <o-button variant="info" size="small">編集</o-button>
-          </router-link>
-        </td>
-      </tr>
-    </template>
-  </table>
+  <div>
+    <table class="roomTable" style="margin-top: 20px">
+      <thead>
+        <th><div>デッキ名</div></th>
+        <th><div>カード枚数</div></th>
+        <th colspan="3"><div></div></th>
+      </thead>
+      <template v-for="(decksSource, sourceIndex) in userDecks" :key="`spreadsheet-${sourceIndex}`">
+        <tr v-for="(deck, deckIndex) in decksSource.decks" :key="decksSource.url + deck.name">
+          <td>
+            <div style="text-align: left;">{{ deck.name }}</div>
+          </td>
+          <td>
+            <div style="text-align: left;">{{ cardsNumInDeck(deck) }}</div>
+          </td>
+          <td style="text-align: center;">
+            <router-link
+              :to="{
+                path: '/single',
+                query: { deck_id: sourceIndex + '-' + deck.name },
+              }"
+            >
+              <o-button variant="info" size="small">動かす</o-button>
+            </router-link>
+          </td>
+          <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
+            <o-button variant="info" size="small" @click="updateDeckFromSource(decksSource.url)">更新</o-button>
+          </td>
+          <td v-if="deckIndex === 0" :rowspan="decksSource.decks.length">
+            <a
+              class="link"
+              :href="decksSource.url.replace('/export', '/edit')"
+              target="sheet"
+              rel="noopener"
+            >
+              <span>シートを開く</span>
+              <o-icon
+                pack="fas"
+                style="margin-left: 4px;"
+                icon="arrow-up-right-from-square"
+                size="small"
+              ></o-icon>
+            </a>
+          </td>
+        </tr>
+      </template>
+      <template v-for="sourceDeck in firebaseDecks" :key="sourceDeck.id">
+        <tr>
+          <td>
+            <div style="text-align: left;">{{ sourceDeck.name }}</div>
+          </td>
+          <td>
+            <div style="text-align: left;">{{ cardsNumInDeck(sourceDeck) }}</div>
+          </td>
+          <td style="text-align: center;">
+            <router-link
+              :to="{
+                path: '/single',
+                query: { deck_id: 'firebase' + '-' + sourceDeck.id },
+              }"
+            >
+              <o-button variant="info" size="small">動かす</o-button>
+            </router-link>
+          </td>
+          <td colspan="2">
+            <router-link
+              :to="{
+                path: '/decks/edit',
+                query: { deck_id: sourceDeck.id },
+              }"
+            >
+              <o-button variant="info" size="small">編集</o-button>
+            </router-link>
+          </td>
+        </tr>
+      </template>
+    </table>
+    <div v-if="authStore.loggedIn && firebaseDecks.length === 0"
+      style="margin-top: 1rem;"
+    >
+      <o-button 
+        variant="info" 
+        size="small"
+        style="margin-right: 4px;"
+        @click="createMyDeck()"
+      >
+        自分のデッキを作成する
+      </o-button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed, reactive, onMounted } from "vue";
-import { getUserDecks } from "./builder/decks";
+import { addDeck, getUserDecks } from "./builder/decks";
 import { SourceDeck } from "@@/core/entities/Deck";
 import { fetchDeck } from "@/components/deck-inputs/GoogleSheetInput";
 import { useDecksStore } from "@/stores/decks";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useAuthStore } from "@/stores/auth";
 
 const firebaseDecks = reactive<SourceDeck[]>([])
+const authStore = useAuthStore()
 
 onAuthStateChanged(getAuth(), async (user) => {
   if (user) {
@@ -129,6 +145,18 @@ async function updateDeckFromSource(url: string) {
   const decksSource = await fetchDeck(url)
   console.log(decksSource)
   decksStore.addDecksSource(decksSource)
+}
+
+async function createMyDeck() {
+  const newDeck: SourceDeck = {
+    name: 'デッキ（名称未設定）',
+    source: 'firebase',
+    cards: [],
+    chojigenCards: [],
+    grCards: [],
+  }
+  await addDeck(newDeck)
+  await navigateTo(`/decks/edit?deck_id=${newDeck.id}`)  
 }
 </script>
 

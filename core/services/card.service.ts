@@ -8,6 +8,11 @@ export async function fetchCardDetails(deck: SourceDeck): Promise<{[key: string]
   deck.cards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
   deck.chojigenCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
   deck.grCards.forEach(c => cardIds.includes(c.cd) || cardIds.push(c.cd))
+
+  if (cardIds.length === 0) {
+    return {}
+  }
+
   const { data: cards } = await axios.get('/api/cards', {
     params: {
       cardIds: cardIds.join(',')
@@ -34,7 +39,7 @@ export async function fetchCardAbility(cardName: string): Promise<CardAbility|nu
     return cardAbilities[cardName]
   }
   try {
-    const mod = await import(`/cards/${cardName}.js`)
+    const mod = await import( /* @vite-ignore */ `/cards/${cardName}.js`)
     cardAbilities[cardName] = mod.default
     return cardAbilities[cardName]
   } catch (error) {
