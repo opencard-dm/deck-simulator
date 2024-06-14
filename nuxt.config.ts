@@ -5,6 +5,9 @@ import 'dotenv/config'
 import markdownRawPlugin from "vite-raw-plugin";
 
 export default defineNuxtConfig({
+    devtools: {
+        enabled: false
+    },
     app: {
         head: {
             charset: 'utf-8',
