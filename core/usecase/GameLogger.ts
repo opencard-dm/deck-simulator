@@ -105,6 +105,16 @@ export class GameLogger {
           roomId: this.roomId,
         })
       }
+    } else {
+      this.resetGameWithoutHistory({ keepDecks })
+      if (keepDecks) {
+        if (deckA) {
+          this.players.a.deck = deckA
+        }
+        if (deckB) {
+          this.players.b.deck = deckB
+        }
+      }
     }
     if (keepDecks) {
       if (deckA) {
