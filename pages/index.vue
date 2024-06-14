@@ -90,6 +90,8 @@
       <div style="margin-top: 1rem;">
         ※デッキ編集機能の実装に伴い、以前のGoogleスプレッドシートからデッキを作成する機能はなくなりました。
       </div>
+      <!-- ローカルでのデバッグ用 -->
+      <!-- <GoogleSheetInput /> -->
     </div>
     <IndexFooter />
   </div>

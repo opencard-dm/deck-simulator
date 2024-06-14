@@ -11,6 +11,11 @@ export function cardData(card: Card) {
   }
   const roomStore = useRoomStore()
   const cardDetail = roomStore.cardDetails[card.cd]
+  // Googleスプレッドシートから取り込んだデッキのための対応
+  if (!cardDetail || card.cd.startsWith('https://')) {
+    return null
+  }
+  console.log(cardDetail)
   const thisInstance = new CardData(cardDetail)
   return thisInstance
 }

@@ -65,7 +65,7 @@
           class="card_bottomButton"
         >
           <o-button
-            v-if="game.players[player].attackingCard && cardData(card).ability.kakumeiChange"
+            v-if="game.players[player].attackingCard && cardData(card)?.ability.kakumeiChange"
             variant="danger"
             size="small"
             @click.stop="kakumeiChange(card)"
